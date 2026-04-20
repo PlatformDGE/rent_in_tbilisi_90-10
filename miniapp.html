@@ -87,6 +87,14 @@
   .h2o-btn.active-1{background:rgba(239,68,68,0.15);border-color:#ef4444;color:#ef4444;}
   .h2o-btn.active-2{background:rgba(245,158,11,0.15);border-color:#f59e0b;color:#f59e0b;}
   .h2o-btn.active-3{background:rgba(34,197,94,0.15);border-color:#22c55e;color:#22c55e;}
+
+  .pdf-viewer{margin-top:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;display:none;}
+  .pdf-viewer.show{display:block;}
+  .pdf-viewer iframe{width:100%;height:400px;border:none;}
+  .pdf-status{padding:10px 14px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+  .pdf-status.found{color:var(--green);}
+  .pdf-status.notfound{color:var(--red);}
+  .pdf-btn{margin-top:8px;width:100%;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:transparent;color:var(--accent2);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
   .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:200;}
   .loading-overlay.hidden{display:none;}
   .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
@@ -111,7 +119,7 @@
     <div class="menu-card" style="--card-color:#6c63ff" onclick="openForm('photo')">
       <span class="card-icon">📷</span>
       <div class="card-label">Фото</div>
-      <div class="card-count"><span class="count-pill" id="pill-photo">0/15</span></div>
+      
     </div>
     <div class="menu-card" style="--card-color:#22c55e" onclick="openForm('showing')">
       <span class="card-icon">🏠</span>
@@ -150,11 +158,6 @@
     <div><div class="header-title">📷 Отчёт по фото</div><div class="header-sub">#Фотография | Отчёт</div></div>
   </div>
   <div class="content">
-    <div class="progress-wrap">
-      <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-photo" style="width:0%"></div></div>
-      <div class="progress-num" id="num-photo">0 / 15</div>
-    </div>
     <div class="section">
       <div class="section-label">Участники</div>
       <div class="field">
@@ -327,7 +330,9 @@
       </div>
       <div class="field">
         <label class="field-label">Кадастровый номер <span>*</span></label>
-        <input type="text" id="rental-cadastral" placeholder="01.13.07.024.009.40.060a">
+        <input type="text" id="rental-cadastral" placeholder="01.13.07.024.009.40.060a" oninput="searchContract(this.value)">
+      <div id="pdf-status" class="pdf-status"></div>
+      <div id="pdf-viewer" class="pdf-viewer"><iframe id="pdf-frame" src=""></iframe></div>
       </div>
     </div>
     <div class="section">
@@ -470,7 +475,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxbxgRpE-bgxMDnXM7Hv72PQKmH0_lGGZuwWMzvtlXZKJvCX2Vnv4VrG2bnauicOLz9XA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxnzrUV8M6brFISWLYeKoaQ5K2bTGcoFWjF_ge_FPMf_3nK8MnJ7mL6wIc6CHgWE5USmw/exec';
 
 // Data
 let RECRUITS_DATA = []; // full objects {id, name, telegram, mentor_id}
@@ -514,7 +519,7 @@ function populateForm(type) {
 
   mentorEl.innerHTML = '<option value="">Выбрать наставника...</option>';
   AGENTS_DATA.forEach(a => {
-    mentorEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + ' (' + a.telegram + ')</option>';
+    mentorEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>';
   });
 }
 
@@ -638,18 +643,120 @@ function renderCounters() {
   });
 }
 
+// ── PDF CONTRACT SEARCH ──
+let pdfSearchTimer = null;
+
+function searchContract(kadastr) {
+  clearTimeout(pdfSearchTimer);
+  const statusEl = document.getElementById('pdf-status');
+  const viewerEl = document.getElementById('pdf-viewer');
+  const frameEl  = document.getElementById('pdf-frame');
+
+  if (!kadastr || kadastr.length < 5) {
+    statusEl.textContent = '';
+    statusEl.className = 'pdf-status';
+    viewerEl.classList.remove('show');
+    return;
+  }
+
+  statusEl.textContent = '🔍 Ищем договор...';
+  statusEl.className = 'pdf-status';
+
+  pdfSearchTimer = setTimeout(async function() {
+    try {
+      const res  = await fetch(API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr));
+      const data = await res.json();
+      if (data.found) {
+        statusEl.textContent = '✓ Договор найден: ' + data.name;
+        statusEl.className = 'pdf-status found';
+        frameEl.src = data.view;
+        viewerEl.classList.add('show');
+      } else {
+        statusEl.textContent = '✗ Договор не найден';
+        statusEl.className = 'pdf-status notfound';
+        viewerEl.classList.remove('show');
+        frameEl.src = '';
+      }
+    } catch(err) {
+      statusEl.textContent = '✗ Ошибка поиска';
+      statusEl.className = 'pdf-status notfound';
+    }
+  }, 800);
+}
+
 // ── SUBMIT ──
 function submitForm(type) {
-  const data = {};
+  const raw = {};
   document.querySelectorAll('#screen-' + type + ' input, #screen-' + type + ' select, #screen-' + type + ' textarea')
-    .forEach(f => { if (f.id) data[f.id] = f.value; });
-  if (type === 'showing') data.result = selectedResult;
-  if (type === 't14') {
-    data.h2o_client  = h2oScores.client;
-    data.h2o_owner   = h2oScores.owner;
-    data.h2o_process = h2oScores.process;
-    data.complaints  = complaintsSel;
-    data.deal_result = dealResultSel;
+    .forEach(f => { if (f.id) raw[f.id] = f.value; });
+
+  // Map form field IDs to API field names
+  let data = {};
+  if (type === 'photo') {
+    const photoRecruit = document.getElementById('photo-recruit');
+    const photoMentor  = document.getElementById('photo-mentor');
+    data = {
+      recruit:            photoRecruit ? photoRecruit.options[photoRecruit.selectedIndex].text : raw['photo-recruit'],
+      mentor:             photoMentor  ? photoMentor.value  : raw['photo-mentor'],
+      district_address:   raw['photo-address'],
+      ad_link_advertising:raw['photo-adlink'],
+      date:               raw['photo-date'],
+    };
+  } else if (type === 'showing') {
+    const showingRecruit = document.getElementById('showing-recruit');
+    const showingMentor  = document.getElementById('showing-mentor');
+    data = {
+      recruit:            showingRecruit ? showingRecruit.options[showingRecruit.selectedIndex].text : raw['showing-recruit'],
+      mentor:             showingMentor  ? showingMentor.value  : raw['showing-mentor'],
+      district_address:   raw['showing-address'],
+      ad_link_advertising:raw['showing-adlink'],
+      client_telegram:    raw['showing-client'],
+      date:               raw['showing-date'],
+      result:             selectedResult,
+    };
+  } else if (type === 'stickers') {
+    const stickersRecruit = document.getElementById('stickers-recruit');
+    const stickersMentor  = document.getElementById('stickers-mentor');
+    data = {
+      recruit:            stickersRecruit ? stickersRecruit.options[stickersRecruit.selectedIndex].text : raw['stickers-recruit'],
+      mentor:             stickersMentor  ? stickersMentor.value  : raw['stickers-mentor'],
+      district:           raw['stickers-district'],
+      stickers_count:     raw['stickers-count'],
+      date:               raw['stickers-date'],
+    };
+  } else if (type === 'rental') {
+    const rentalRecruit = document.getElementById('rental-recruit');
+    const rentalMentor  = document.getElementById('rental-mentor');
+    data = {
+      recruit:             rentalRecruit ? rentalRecruit.options[rentalRecruit.selectedIndex].text : raw['rental-recruit'],
+      mentor:              rentalMentor  ? rentalMentor.value  : raw['rental-mentor'],
+      ad_link_advertising: raw['rental-adlink'],
+      cadastral_number:    raw['rental-cadastral'],
+      rent_price:          raw['rental-price'],
+      agency_commission:   raw['rental-agency'],
+      recruit_commission:  raw['rental-recruit-comm'],
+      platform_commission: raw['rental-platform'],
+      client_telegram:     raw['rental-client'],
+      owner_name:          raw['rental-owner-name'],
+      owner_phone:         raw['rental-owner-phone'],
+      rent_from:           raw['rental-from'],
+      rent_to:             raw['rental-to'],
+      deal_type:           raw['rental-deal'],
+    };
+  } else if (type === 't14') {
+    data = {
+      object:       raw['t14-object'],
+      agent:        raw['t14-agent'],
+      deal_date:    raw['t14-deal-date'],
+      changes:      raw['t14-changes'],
+      complaints_text: raw['t14-complaints-text'],
+      agent_comment:   raw['t14-comment'],
+      h2o_client:   h2oScores.client,
+      h2o_owner:    h2oScores.owner,
+      h2o_process:  h2oScores.process,
+      complaints:   complaintsSel,
+      deal_result:  dealResultSel,
+    };
   }
 
   fetch(API_URL, {
