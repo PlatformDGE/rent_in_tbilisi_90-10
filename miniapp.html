@@ -475,7 +475,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxnzrUV8M6brFISWLYeKoaQ5K2bTGcoFWjF_ge_FPMf_3nK8MnJ7mL6wIc6CHgWE5USmw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbypDCEc1LiyiWFCAXeBOrx0qcnwgdA6PCTOlvHwE7PRoG6fGiMAQAsnYWCa5e6UJXnwkA/exec';
 
 // Data
 let RECRUITS_DATA = []; // full objects {id, name, telegram, mentor_id}
@@ -759,12 +759,31 @@ function submitForm(type) {
     };
   }
 
-  fetch(API_URL, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({type: type, data: data}),
-    mode: 'no-cors'
-  }).catch(function(err) { console.error('Ошибка отправки:', err); });
+  // Send via form POST (works without CORS issues)
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = API_URL;
+  form.target = 'hidden-frame';
+
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify({type: type, data: data});
+  form.appendChild(input);
+
+  // Create hidden iframe to receive response
+  let iframe = document.getElementById('hidden-frame');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.name = 'hidden-frame';
+    iframe.id = 'hidden-frame';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
 
   showToast('Отчёт отправлен! ✓');
   setTimeout(function() { showScreen('menu'); }, 1500);
