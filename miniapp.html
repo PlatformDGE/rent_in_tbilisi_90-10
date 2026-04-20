@@ -7,297 +7,100 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
-
   :root {
-    --bg: #0f0f13;
-    --bg2: #18181f;
-    --bg3: #22222c;
-    --border: rgba(255,255,255,0.08);
-    --text: #f0f0f5;
-    --text2: #8888a0;
-    --text3: #55556a;
-    --accent: #6c63ff;
-    --accent2: #8b83ff;
-    --green: #22c55e;
-    --red: #ef4444;
-    --amber: #f59e0b;
-    --blue: #3b82f6;
-    --radius: 14px;
-    --radius-sm: 8px;
+    --bg:#0f0f13;--bg2:#18181f;--bg3:#22222c;
+    --border:rgba(255,255,255,0.08);
+    --text:#f0f0f5;--text2:#8888a0;--text3:#55556a;
+    --accent:#6c63ff;--accent2:#8b83ff;
+    --green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;
+    --radius:14px;--radius-sm:8px;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Manrope', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* SCREENS */
-  .screen { display: none; min-height: 100vh; flex-direction: column; }
-  .screen.active { display: flex; }
-
-  /* HEADER */
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .back-btn {
-    width: 36px; height: 36px;
-    background: var(--bg3);
-    border: none; border-radius: 50%;
-    color: var(--text);
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .header-title { font-size: 16px; font-weight: 600; }
-  .header-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
-
-  /* SCROLLABLE CONTENT */
-  .content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    padding-bottom: 100px;
-  }
-
-  /* MENU SCREEN */
-  .menu-top {
-    padding: 28px 20px 20px;
-    text-align: center;
-  }
-  .menu-logo {
-    width: 60px; height: 60px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    border-radius: 18px;
-    margin: 0 auto 16px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-  }
-  .menu-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-  .menu-sub { font-size: 13px; color: var(--text2); }
-
-  .menu-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 0 20px 24px;
-  }
-  .menu-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 16px;
-    cursor: pointer;
-    transition: transform 0.15s, border-color 0.15s, background 0.15s;
-    position: relative;
-    overflow: hidden;
-  }
-  .menu-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--card-color, var(--accent)), transparent 60%);
-    opacity: 0.07;
-    transition: opacity 0.15s;
-  }
-  .menu-card:active { transform: scale(0.97); }
-  .menu-card:active::before { opacity: 0.14; }
-  .card-icon { font-size: 28px; margin-bottom: 12px; display: block; }
-  .card-label { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .card-count {
-    font-size: 11px;
-    color: var(--text2);
-    display: flex; align-items: center; gap: 4px;
-  }
-  .count-pill {
-    font-size: 10px; font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 20px;
-    background: var(--card-color, var(--accent));
-    color: #fff;
-  }
-
-  /* PROGRESS BAR */
-  .progress-wrap {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .progress-label { font-size: 12px; color: var(--text2); flex-shrink: 0; }
-  .progress-track {
-    flex: 1; height: 5px;
-    background: var(--bg3);
-    border-radius: 3px; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 3px;
-    transition: width 0.3s;
-  }
-  .progress-num { font-size: 13px; font-weight: 700; color: var(--accent2); flex-shrink: 0; }
-
-  /* FORM SECTIONS */
-  .section { margin-bottom: 20px; }
-  .section-label {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .field { margin-bottom: 12px; }
-  .field-label {
-    font-size: 12px; color: var(--text2);
-    margin-bottom: 6px; display: block;
-  }
-  .field-label span { color: #ef4444; margin-left: 2px; }
-
-  input, select, textarea {
-    width: 100%;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: 'Manrope', sans-serif;
-    font-size: 14px;
-    padding: 11px 14px;
-    outline: none;
-    transition: border-color 0.15s;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-  textarea { resize: none; line-height: 1.5; }
-  input[type="date"]::-webkit-calendar-picker-indicator,
-  input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
-
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-  /* RESULT BUTTONS */
-  .result-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .res-btn {
-    padding: 12px 8px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    color: var(--text2);
-    font-family: 'Manrope', sans-serif;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-  }
-  .res-btn.active-refused { background: rgba(239,68,68,0.12); border-color: #ef4444; color: #ef4444; }
-  .res-btn.active-thinking { background: rgba(59,130,246,0.12); border-color: #3b82f6; color: #3b82f6; }
-
-  /* SUBMIT BUTTON */
-  .submit-wrap {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 16px 20px;
-    background: linear-gradient(to top, var(--bg) 70%, transparent);
-  }
-  .submit-btn {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    border: none;
-    border-radius: var(--radius);
-    color: #fff;
-    font-family: 'Manrope', sans-serif;
-    font-size: 15px; font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-    letter-spacing: 0.01em;
-  }
-  .submit-btn:active { opacity: 0.85; transform: scale(0.99); }
-  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* SUCCESS TOAST */
-  .toast {
-    position: fixed;
-    bottom: 90px; left: 20px; right: 20px;
-    background: #22c55e;
-    color: #fff;
-    padding: 14px 18px;
-    border-radius: var(--radius);
-    font-weight: 600; font-size: 14px;
-    text-align: center;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 100;
-    pointer-events: none;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-
-  /* COUNTERS SCREEN */
-  .counters-grid { display: flex; flex-direction: column; gap: 12px; }
-  .counter-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-  }
-  .counter-name { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
-  .counter-row {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 8px;
-  }
-  .counter-row:last-child { margin-bottom: 0; }
-  .counter-icon { font-size: 14px; width: 20px; flex-shrink: 0; }
-  .counter-type { font-size: 12px; color: var(--text2); flex: 1; }
-  .counter-mini-track { width: 80px; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
-  .counter-mini-fill { height: 100%; background: var(--accent); border-radius: 2px; }
-  .counter-val { font-size: 12px; font-weight: 700; color: var(--accent2); min-width: 36px; text-align: right; }
-
-  /* PHOTO upload area */
-  .upload-area {
-    border: 1.5px dashed var(--border);
-    border-radius: var(--radius-sm);
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.15s;
-    color: var(--text2);
-    font-size: 13px;
-  }
-  .upload-area:hover { border-color: var(--accent); }
-  .upload-area input { display: none; }
-  .upload-preview { margin-top: 10px; font-size: 12px; color: var(--green); }
-
-  /* H2O RATING */
-  .h2o-block { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; }
-  .h2o-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-  .h2o-sub { font-size: 11px; color: var(--text2); margin-bottom: 10px; }
-  .h2o-btns { display: flex; gap: 8px; }
-  .h2o-btn { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-  .h2o-btn.active-1 { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
-  .h2o-btn.active-2 { background: rgba(245,158,11,0.15); border-color: #f59e0b; color: #f59e0b; }
-  .h2o-btn.active-3 { background: rgba(34,197,94,0.15); border-color: #22c55e; color: #22c55e; }
-  .res-btn.active-clean { background: rgba(34,197,94,0.12); border-color: #22c55e; color: #22c55e; }
-  .res-btn.active-dirty { background: rgba(239,68,68,0.12); border-color: #ef4444; color: #ef4444; }
-  .res-btn.active-no { background: rgba(34,197,94,0.12); border-color: #22c55e; color: #22c55e; }
-  .res-btn.active-yes-complaint { background: rgba(239,68,68,0.12); border-color: #ef4444; color: #ef4444; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Manrope',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  .screen{display:none;min-height:100vh;flex-direction:column;}
+  .screen.active{display:flex;}
+  .header{display:flex;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--border);}
+  .back-btn{width:36px;height:36px;background:var(--bg3);border:none;border-radius:50%;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .header-title{font-size:16px;font-weight:600;}
+  .header-sub{font-size:12px;color:var(--text2);margin-top:1px;}
+  .content{flex:1;overflow-y:auto;padding:20px;padding-bottom:100px;}
+  .menu-top{padding:28px 20px 20px;text-align:center;}
+  .menu-logo{width:60px;height:60px;background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:18px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;}
+  .menu-title{font-size:22px;font-weight:700;margin-bottom:4px;}
+  .menu-sub{font-size:13px;color:var(--text2);}
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 16px;}
+  .menu-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;cursor:pointer;transition:transform 0.15s,border-color 0.15s;position:relative;overflow:hidden;}
+  .menu-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-color,var(--accent)),transparent 60%);opacity:0.07;transition:opacity 0.15s;}
+  .menu-card:active{transform:scale(0.97);}
+  .card-icon{font-size:28px;margin-bottom:12px;display:block;}
+  .card-label{font-size:13px;font-weight:600;margin-bottom:4px;}
+  .card-count{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;}
+  .count-pill{font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--card-color,var(--accent));color:#fff;}
+  .progress-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+  .progress-label{font-size:12px;color:var(--text2);flex-shrink:0;}
+  .progress-track{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.3s;}
+  .progress-num{font-size:13px;font-weight:700;color:var(--accent2);flex-shrink:0;}
+  .section{margin-bottom:20px;}
+  .section-label{font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+  .field{margin-bottom:12px;}
+  .field-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block;}
+  .field-label span{color:#ef4444;margin-left:2px;}
+  input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Manrope',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color 0.15s;appearance:none;-webkit-appearance:none;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+  textarea{resize:none;line-height:1.5;}
+  input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.6);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .result-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .res-btn{padding:12px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;}
+  .res-btn.active-refused{background:rgba(239,68,68,0.12);border-color:#ef4444;color:#ef4444;}
+  .res-btn.active-thinking{background:rgba(59,130,246,0.12);border-color:#3b82f6;color:#3b82f6;}
+  .res-btn.active-clean{background:rgba(34,197,94,0.12);border-color:#22c55e;color:#22c55e;}
+  .res-btn.active-dirty{background:rgba(239,68,68,0.12);border-color:#ef4444;color:#ef4444;}
+  .res-btn.active-no{background:rgba(34,197,94,0.12);border-color:#22c55e;color:#22c55e;}
+  .res-btn.active-yes-complaint{background:rgba(239,68,68,0.12);border-color:#ef4444;color:#ef4444;}
+  .submit-wrap{position:fixed;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(to top,var(--bg) 70%,transparent);}
+  .submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:var(--radius);color:#fff;font-family:'Manrope',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity 0.15s,transform 0.1s;}
+  .submit-btn:active{opacity:0.85;transform:scale(0.99);}
+  .toast{position:fixed;bottom:90px;left:20px;right:20px;background:#22c55e;color:#fff;padding:14px 18px;border-radius:var(--radius);font-weight:600;font-size:14px;text-align:center;transform:translateY(20px);opacity:0;transition:all 0.3s;z-index:100;pointer-events:none;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .counters-grid{display:flex;flex-direction:column;gap:12px;}
+  .counter-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+  .counter-name{font-size:15px;font-weight:600;margin-bottom:12px;}
+  .counter-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .counter-row:last-child{margin-bottom:0;}
+  .counter-icon{font-size:14px;width:20px;flex-shrink:0;}
+  .counter-type{font-size:12px;color:var(--text2);flex:1;}
+  .counter-mini-track{width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+  .counter-mini-fill{height:100%;background:var(--accent);border-radius:2px;}
+  .counter-val{font-size:12px;font-weight:700;color:var(--accent2);min-width:36px;text-align:right;}
+  .upload-area{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color 0.15s;color:var(--text2);font-size:13px;}
+  .upload-area:hover{border-color:var(--accent);}
+  .upload-area input{display:none;}
+  .upload-preview{margin-top:10px;font-size:12px;color:var(--green);}
+  .h2o-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;}
+  .h2o-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+  .h2o-sub{font-size:11px;color:var(--text2);margin-bottom:10px;}
+  .h2o-btns{display:flex;gap:8px;}
+  .h2o-btn{flex:1;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'Manrope',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+  .h2o-btn.active-1{background:rgba(239,68,68,0.15);border-color:#ef4444;color:#ef4444;}
+  .h2o-btn.active-2{background:rgba(245,158,11,0.15);border-color:#f59e0b;color:#f59e0b;}
+  .h2o-btn.active-3{background:rgba(34,197,94,0.15);border-color:#22c55e;color:#22c55e;}
+  .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:200;}
+  .loading-overlay.hidden{display:none;}
+  .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 
-<!-- ========== SCREEN: MENU ========== -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:13px;color:var(--text2);">Загрузка данных...</div>
+</div>
+
+<!-- MENU -->
 <div class="screen active" id="screen-menu">
   <div class="menu-top">
     <div class="menu-logo">📋</div>
@@ -308,66 +111,61 @@
     <div class="menu-card" style="--card-color:#6c63ff" onclick="openForm('photo')">
       <span class="card-icon">📷</span>
       <div class="card-label">Фото</div>
-      <div class="card-count"><span class="count-pill" id="pill-photo">6/15</span></div>
+      <div class="card-count"><span class="count-pill" id="pill-photo">0/15</span></div>
     </div>
     <div class="menu-card" style="--card-color:#22c55e" onclick="openForm('showing')">
       <span class="card-icon">🏠</span>
       <div class="card-label">Показ</div>
-      <div class="card-count"><span class="count-pill" id="pill-showing">8/15</span></div>
+      <div class="card-count"><span class="count-pill" id="pill-showing">0/15</span></div>
     </div>
     <div class="menu-card" style="--card-color:#f59e0b" onclick="openForm('stickers')">
       <span class="card-icon">📌</span>
       <div class="card-label">Расклейка</div>
-      <div class="card-count"><span class="count-pill" id="pill-stickers">1/15</span></div>
+      <div class="card-count"><span class="count-pill" id="pill-stickers">0/15</span></div>
     </div>
     <div class="menu-card" style="--card-color:#ef4444" onclick="openForm('rental')">
       <span class="card-icon">💰</span>
       <div class="card-label">Сдача</div>
-      <div class="card-count"><span class="count-pill" id="pill-rental">1/10</span></div>
+      <div class="card-count"><span class="count-pill" id="pill-rental">0/10</span></div>
     </div>
   </div>
-  <div style="padding: 0 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+  <div style="padding:0 20px 24px;display:flex;flex-direction:column;gap:12px;">
     <div class="menu-card" style="--card-color:#06b6d4" onclick="openForm('t14')">
       <span class="card-icon">🔍</span>
       <div class="card-label">T14 — Проверка сделки</div>
-      <div class="card-count" style="color: var(--text2);">Через 14 дней после сдачи</div>
+      <div class="card-count" style="color:var(--text2);">Через 14 дней после сдачи</div>
     </div>
-    <div class="menu-card" style="--card-color:#8888a0;" onclick="showScreen('counters')">
+    <div class="menu-card" style="--card-color:#8888a0" onclick="showScreen('counters')">
       <span class="card-icon">📊</span>
       <div class="card-label">Счётчики рекрутов</div>
-      <div class="card-count" style="color: var(--text2);">Посмотреть прогресс</div>
+      <div class="card-count" style="color:var(--text2);">Посмотреть прогресс</div>
     </div>
   </div>
 </div>
 
-<!-- ========== SCREEN: PHOTO ========== -->
+<!-- PHOTO -->
 <div class="screen" id="screen-photo">
   <div class="header">
     <button class="back-btn" onclick="showScreen('menu')">←</button>
-    <div>
-      <div class="header-title">📷 Отчёт по фото</div>
-      <div class="header-sub">#Фотография | Отчёт</div>
-    </div>
+    <div><div class="header-title">📷 Отчёт по фото</div><div class="header-sub">#Фотография | Отчёт</div></div>
   </div>
   <div class="content">
     <div class="progress-wrap">
       <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-photo" style="width:40%"></div></div>
-      <div class="progress-num" id="num-photo">6 / 15</div>
+      <div class="progress-track"><div class="progress-fill" id="prog-photo" style="width:0%"></div></div>
+      <div class="progress-num" id="num-photo">0 / 15</div>
     </div>
-
     <div class="section">
       <div class="section-label">Участники</div>
       <div class="field">
         <label class="field-label">Рекрут <span>*</span></label>
-        <select id="photo-recruit"><option value="">Выбрать рекрута...</option></select>
+        <select id="photo-recruit" onchange="onRecruitChange('photo')"><option value="">Выбрать рекрута...</option></select>
       </div>
       <div class="field">
         <label class="field-label">Наставник <span>*</span></label>
         <select id="photo-mentor"><option value="">Выбрать наставника...</option></select>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Объект</div>
       <div class="field">
@@ -384,39 +182,32 @@
       </div>
     </div>
   </div>
-  <div class="submit-wrap">
-    <button class="submit-btn" onclick="submitForm('photo')">Отправить отчёт</button>
-  </div>
+  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('photo')">Отправить отчёт</button></div>
 </div>
 
-<!-- ========== SCREEN: SHOWING ========== -->
+<!-- SHOWING -->
 <div class="screen" id="screen-showing">
   <div class="header">
     <button class="back-btn" onclick="showScreen('menu')">←</button>
-    <div>
-      <div class="header-title">🏠 Отчёт по показу</div>
-      <div class="header-sub">#Просмотры | Отчёт</div>
-    </div>
+    <div><div class="header-title">🏠 Отчёт по показу</div><div class="header-sub">#Просмотры | Отчёт</div></div>
   </div>
   <div class="content">
     <div class="progress-wrap">
       <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-showing" style="width:53%"></div></div>
-      <div class="progress-num" id="num-showing">8 / 15</div>
+      <div class="progress-track"><div class="progress-fill" id="prog-showing" style="width:0%"></div></div>
+      <div class="progress-num" id="num-showing">0 / 15</div>
     </div>
-
     <div class="section">
       <div class="section-label">Участники</div>
       <div class="field">
         <label class="field-label">Рекрут <span>*</span></label>
-        <select id="showing-recruit"><option value="">Выбрать рекрута...</option></select>
+        <select id="showing-recruit" onchange="onRecruitChange('showing')"><option value="">Выбрать рекрута...</option></select>
       </div>
       <div class="field">
         <label class="field-label">Наставник <span>*</span></label>
         <select id="showing-mentor"><option value="">Выбрать наставника...</option></select>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Объект</div>
       <div class="field">
@@ -436,7 +227,6 @@
         <input type="date" id="showing-date">
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Результат</div>
       <div class="result-btns">
@@ -444,7 +234,6 @@
         <button class="res-btn" id="btn-thinking" onclick="selectResult('thinking')">Думает</button>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Фото объекта</div>
       <div class="upload-area" onclick="document.getElementById('showing-photo').click()">
@@ -454,39 +243,32 @@
       </div>
     </div>
   </div>
-  <div class="submit-wrap">
-    <button class="submit-btn" onclick="submitForm('showing')">Отправить отчёт</button>
-  </div>
+  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('showing')">Отправить отчёт</button></div>
 </div>
 
-<!-- ========== SCREEN: STICKERS ========== -->
+<!-- STICKERS -->
 <div class="screen" id="screen-stickers">
   <div class="header">
     <button class="back-btn" onclick="showScreen('menu')">←</button>
-    <div>
-      <div class="header-title">📌 Отчёт по расклейке</div>
-      <div class="header-sub">#Расклейка | Отчёт</div>
-    </div>
+    <div><div class="header-title">📌 Отчёт по расклейке</div><div class="header-sub">#Расклейка | Отчёт</div></div>
   </div>
   <div class="content">
     <div class="progress-wrap">
       <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-stickers" style="width:7%"></div></div>
-      <div class="progress-num" id="num-stickers">1 / 15</div>
+      <div class="progress-track"><div class="progress-fill" id="prog-stickers" style="width:0%"></div></div>
+      <div class="progress-num" id="num-stickers">0 / 15</div>
     </div>
-
     <div class="section">
       <div class="section-label">Участники</div>
       <div class="field">
         <label class="field-label">Рекрут <span>*</span></label>
-        <select id="stickers-recruit"><option value="">Выбрать рекрута...</option></select>
+        <select id="stickers-recruit" onchange="onRecruitChange('stickers')"><option value="">Выбрать рекрута...</option></select>
       </div>
       <div class="field">
         <label class="field-label">Наставник <span>*</span></label>
         <select id="stickers-mentor"><option value="">Выбрать наставника...</option></select>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Расклейка</div>
       <div class="field">
@@ -502,7 +284,6 @@
         <input type="date" id="stickers-date">
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Скрин карты</div>
       <div class="upload-area" onclick="document.getElementById('stickers-photo').click()">
@@ -512,39 +293,32 @@
       </div>
     </div>
   </div>
-  <div class="submit-wrap">
-    <button class="submit-btn" onclick="submitForm('stickers')">Отправить отчёт</button>
-  </div>
+  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('stickers')">Отправить отчёт</button></div>
 </div>
 
-<!-- ========== SCREEN: RENTAL ========== -->
+<!-- RENTAL -->
 <div class="screen" id="screen-rental">
   <div class="header">
     <button class="back-btn" onclick="showScreen('menu')">←</button>
-    <div>
-      <div class="header-title">💰 Отчёт по сдаче</div>
-      <div class="header-sub">#Rented | Отчёт</div>
-    </div>
+    <div><div class="header-title">💰 Отчёт по сдаче</div><div class="header-sub">#Rented | Отчёт</div></div>
   </div>
   <div class="content">
     <div class="progress-wrap">
       <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-rental" style="width:10%"></div></div>
-      <div class="progress-num" id="num-rental">1 / 10</div>
+      <div class="progress-track"><div class="progress-fill" id="prog-rental" style="width:0%"></div></div>
+      <div class="progress-num" id="num-rental">0 / 10</div>
     </div>
-
     <div class="section">
       <div class="section-label">Участники</div>
       <div class="field">
         <label class="field-label">Рекрут <span>*</span></label>
-        <select id="rental-recruit"><option value="">Выбрать рекрута...</option></select>
+        <select id="rental-recruit" onchange="onRecruitChange('rental')"><option value="">Выбрать рекрута...</option></select>
       </div>
       <div class="field">
         <label class="field-label">Наставник <span>*</span></label>
         <select id="rental-mentor"><option value="">Выбрать наставника...</option></select>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Объект</div>
       <div class="field">
@@ -556,7 +330,6 @@
         <input type="text" id="rental-cadastral" placeholder="01.13.07.024.009.40.060a">
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Финансы</div>
       <div class="row2">
@@ -566,7 +339,7 @@
         </div>
         <div class="field">
           <label class="field-label">Тип сделки</label>
-          <select id="rental-deal">
+          <select id="rental-deal" onchange="calcCommissions()">
             <option value="50/50">Recruiting 50%/50%</option>
             <option value="100">Агент 100%</option>
           </select>
@@ -587,7 +360,6 @@
         <input type="number" id="rental-platform" placeholder="150">
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Клиент и собственник</div>
       <div class="field">
@@ -603,53 +375,30 @@
         <input type="tel" id="rental-owner-phone" placeholder="+995 599 000 000">
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Период аренды</div>
       <div class="row2">
-        <div class="field">
-          <label class="field-label">От <span>*</span></label>
-          <input type="date" id="rental-from">
-        </div>
-        <div class="field">
-          <label class="field-label">До <span>*</span></label>
-          <input type="date" id="rental-to">
-        </div>
+        <div class="field"><label class="field-label">От <span>*</span></label><input type="date" id="rental-from"></div>
+        <div class="field"><label class="field-label">До <span>*</span></label><input type="date" id="rental-to"></div>
       </div>
     </div>
   </div>
-  <div class="submit-wrap">
-    <button class="submit-btn" onclick="submitForm('rental')">Отправить отчёт</button>
-  </div>
+  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('rental')">Отправить отчёт</button></div>
 </div>
 
-<!-- ========== SCREEN: T14 ========== -->
+<!-- T14 -->
 <div class="screen" id="screen-t14">
   <div class="header">
     <button class="back-btn" onclick="showScreen('menu')">←</button>
-    <div>
-      <div class="header-title">🔍 T14 — Проверка сделки</div>
-      <div class="header-sub">Через 14 дней после сдачи</div>
-    </div>
+    <div><div class="header-title">🔍 T14 — Проверка сделки</div><div class="header-sub">Через 14 дней после сдачи</div></div>
   </div>
   <div class="content">
-
     <div class="section">
       <div class="section-label">Объект и агент</div>
-      <div class="field">
-        <label class="field-label">Объект <span>*</span></label>
-        <input type="text" id="t14-object" placeholder="#Vera, ул. Мира 12...">
-      </div>
-      <div class="field">
-        <label class="field-label">Агент <span>*</span></label>
-        <select id="t14-agent"><option value="">Выбрать агента...</option></select>
-      </div>
-      <div class="field">
-        <label class="field-label">Дата сделки <span>*</span></label>
-        <input type="date" id="t14-deal-date">
-      </div>
+      <div class="field"><label class="field-label">Объект <span>*</span></label><input type="text" id="t14-object" placeholder="#Vera, ул. Мира 12..."></div>
+      <div class="field"><label class="field-label">Агент <span>*</span></label><select id="t14-agent"><option value="">Выбрать агента...</option></select></div>
+      <div class="field"><label class="field-label">Дата сделки <span>*</span></label><input type="date" id="t14-deal-date"></div>
     </div>
-
     <div class="section">
       <div class="section-label">H2O — Оценка через 14 дней</div>
       <div class="h2o-block">
@@ -680,26 +429,18 @@
         </div>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Изменения после сделки</div>
-      <div class="field">
-        <label class="field-label">Что стало лучше или хуже и почему</label>
-        <textarea id="t14-changes" rows="3" placeholder="Опиши изменения..."></textarea>
-      </div>
+      <div class="field"><label class="field-label">Что стало лучше или хуже и почему</label><textarea id="t14-changes" rows="3" placeholder="Опиши изменения..."></textarea></div>
     </div>
-
     <div class="section">
       <div class="section-label">Жалобы или проблемы после заселения</div>
       <div class="result-btns" style="margin-bottom:12px;">
         <button class="res-btn" id="t14-complaints-no" onclick="selectComplaints('no')">Нет</button>
         <button class="res-btn" id="t14-complaints-yes" onclick="selectComplaints('yes')">Да</button>
       </div>
-      <div id="t14-complaints-detail" style="display:none;">
-        <textarea id="t14-complaints-text" rows="3" placeholder="Опиши проблемы..."></textarea>
-      </div>
+      <div id="t14-complaints-detail" style="display:none;"><textarea id="t14-complaints-text" rows="3" placeholder="Опиши проблемы..."></textarea></div>
     </div>
-
     <div class="section">
       <div class="section-label">Итог сделки</div>
       <div class="result-btns">
@@ -707,53 +448,39 @@
         <button class="res-btn" id="t14-dirty" onclick="selectDealResult('dirty')">Грязная сделка</button>
       </div>
     </div>
-
     <div class="section">
       <div class="section-label">Комментарий агента</div>
-      <div class="field">
-        <label class="field-label">Честно: что было не идеально, что можно сделать лучше</label>
-        <textarea id="t14-comment" rows="4" placeholder="Ваш честный комментарий..."></textarea>
-      </div>
+      <div class="field"><label class="field-label">Честно: что было не идеально</label><textarea id="t14-comment" rows="4" placeholder="Ваш честный комментарий..."></textarea></div>
     </div>
-
   </div>
-  <div class="submit-wrap">
-    <button class="submit-btn" onclick="submitForm('t14')">Отправить T14</button>
-  </div>
+  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('t14')">Отправить T14</button></div>
 </div>
 
-<!-- ========== SCREEN: COUNTERS ========== -->
+<!-- COUNTERS -->
 <div class="screen" id="screen-counters">
   <div class="header">
     <button class="back-btn" onclick="showScreen('menu')">←</button>
-    <div>
-      <div class="header-title">📊 Счётчики рекрутов</div>
-      <div class="header-sub">Прогресс по всем типам</div>
-    </div>
+    <div><div class="header-title">📊 Счётчики рекрутов</div><div class="header-sub">Прогресс по всем типам</div></div>
   </div>
   <div class="content">
     <div class="counters-grid" id="counters-list"></div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── MOCK DATA (заменить на реальный Google Sheets API) ──
-const RECRUITS = ['Tony','Liana','Ellie','Козлова Н.','Сидоров К.'];
-const MENTORS  = ['@davidtibelashvili','@agent_maria','@agent_ivan'];
-const ADDRESSES = [
-  {label:'#Vera — ул. Мира 12', ad:'https://t.me/...'},
-  {label:'#Vake — 22 Nikoloz Kipshidze', ad:'https://t.me/rent_tbilisi_ge/445324'},
-  {label:'#Chugurety — пр. Руставели 5', ad:''},
-];
-const COUNTERS_DATA = [
-  {name:'Tony',    photo:[6,15], showing:[8,15], stickers:[1,15], rental:[1,10]},
-  {name:'Liana',   photo:[11,15], showing:[3,15], stickers:[5,15], rental:[0,10]},
-  {name:'Ellie',   photo:[3,15], showing:[6,15], stickers:[2,15], rental:[1,10]},
-];
+const API_URL = 'https://script.google.com/macros/s/AKfycbxbxgRpE-bgxMDnXM7Hv72PQKmH0_lGGZuwWMzvtlXZKJvCX2Vnv4VrG2bnauicOLz9XA/exec';
 
+// Data
+let RECRUITS_DATA = []; // full objects {id, name, telegram, mentor_id}
+let AGENTS_DATA   = []; // full objects {id, name, telegram}
+let COUNTERS_DATA = []; // {name, photo:[done,plan], ...}
+
+// T14 state
+let h2oScores     = {client:0, owner:0, process:0};
+let complaintsSel = '';
+let dealResultSel = '';
 let selectedResult = '';
 
 // ── NAVIGATION ──
@@ -764,148 +491,105 @@ function showScreen(id) {
 }
 
 function openForm(type) {
-  populateSelects(type);
+  if (type === 't14') {
+    populateT14();
+    showScreen('t14');
+    return;
+  }
+  populateForm(type);
   setToday(type);
   showScreen(type);
 }
 
-// ── POPULATE SELECTS ──
-function populateSelects(type) {
-  const recruits = [type+'-recruit'];
-  const mentors  = [type+'-mentor'];
-  const addresses= type !== 'rental' && type !== 'stickers' ? [type+'-address'] : [];
+// ── POPULATE FORM ──
+function populateForm(type) {
+  const recruitEl = document.getElementById(type + '-recruit');
+  const mentorEl  = document.getElementById(type + '-mentor');
+  if (!recruitEl || !mentorEl) return;
 
-  recruits.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = '<option value="">Выбрать рекрута...</option>';
-    RECRUITS.forEach(r => el.innerHTML += `<option value="${r}">${r}</option>`);
-  });
-  mentors.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = '<option value="">Выбрать наставника...</option>';
-    MENTORS.forEach(m => el.innerHTML += `<option value="${m}">${m}</option>`);
-  });
-  addresses.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = '<option value="">Выбрать адрес...</option>';
-    ADDRESSES.forEach(a => el.innerHTML += `<option value="${a.label}">${a.label}</option>`);
+  recruitEl.innerHTML = '<option value="">Выбрать рекрута...</option>';
+  RECRUITS_DATA.forEach(r => {
+    recruitEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>';
   });
 
+  mentorEl.innerHTML = '<option value="">Выбрать наставника...</option>';
+  AGENTS_DATA.forEach(a => {
+    mentorEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + ' (' + a.telegram + ')</option>';
+  });
 }
 
-function autofillAdLink(type) {
-  const adr = document.getElementById(type+'-address');
-  const link = document.getElementById(type+'-adlink');
-  if (!adr || !link) return;
-  const found = ADDRESSES.find(a => a.label === adr.value);
-  if (found && found.ad) link.value = found.ad;
+function populateT14() {
+  const agEl = document.getElementById('t14-agent');
+  agEl.innerHTML = '<option value="">Выбрать агента...</option>';
+  AGENTS_DATA.forEach(a => {
+    agEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>';
+  });
+  // reset
+  h2oScores = {client:0, owner:0, process:0};
+  complaintsSel = ''; dealResultSel = '';
+  document.querySelectorAll('.h2o-btn').forEach(b => b.className = 'h2o-btn');
+  ['t14-complaints-no','t14-complaints-yes','t14-clean','t14-dirty'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.className = 'res-btn';
+  });
+  document.getElementById('t14-complaints-detail').style.display = 'none';
+}
+
+// ── RECRUIT CHANGE → AUTO FILL MENTOR + COUNTER ──
+function onRecruitChange(type) {
+  const recruitEl = document.getElementById(type + '-recruit');
+  const mentorEl  = document.getElementById(type + '-mentor');
+  if (!recruitEl || !mentorEl) return;
+
+  const recruitName = recruitEl.value;
+  const recruit     = RECRUITS_DATA.find(r => r.name === recruitName);
+
+  if (recruit) {
+    const agent = AGENTS_DATA.find(a => a.id == recruit.mentor_id);
+    if (agent) mentorEl.value = agent.telegram;
+  }
+
+  // Update progress bar for this recruit
+  updateProgress(type, recruitName);
+}
+
+function updateProgress(type, recruitName) {
+  const cd = COUNTERS_DATA.find(c => c.name === recruitName);
+  if (!cd) return;
+  const map  = {photo:'photo', showing:'showing', stickers:'stickers', rental:'rental'};
+  const key  = map[type];
+  if (!key) return;
+  const done = cd[key][0];
+  const plan = cd[key][1];
+  const pct  = plan > 0 ? Math.round(done / plan * 100) : 0;
+  const pg   = document.getElementById('prog-' + type);
+  const nm   = document.getElementById('num-' + type);
+  if (pg) pg.style.width = pct + '%';
+  if (nm) nm.textContent = done + ' / ' + plan;
 }
 
 function setToday(type) {
-  const today = new Date().toISOString().split('T')[0];
-  const dateEl = document.getElementById(type+'-date');
+  const today  = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById(type + '-date');
   if (dateEl) dateEl.value = today;
 }
 
-// ── RESULT BUTTONS (showing) ──
+// ── RESULT BUTTONS ──
 function selectResult(val) {
   selectedResult = val;
-  document.getElementById('btn-refused').className = 'res-btn' + (val==='refused' ? ' active-refused' : '');
+  document.getElementById('btn-refused').className  = 'res-btn' + (val==='refused'  ? ' active-refused'  : '');
   document.getElementById('btn-thinking').className = 'res-btn' + (val==='thinking' ? ' active-thinking' : '');
 }
 
-// ── COMMISSION AUTO-CALC ──
-function calcCommissions() {
-  const price = parseFloat(document.getElementById('rental-price').value) || 0;
-  const deal  = document.getElementById('rental-deal').value;
-  if (deal === '50/50') {
-    const agency = Math.round(price * 0.5);
-    const recruit = Math.round(agency * 0.5);
-    const platform = Math.round(agency * 0.5);
-    document.getElementById('rental-agency').value = agency;
-    document.getElementById('rental-recruit-comm').value = recruit;
-    document.getElementById('rental-platform').value = platform;
-  }
-}
-
-// ── FILE PREVIEW ──
-function previewFile(input, previewId) {
-  const prev = document.getElementById(previewId);
-  if (input.files && input.files[0]) {
-    prev.textContent = '✓ ' + input.files[0].name;
-  }
-}
-
-// ── COUNTERS SCREEN ──
-function renderCounters() {
-  const list = document.getElementById('counters-list');
-  list.innerHTML = '';
-  COUNTERS_DATA.forEach(r => {
-    const rows = [
-      {icon:'📷', label:'Фото', done:r.photo[0], plan:r.photo[1]},
-      {icon:'🏠', label:'Показ', done:r.showing[0], plan:r.showing[1]},
-      {icon:'📌', label:'Расклейка', done:r.stickers[0], plan:r.stickers[1]},
-      {icon:'💰', label:'Сдача', done:r.rental[0], plan:r.rental[1]},
-    ];
-    list.innerHTML += `
-      <div class="counter-card">
-        <div class="counter-name">${r.name}</div>
-        ${rows.map(row => `
-          <div class="counter-row">
-            <span class="counter-icon">${row.icon}</span>
-            <span class="counter-type">${row.label}</span>
-            <div class="counter-mini-track">
-              <div class="counter-mini-fill" style="width:${Math.round(row.done/row.plan*100)}%"></div>
-            </div>
-            <span class="counter-val">${row.done}/${row.plan}</span>
-          </div>
-        `).join('')}
-      </div>`;
-  });
-}
-renderCounters();
-
-// ── SUBMIT ──
-function submitForm(type) {
-  // Собираем данные формы
-  const data = {};
-  const fields = document.querySelectorAll(`#screen-${type} input, #screen-${type} select, #screen-${type} textarea`);
-  fields.forEach(f => { if(f.id) data[f.id] = f.value; });
-  if (type === 'showing') data.result = selectedResult;
-
-  // TODO: отправить в бэкенд (Google Sheets + Telegram)
-  // fetch('/api/submit', { method:'POST', body: JSON.stringify({type, ...data}) })
-
-  showToast('Отчёт отправлен! ✓');
-  setTimeout(() => showScreen('menu'), 1500);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-
-// ── T14 STATE ──
-let h2oScores = {client: 0, owner: 0, process: 0};
-let complaintsSel = '';
-let dealResultSel = '';
-
 function selectH2O(type, val, btn) {
   h2oScores[type] = val;
-  const container = document.getElementById('h2o-' + type);
-  container.querySelectorAll('.h2o-btn').forEach(b => b.className = 'h2o-btn');
+  document.getElementById('h2o-' + type).querySelectorAll('.h2o-btn').forEach(b => b.className = 'h2o-btn');
   btn.classList.add('active-' + val);
 }
 
 function selectComplaints(val) {
   complaintsSel = val;
-  document.getElementById('t14-complaints-no').className = 'res-btn' + (val==='no' ? ' active-no' : '');
+  document.getElementById('t14-complaints-no').className  = 'res-btn' + (val==='no'  ? ' active-no' : '');
   document.getElementById('t14-complaints-yes').className = 'res-btn' + (val==='yes' ? ' active-yes-complaint' : '');
   document.getElementById('t14-complaints-detail').style.display = val === 'yes' ? 'block' : 'none';
 }
@@ -916,33 +600,157 @@ function selectDealResult(val) {
   document.getElementById('t14-dirty').className = 'res-btn' + (val==='dirty' ? ' active-dirty' : '');
 }
 
-// Populate T14 selects on open
-const _origOpenForm = openForm;
-function openForm(type) {
-  if (type === 't14') {
-    // populate object list
-    const obj = document.getElementById('t14-object');
-    obj.innerHTML = '<option value="">Выбрать адрес...</option>';
-    ADDRESSES.forEach(a => obj.innerHTML += `<option value="${a.label}">${a.label}</option>`);
-    // populate agents list
-    const ag = document.getElementById('t14-agent');
-    ag.innerHTML = '<option value="">Выбрать агента...</option>';
-    MENTORS.forEach(m => ag.innerHTML += `<option value="${m}">${m}</option>`);
-    // reset state
-    h2oScores = {client:0, owner:0, process:0};
-    complaintsSel = ''; dealResultSel = '';
-    document.querySelectorAll('.h2o-btn').forEach(b => b.className = 'h2o-btn');
-    ['t14-complaints-no','t14-complaints-yes','t14-clean','t14-dirty'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.className = 'res-btn';
-    });
-    document.getElementById('t14-complaints-detail').style.display = 'none';
-    showScreen('t14');
-    return;
+// ── COMMISSIONS ──
+function calcCommissions() {
+  const price = parseFloat(document.getElementById('rental-price').value) || 0;
+  const deal  = document.getElementById('rental-deal').value;
+  if (deal === '50/50') {
+    const agency = Math.round(price * 0.5);
+    document.getElementById('rental-agency').value        = agency;
+    document.getElementById('rental-recruit-comm').value  = Math.round(agency * 0.5);
+    document.getElementById('rental-platform').value      = Math.round(agency * 0.5);
   }
-  populateSelects(type);
-  setToday(type);
-  showScreen(type);
+}
+
+// ── FILE PREVIEW ──
+function previewFile(input, previewId) {
+  const prev = document.getElementById(previewId);
+  if (input.files && input.files[0]) prev.textContent = '✓ ' + input.files[0].name;
+}
+
+// ── COUNTERS SCREEN ──
+function renderCounters() {
+  const list = document.getElementById('counters-list');
+  if (!list) return;
+  list.innerHTML = '';
+  COUNTERS_DATA.forEach(r => {
+    const rows = [
+      {icon:'📷', label:'Фото',      done:r.photo[0],    plan:r.photo[1]},
+      {icon:'🏠', label:'Показ',     done:r.showing[0],  plan:r.showing[1]},
+      {icon:'📌', label:'Расклейка', done:r.stickers[0], plan:r.stickers[1]},
+      {icon:'💰', label:'Сдача',     done:r.rental[0],   plan:r.rental[1]},
+    ];
+    list.innerHTML += '<div class="counter-card"><div class="counter-name">' + r.name + '</div>' +
+      rows.map(row => '<div class="counter-row"><span class="counter-icon">' + row.icon + '</span>' +
+        '<span class="counter-type">' + row.label + '</span>' +
+        '<div class="counter-mini-track"><div class="counter-mini-fill" style="width:' + Math.round(row.done/row.plan*100) + '%"></div></div>' +
+        '<span class="counter-val">' + row.done + '/' + row.plan + '</span></div>').join('') + '</div>';
+  });
+}
+
+// ── SUBMIT ──
+function submitForm(type) {
+  const data = {};
+  document.querySelectorAll('#screen-' + type + ' input, #screen-' + type + ' select, #screen-' + type + ' textarea')
+    .forEach(f => { if (f.id) data[f.id] = f.value; });
+  if (type === 'showing') data.result = selectedResult;
+  if (type === 't14') {
+    data.h2o_client  = h2oScores.client;
+    data.h2o_owner   = h2oScores.owner;
+    data.h2o_process = h2oScores.process;
+    data.complaints  = complaintsSel;
+    data.deal_result = dealResultSel;
+  }
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({type: type, data: data}),
+    mode: 'no-cors'
+  }).catch(function(err) { console.error('Ошибка отправки:', err); });
+
+  showToast('Отчёт отправлен! ✓');
+  setTimeout(function() { showScreen('menu'); }, 1500);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+// ── LOAD DATA FROM API ──
+async function loadLists() {
+  try {
+    const res  = await fetch(API_URL + '?action=getLists', {cache: 'no-cache'});
+    const data = await res.json();
+
+    if (data.recruits && data.recruits.length > 0) {
+      RECRUITS_DATA = data.recruits;
+    } else {
+      // fallback
+      RECRUITS_DATA = [
+        {id:1,name:'Danila',telegram:'@DanilaPavlenk0',mentor_id:1},
+        {id:2,name:'Artem',telegram:'@levittart',mentor_id:1},
+        {id:3,name:'Mariam',telegram:'@sourlylight',mentor_id:1},
+        {id:4,name:'Liana',telegram:'@lianagadzhikhana',mentor_id:1},
+        {id:5,name:'Tata',telegram:'@Tatuli02',mentor_id:1},
+        {id:6,name:'Nikita',telegram:'@krezonik',mentor_id:1},
+        {id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail',mentor_id:1},
+        {id:8,name:'Irakli',telegram:'@iraklibu',mentor_id:1},
+        {id:9,name:'Anton',telegram:'@Antonio_ozzz',mentor_id:1},
+        {id:10,name:'Gio',telegram:'@giosar',mentor_id:1},
+        {id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva',mentor_id:1},
+        {id:12,name:'Tunar',telegram:'@tunaotchenash',mentor_id:1},
+      ];
+    }
+
+    if (data.agents && data.agents.length > 0) {
+      AGENTS_DATA = data.agents;
+    } else {
+      AGENTS_DATA = [
+        {id:1,name:'David Tibelashvili',telegram:'@davidtibelashvili'},
+        {id:2,name:'DANIIL Gamkrelidze',telegram:'@dogruller'},
+        {id:3,name:'Серги Грузия',telegram:'@SergiTb'},
+        {id:4,name:'Zaza',telegram:'@eforit'},
+      ];
+    }
+
+    // Build counters
+    COUNTERS_DATA = RECRUITS_DATA.map(r => {
+      const c = data.counters && data.counters[r.name] || {};
+      return {
+        name:     r.name,
+        photo:    [c.photo    ? c.photo.done    : 0, c.photo    ? c.photo.plan    : 15],
+        showing:  [c.showing  ? c.showing.done  : 0, c.showing  ? c.showing.plan  : 15],
+        stickers: [c.stickers ? c.stickers.done : 0, c.stickers ? c.stickers.plan : 15],
+        rental:   [c.rental   ? c.rental.done   : 0, c.rental   ? c.rental.plan   : 10],
+      };
+    });
+
+    renderCounters();
+
+  } catch(err) {
+    console.log('API недоступен, используем локальные данные:', err.message);
+    // Use fallback data
+    RECRUITS_DATA = [
+      {id:1,name:'Danila',telegram:'@DanilaPavlenk0',mentor_id:1},
+      {id:2,name:'Artem',telegram:'@levittart',mentor_id:1},
+      {id:3,name:'Mariam',telegram:'@sourlylight',mentor_id:1},
+      {id:4,name:'Liana',telegram:'@lianagadzhikhana',mentor_id:1},
+      {id:5,name:'Tata',telegram:'@Tatuli02',mentor_id:1},
+      {id:6,name:'Nikita',telegram:'@krezonik',mentor_id:1},
+      {id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail',mentor_id:1},
+      {id:8,name:'Irakli',telegram:'@iraklibu',mentor_id:1},
+      {id:9,name:'Anton',telegram:'@Antonio_ozzz',mentor_id:1},
+      {id:10,name:'Gio',telegram:'@giosar',mentor_id:1},
+      {id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva',mentor_id:1},
+      {id:12,name:'Tunar',telegram:'@tunaotchenash',mentor_id:1},
+    ];
+    AGENTS_DATA = [
+      {id:1,name:'David Tibelashvili',telegram:'@davidtibelashvili'},
+      {id:2,name:'DANIIL Gamkrelidze',telegram:'@dogruller'},
+      {id:3,name:'Серги Грузия',telegram:'@SergiTb'},
+      {id:4,name:'Zaza',telegram:'@eforit'},
+    ];
+    COUNTERS_DATA = RECRUITS_DATA.map(r => ({
+      name:r.name, photo:[0,15], showing:[0,15], stickers:[0,15], rental:[0,10]
+    }));
+    renderCounters();
+  } finally {
+    document.getElementById('loading').classList.add('hidden');
+  }
 }
 
 // ── TELEGRAM INIT ──
@@ -951,6 +759,8 @@ if (window.Telegram && window.Telegram.WebApp) {
   tg.ready();
   tg.expand();
 }
+
+loadLists();
 </script>
 </body>
 </html>
