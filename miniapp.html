@@ -372,7 +372,7 @@
       <div class="section-label">Объект</div>
       <div class="field">
         <label class="field-label">Район / Адрес <span>*</span></label>
-        <select id="photo-address"><option value="">Выбрать адрес...</option></select>
+        <input type="text" id="photo-address" placeholder="#Vera, ул. Мира 12...">
       </div>
       <div class="field">
         <label class="field-label">Ссылка из Advertising <span>*</span></label>
@@ -421,7 +421,7 @@
       <div class="section-label">Объект</div>
       <div class="field">
         <label class="field-label">Район / Адрес <span>*</span></label>
-        <select id="showing-address"><option value="">Выбрать адрес...</option></select>
+        <input type="text" id="showing-address" placeholder="#Vake, 22 Nikoloz Kipshidze...">
       </div>
       <div class="field">
         <label class="field-label">Ссылка из Advertising <span>*</span></label>
@@ -638,7 +638,7 @@
       <div class="section-label">Объект и агент</div>
       <div class="field">
         <label class="field-label">Объект <span>*</span></label>
-        <select id="t14-object"><option value="">Выбрать адрес...</option></select>
+        <input type="text" id="t14-object" placeholder="#Vera, ул. Мира 12...">
       </div>
       <div class="field">
         <label class="field-label">Агент <span>*</span></label>
@@ -793,10 +793,7 @@ function populateSelects(type) {
     el.innerHTML = '<option value="">Выбрать адрес...</option>';
     ADDRESSES.forEach(a => el.innerHTML += `<option value="${a.label}">${a.label}</option>`);
   });
-  if (type === 'photo' || type === 'showing') {
-    const adr = document.getElementById(type+'-address');
-    if (adr) adr.onchange = () => autofillAdLink(type);
-  }
+
 }
 
 function autofillAdLink(type) {
