@@ -241,7 +241,6 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       <div style="padding:14px 16px 0;">
         <div style="font-size:18px;font-weight:800;margin-bottom:3px;">💰 Сдача квартиры</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Калькулятор + отчёт + T0 оценка</div>
-        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-rental" style="width:0"></div></div><div class="prog-n" id="pn-rental">0/10</div></div>
       </div>
       <div class="pad pb">
 
@@ -625,7 +624,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwkVTgeTMzeo4x8G_RdsHSJAwUeiJJBbyNKWf9mXCUIRawiAzXpQJPObCGFYE9hTMNVWg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxygxYSRH7Hhe1yc73LBxbF4N6fYps-Zv9zATLGVjphwGeSQWCNMV6wdtTTCFOP5c1Yzg/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -638,7 +637,7 @@ let dExcl=true, dType='rent', dSub='long', dLvl=50;
 let prevTab='reports';
 let cStep=1, cLang='';
 let quizAnswers=[], quizCurrent=0, quizScore=0;
-let pdfTimer={};
+
 
 // SPLASH
 window.addEventListener('load', function() {
@@ -654,7 +653,14 @@ function goTab(tab) {
   document.getElementById('nav-'+tab).classList.add('on');
   if(tab==='stats') renderStats();
   if(tab==='contract') { cStep=1; cLang=''; cRender(); }
-  if(tab==='deals') { populateDeals(); populateRentalInDeals(); }
+  if(tab==='deals') {
+    populateDeals();
+    populateRentalInDeals();
+    // Set today's date
+    var today = new Date().toISOString().split('T')[0];
+    var fromEl = document.getElementById('rn-from');
+    if (fromEl && !fromEl.value) fromEl.value = today;
+  }
   window.scrollTo(0,0);
 }
 
@@ -706,9 +712,23 @@ function setDealMode(mode) {
 }
 
 function populateRentalInDeals() {
-  const agEl=document.getElementById('rn-agent'); agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
-  const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
-  const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
+  var agEl = document.getElementById('rn-agent');
+  if (agEl) {
+    agEl.innerHTML = '<option value="">Выбрать агента...</option>';
+    AGENTS.forEach(function(a) {
+      agEl.innerHTML += '<option value="' + a.telegram + '" data-level="' + (a.level||50) + '">' + a.name + ' (' + (a.level||50) + '%)</option>';
+    });
+  }
+  var rEl = document.getElementById('rn-recruit');
+  if (rEl) {
+    rEl.innerHTML = '<option value="">Без рекрута</option>';
+    RECRUITS.forEach(function(r) { rEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>'; });
+  }
+  var mEl = document.getElementById('rn-mentor');
+  if (mEl) {
+    mEl.innerHTML = '<option value="">Без наставника</option>';
+    AGENTS.forEach(function(a) { mEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>'; });
+  }
 }
 
 function populateDeals() {
@@ -885,37 +905,40 @@ function calcDeal() {
 }
 
 // PDF SEARCH
+var pdfSearchTimer = null;
 function searchPDF(kadastr) {
-  clearTimeout(pdfTimer['rn']);
+  clearTimeout(pdfSearchTimer);
   var st = document.getElementById('pdf-status');
   var wr = document.getElementById('pdf-wrap');
   var fr = document.getElementById('pdf-frame');
-  if (!kadastr || kadastr.length < 5) {
-    if (st) { st.style.display='none'; st.textContent=''; }
-    if (wr) wr.style.display='none';
+  if (!kadastr || kadastr.trim().length < 5) {
+    if (st) { st.style.display = 'none'; st.textContent = ''; }
+    if (wr) wr.style.display = 'none';
     return;
   }
-  if (st) { st.style.display='block'; st.style.color='var(--text2)'; st.textContent='🔍 Ищем договор...'; }
-  pdfTimer['rn'] = setTimeout(async function() {
-    try {
-      var res = await fetch(API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr));
-      var data = await res.json();
-      if (data.found) {
-        st.style.color = 'var(--green)';
-        st.textContent = '✓ Договор найден: ' + data.name;
-        fr.src = data.view;
-        wr.style.display = 'block';
-      } else {
+  if (st) { st.style.display = 'block'; st.style.color = 'var(--text2)'; st.textContent = '🔍 Ищем договор...'; }
+  pdfSearchTimer = setTimeout(function() {
+    var url = API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr.trim());
+    fetch(url, {cache: 'no-cache'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.found) {
+          st.style.color = 'var(--green)';
+          st.textContent = '✓ Найден: ' + data.name;
+          fr.src = data.view;
+          wr.style.display = 'block';
+        } else {
+          st.style.color = 'var(--amber)';
+          st.textContent = '⚠ Договор не найден (кадастр: ' + kadastr.trim() + ')';
+          wr.style.display = 'none';
+          fr.src = '';
+        }
+      })
+      .catch(function(e) {
         st.style.color = 'var(--red)';
-        st.textContent = '✗ Договор не найден в папке';
-        wr.style.display = 'none';
-        fr.src = '';
-      }
-    } catch(e) {
-      st.style.color = 'var(--red)';
-      st.textContent = '✗ Ошибка соединения';
-    }
-  }, 800);
+        st.textContent = '✗ Ошибка: ' + e.message;
+      });
+  }, 1000);
 }
 
 // SUBMIT
@@ -1136,7 +1159,12 @@ async function loadData(){
     COUNTERS=RECRUITS.map(r=>({name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]}));
   }
   populateDeals();
+  populateRentalInDeals();
   cRender();
+  // Set today for rental form
+  var today = new Date().toISOString().split('T')[0];
+  var fromEl = document.getElementById('rn-from');
+  if (fromEl && !fromEl.value) fromEl.value = today;
 }
 
 // TG
