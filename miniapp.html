@@ -2,1247 +2,1110 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Platform 90/10</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Rent in Tbilisi</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--bg4:#22222e;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);
   --text:#eeeef5;--text2:#9090a8;--text3:#55556a;
-  --accent:#7c6fff;--accent2:#a89fff;--accent-glow:rgba(124,111,255,0.25);
-  --green:#22c55e;--green-bg:rgba(34,197,94,0.12);
-  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);
-  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.12);
-  --blue:#3b82f6;--blue-bg:rgba(59,130,246,0.12);
-  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.12);
-  --r:12px;--r-sm:8px;--r-lg:18px;
+  --accent:#7c6fff;--accent2:#a89fff;--glow:rgba(124,111,255,.2);
+  --green:#22c55e;--gbg:rgba(34,197,94,.12);
+  --red:#ef4444;--rbg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--abg:rgba(245,158,11,.12);
+  --blue:#3b82f6;--bbg:rgba(59,130,246,.12);
+  --navy:#1d3560;
+  --r:12px;--rsm:8px;--rlg:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:80px;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 
-/* SCREENS */
-.screen{display:none;min-height:100vh;flex-direction:column;animation:fadeIn .2s ease;}
-.screen.active{display:flex;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s;}
+#splash.hide{opacity:0;pointer-events:none;}
+#splash img{width:90px;height:90px;border-radius:50%;box-shadow:0 0 40px rgba(255,255,255,.2);}
+#splash .st{font-size:22px;font-weight:800;color:#fff;}
+#splash .ss{font-size:12px;color:rgba(255,255,255,.5);}
+#splash .sb{width:100px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;margin-top:8px;}
+#splash .sf{height:100%;background:#fff;border-radius:2px;animation:ld 1.6s ease forwards;}
+@keyframes ld{from{width:0}to{width:100%}}
 
-/* HEADER */
-.header{display:flex;align-items:center;gap:12px;padding:16px 16px 12px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10;}
-.back-btn{width:38px;height:38px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;}
-.back-btn:active{background:var(--bg4);}
-.header-info{flex:1;}
-.header-title{font-size:15px;font-weight:600;}
-.header-sub{font-size:11px;color:var(--text2);margin-top:1px;}
-
-/* CONTENT */
-.content{flex:1;padding:16px;padding-bottom:20px;}
+/* APP */
+.app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;}
+.screens{flex:1;overflow:hidden;position:relative;}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;}
+.screen.active{display:flex;animation:fu .2s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:8px 4px 20px;z-index:50;}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border-radius:var(--r-sm);transition:all .15s;border:none;background:none;color:var(--text3);font-family:'Inter',sans-serif;}
-.nav-item.active{color:var(--accent);}
-.nav-item:active{background:var(--bg3);}
-.nav-icon{font-size:20px;line-height:1;}
-.nav-label{font-size:10px;font-weight:500;}
+.bnav{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(env(safe-area-inset-bottom,0px) + 6px);}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;cursor:pointer;border:none;background:none;color:var(--text3);font-family:'Inter',sans-serif;transition:color .15s;}
+.bni.on{color:var(--accent);}
+.bni:active{opacity:.7;}
+.bni-ic{font-size:19px;line-height:1;}
+.bni-lb{font-size:9px;font-weight:600;}
 
-/* MENU */
-.menu-hero{padding:24px 16px 20px;text-align:center;}
-.menu-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:16px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 8px 24px var(--accent-glow);}
-.menu-title{font-size:20px;font-weight:700;letter-spacing:-.02em;}
-.menu-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10;flex-shrink:0;}
+.hdr img{width:28px;height:28px;border-radius:50%;flex-shrink:0;}
+.hi{flex:1;}
+.ht{font-size:14px;font-weight:700;}
+.hs{font-size:11px;color:var(--text2);}
+.back{width:34px;height:34px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;color:var(--text);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
-.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 16px;}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 14px;cursor:pointer;transition:transform .15s,border-color .15s;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-color,var(--accent)),transparent 55%);opacity:0.06;transition:opacity .15s;}
-.card:active{transform:scale(0.97);}
-.card:active::before{opacity:0.12;}
-.card-icon{font-size:26px;margin-bottom:10px;display:block;}
-.card-label{font-size:13px;font-weight:600;margin-bottom:3px;}
-.card-sub{font-size:11px;color:var(--text2);}
-.card-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--card-color,var(--accent));color:#fff;margin-top:6px;}
-.card-wide{grid-column:span 2;}
-
-/* FORM ELEMENTS */
-.section{margin-bottom:18px;}
-.section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+/* CONTENT */
+.pad{padding:16px;}
+.pb{padding-bottom:20px;}
+.section{margin-bottom:16px;}
+.sl{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .field{margin-bottom:10px;}
-.field-label{font-size:12px;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:4px;}
-.field-label .req{color:var(--red);font-size:10px;}
-input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
+.fl{font-size:12px;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:3px;}
+.req{color:var(--red);font-size:10px;}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239090a8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;}
 textarea{resize:none;line-height:1.5;}
-input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5);}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-/* PROGRESS */
-.progress-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.progress-label{font-size:12px;color:var(--text2);flex-shrink:0;}
-.progress-track{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;}
-.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s;}
-.progress-num{font-size:13px;font-weight:700;color:var(--accent2);flex-shrink:0;min-width:40px;text-align:right;}
+/* CARDS */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 16px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);padding:16px 14px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--cc,var(--accent)),transparent 55%);opacity:.06;}
+.card:active{transform:scale(.97);}
+.card-ic{font-size:24px;margin-bottom:8px;display:block;}
+.card-lb{font-size:13px;font-weight:600;margin-bottom:2px;}
+.card-sub{font-size:11px;color:var(--text2);}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:var(--cc,var(--accent));color:#fff;margin-top:5px;}
 
-/* TOGGLE BUTTONS */
-.toggle-group{display:grid;gap:8px;}
-.toggle-group.cols2{grid-template-columns:1fr 1fr;}
-.toggle-group.cols3{grid-template-columns:1fr 1fr 1fr;}
-.toggle-btn{padding:11px 8px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;}
-.toggle-btn.active-green{background:var(--green-bg);border-color:var(--green);color:var(--green);}
-.toggle-btn.active-red{background:var(--red-bg);border-color:var(--red);color:var(--red);}
-.toggle-btn.active-amber{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
-.toggle-btn.active-blue{background:var(--blue-bg);border-color:var(--blue);color:var(--blue);}
-.toggle-btn.active-accent{background:var(--accent-glow);border-color:var(--accent);color:var(--accent2);}
+/* TOGGLES */
+.tg{display:grid;gap:8px;}
+.tg.c2{grid-template-columns:1fr 1fr;}
+.tg.c3{grid-template-columns:1fr 1fr 1fr;}
+.tb{padding:11px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s;}
+.tb.ag{background:var(--gbg);border-color:var(--green);color:var(--green);}
+.tb.ar{background:var(--rbg);border-color:var(--red);color:var(--red);}
+.tb.ab{background:var(--bbg);border-color:var(--blue);color:var(--blue);}
+.tb.aa{background:var(--glow);border-color:var(--accent);color:var(--accent2);}
+.tb.am{background:var(--abg);border-color:var(--amber);color:var(--amber);}
 
 /* H2O */
-.h2o-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:8px;}
-.h2o-title{font-size:13px;font-weight:600;margin-bottom:2px;}
-.h2o-sub{font-size:11px;color:var(--text2);margin-bottom:10px;}
-.h2o-btns{display:flex;gap:8px;}
-.h2o-btn{flex:1;padding:10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;}
-.h2o-btn.a1{background:var(--red-bg);border-color:var(--red);color:var(--red);}
-.h2o-btn.a2{background:var(--amber-bg);border-color:var(--amber);color:var(--amber);}
-.h2o-btn.a3{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+.h2o{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;margin-bottom:8px;}
+.h2o-t{font-size:13px;font-weight:600;margin-bottom:2px;}
+.h2o-s{font-size:11px;color:var(--text2);margin-bottom:9px;}
+.h2o-b{display:flex;gap:8px;}
+.hb{flex:1;padding:10px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;}
+.hb.a1{background:var(--rbg);border-color:var(--red);color:var(--red);}
+.hb.a2{background:var(--abg);border-color:var(--amber);color:var(--amber);}
+.hb.a3{background:var(--gbg);border-color:var(--green);color:var(--green);}
 
-/* SUBMIT */
-.submit-wrap{padding:16px;padding-bottom:4px;}
-.submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:var(--r);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;box-shadow:0 4px 16px var(--accent-glow);}
-.submit-btn:active{opacity:0.85;transform:scale(0.99);}
+/* CALC */
+.cbox{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px;}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid var(--border);}
+.crow:last-child{border-bottom:none;}
+.ck{font-size:13px;color:var(--text2);}
+.cv{font-size:14px;font-weight:700;}
+.cv.g{color:var(--green);}
+.cv.a{color:var(--amber);}
+.cv.p{color:var(--accent2);}
+.ctot{margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;}
+.ctot-l{font-size:13px;font-weight:600;}
+.ctot-v{font-size:18px;font-weight:800;color:var(--accent2);}
 
-/* CALCULATOR */
-.calc-result{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
-.calc-result-title{font-size:12px;color:var(--text2);margin-bottom:12px;font-weight:500;}
-.calc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);}
-.calc-row:last-child{border-bottom:none;}
-.calc-key{font-size:13px;color:var(--text2);}
-.calc-val{font-size:14px;font-weight:700;color:var(--text);}
-.calc-val.accent{color:var(--accent2);}
-.calc-val.green{color:var(--green);}
-.calc-val.amber{color:var(--amber);}
-.calc-total{margin-top:12px;padding-top:12px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;}
-.calc-total-label{font-size:13px;font-weight:600;}
-.calc-total-val{font-size:18px;font-weight:700;color:var(--accent2);}
-
-/* COUNTERS */
-.counter-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
-.counter-name{font-size:14px;font-weight:600;margin-bottom:10px;}
-.counter-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
-.counter-row:last-child{margin-bottom:0;}
-.counter-icon{font-size:13px;width:18px;flex-shrink:0;}
-.counter-type{font-size:12px;color:var(--text2);flex:1;}
-.counter-track{width:70px;height:3px;background:var(--bg4);border-radius:2px;overflow:hidden;}
-.counter-fill{height:100%;background:var(--accent);border-radius:2px;}
-.counter-val{font-size:11px;font-weight:700;color:var(--accent2);min-width:32px;text-align:right;}
+/* PROG */
+.prog{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.prog-l{font-size:12px;color:var(--text2);flex-shrink:0;}
+.prog-t{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;}
+.prog-f{height:100%;background:var(--accent);border-radius:2px;transition:width .4s;}
+.prog-n{font-size:13px;font-weight:700;color:var(--accent2);flex-shrink:0;min-width:36px;text-align:right;}
 
 /* UPLOAD */
-.upload-area{border:1.5px dashed var(--border2);border-radius:var(--r-sm);padding:18px;text-align:center;cursor:pointer;transition:border-color .15s;color:var(--text2);font-size:13px;}
-.upload-area:hover{border-color:var(--accent);}
-.upload-area input{display:none;}
-.upload-preview{margin-top:8px;font-size:12px;color:var(--green);}
+.upl{border:1.5px dashed var(--border2);border-radius:var(--rsm);padding:16px;text-align:center;cursor:pointer;color:var(--text2);font-size:13px;}
+.upl input{display:none;}
+.upl-p{margin-top:6px;font-size:12px;color:var(--green);}
 
-/* INFO BOX */
-.info-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--text2);line-height:1.6;}
-.info-box strong{color:var(--text);}
+/* PDF VIEWER */
+.pdf-status{font-size:12px;padding:6px 0;display:none;}
+.pdf-status.found{color:var(--green);display:block;}
+.pdf-status.notfound{color:var(--red);display:block;}
+.pdf-frame-wrap{margin-top:8px;border-radius:var(--rsm);overflow:hidden;display:none;}
+.pdf-frame-wrap.show{display:block;}
+.pdf-frame-wrap iframe{width:100%;height:380px;border:none;}
 
-/* TOAST */
-.toast{position:fixed;bottom:90px;left:16px;right:16px;background:var(--green);color:#fff;padding:14px 18px;border-radius:var(--r);font-weight:600;font-size:14px;text-align:center;transform:translateY(20px);opacity:0;transition:all .3s;z-index:200;pointer-events:none;}
+/* INFO */
+.info{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 13px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.info strong{color:var(--text);}
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* SUBMIT */
+.swrap{padding:12px 16px 4px;}
+.sbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:var(--r);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--glow);}
+.sbtn:active{opacity:.85;}
+.sbtn.navy{background:var(--navy);}
+
+/* CONTRACT STEPS */
+.csteps{background:var(--navy);padding:6px 16px 14px;display:flex;align-items:center;flex-shrink:0;}
+.csc{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.csn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.csn.done{background:rgba(255,255,255,.85);color:var(--navy);}
+.csn.active{background:#fff;color:var(--navy);}
+.csn.idle{background:rgba(255,255,255,.12);color:rgba(255,255,255,.3);}
+.csl{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);}
+.csl.on{color:#fff;}
+.csline{flex:1;height:2px;background:rgba(255,255,255,.15);border-radius:1px;margin-bottom:14px;}
+.csline.on{background:rgba(255,255,255,.7);}
+.ctabs{display:flex;background:rgba(255,255,255,.07);border-radius:var(--rsm);padding:3px;margin-bottom:14px;gap:3px;}
+.ctab{flex:1;padding:8px 4px;text-align:center;font-size:12px;font-weight:700;color:var(--text2);border-radius:6px;cursor:pointer;}
+.ctab.on{background:var(--bg3);color:var(--text);}
+.ctpg{display:none;}
+.ctpg.on{display:block;}
+.lcbtn{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);padding:14px 16px;margin-bottom:10px;cursor:pointer;}
+.lcbtn.sel{border-color:var(--accent);}
+.lbadge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:var(--rsm);background:var(--bg3);color:var(--accent2);border:1px solid var(--border2);}
+.lcbtn.sel .lbadge{background:var(--accent);color:#fff;border-color:var(--accent);}
+.csumrow{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 14px;margin-bottom:8px;}
+.csumk{font-size:12px;color:var(--text2);font-weight:600;}
+.csumv{font-size:13px;font-weight:700;text-align:right;max-width:55%;}
+.cresult{background:var(--gbg);border:1px solid var(--green);border-radius:var(--rlg);padding:22px;text-align:center;margin-top:14px;}
+.cric{font-size:44px;display:block;margin-bottom:8px;}
+.crt{font-size:17px;font-weight:800;color:var(--green);display:block;margin-bottom:3px;}
+.crs{font-size:12px;color:var(--green);display:block;margin-bottom:14px;}
+.crbtns{display:flex;gap:10px;}
+.crbtns a{flex:1;text-align:center;text-decoration:none;padding:11px;border-radius:var(--rsm);font-size:13px;font-weight:700;display:block;}
+.crdoc{background:var(--navy);color:#fff;}
+.crpdf{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
+
+/* COUNTERS */
+.cntcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.cntname{font-size:14px;font-weight:600;margin-bottom:10px;}
+.cntrow{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.cntrow:last-child{margin-bottom:0;}
+.cntic{font-size:13px;width:18px;flex-shrink:0;}
+.cnttype{font-size:12px;color:var(--text2);flex:1;}
+.cnttrack{width:70px;height:3px;background:var(--bg4);border-radius:2px;overflow:hidden;}
+.cntfill{height:100%;background:var(--accent);border-radius:2px;}
+.cntval{font-size:11px;font-weight:700;color:var(--accent2);min-width:32px;text-align:right;}
+
+/* STANDARDS */
+.std-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.std-title{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.std-item{font-size:12px;color:var(--text2);line-height:1.6;padding:5px 0;border-bottom:.5px solid var(--border);}
+.std-item:last-child{border-bottom:none;}
+.std-item strong{color:var(--text);}
+
+/* QUIZ */
+.quiz-wrap{padding:16px;}
+.qcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.qnum{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.qtext{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:14px;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.qopt{padding:11px 14px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;text-align:left;transition:all .15s;}
+.qopt.correct{background:var(--gbg);border-color:var(--green);color:var(--green);}
+.qopt.wrong{background:var(--rbg);border-color:var(--red);color:var(--red);}
+.qopt.show-correct{background:var(--gbg);border-color:var(--green);color:var(--green);}
+.qopt:disabled{cursor:default;}
+.qexpl{font-size:12px;color:var(--text2);margin-top:10px;padding:10px;background:var(--bg3);border-radius:var(--rsm);display:none;line-height:1.5;}
+.qexpl.show{display:block;}
+.qscore{background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:var(--rlg);padding:24px;text-align:center;margin-bottom:16px;}
+.qs-ic{font-size:48px;display:block;margin-bottom:8px;}
+.qs-t{font-size:20px;font-weight:800;color:#fff;display:block;margin-bottom:4px;}
+.qs-s{font-size:14px;color:rgba(255,255,255,.8);display:block;}
+
+/* OV / TOAST */
+.ov{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);}
+.ov.on{display:flex;}
+.ovbox{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rlg);padding:28px 36px;text-align:center;}
+.spin{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 12px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.toast{position:fixed;bottom:76px;left:16px;right:16px;background:var(--green);color:#fff;padding:13px 18px;border-radius:var(--r);font-weight:600;font-size:14px;text-align:center;transform:translateY(20px);opacity:0;transition:all .3s;z-index:150;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
-
-/* LOADING */
-.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:300;}
-.loading-overlay.hidden{display:none;}
-.spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* DIVIDER */
-.divider{height:1px;background:var(--border);margin:16px 0;}
-
-/* BADGE */
-.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;}
-.badge-green{background:var(--green-bg);color:var(--green);}
-.badge-amber{background:var(--amber-bg);color:var(--amber);}
-.badge-blue{background:var(--blue-bg);color:var(--blue);}
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loading">
-  <div class="spinner"></div>
-  <div style="font-size:13px;color:var(--text2);">Загрузка...</div>
+<div id="splash">
+  <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" alt="">
+  <div class="st">Rent in Tbilisi</div>
+  <div class="ss">Platform 90/10</div>
+  <div class="sb"><div class="sf"></div></div>
 </div>
 
-<!-- ═══════════════════ BOTTOM NAV ═══════════════════ -->
-<nav class="bottom-nav" id="bottom-nav">
-  <button class="nav-item active" onclick="switchTab('deals')" id="nav-deals">
-    <span class="nav-icon">💰</span><span class="nav-label">Сделка</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('reports')" id="nav-reports">
-    <span class="nav-icon">📋</span><span class="nav-label">Отчёты</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('quality')" id="nav-quality">
-    <span class="nav-icon">🔍</span><span class="nav-label">T14</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('stats')" id="nav-stats">
-    <span class="nav-icon">📊</span><span class="nav-label">Счётчики</span>
-  </button>
-</nav>
+<div class="app">
+  <div class="screens" id="screens">
 
-<!-- ═══════════════════ TAB: REPORTS ═══════════════════ -->
-<div class="screen" id="screen-reports">
-  <div class="menu-hero">
-    <img src="Logo_rent.png" alt="Rent in Tbilisi" style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;">
-    <div class="menu-title">Rent in Tbilisi</div>
-    <div class="menu-sub">Platform 90/10 · Выбери тип отчёта</div>
-  </div>
-  <div class="cards-grid">
-    <div class="card" style="--card-color:#7c6fff" onclick="openForm('photo')">
-      <span class="card-icon">📷</span>
-      <div class="card-label">Фото</div>
-      <div class="card-sub">Отчёт по фото</div>
+    <!-- ═══ DEALS ═══ -->
+    <div class="screen active" id="tab-deals">
+      <!-- Mode switcher -->
+      <div style="padding:14px 16px 0;">
+        <div style="display:flex;background:var(--bg3);border-radius:var(--r);padding:3px;gap:3px;">
+          <button class="tb aa" id="deal-mode-calc" onclick="setDealMode('calc')" style="flex:1;padding:10px 8px;">💼 Калькулятор</button>
+          <button class="tb" id="deal-mode-rental" onclick="setDealMode('rental')" style="flex:1;padding:10px 8px;">💰 Сдача + T0</button>
+        </div>
+      </div>
+
+      <!-- CALCULATOR MODE -->
+      <div id="deal-calc-mode" class="pad pb">
+        <div style="font-size:15px;font-weight:700;color:var(--text2);margin-bottom:14px;">Platform 90/10 · Распределение комиссии</div>
+
+        <div class="section"><div class="sl">Тип сделки</div>
+          <div class="tg c2">
+            <button class="tb aa" id="dt-rent" onclick="setDealType('rent')">🏠 Аренда</button>
+            <button class="tb" id="dt-sale" onclick="setDealType('sale')">🔑 Продажа</button>
+          </div>
+        </div>
+
+        <div id="d-subtype-wrap" class="section"><div class="sl">Подтип аренды</div>
+          <div class="tg c2">
+            <button class="tb aa" id="ds-long" onclick="setSubtype('long')">Долгосрочная<br><span style="font-size:10px;opacity:.7">50% комиссии</span></button>
+            <button class="tb" id="ds-comm" onclick="setSubtype('comm')">Коммерция<br><span style="font-size:10px;opacity:.7">100% комиссии</span></button>
+          </div>
+        </div>
+
+        <div class="section"><div class="sl">Объект</div>
+          <div class="field"><label class="fl">Ссылка на объект</label><input type="url" id="d-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
+          <div class="field"><label class="fl">Эксклюзив?</label>
+            <div class="tg c2">
+              <button class="tb ag" id="d-excl-y" onclick="setExcl(true)">✓ Эксклюзив</button>
+              <button class="tb" id="d-excl-n" onclick="setExcl(false)">Неэксклюзив</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section"><div class="sl">Участники</div>
+          <div class="field"><label class="fl">Агент <span class="req">*</span></label>
+            <select id="d-agent" onchange="onAgentChange()"><option value="">Выбрать агента...</option></select>
+          </div>
+          <div class="field"><label class="fl">Уровень агента</label>
+            <div class="tg c3">
+              <button class="tb" id="d-lvl-50" onclick="setLvl(50)">50%</button>
+              <button class="tb" id="d-lvl-70" onclick="setLvl(70)">70%</button>
+              <button class="tb aa" id="d-lvl-90" onclick="setLvl(90)">90%</button>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:5px;">Подставляется автоматически из профиля агента</div>
+          </div>
+          <div class="field"><label class="fl">Рекрут (если есть)</label>
+            <select id="d-recruit"><option value="">Без рекрута</option></select>
+          </div>
+        </div>
+
+        <div class="section"><div class="sl">Финансы</div>
+          <div class="r2">
+            <div class="field"><label class="fl">Цена $ <span class="req">*</span></label><input type="number" id="d-price" placeholder="1200" oninput="calcDeal()"></div>
+            <div class="field"><label class="fl">Комиссия %</label><input type="number" id="d-comm-pct" value="50" oninput="calcDeal()"></div>
+          </div>
+        </div>
+
+        <div class="cbox" id="d-calc-box"><div style="font-size:13px;color:var(--text2);">💡 Введи цену для расчёта</div></div>
+
+        <div class="section"><div class="sl">Сроки</div>
+          <div class="r2">
+            <div class="field"><label class="fl">От</label><input type="date" id="d-from"></div>
+            <div class="field"><label class="fl">До</label><input type="date" id="d-to"></div>
+          </div>
+        </div>
+
+        <button class="sbtn" onclick="submitCalc()">Отправить расчёт в группу</button>
+      </div>
+
+      <!-- RENTAL + T0 MODE -->
+      <div id="deal-rental-mode" class="pad pb" style="display:none;">
+        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-rental" style="width:0"></div></div><div class="prog-n" id="pn-rental">0/10</div></div>
+
+        <div class="section"><div class="sl">Участники</div>
+          <div class="field"><label class="fl">Агент <span class="req">*</span></label><select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать...</option></select></div>
+          <div class="field"><label class="fl">Рекрут (если есть)</label><select id="rn-recruit" onchange="onRCRental()"><option value="">Без рекрута</option></select></div>
+          <div class="field"><label class="fl">Наставник</label><select id="rn-mentor"><option value="">Без наставника</option></select></div>
+        </div>
+
+        <div class="section"><div class="sl">Объект</div>
+          <div class="field"><label class="fl">Ссылка на объект <span class="req">*</span></label><input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
+          <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
+            <input type="text" id="rn-cadastral" placeholder="01.13.07.024.009.40.060a" oninput="searchPDF(this.value,'rn')">
+            <div class="pdf-status" id="rn-pdf-status"></div>
+            <div class="pdf-frame-wrap" id="rn-pdf-wrap"><iframe id="rn-pdf-frame" src=""></iframe></div>
+          </div>
+          <div class="field"><label class="fl">Тип объекта</label>
+            <div class="tg c2"><button class="tb ag" id="rn-ex-y" onclick="setRnExcl(true)">✓ Эксклюзив</button><button class="tb" id="rn-ex-n" onclick="setRnExcl(false)">Неэксклюзив</button></div>
+          </div>
+          <div class="field"><label class="fl">Тип сделки</label>
+            <div class="tg c2"><button class="tb aa" id="rn-tp-r" onclick="setRnType('rent')">Аренда</button><button class="tb" id="rn-tp-s" onclick="setRnType('sale')">Продажа</button></div>
+          </div>
+        </div>
+
+        <div class="section"><div class="sl">Финансы</div>
+          <div class="r2">
+            <div class="field"><label class="fl">Цена $ <span class="req">*</span></label><input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
+            <div class="field"><label class="fl">Уровень агента</label>
+              <select id="rn-lvl" onchange="calcRental()"><option value="50">50%</option><option value="70">70%</option><option value="90">90%</option></select>
+            </div>
+          </div>
+          <div class="cbox" id="rn-calc" style="display:none">
+            <div class="crow"><span class="ck">Комиссия (50%)</span><span class="cv" id="rn-ct">—</span></div>
+            <div class="crow"><span class="ck">Платформа</span><span class="cv a" id="rn-cp">—</span></div>
+            <div class="crow"><span class="ck">Агент</span><span class="cv g" id="rn-ca">—</span></div>
+          </div>
+        </div>
+
+        <div class="section"><div class="sl">Клиент и собственник</div>
+          <div class="r2">
+            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Giorgi"></div>
+            <div class="field"><label class="fl">Тел. клиента</label><input type="tel" id="rn-cphone" placeholder="+995 557..."></div>
+          </div>
+          <div class="r2">
+            <div class="field"><label class="fl">Собственник</label><input type="text" id="rn-oname" placeholder="Ucha"></div>
+            <div class="field"><label class="fl">Тел. соб.</label><input type="tel" id="rn-ophone" placeholder="+995 551..."></div>
+          </div>
+        </div>
+
+        <div class="section"><div class="sl">Период</div>
+          <div class="r2">
+            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from"></div>
+            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to"></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="info">🔍 <strong>T0 — оценка сразу после сдачи</strong><br>Заполни качество сделки прямо сейчас</div>
+
+        <div class="section"><div class="sl">H2O — T0 оценка</div>
+          <div class="h2o"><div class="h2o-t">Client Delivery</div><div class="h2o-s">Клиент получил ожидаемое?</div>
+            <div class="h2o-b" id="h0-c"><button class="hb" onclick="setH2O('t0','client',1,this)">1</button><button class="hb" onclick="setH2O('t0','client',2,this)">2</button><button class="hb" onclick="setH2O('t0','client',3,this)">3</button></div>
+          </div>
+          <div class="h2o"><div class="h2o-t">Owner Result</div><div class="h2o-s">Собственник получил результат?</div>
+            <div class="h2o-b" id="h0-o"><button class="hb" onclick="setH2O('t0','owner',1,this)">1</button><button class="hb" onclick="setH2O('t0','owner',2,this)">2</button><button class="hb" onclick="setH2O('t0','owner',3,this)">3</button></div>
+          </div>
+          <div class="h2o"><div class="h2o-t">Process Integrity</div><div class="h2o-s">Процесс прошёл чисто?</div>
+            <div class="h2o-b" id="h0-p"><button class="hb" onclick="setH2O('t0','process',1,this)">1</button><button class="hb" onclick="setH2O('t0','process',2,this)">2</button><button class="hb" onclick="setH2O('t0','process',3,this)">3</button></div>
+          </div>
+          <div class="section" style="margin-top:12px"><div class="sl">Итог T0</div>
+            <div class="tg c2"><button class="tb" id="t0-cl" onclick="setT0R('clean')">✓ Чистая</button><button class="tb" id="t0-dr" onclick="setT0R('dirty')">✗ Грязная</button></div>
+          </div>
+          <div class="field" style="margin-top:10px"><label class="fl">Комментарий</label><textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..."></textarea></div>
+        </div>
+
+        <button class="sbtn" onclick="sub('rental')">Отправить сдачу + T0</button>
+      </div>
     </div>
-    <div class="card" style="--card-color:#22c55e" onclick="openForm('showing')">
-      <span class="card-icon">🏠</span>
-      <div class="card-label">Показ</div>
-      <div class="card-sub">Отчёт по показу</div>
-      <div class="card-pill" id="pill-showing">0/15</div>
+
+        <!-- ═══ REPORTS ═══ -->
+    <div class="screen" id="tab-reports">
+      <div style="text-align:center;padding:20px 16px 14px;">
+        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
+        <div style="font-size:18px;font-weight:800;">Отчёты</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Выбери тип отчёта</div>
+      </div>
+      <div class="cards">
+        <div class="card" style="--cc:#7c6fff" onclick="openForm('photo')"><span class="card-ic">📷</span><div class="card-lb">Фото</div><div class="card-sub">Отчёт по фото</div></div>
+        <div class="card" style="--cc:#22c55e" onclick="openForm('showing')"><span class="card-ic">🏠</span><div class="card-lb">Показ</div><div class="card-sub">Отчёт</div><div class="pill" id="pill-showing">0/15</div></div>
+        <div class="card" style="--cc:#f59e0b" onclick="openForm('stickers')"><span class="card-ic">📌</span><div class="card-lb">Расклейка</div><div class="card-sub">Отчёт</div><div class="pill" id="pill-stickers">0/15</div></div>
+        <div class="card" style="--cc:#ef4444" onclick="openForm('rental')"><span class="card-ic">💰</span><div class="card-lb">Сдача</div><div class="card-sub">+ T0 оценка</div><div class="pill" id="pill-rental">0/10</div></div>
+        <div class="card" style="--cc:#06b6d4;grid-column:span 2" onclick="openForm('t14')"><span class="card-ic">🔍</span><div class="card-lb">T14 — Проверка сделки</div><div class="card-sub">Через 14 дней после сдачи</div></div>
+      </div>
     </div>
-    <div class="card" style="--card-color:#f59e0b" onclick="openForm('stickers')">
-      <span class="card-icon">📌</span>
-      <div class="card-label">Расклейка</div>
-      <div class="card-sub">Отчёт</div>
-      <div class="card-pill" id="pill-stickers">0/15</div>
+
+    <!-- ═══ FORM: PHOTO ═══ -->
+    <div class="screen" id="form-photo">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png"><div class="hi"><div class="ht">📷 Отчёт по фото</div><div class="hs">#Фотография | Отчёт</div></div></div>
+      <div class="pad pb">
+        <div class="section"><div class="sl">Участники</div>
+          <div class="field"><label class="fl">Рекрут <span class="req">*</span></label><select id="ph-r" onchange="onRC('photo')"><option value="">Выбрать...</option></select></div>
+          <div class="field"><label class="fl">Наставник <span class="req">*</span></label><select id="ph-m"><option value="">Выбрать...</option></select></div>
+        </div>
+        <div class="section"><div class="sl">Объект</div>
+          <div class="field"><label class="fl">Район / Адрес <span class="req">*</span></label><input type="text" id="ph-addr" placeholder="#Vera, ул. Мира 12..."></div>
+          <div class="field"><label class="fl">Ссылка из Advertising</label><input type="url" id="ph-link" placeholder="https://t.me/..."></div>
+          <div class="field"><label class="fl">Дата <span class="req">*</span></label><input type="date" id="ph-date"></div>
+        </div>
+      </div>
+      <div class="swrap"><button class="sbtn" onclick="sub('photo')">Отправить отчёт</button></div>
     </div>
-    <div class="card" style="--card-color:#ef4444" onclick="openForm('rental')">
-      <span class="card-icon">💰</span>
-      <div class="card-label">Сдача</div>
-      <div class="card-sub">+ T0 сразу</div>
-      <div class="card-pill" id="pill-rental">0/10</div>
+
+    <!-- ═══ FORM: SHOWING ═══ -->
+    <div class="screen" id="form-showing">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png"><div class="hi"><div class="ht">🏠 Показ</div><div class="hs">#Просмотры | Отчёт</div></div></div>
+      <div class="pad pb">
+        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-showing" style="width:0"></div></div><div class="prog-n" id="pn-showing">0/15</div></div>
+        <div class="section"><div class="sl">Участники</div>
+          <div class="field"><label class="fl">Рекрут <span class="req">*</span></label><select id="sh-r" onchange="onRC('showing')"><option value="">Выбрать...</option></select></div>
+          <div class="field"><label class="fl">Наставник <span class="req">*</span></label><select id="sh-m"><option value="">Выбрать...</option></select></div>
+        </div>
+        <div class="section"><div class="sl">Объект</div>
+          <div class="field"><label class="fl">Район / Адрес <span class="req">*</span></label><input type="text" id="sh-addr" placeholder="#Vake, 22 Nikoloz Kipshidze..."></div>
+          <div class="field"><label class="fl">Ссылка из Advertising</label><input type="url" id="sh-link" placeholder="https://t.me/..."></div>
+          <div class="field"><label class="fl">Клиент (Telegram)</label><input type="text" id="sh-client" placeholder="@username"></div>
+          <div class="field"><label class="fl">Дата <span class="req">*</span></label><input type="date" id="sh-date"></div>
+        </div>
+        <div class="section"><div class="sl">Результат</div>
+          <div class="tg c2"><button class="tb" id="sh-ref" onclick="selRes('refused')">Отказ</button><button class="tb" id="sh-thk" onclick="selRes('thinking')">Думает</button></div>
+        </div>
+      </div>
+      <div class="swrap"><button class="sbtn" onclick="sub('showing')">Отправить отчёт</button></div>
     </div>
-  </div>
+
+    <!-- ═══ FORM: STICKERS ═══ -->
+    <div class="screen" id="form-stickers">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png"><div class="hi"><div class="ht">📌 Расклейка</div><div class="hs">#Расклейка | Отчёт</div></div></div>
+      <div class="pad pb">
+        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-stickers" style="width:0"></div></div><div class="prog-n" id="pn-stickers">0/15</div></div>
+        <div class="section"><div class="sl">Участники</div>
+          <div class="field"><label class="fl">Рекрут <span class="req">*</span></label><select id="st-r" onchange="onRC('stickers')"><option value="">Выбрать...</option></select></div>
+          <div class="field"><label class="fl">Наставник <span class="req">*</span></label><select id="st-m"><option value="">Выбрать...</option></select></div>
+        </div>
+        <div class="section"><div class="sl">Расклейка</div>
+          <div class="field"><label class="fl">Район <span class="req">*</span></label><input type="text" id="st-dist" placeholder="#chugurety, #vake..."></div>
+          <div class="field"><label class="fl">Кол-во стикеров <span class="req">*</span></label><input type="number" id="st-cnt" placeholder="20" min="1"></div>
+          <div class="field"><label class="fl">Дата <span class="req">*</span></label><input type="date" id="st-date"></div>
+        </div>
+        <div class="section"><div class="sl">Скрин карты</div>
+          <div class="upl" onclick="document.getElementById('st-photo').click()"><input type="file" id="st-photo" accept="image/*" onchange="prevFile(this,'st-prev')"><div>📎 Прикрепить скрин</div><div class="upl-p" id="st-prev"></div></div>
+        </div>
+      </div>
+      <div class="swrap"><button class="sbtn" onclick="sub('stickers')">Отправить отчёт</button></div>
+    </div>
+
+        <!-- ═══ FORM: T14 ═══ -->
+    <div class="screen" id="form-t14">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png"><div class="hi"><div class="ht">🔍 T14 — Проверка</div><div class="hs">Через 14 дней после сдачи</div></div></div>
+      <div class="pad pb">
+        <div class="section"><div class="sl">Объект и агент</div>
+          <div class="field"><label class="fl">Объект / Адрес <span class="req">*</span></label><input type="text" id="t14-obj" placeholder="#Vera, ул. Мира 12..."></div>
+          <div class="field"><label class="fl">Агент <span class="req">*</span></label><select id="t14-agent"><option value="">Выбрать...</option></select></div>
+          <div class="field"><label class="fl">Дата сделки <span class="req">*</span></label><input type="date" id="t14-date"></div>
+        </div>
+        <div class="section"><div class="sl">H2O — T14 оценка</div>
+          <div class="h2o"><div class="h2o-t">Client Delivery</div><div class="h2o-s">Клиент получил ожидаемое?</div><div class="h2o-b" id="h14-c"><button class="hb" onclick="setH2O('t14','client',1,this)">1</button><button class="hb" onclick="setH2O('t14','client',2,this)">2</button><button class="hb" onclick="setH2O('t14','client',3,this)">3</button></div></div>
+          <div class="h2o"><div class="h2o-t">Owner Result</div><div class="h2o-s">Собственник получил результат?</div><div class="h2o-b" id="h14-o"><button class="hb" onclick="setH2O('t14','owner',1,this)">1</button><button class="hb" onclick="setH2O('t14','owner',2,this)">2</button><button class="hb" onclick="setH2O('t14','owner',3,this)">3</button></div></div>
+          <div class="h2o"><div class="h2o-t">Process Integrity</div><div class="h2o-s">Процесс прошёл чисто?</div><div class="h2o-b" id="h14-p"><button class="hb" onclick="setH2O('t14','process',1,this)">1</button><button class="hb" onclick="setH2O('t14','process',2,this)">2</button><button class="hb" onclick="setH2O('t14','process',3,this)">3</button></div></div>
+        </div>
+        <div class="section"><div class="sl">Изменения</div><div class="field"><textarea id="t14-changes" rows="3" placeholder="Что стало лучше или хуже..."></textarea></div></div>
+        <div class="section"><div class="sl">Жалобы</div>
+          <div class="tg c2" style="margin-bottom:10px;"><button class="tb" id="t14-cn" onclick="selComp('no')">Нет</button><button class="tb" id="t14-cy" onclick="selComp('yes')">Да</button></div>
+          <div id="t14-comp-det" style="display:none"><textarea id="t14-comp-txt" rows="3" placeholder="Опиши проблемы..."></textarea></div>
+        </div>
+        <div class="section"><div class="sl">Итог T14</div><div class="tg c2"><button class="tb" id="t14-cl" onclick="selT14R('clean')">✓ Чистая</button><button class="tb" id="t14-dr" onclick="selT14R('dirty')">✗ Грязная</button></div></div>
+        <div class="section"><div class="sl">Комментарий агента</div><div class="field"><textarea id="t14-comment" rows="4" placeholder="Честно: что было не идеально..."></textarea></div></div>
+        <div class="swrap" style="padding:0;"><button class="sbtn" onclick="sub('t14')">Отправить T14</button></div>
+      </div>
+    </div>
+
+    <!-- ═══ CONTRACT ═══ -->
+    <div class="screen" id="tab-contract">
+      <div class="hdr" style="background:var(--navy);border-bottom-color:rgba(255,255,255,.1);">
+        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png">
+        <div class="hi"><div class="ht" style="color:#fff;">📄 Договор аренды</div><div class="hs" style="color:rgba(255,255,255,.6);">Rent in Tbilisi · Contract</div></div>
+        <span style="font-size:20px;">🇬🇪</span>
+      </div>
+      <div class="csteps" id="csteps">
+        <div class="csc"><div class="csn active" id="csn1">1</div><span class="csl on" id="csl1">Язык</span></div>
+        <div class="csline" id="csl12"></div>
+        <div class="csc"><div class="csn idle" id="csn2">2</div><span class="csl" id="csl2">Детали</span></div>
+        <div class="csline" id="csl23"></div>
+        <div class="csc"><div class="csn idle" id="csn3">3</div><span class="csl" id="csl3">Проверка</span></div>
+      </div>
+      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;" id="cscroll">
+        <div class="pad" id="cp1">
+          <div style="font-size:16px;font-weight:800;margin-bottom:4px;">Выбери язык договора</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Выбери нужную версию</div>
+          <div class="lcbtn" data-lang="GEO" onclick="selLang('GEO',this)"><span style="font-size:26px;">🇬🇪</span><div style="flex:1"><div style="font-size:14px;font-weight:700;">ქართული</div><div style="font-size:11px;color:var(--text2);">Georgian version</div></div><span class="lbadge">GEO</span></div>
+          <div class="lcbtn" data-lang="RU" onclick="selLang('RU',this)"><span style="font-size:26px;">🇷🇺</span><div style="flex:1"><div style="font-size:14px;font-weight:700;">Русский</div><div style="font-size:11px;color:var(--text2);">Russian version</div></div><span class="lbadge">RU</span></div>
+          <div class="lcbtn" data-lang="EN" onclick="selLang('EN',this)"><span style="font-size:26px;">🇬🇧</span><div style="flex:1"><div style="font-size:14px;font-weight:700;">English</div><div style="font-size:11px;color:var(--text2);">English version</div></div><span class="lbadge">EN</span></div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr1"></div>
+        </div>
+        <div class="pad" id="cp2" style="display:none">
+          <div class="ctabs"><div class="ctab on" onclick="setCTab('ct1',this)">Стороны</div><div class="ctab" onclick="setCTab('ct2',this)">Объект</div><div class="ctab" onclick="setCTab('ct3',this)">Финансы</div></div>
+          <div class="ctpg on" id="ct1">
+            <div class="field"><label class="fl">Дата договора <span class="req">*</span></label><input type="date" id="c-ts"></div>
+            <div class="field"><label class="fl">Собственник (ФИО) <span class="req">*</span></label><input type="text" id="c-on" placeholder="Полное имя"></div>
+            <div class="field"><label class="fl">ID собственника <span class="req">*</span></label><input type="text" id="c-oi" placeholder="Личный номер"></div>
+            <div class="field"><label class="fl">Арендатор (ФИО) <span class="req">*</span></label><input type="text" id="c-cn" placeholder="Полное имя"></div>
+            <div class="field"><label class="fl">ID арендатора <span class="req">*</span></label><input type="text" id="c-ci" placeholder="Личный номер"></div>
+          </div>
+          <div class="ctpg" id="ct2">
+            <div class="field"><label class="fl">Кадастровый код <span class="req">*</span></label><input type="text" id="c-cad" placeholder="01.10.10.02.20.0.01.01.84A"></div>
+            <div class="field"><label class="fl">Адрес <span class="req">*</span></label><input type="text" id="c-addr" placeholder="Улица, дом"></div>
+            <div class="r2"><div class="field"><label class="fl">Этаж</label><input type="text" id="c-fl" placeholder="2"></div><div class="field"><label class="fl">Кв. номер</label><input type="text" id="c-apt" placeholder="Номер"></div></div>
+            <div class="field"><label class="fl">Площадь (м²) <span class="req">*</span></label><input type="text" id="c-area" placeholder="45"></div>
+          </div>
+          <div class="ctpg" id="ct3">
+            <div class="r2"><div class="field"><label class="fl">Начало <span class="req">*</span></label><input type="date" id="c-start"></div><div class="field"><label class="fl">Конец <span class="req">*</span></label><input type="date" id="c-end"></div></div>
+            <div class="field"><label class="fl">Срок (мес.) <span class="req">*</span></label><input type="text" id="c-mo" placeholder="12"></div>
+            <div class="r2"><div class="field"><label class="fl">Цена (USD) <span class="req">*</span></label><input type="text" id="c-pr" placeholder="600" oninput="syncDep()"></div><div class="field"><label class="fl">Депозит (USD) <span class="req">*</span></label><input type="text" id="c-dep" placeholder="600"></div></div>
+            <div class="field"><label class="fl">День оплаты <span class="req">*</span></label><input type="text" id="c-pd" placeholder="1"></div>
+          </div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr2"></div>
+        </div>
+        <div class="pad" id="cp3" style="display:none">
+          <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Проверь данные</div>
+          <div id="csum"></div>
+          <div style="font-size:12px;margin-top:8px;display:none" id="cerr3"></div>
+          <div id="cresult" style="display:none">
+            <div class="cresult"><span class="cric">✅</span><span class="crt">Договор создан!</span><span class="crs">Документы готовы</span>
+              <div class="crbtns"><a class="crdoc" id="cdoclink" href="#" target="_blank">📄 DOC</a><a class="crpdf" id="cpdflink" href="#" target="_blank">📋 PDF</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom,0px)+12px);display:flex;gap:10px;flex-shrink:0;">
+        <button class="sbtn navy" id="cbback" onclick="cBack()" style="display:none;flex:0 0 auto;width:80px;">← Назад</button>
+        <button class="sbtn" id="cbnext" onclick="cNext()">Продолжить →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STATS ═══ -->
+    <div class="screen" id="tab-stats">
+      <div style="padding:18px 16px 8px;"><div style="font-size:18px;font-weight:800;">📊 Счётчики</div><div style="font-size:12px;color:var(--text2);margin-top:3px;">Агенты и рекруты · Platform 90/10</div></div>
+      <div class="pad pb">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:8px 10px;background:var(--bg3);border-radius:var(--rsm);">💡 Для изменения уровня агента — отредактируй колонку <strong style="color:var(--text)">level</strong> в листе <strong style="color:var(--text)">Agents</strong> в Google Sheets (50, 70 или 90)</div>
+        <div class="sl" style="margin-bottom:10px;">Агенты — эксклюзивные сделки</div>
+        <div id="agent-list"></div>
+        <div class="divider"></div>
+        <div class="sl" style="margin-bottom:10px;">Рекруты — прогресс отчётов</div>
+        <div id="recruit-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══ STANDARDS + QUIZ ═══ -->
+    <div class="screen" id="tab-standards">
+      <div style="padding:18px 16px 8px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="font-size:18px;font-weight:800;">📚 Стандарты</div><div style="font-size:12px;color:var(--text2);margin-top:3px;">Platform 90/10 · Правила</div></div>
+        <button class="sbtn" style="width:auto;padding:8px 14px;font-size:13px;" onclick="startQuiz()">🎯 Викторина</button>
+      </div>
+
+      <!-- Standards content -->
+      <div class="pad pb" id="std-content">
+        <div class="std-section">
+          <div class="std-title">💡 Главный принцип</div>
+          <div class="std-item"><strong>Эксклюзив = доверительное управление.</strong> Только эксклюзивные объекты идут в зачёт системы 90/10 и в рост агента.</div>
+          <div class="std-item"><strong>Неэксклюзив</strong> — инструмент выживания, не строит платформу и не даёт наставнической выплаты.</div>
+        </div>
+        <div class="std-section">
+          <div class="std-title">💰 Распределение комиссии</div>
+          <div class="std-item"><strong>Платформа</strong> — 10% навечно за эксклюзивный объект</div>
+          <div class="std-item"><strong>Агент 50%</strong> — начальный уровень (сделки 1-10)</div>
+          <div class="std-item"><strong>Агент 70%</strong> — доказал стабильность (сделки 11-100)</div>
+          <div class="std-item"><strong>Агент 90%</strong> — высший уровень зрелости (100+ сделок)</div>
+          <div class="std-item"><strong>Внешний агент</strong> — 30%</div>
+          <div class="std-item"><strong>Передача клиента</strong> внутри системы — 10%</div>
+          <div class="std-item"><strong>Только показ → сдача</strong> — 20%</div>
+          <div class="std-item"><strong>Фото + показ + сдача</strong> эксклюзива — 40%</div>
+        </div>
+        <div class="std-section">
+          <div class="std-title">👨‍🏫 Наставник</div>
+          <div class="std-item"><strong>Первые 10 сделок агента</strong> — наставник получает 25%</div>
+          <div class="std-item"><strong>Следующие 90 сделок</strong> — наставник получает 15%</div>
+          <div class="std-item">Только от эксклюзивных объектов агента-рекрута</div>
+        </div>
+        <div class="std-section">
+          <div class="std-title">📈 Путь рекрута → агента</div>
+          <div class="std-item"><strong>15 раз</strong> — расклейка с наставником</div>
+          <div class="std-item"><strong>15 раз</strong> — фото с наставником</div>
+          <div class="std-item"><strong>15 раз</strong> — показ с наставником</div>
+          <div class="std-item"><strong>15 раз</strong> — подписание договора с наставником</div>
+          <div class="std-item"><strong>5 квартир</strong> — под 20% на объектах наставника</div>
+          <div class="std-item"><strong>10 квартир</strong> — под 50/50</div>
+        </div>
+        <div class="std-section">
+          <div class="std-title">🚫 Запрещено</div>
+          <div class="std-item">Уводить объект или клиента мимо платформы</div>
+          <div class="std-item">Скрывать собственника или клиента</div>
+          <div class="std-item">Выдавать неэксклюзив за эксклюзив</div>
+          <div class="std-item">Выпускать рекрута без 15-кратной практики</div>
+          <div class="std-item"><strong>За обман — обнуление</strong> накопленного пути</div>
+        </div>
+        <div class="std-section">
+          <div class="std-title">⏰ T0 и T14 оценка</div>
+          <div class="std-item"><strong>T0</strong> — заполняется сразу после сдачи. H2O: Client / Owner / Process (1-3)</div>
+          <div class="std-item"><strong>T14</strong> — через 14 дней. Повторная оценка + жалобы + итог (чистая/грязная)</div>
+          <div class="std-item">Итог: <strong>чистая сделка</strong> — всё по стандарту. <strong>Грязная</strong> — нарушения процесса.</div>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <div id="quiz-wrap" style="display:none;">
+        <div class="quiz-wrap" id="quiz-content"></div>
+        <div class="quiz-wrap" id="quiz-result" style="display:none;">
+          <div class="qscore">
+            <span class="qs-ic" id="qr-ic">🏆</span>
+            <span class="qs-t" id="qr-t">Результат</span>
+            <span class="qs-s" id="qr-s"></span>
+          </div>
+          <button class="sbtn" onclick="resetQuiz()" style="margin-bottom:20px;">Пройти ещё раз</button>
+          <button class="sbtn navy" onclick="showStandards()" style="margin-bottom:20px;">← Стандарты</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <nav class="bnav">
+    <button class="bni on" id="nav-deals" onclick="goTab('deals')"><span class="bni-ic">💼</span><span class="bni-lb">Сделка</span></button>
+    <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Отчёты</span></button>
+    <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Договор</span></button>
+    <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Счётчики</span></button>
+    <button class="bni" id="nav-standards" onclick="goTab('standards')"><span class="bni-ic">📚</span><span class="bni-lb">Стандарты</span></button>
+  </nav>
 </div>
 
-<!-- ═══════════════════ FORM: PHOTO ═══════════════════ -->
-<div class="screen" id="screen-photo">
-  <div class="header">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="header-info"><div class="header-title">📷 Отчёт по фото</div><div class="header-sub">#Фотография | Отчёт</div></div>
-  </div>
-  <div class="content">
-    <div class="section">
-      <div class="section-label">Участники</div>
-      <div class="field"><label class="field-label">Рекрут <span class="req">*</span></label>
-        <select id="photo-recruit" onchange="onRecruitChange('photo')"><option value="">Выбрать рекрута...</option></select></div>
-      <div class="field"><label class="field-label">Наставник <span class="req">*</span></label>
-        <select id="photo-mentor"><option value="">Выбрать наставника...</option></select></div>
-    </div>
-    <div class="section">
-      <div class="section-label">Объект</div>
-      <div class="field"><label class="field-label">Район / Адрес <span class="req">*</span></label>
-        <input type="text" id="photo-address" placeholder="#Vera, ул. Мира 12..."></div>
-      <div class="field"><label class="field-label">Ссылка из Advertising</label>
-        <input type="url" id="photo-adlink" placeholder="https://t.me/..."></div>
-      <div class="field"><label class="field-label">Дата <span class="req">*</span></label>
-        <input type="date" id="photo-date"></div>
-    </div>
-  </div>
-  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('photo')">Отправить отчёт</button></div>
-</div>
-
-<!-- ═══════════════════ FORM: SHOWING ═══════════════════ -->
-<div class="screen" id="screen-showing">
-  <div class="header">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="header-info"><div class="header-title">🏠 Отчёт по показу</div><div class="header-sub">#Просмотры | Отчёт</div></div>
-  </div>
-  <div class="content">
-    <div class="progress-card">
-      <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-showing" style="width:0%"></div></div>
-      <div class="progress-num" id="num-showing">0/15</div>
-    </div>
-    <div class="section">
-      <div class="section-label">Участники</div>
-      <div class="field"><label class="field-label">Рекрут <span class="req">*</span></label>
-        <select id="showing-recruit" onchange="onRecruitChange('showing')"><option value="">Выбрать рекрута...</option></select></div>
-      <div class="field"><label class="field-label">Наставник <span class="req">*</span></label>
-        <select id="showing-mentor"><option value="">Выбрать наставника...</option></select></div>
-    </div>
-    <div class="section">
-      <div class="section-label">Объект</div>
-      <div class="field"><label class="field-label">Район / Адрес <span class="req">*</span></label>
-        <input type="text" id="showing-address" placeholder="#Vake, 22 Nikoloz Kipshidze..."></div>
-      <div class="field"><label class="field-label">Ссылка из Advertising</label>
-        <input type="url" id="showing-adlink" placeholder="https://t.me/..."></div>
-      <div class="field"><label class="field-label">Клиент (Telegram)</label>
-        <input type="text" id="showing-client" placeholder="@username"></div>
-      <div class="field"><label class="field-label">Дата <span class="req">*</span></label>
-        <input type="date" id="showing-date"></div>
-    </div>
-    <div class="section">
-      <div class="section-label">Результат</div>
-      <div class="toggle-group cols2">
-        <button class="toggle-btn" id="btn-refused" onclick="selectResult('refused')">Отказ</button>
-        <button class="toggle-btn" id="btn-thinking" onclick="selectResult('thinking')">Думает</button>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-label">Фото объекта</div>
-      <div class="upload-area" onclick="document.getElementById('showing-photo').click()">
-        <input type="file" id="showing-photo" accept="image/*" onchange="previewFile(this,'showing-preview')">
-        <div>📎 Прикрепить фото</div>
-        <div class="upload-preview" id="showing-preview"></div>
-      </div>
-    </div>
-  </div>
-  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('showing')">Отправить отчёт</button></div>
-</div>
-
-<!-- ═══════════════════ FORM: STICKERS ═══════════════════ -->
-<div class="screen" id="screen-stickers">
-  <div class="header">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="header-info"><div class="header-title">📌 Отчёт по расклейке</div><div class="header-sub">#Расклейка | Отчёт</div></div>
-  </div>
-  <div class="content">
-    <div class="progress-card">
-      <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-stickers" style="width:0%"></div></div>
-      <div class="progress-num" id="num-stickers">0/15</div>
-    </div>
-    <div class="section">
-      <div class="section-label">Участники</div>
-      <div class="field"><label class="field-label">Рекрут <span class="req">*</span></label>
-        <select id="stickers-recruit" onchange="onRecruitChange('stickers')"><option value="">Выбрать рекрута...</option></select></div>
-      <div class="field"><label class="field-label">Наставник <span class="req">*</span></label>
-        <select id="stickers-mentor"><option value="">Выбрать наставника...</option></select></div>
-    </div>
-    <div class="section">
-      <div class="section-label">Расклейка</div>
-      <div class="field"><label class="field-label">Район <span class="req">*</span></label>
-        <input type="text" id="stickers-district" placeholder="#chugurety, #vake..."></div>
-      <div class="field"><label class="field-label">Кол-во стикеров <span class="req">*</span></label>
-        <input type="number" id="stickers-count" placeholder="20" min="1"></div>
-      <div class="field"><label class="field-label">Дата <span class="req">*</span></label>
-        <input type="date" id="stickers-date"></div>
-    </div>
-    <div class="section">
-      <div class="section-label">Скрин карты</div>
-      <div class="upload-area" onclick="document.getElementById('stickers-photo').click()">
-        <input type="file" id="stickers-photo" accept="image/*" onchange="previewFile(this,'stickers-preview')">
-        <div>📎 Прикрепить скрин</div>
-        <div class="upload-preview" id="stickers-preview"></div>
-      </div>
-    </div>
-  </div>
-  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('stickers')">Отправить отчёт</button></div>
-</div>
-
-<!-- ═══════════════════ FORM: RENTAL ═══════════════════ -->
-<div class="screen" id="screen-rental">
-  <div class="header">
-    <button class="back-btn" onclick="goBack()">←</button>
-    <div class="header-info"><div class="header-title">💰 Сдача квартиры</div><div class="header-sub">#Rented | Отчёт + T0</div></div>
-  </div>
-  <div class="content">
-    <div class="progress-card">
-      <div class="progress-label">Прогресс</div>
-      <div class="progress-track"><div class="progress-fill" id="prog-rental" style="width:0%"></div></div>
-      <div class="progress-num" id="num-rental">0/10</div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Участники</div>
-      <div class="field"><label class="field-label">Агент <span class="req">*</span></label>
-        <select id="rental-agent" onchange="onAgentChange('rental')"><option value="">Выбрать агента...</option></select></div>
-      <div class="field"><label class="field-label">Рекрут (если есть)</label>
-        <select id="rental-recruit"><option value="">Без рекрута</option></select></div>
-      <div class="field"><label class="field-label">Наставник комиссия (если есть)</label>
-        <select id="rental-mentor-comm"><option value="">Без наставника</option></select></div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Объект</div>
-      <div class="field"><label class="field-label">Ссылка на объект <span class="req">*</span></label>
-        <input type="url" id="rental-adlink" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
-      <div class="field"><label class="field-label">Кадастровый номер <span class="req">*</span></label>
-        <input type="text" id="rental-cadastral" placeholder="01.13.07.024.009.40.060a"></div>
-      <div class="field"><label class="field-label">Тип объекта</label>
-        <div class="toggle-group cols2">
-          <button class="toggle-btn active-green" id="rent-excl-yes" onclick="selectExclusive(true)">✓ Эксклюзив</button>
-          <button class="toggle-btn" id="rent-excl-no" onclick="selectExclusive(false)">Неэксклюзив</button>
-        </div>
-      </div>
-      <div class="field"><label class="field-label">Тип сделки</label>
-        <div class="toggle-group cols2">
-          <button class="toggle-btn active-accent" id="rent-type-rent" onclick="selectDealType('rent')">Аренда</button>
-          <button class="toggle-btn" id="rent-type-sale" onclick="selectDealType('sale')">Продажа</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Финансы</div>
-      <div class="row2">
-        <div class="field"><label class="field-label">Цена $ <span class="req">*</span></label>
-          <input type="number" id="rental-price" placeholder="1200" oninput="calcRentalCommissions()"></div>
-        <div class="field"><label class="field-label">Уровень агента</label>
-          <select id="rental-agent-level" onchange="calcRentalCommissions()">
-            <option value="50" selected>Агент 50%</option>
-            <option value="70">Агент 70%</option>
-            <option value="90">Агент 90%</option>
-          </select>
-        </div>
-      </div>
-      <div class="calc-result" id="rental-calc-result" style="display:none">
-        <div class="calc-result-title">Распределение комиссии</div>
-        <div class="calc-row"><span class="calc-key">Комиссия (50% от цены)</span><span class="calc-val" id="rc-total">—</span></div>
-        <div class="calc-row"><span class="calc-key">Платформа (10%)</span><span class="calc-val amber" id="rc-platform">—</span></div>
-        <div class="calc-row"><span class="calc-key">Агент</span><span class="calc-val green" id="rc-agent">—</span></div>
-        <div class="calc-row" id="rc-mentor-row" style="display:none"><span class="calc-key">Наставник</span><span class="calc-val accent" id="rc-mentor">—</span></div>
-        <div class="calc-row" id="rc-recruit-row" style="display:none"><span class="calc-key">Рекрут</span><span class="calc-val" id="rc-recruit">—</span></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Клиент и собственник</div>
-      <div class="row2">
-        <div class="field"><label class="field-label">Клиент (имя)</label>
-          <input type="text" id="rental-client-name" placeholder="Giorgi"></div>
-        <div class="field"><label class="field-label">Телефон клиента</label>
-          <input type="tel" id="rental-client-phone" placeholder="+995 557..."></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label class="field-label">Собственник (имя)</label>
-          <input type="text" id="rental-owner-name" placeholder="Ucha"></div>
-        <div class="field"><label class="field-label">Телефон собственника</label>
-          <input type="tel" id="rental-owner-phone" placeholder="+995 551..."></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Период аренды</div>
-      <div class="row2">
-        <div class="field"><label class="field-label">От <span class="req">*</span></label><input type="date" id="rental-from"></div>
-        <div class="field"><label class="field-label">До <span class="req">*</span></label><input type="date" id="rental-to"></div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="info-box">🔍 <strong>T0 — оценка сразу после сдачи</strong><br>Заполни оценку качества сделки прямо сейчас</div>
-
-    <div class="section">
-      <div class="section-label">H2O — T0 оценка</div>
-      <div class="h2o-block">
-        <div class="h2o-title">Client Delivery</div>
-        <div class="h2o-sub">Клиент получил ожидаемое?</div>
-        <div class="h2o-btns" id="h2o0-client">
-          <button class="h2o-btn" onclick="selectH2O('t0','client',1,this)">1</button>
-          <button class="h2o-btn" onclick="selectH2O('t0','client',2,this)">2</button>
-          <button class="h2o-btn" onclick="selectH2O('t0','client',3,this)">3</button>
-        </div>
-      </div>
-      <div class="h2o-block">
-        <div class="h2o-title">Owner Result</div>
-        <div class="h2o-sub">Собственник получил результат?</div>
-        <div class="h2o-btns" id="h2o0-owner">
-          <button class="h2o-btn" onclick="selectH2O('t0','owner',1,this)">1</button>
-          <button class="h2o-btn" onclick="selectH2O('t0','owner',2,this)">2</button>
-          <button class="h2o-btn" onclick="selectH2O('t0','owner',3,this)">3</button>
-        </div>
-      </div>
-      <div class="h2o-block">
-        <div class="h2o-title">Process Integrity</div>
-        <div class="h2o-sub">Процесс прошёл чисто?</div>
-        <div class="h2o-btns" id="h2o0-process">
-          <button class="h2o-btn" onclick="selectH2O('t0','process',1,this)">1</button>
-          <button class="h2o-btn" onclick="selectH2O('t0','process',2,this)">2</button>
-          <button class="h2o-btn" onclick="selectH2O('t0','process',3,this)">3</button>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-label">Итог сделки (T0)</div>
-        <div class="toggle-group cols2">
-          <button class="toggle-btn" id="t0-clean" onclick="selectT0Result('clean')">✓ Чистая</button>
-          <button class="toggle-btn" id="t0-dirty" onclick="selectT0Result('dirty')">✗ Грязная</button>
-        </div>
-      </div>
-      <div class="field"><label class="field-label">Комментарий агента (T0)</label>
-        <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что можно улучшить..."></textarea></div>
-    </div>
-  </div>
-  <div class="submit-wrap"><button class="submit-btn" onclick="submitForm('rental')">Отправить сдачу + T0</button></div>
-</div>
-
-<!-- ═══════════════════ TAB: DEALS (CALCULATOR) ═══════════════════ -->
-<div class="screen active" id="screen-deals">
-  <div style="padding:20px 16px 12px;">
-    <div class="menu-title" style="font-size:18px;">💼 Калькулятор сделок</div>
-    <div class="menu-sub" style="margin-top:4px;">Система 90/10 · Platform</div>
-  </div>
-  <div class="content" style="padding-top:0;">
-
-    <div class="section">
-      <div class="section-label">Тип сделки</div>
-      <div class="toggle-group cols2">
-        <button class="toggle-btn active-accent" id="calc-type-rent" onclick="selectCalcType('rent')">Аренда</button>
-        <button class="toggle-btn" id="calc-type-sale" onclick="selectCalcType('sale')">Продажа</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Объект</div>
-      <div class="field"><label class="field-label">Ссылка на объект</label>
-        <input type="url" id="calc-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
-      <div class="field"><label class="field-label">Эксклюзив?</label>
-        <div class="toggle-group cols2">
-          <button class="toggle-btn active-green" id="calc-excl-yes" onclick="selectCalcExcl(true)">✓ Эксклюзив</button>
-          <button class="toggle-btn" id="calc-excl-no" onclick="selectCalcExcl(false)">Неэксклюзив</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Участники</div>
-      <div class="field"><label class="field-label">Агент <span class="req">*</span></label>
-        <select id="calc-agent"><option value="">Выбрать агента...</option></select></div>
-      <div class="field"><label class="field-label">Уровень агента</label>
-        <div class="toggle-group cols3" style="margin-top:4px;">
-          <button class="toggle-btn active-accent" id="calc-lvl-50" onclick="selectCalcLevel(50)">50%</button>
-          <button class="toggle-btn" id="calc-lvl-70" onclick="selectCalcLevel(70)">70%</button>
-          <button class="toggle-btn" id="calc-lvl-90" onclick="selectCalcLevel(90)">90%</button>
-        </div>
-      </div>
-      <div class="field"><label class="field-label">Рекрут (если есть)</label>
-        <select id="calc-recruit"><option value="">Без рекрута</option></select></div>
-      <div class="field"><label class="field-label">Наставник (комиссия)</label>
-        <select id="calc-mentor"><option value="">Без наставника</option></select></div>
-      <div class="field" id="calc-mentor-pct-field" style="display:none">
-        <label class="field-label">% наставника</label>
-        <div class="toggle-group cols2">
-          <button class="toggle-btn active-accent" id="calc-mp-25" onclick="selectMentorPct(25)">25% (1-10 сделки)</button>
-          <button class="toggle-btn" id="calc-mp-15" onclick="selectMentorPct(15)">15% (11-100)</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Стоимость и комиссия</div>
-      <div class="section">
-        <div class="section-label">Подтип аренды</div>
-        <div class="toggle-group cols3">
-          <button class="toggle-btn active-accent" id="calc-sub-long" onclick="selectCalcSub('long')">Долгосрочная</button>
-          <button class="toggle-btn" id="calc-sub-sale" onclick="selectCalcSub('sale2')">Продажа</button>
-          <button class="toggle-btn" id="calc-sub-comm" onclick="selectCalcSub('commercial')">Коммерция</button>
-        </div>
-      </div>
-      <div class="row2">
-        <div class="field"><label class="field-label">Цена $ <span class="req">*</span></label>
-          <input type="number" id="calc-price" placeholder="1200" oninput="calcDeal()"></div>
-        <div class="field"><label class="field-label">Комиссия % <span style="font-size:10px;color:var(--text3)">(можно изменить)</span></label>
-          <input type="number" id="calc-comm-pct" value="50" placeholder="50" oninput="calcDeal()"></div>
-      </div>
-      <div class="field"><label class="field-label">Комиссия платформы %</label>
-        <input type="number" id="calc-platform-pct" value="10" placeholder="10" oninput="calcDeal()"></div>
-    </div>
-
-    <!-- RESULT -->
-    <div class="calc-result" id="calc-result-box">
-      <div class="calc-result-title">💡 Введи цену для расчёта</div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Сроки аренды</div>
-      <div class="row2">
-        <div class="field"><label class="field-label">От</label><input type="date" id="calc-from"></div>
-        <div class="field"><label class="field-label">До</label><input type="date" id="calc-to"></div>
-      </div>
-    </div>
-
-    <div class="submit-wrap" style="position:relative;padding:0;">
-      <button class="submit-btn" onclick="submitCalc()">Отправить расчёт в группу</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ TAB: QUALITY (T14) ═══════════════════ -->
-<div class="screen" id="screen-quality">
-  <div style="padding:20px 16px 12px;">
-    <div class="menu-title" style="font-size:18px;">🔍 T14 — Проверка сделки</div>
-    <div class="menu-sub" style="margin-top:4px;">Оценка через 14 дней после сдачи</div>
-  </div>
-  <div class="content" style="padding-top:0;">
-    <div class="section">
-      <div class="section-label">Объект и агент</div>
-      <div class="field"><label class="field-label">Объект / Адрес <span class="req">*</span></label>
-        <input type="text" id="t14-object" placeholder="#Vera, ул. Мира 12..."></div>
-      <div class="field"><label class="field-label">Агент <span class="req">*</span></label>
-        <select id="t14-agent"><option value="">Выбрать агента...</option></select></div>
-      <div class="field"><label class="field-label">Дата сделки <span class="req">*</span></label>
-        <input type="date" id="t14-deal-date"></div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">H2O — T14 оценка (через 14 дней)</div>
-      <div class="h2o-block">
-        <div class="h2o-title">Client Delivery</div>
-        <div class="h2o-sub">Клиент получил ожидаемое?</div>
-        <div class="h2o-btns" id="h2o14-client">
-          <button class="h2o-btn" onclick="selectH2O('t14','client',1,this)">1</button>
-          <button class="h2o-btn" onclick="selectH2O('t14','client',2,this)">2</button>
-          <button class="h2o-btn" onclick="selectH2O('t14','client',3,this)">3</button>
-        </div>
-      </div>
-      <div class="h2o-block">
-        <div class="h2o-title">Owner Result</div>
-        <div class="h2o-sub">Собственник получил результат?</div>
-        <div class="h2o-btns" id="h2o14-owner">
-          <button class="h2o-btn" onclick="selectH2O('t14','owner',1,this)">1</button>
-          <button class="h2o-btn" onclick="selectH2O('t14','owner',2,this)">2</button>
-          <button class="h2o-btn" onclick="selectH2O('t14','owner',3,this)">3</button>
-        </div>
-      </div>
-      <div class="h2o-block">
-        <div class="h2o-title">Process Integrity</div>
-        <div class="h2o-sub">Процесс прошёл чисто?</div>
-        <div class="h2o-btns" id="h2o14-process">
-          <button class="h2o-btn" onclick="selectH2O('t14','process',1,this)">1</button>
-          <button class="h2o-btn" onclick="selectH2O('t14','process',2,this)">2</button>
-          <button class="h2o-btn" onclick="selectH2O('t14','process',3,this)">3</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Изменения после сделки</div>
-      <div class="field"><textarea id="t14-changes" rows="3" placeholder="Что стало лучше или хуже..."></textarea></div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Жалобы после заселения</div>
-      <div class="toggle-group cols2" style="margin-bottom:10px;">
-        <button class="toggle-btn" id="t14-comp-no" onclick="selectComplaints('no')">Нет</button>
-        <button class="toggle-btn" id="t14-comp-yes" onclick="selectComplaints('yes')">Да</button>
-      </div>
-      <div id="t14-comp-detail" style="display:none">
-        <textarea id="t14-comp-text" rows="3" placeholder="Опиши проблемы..."></textarea>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Итог T14</div>
-      <div class="toggle-group cols2">
-        <button class="toggle-btn" id="t14-clean" onclick="selectT14Result('clean')">✓ Чистая</button>
-        <button class="toggle-btn" id="t14-dirty" onclick="selectT14Result('dirty')">✗ Грязная</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Комментарий агента</div>
-      <div class="field"><textarea id="t14-comment" rows="4" placeholder="Честно: что было не идеально..."></textarea></div>
-    </div>
-
-    <div class="submit-wrap" style="position:relative;padding:0;">
-      <button class="submit-btn" onclick="submitForm('t14')">Отправить T14</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ TAB: STATS ═══════════════════ -->
-<div class="screen" id="screen-stats">
-  <div style="padding:20px 16px 12px;">
-    <div class="menu-title" style="font-size:18px;">📊 Статистика</div>
-    <div class="menu-sub" style="margin-top:4px;">Агенты и рекруты</div>
-  </div>
-  <div class="content" style="padding-top:0;">
-    <div class="section-label" style="margin-bottom:10px;">Агенты — эксклюзивные сделки</div>
-    <div id="agent-counters-list"></div>
-    <div class="divider"></div>
-    <div class="section-label" style="margin-bottom:10px;">Рекруты — прогресс отчётов</div>
-    <div id="counters-list"></div>
-  </div>
-</div>
-
+<div class="ov" id="ov"><div class="ovbox"><div class="spin"></div><div style="font-size:13px;color:var(--text2);">Создаём договор...</div></div></div>
 <div class="toast" id="toast"></div>
-<iframe name="hidden-frame" id="hidden-frame" style="display:none"></iframe>
+<iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxMqLVasIbwcupjEAqLZd2FYbZFJvwM7FpYwLA_DIJs3pARc7G0tZbk2RVLbOLfsJOaJQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwkVTgeTMzeo4x8G_RdsHSJAwUeiJJBbyNKWf9mXCUIRawiAzXpQJPObCGFYE9hTMNVWg/exec';
 
 // Data
-let RECRUITS_DATA    = [];
-let AGENTS_DATA      = [];
-let COUNTERS_DATA    = [];
-let AGENT_COUNTERS   = {}; // {agentName: {deals, level, next}}
+let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
 
 // State
-let selectedResult  = '';
-let h2oScores       = { t0:{client:0,owner:0,process:0}, t14:{client:0,owner:0,process:0} };
-let complaintsSel   = '';
-let t14ResultSel    = '';
-let t0ResultSel     = '';
-let isExclusive     = true;
-let dealType        = 'rent';
-let calcExclusive   = true;
-let calcType        = 'rent';
-let calcLevel       = 50;
-let mentorPct       = 25;
-let prevScreen      = 'reports';
+let showRes='', h2o={t0:{client:0,owner:0,process:0},t14:{client:0,owner:0,process:0}};
+let t0Res='', t14Res='', compSel='';
+let rnExcl=true, rnType='rent';
+let dExcl=true, dType='rent', dSub='long', dLvl=50;
+let prevTab='reports';
+let cStep=1, cLang='';
+let quizAnswers=[], quizCurrent=0, quizScore=0;
+let pdfTimer={};
 
-// ── NAVIGATION ──
-function switchTab(tab) {
-  ['reports','deals','quality','stats'].forEach(t => {
-    document.getElementById('screen-' + t).classList.remove('active');
-    document.getElementById('nav-' + t).classList.remove('active');
-  });
-  document.getElementById('screen-' + tab).classList.add('active');
-  document.getElementById('nav-' + tab).classList.add('active');
-  if (tab === 'stats') renderCounters();
-  if (tab === 'quality') populateT14();
-  if (tab === 'deals') populateCalc();
+// SPLASH
+window.addEventListener('load', function() {
+  setTimeout(function(){ document.getElementById('splash').classList.add('hide'); setTimeout(function(){ document.getElementById('splash').style.display='none'; },500); },1800);
+  loadData();
+});
+
+// TABS
+function goTab(tab) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('nav-'+tab).classList.add('on');
+  if(tab==='stats') renderStats();
+  if(tab==='contract') { cStep=1; cLang=''; cRender(); }
+  if(tab==='deals') populateDeals();
   window.scrollTo(0,0);
 }
 
-// Default tab on load
-function initDefaultTab() {
-  switchTab('deals');
-}
-
 function openForm(type) {
-  prevScreen = 'reports';
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + type).classList.add('active');
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('form-'+type).classList.add('active');
   populateForm(type);
   setToday(type);
+  if(type==='t14') { const el=document.getElementById('t14-agent'); el.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>el.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`); }
   window.scrollTo(0,0);
 }
 
 function goBack() {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + prevScreen).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+prevTab).classList.add('active');
+  document.getElementById('nav-'+prevTab).classList.add('on');
   window.scrollTo(0,0);
 }
 
-// ── POPULATE SELECTS ──
+// POPULATE
 function populateForm(type) {
-  const rEl = document.getElementById(type + '-recruit');
-  const mEl = document.getElementById(type + '-mentor') || document.getElementById(type + '-agent');
-  if (rEl) {
-    const isOptional = type === 'rental';
-    rEl.innerHTML = isOptional ? '<option value="">Без рекрута</option>' : '<option value="">Выбрать рекрута...</option>';
-    RECRUITS_DATA.forEach(r => rEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>');
+  const maps={photo:['ph-r','ph-m'],showing:['sh-r','sh-m'],stickers:['st-r','st-m']};
+  if(maps[type]) {
+    const[rId,mId]=maps[type];
+    const rEl=document.getElementById(rId), mEl=document.getElementById(mId);
+    rEl.innerHTML='<option value="">Выбрать рекрута...</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
+    mEl.innerHTML='<option value="">Выбрать наставника...</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
   }
-  // Agents
-  const agEl = document.getElementById(type === 'rental' ? 'rental-agent' : type + '-mentor');
-  if (agEl) {
-    agEl.innerHTML = '<option value="">Выбрать...</option>';
-    AGENTS_DATA.forEach(a => agEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>');
-  }
-  // Mentor commission for rental
-  if (type === 'rental') {
-    const mcEl = document.getElementById('rental-mentor-comm');
-    if (mcEl) {
-      mcEl.innerHTML = '<option value="">Без наставника</option>';
-      AGENTS_DATA.forEach(a => mcEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>');
-    }
-    const rrEl = document.getElementById('rental-recruit');
-    if (rrEl) {
-      rrEl.innerHTML = '<option value="">Без рекрута</option>';
-      RECRUITS_DATA.forEach(r => rrEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>');
-    }
+  if(type==='rental') {
+    const agEl=document.getElementById('rn-agent'); agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}">${a.name} (${a.level||50}%)</option>`);
+    const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
+    const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
   }
 }
 
-function populateT14() {
-  const agEl = document.getElementById('t14-agent');
-  if (agEl) {
-    agEl.innerHTML = '<option value="">Выбрать агента...</option>';
-    AGENTS_DATA.forEach(a => agEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>');
+function setDealMode(mode) {
+  document.getElementById('deal-mode-calc').className = 'tb' + (mode==='calc' ? ' aa' : '');
+  document.getElementById('deal-mode-rental').className = 'tb' + (mode==='rental' ? ' aa' : '');
+  document.getElementById('deal-calc-mode').style.display = mode==='calc' ? 'block' : 'none';
+  document.getElementById('deal-rental-mode').style.display = mode==='rental' ? 'block' : 'none';
+  if (mode==='rental') {
+    populateRentalInDeals();
+    const today = new Date().toISOString().split('T')[0];
+    const f = document.getElementById('rn-from'); if(f && !f.value) f.value = today;
   }
 }
 
-function populateCalc() {
-  const agEl = document.getElementById('calc-agent');
-  if (agEl) {
-    agEl.innerHTML = '<option value="">Выбрать агента...</option>';
-    AGENTS_DATA.forEach(a => agEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>');
-  }
-  const rEl = document.getElementById('calc-recruit');
-  if (rEl) {
-    rEl.innerHTML = '<option value="">Без рекрута</option>';
-    RECRUITS_DATA.forEach(r => rEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>');
-  }
-  const mEl = document.getElementById('calc-mentor');
-  if (mEl) {
-    mEl.innerHTML = '<option value="">Без наставника</option>';
-    AGENTS_DATA.forEach(a => mEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>');
-  }
+function populateRentalInDeals() {
+  const agEl=document.getElementById('rn-agent'); agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
+  const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
+  const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
 }
 
-function onRecruitChange(type) {
-  const rEl = document.getElementById(type + '-recruit');
-  const mEl = document.getElementById(type + '-mentor');
-  if (!rEl || !mEl) return;
-  const recruit = RECRUITS_DATA.find(r => r.name === rEl.value);
-  if (recruit) {
-    const agent = AGENTS_DATA.find(a => a.id == recruit.mentor_id);
-    if (agent) mEl.value = agent.telegram;
-  }
-  updateProgress(type, rEl.value);
+function populateDeals() {
+  const aEl=document.getElementById('d-agent'); aEl.innerHTML='<option value="">Выбрать агента...</option>'; AGENTS.forEach(a=>aEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
+  const rEl=document.getElementById('d-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
 }
 
-function onAgentChange(type) {
-  // auto-select agent level based on deals count if known
+function onAgentChange() {
+  const aEl=document.getElementById('d-agent');
+  const opt=aEl.options[aEl.selectedIndex];
+  const lvl=parseInt(opt.getAttribute('data-level')||50);
+  setLvl(lvl);
 }
 
-function updateProgress(type, recruitName) {
-  const cd  = COUNTERS_DATA.find(c => c.name === recruitName);
-  if (!cd) return;
-  const map = {showing:'showing',stickers:'stickers',rental:'rental'};
-  const key = map[type];
-  if (!key) return;
-  const done = cd[key][0], plan = cd[key][1];
-  const pct  = plan > 0 ? Math.round(done/plan*100) : 0;
-  const pg   = document.getElementById('prog-' + type);
-  const nm   = document.getElementById('num-' + type);
-  if (pg) pg.style.width = pct + '%';
-  if (nm) nm.textContent = done + '/' + plan;
+function onAgentChangeRental() {
+  const aEl=document.getElementById('rn-agent');
+  const opt=aEl.options[aEl.selectedIndex];
+  const lvl=parseInt(opt.getAttribute('data-level')||50);
+  const lvlEl=document.getElementById('rn-lvl'); if(lvlEl) lvlEl.value=lvl;
+  calcRental();
+}
+
+function onRCRental() {
+  const rEl=document.getElementById('rn-recruit');
+  const rec=RECRUITS.find(r=>r.name===rEl.value);
+  if(rec) { const ag=AGENTS.find(a=>a.id==rec.mentor_id); if(ag) { } } // mentor stays manual
+  updateProg('rental', rEl.value);
+}
+
+function onRC(type) {
+  const map={photo:['ph-r','ph-m'],showing:['sh-r','sh-m'],stickers:['st-r','st-m']};
+  const[rId,mId]=map[type];
+  const rEl=document.getElementById(rId), mEl=document.getElementById(mId);
+  const rec=RECRUITS.find(r=>r.name===rEl.value);
+  if(rec){const ag=AGENTS.find(a=>a.id==rec.mentor_id);if(ag)mEl.value=ag.telegram;}
+  updateProg(type,rEl.value);
+}
+
+function updateProg(type,name) {
+  const cd=COUNTERS.find(c=>c.name===name); if(!cd)return;
+  const map={showing:'showing',stickers:'stickers',rental:'rental'};
+  const key=map[type]; if(!key)return;
+  const done=cd[key][0],plan=cd[key][1],pct=plan>0?Math.round(done/plan*100):0;
+  const pg=document.getElementById('pg-'+type),pn=document.getElementById('pn-'+type);
+  if(pg)pg.style.width=pct+'%'; if(pn)pn.textContent=done+'/'+plan;
 }
 
 function setToday(type) {
-  const today = new Date().toISOString().split('T')[0];
-  const el = document.getElementById(type + '-date');
-  if (el) el.value = today;
-  if (type === 'rental') {
-    const f = document.getElementById('rental-from');
-    if (f) f.value = today;
-  }
+  const today=new Date().toISOString().split('T')[0];
+  const ids={photo:'ph-date',showing:'sh-date',stickers:'st-date'};
+  if(ids[type]){const el=document.getElementById(ids[type]);if(el)el.value=today;}
+  if(type==='rental'){const f=document.getElementById('rn-from');if(f)f.value=today;}
 }
 
-// ── TOGGLES ──
-function selectResult(val) {
-  selectedResult = val;
-  document.getElementById('btn-refused').className  = 'toggle-btn' + (val==='refused'  ? ' active-red'  : '');
-  document.getElementById('btn-thinking').className = 'toggle-btn' + (val==='thinking' ? ' active-blue' : '');
-}
-
-function selectExclusive(val) {
-  isExclusive = val;
-  document.getElementById('rent-excl-yes').className = 'toggle-btn' + (val  ? ' active-green' : '');
-  document.getElementById('rent-excl-no').className  = 'toggle-btn' + (!val ? ' active-red'   : '');
-}
-
-function selectDealType(val) {
-  dealType = val;
-  document.getElementById('rent-type-rent').className = 'toggle-btn' + (val==='rent' ? ' active-accent' : '');
-  document.getElementById('rent-type-sale').className = 'toggle-btn' + (val==='sale' ? ' active-accent' : '');
-}
-
-let calcSub = 'long'; // long, sale2, commercial
-
-function selectCalcType(val) {
-  calcType = val;
-  document.getElementById('calc-type-rent').className = 'toggle-btn' + (val==='rent' ? ' active-accent' : '');
-  document.getElementById('calc-type-sale').className = 'toggle-btn' + (val==='sale' ? ' active-accent' : '');
-  // Auto-set commission
-  if (val === 'sale') {
-    document.getElementById('calc-comm-pct').value = 3;
-  } else {
-    document.getElementById('calc-comm-pct').value = 50;
-  }
+// DEAL TYPE
+function setDealType(v) {
+  dType=v;
+  document.getElementById('dt-rent').className='tb'+(v==='rent'?' aa':'');
+  document.getElementById('dt-sale').className='tb'+(v==='sale'?' aa':'');
+  document.getElementById('d-subtype-wrap').style.display=v==='rent'?'block':'none';
+  const pct=v==='sale'?3:dSub==='comm'?100:50;
+  document.getElementById('d-comm-pct').value=pct;
   calcDeal();
 }
 
-function selectCalcSub(val) {
-  calcSub = val;
-  ['long','sale2','commercial'].forEach(function(s) {
-    const id = s === 'long' ? 'calc-sub-long' : s === 'sale2' ? 'calc-sub-sale' : 'calc-sub-comm';
-    const el = document.getElementById(id);
-    if (el) el.className = 'toggle-btn' + (s === val ? ' active-accent' : '');
-  });
-  // Auto-set default commission %
-  const commEl = document.getElementById('calc-comm-pct');
-  if (val === 'commercial') commEl.value = 100;
-  else if (val === 'sale2') commEl.value = 3;
-  else commEl.value = 50;
+function setSubtype(v) {
+  dSub=v;
+  document.getElementById('ds-long').className='tb'+(v==='long'?' aa':'');
+  document.getElementById('ds-comm').className='tb'+(v==='comm'?' aa':'');
+  document.getElementById('d-comm-pct').value=v==='comm'?100:50;
   calcDeal();
 }
 
-function selectCalcExcl(val) {
-  calcExclusive = val;
-  document.getElementById('calc-excl-yes').className = 'toggle-btn' + (val  ? ' active-green' : '');
-  document.getElementById('calc-excl-no').className  = 'toggle-btn' + (!val ? ' active-red'   : '');
+function setExcl(v) {
+  dExcl=v;
+  document.getElementById('d-excl-y').className='tb'+(v?' ag':'');
+  document.getElementById('d-excl-n').className='tb'+(!v?' ar':'');
   calcDeal();
 }
 
-function selectCalcLevel(val) {
-  calcLevel = val;
-  [50,70,90].forEach(function(l) {
-    const el = document.getElementById('calc-lvl-' + l);
-    if (el) el.className = 'toggle-btn' + (l === val ? ' active-accent' : '');
-  });
+function setLvl(v) {
+  dLvl=v;
+  [50,70,90].forEach(l=>{const el=document.getElementById('d-lvl-'+l);if(el)el.className='tb'+(l===v?' aa':'');});
   calcDeal();
 }
 
-function selectMentorPct(val) {
-  mentorPct = val;
-  document.getElementById('calc-mp-25').className = 'toggle-btn' + (val===25 ? ' active-accent' : '');
-  document.getElementById('calc-mp-15').className = 'toggle-btn' + (val===15 ? ' active-accent' : '');
-  calcDeal();
+function setRnExcl(v){rnExcl=v;document.getElementById('rn-ex-y').className='tb'+(v?' ag':'');document.getElementById('rn-ex-n').className='tb'+(!v?' ar':'');}
+function setRnType(v){rnType=v;document.getElementById('rn-tp-r').className='tb'+(v==='rent'?' aa':'');document.getElementById('rn-tp-s').className='tb'+(v==='sale'?' aa':'');}
+function selRes(v){showRes=v;document.getElementById('sh-ref').className='tb'+(v==='refused'?' ar':'');document.getElementById('sh-thk').className='tb'+(v==='thinking'?' ab':'');}
+function setH2O(form,type,val,btn){h2o[form][type]=val;const pre=form==='t0'?'h0':'h14';const id=pre+'-'+(type==='client'?'c':type==='owner'?'o':'p');document.getElementById(id).querySelectorAll('.hb').forEach(b=>b.className='hb');btn.classList.add('a'+val);}
+function selComp(v){compSel=v;document.getElementById('t14-cn').className='tb'+(v==='no'?' ag':'');document.getElementById('t14-cy').className='tb'+(v==='yes'?' ar':'');document.getElementById('t14-comp-det').style.display=v==='yes'?'block':'none';}
+function selT14R(v){t14Res=v;document.getElementById('t14-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t14-dr').className='tb'+(v==='dirty'?' ar':'');}
+function setT0R(v){t0Res=v;document.getElementById('t0-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t0-dr').className='tb'+(v==='dirty'?' ar':'');}
+
+// RENTAL CALC
+function calcRental() {
+  const price=parseFloat(document.getElementById('rn-price').value)||0;
+  const lvl=parseInt(document.getElementById('rn-lvl').value)||50;
+  const box=document.getElementById('rn-calc');
+  if(price<=0){box.style.display='none';return;}
+  const comm=Math.round(price*0.5);
+  const platPct=100-lvl, plat=Math.round(comm*platPct/100), agent=comm-plat;
+  box.style.display='block';
+  document.getElementById('rn-ct').textContent=comm+'$';
+  document.getElementById('rn-cp').textContent=plat+'$ ('+platPct+'%)';
+  document.getElementById('rn-ca').textContent=agent+'$ ('+lvl+'%)';
 }
 
-function selectComplaints(val) {
-  complaintsSel = val;
-  document.getElementById('t14-comp-no').className  = 'toggle-btn' + (val==='no'  ? ' active-green' : '');
-  document.getElementById('t14-comp-yes').className = 'toggle-btn' + (val==='yes' ? ' active-red'   : '');
-  document.getElementById('t14-comp-detail').style.display = val === 'yes' ? 'block' : 'none';
-}
-
-function selectT0Result(val) {
-  t0ResultSel = val;
-  document.getElementById('t0-clean').className = 'toggle-btn' + (val==='clean' ? ' active-green' : '');
-  document.getElementById('t0-dirty').className = 'toggle-btn' + (val==='dirty' ? ' active-red'   : '');
-}
-
-function selectT14Result(val) {
-  t14ResultSel = val;
-  document.getElementById('t14-clean').className = 'toggle-btn' + (val==='clean' ? ' active-green' : '');
-  document.getElementById('t14-dirty').className = 'toggle-btn' + (val==='dirty' ? ' active-red'   : '');
-}
-
-// ── H2O ──
-function selectH2O(form, type, val, btn) {
-  h2oScores[form][type] = val;
-  const prefix = form === 't0' ? 'h2o0' : 'h2o14';
-  document.getElementById(prefix + '-' + type).querySelectorAll('.h2o-btn')
-    .forEach(function(b) { b.className = 'h2o-btn'; });
-  btn.classList.add('a' + val);
-}
-
-// ── RENTAL CALC ──
-function calcRentalCommissions() {
-  const price     = parseFloat(document.getElementById('rental-price').value) || 0;
-  const level     = parseInt(document.getElementById('rental-agent-level').value) || 50;
-  const commTotal  = Math.round(price * 0.5);
-  const platPct2   = 100 - level; // 50→50, 70→30, 90→10
-  const platform   = Math.round(commTotal * platPct2 / 100);
-  const agentAmt   = commTotal - platform;
-  const box        = document.getElementById('rental-calc-result');
-
-  if (price > 0) {
-    box.style.display = 'block';
-    document.getElementById('rc-total').textContent    = commTotal + '$';
-    document.getElementById('rc-platform').textContent = platform + '$ (' + platPct2 + '%)';
-    document.getElementById('rc-agent').textContent    = agentAmt + '$ (' + level + '%)';
-  } else {
-    box.style.display = 'none';
-  }
-}
-
-// ── DEAL CALCULATOR ──
+// DEAL CALC
 function calcDeal() {
-  const price      = parseFloat(document.getElementById('calc-price').value) || 0;
-  const commPct    = parseFloat(document.getElementById('calc-comm-pct').value) || 50;
-  const platPct    = parseFloat(document.getElementById('calc-platform-pct').value) || 10;
-  const mentorEl   = document.getElementById('calc-mentor');
-  const hasMentor  = mentorEl && mentorEl.value !== '';
-  const box        = document.getElementById('calc-result-box');
-
-  // Show mentor pct field
-  document.getElementById('calc-mentor-pct-field').style.display = hasMentor ? 'block' : 'none';
-
-  if (price <= 0) {
-    box.innerHTML = '<div class="calc-result-title">💡 Введи цену для расчёта</div>';
-    return;
-  }
-
-  const commTotal  = Math.round(price * commPct / 100);
-  // Platform % = 100 - agent level (50%→platform50, 70%→platform30, 90%→platform10)
-  const platformPct = 100 - calcLevel;
-  const platform    = Math.round(commTotal * platformPct / 100);
-  const agentPool   = commTotal - platform;
-
-  let agentAmt  = agentPool;
-  let mentorAmt = 0;
-
-  if (hasMentor) {
-    mentorAmt = Math.round(agentAmt * mentorPct / 100);
-    agentAmt  = agentAmt - mentorAmt;
-  }
-
-  let html = '<div class="calc-result-title">📊 Распределение комиссии</div>';
-  html += '<div class="calc-row"><span class="calc-key">Цена объекта</span><span class="calc-val">' + price + '$</span></div>';
-  html += '<div class="calc-row"><span class="calc-key">Комиссия (' + commPct + '%)</span><span class="calc-val">' + commTotal + '$</span></div>';
-  html += '<div class="calc-row"><span class="calc-key">Агент ' + calcLevel + '% → ' + agentAmt + '$</span><span class="calc-val green">' + agentAmt + '$</span></div>';
-  html += '<div class="calc-row"><span class="calc-key">Платформа ' + platformPct + '%</span><span class="calc-val amber">' + platform + '$</span></div>';
-  if (hasMentor && mentorAmt > 0) {
-    html += '<div class="calc-row"><span class="calc-key">Наставник (' + mentorPct + '%)</span><span class="calc-val accent">' + mentorAmt + '$</span></div>';
-  }
-  html += '<div class="calc-total"><span class="calc-total-label">Итого комиссия</span><span class="calc-total-val">' + commTotal + '$</span></div>';
-  if (!calcExclusive) {
-    html += '<div class="info-box" style="margin-top:10px;">⚠️ Неэксклюзив — не идёт в зачёт системы 90/10</div>';
-  }
-  box.innerHTML = html;
+  const price=parseFloat(document.getElementById('d-price').value)||0;
+  const commPct=parseFloat(document.getElementById('d-comm-pct').value)||50;
+  const box=document.getElementById('d-calc-box');
+  if(price<=0){box.innerHTML='<div style="font-size:13px;color:var(--text2);">💡 Введи цену для расчёта</div>';return;}
+  const comm=Math.round(price*commPct/100);
+  const platPct=100-dLvl, plat=Math.round(comm*platPct/100), agent=comm-plat;
+  const dealLabel=dExcl?'Эксклюзив':'Неэксклюзив';
+  let html='';
+  html+=`<div class="crow"><span class="ck">Цена объекта</span><span class="cv">${price}$</span></div>`;
+  html+=`<div class="crow"><span class="ck">Комиссия (${commPct}%) · ${dealLabel}</span><span class="cv">${comm}$</span></div>`;
+  html+=`<div class="crow"><span class="ck">Агент ${dLvl}%</span><span class="cv g">${agent}$</span></div>`;
+  html+=`<div class="crow"><span class="ck">Платформа ${platPct}%</span><span class="cv a">${plat}$</span></div>`;
+  html+=`<div class="ctot"><span class="ctot-l">Итого комиссия</span><span class="ctot-v">${comm}$</span></div>`;
+  if(!dExcl)html+=`<div class="info" style="margin-top:10px;margin-bottom:0;">⚠️ Неэксклюзив — не идёт в зачёт 90/10</div>`;
+  box.innerHTML=html;
 }
 
-document.getElementById('calc-mentor').addEventListener('change', calcDeal);
+// PDF SEARCH
+function searchPDF(kadastr,prefix) {
+  clearTimeout(pdfTimer[prefix]);
+  const st=document.getElementById(prefix+'-pdf-status');
+  const wr=document.getElementById(prefix+'-pdf-wrap');
+  const fr=document.getElementById(prefix+'-pdf-frame');
+  if(!kadastr||kadastr.length<5){if(st)st.className='pdf-status';if(wr)wr.classList.remove('show');return;}
+  if(st){st.className='pdf-status found';st.textContent='🔍 Ищем договор...';}
+  pdfTimer[prefix]=setTimeout(async function(){
+    try{
+      const res=await fetch(API_URL+'?action=findContract&kadastr='+encodeURIComponent(kadastr));
+      const data=await res.json();
+      if(data.found){st.className='pdf-status found';st.textContent='✓ Договор найден: '+data.name;fr.src=data.view;wr.classList.add('show');}
+      else{st.className='pdf-status notfound';st.textContent='✗ Договор не найден';wr.classList.remove('show');fr.src='';}
+    }catch(e){st.className='pdf-status notfound';st.textContent='✗ Ошибка поиска';}
+  },800);
+}
 
-// ── SUBMIT CALC ──
+// SUBMIT
+function sub(type) {
+  let data={};
+  if(type==='photo'){const rEl=document.getElementById('ph-r'),mEl=document.getElementById('ph-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('ph-addr').value,ad_link_advertising:document.getElementById('ph-link').value,date:document.getElementById('ph-date').value};}
+  else if(type==='showing'){const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('sh-addr').value,ad_link_advertising:document.getElementById('sh-link').value,client_telegram:document.getElementById('sh-client').value,date:document.getElementById('sh-date').value,result:showRes};}
+  else if(type==='stickers'){const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district:document.getElementById('st-dist').value,stickers_count:document.getElementById('st-cnt').value,date:document.getElementById('st-date').value};}
+  else if(type==='rental'){
+    const aEl=document.getElementById('rn-agent'),rEl=document.getElementById('rn-recruit'),mEl=document.getElementById('rn-mentor');
+    const lvl=document.getElementById('rn-lvl').value;
+    const price=parseFloat(document.getElementById('rn-price').value)||0;
+    const comm=Math.round(price*0.5),plat=Math.round(comm*(100-parseInt(lvl))/100),agent=comm-plat;
+    data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.options[mEl.selectedIndex].text,agent_level:lvl,ad_link_advertising:document.getElementById('rn-link').value,cadastral_number:document.getElementById('rn-cadastral').value,is_exclusive:rnExcl,deal_type:rnType,rent_price:price,commission_total:comm,commission_platform:plat,commission_agent:agent,client_name:document.getElementById('rn-cname').value,client_phone:document.getElementById('rn-cphone').value,owner_name:document.getElementById('rn-oname').value,owner_phone:document.getElementById('rn-ophone').value,rent_from:document.getElementById('rn-from').value,rent_to:document.getElementById('rn-to').value,t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,t0_h2o_process:h2o.t0.process,t0_result:t0Res,t0_comment:document.getElementById('t0-comment').value};
+  }
+  else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
+  send(type,data);
+  showToast('Отправлено! ✓');
+  setTimeout(goBack,1500);
+}
+
 function submitCalc() {
-  const price     = document.getElementById('calc-price').value;
-  const commPct   = document.getElementById('calc-comm-pct').value;
-  const agentEl   = document.getElementById('calc-agent');
-  const agent     = agentEl.options[agentEl.selectedIndex].text;
-  const link      = document.getElementById('calc-link').value;
-  const from      = document.getElementById('calc-from').value;
-  const to        = document.getElementById('calc-to').value;
-
-  const commTotal = Math.round(parseFloat(price) * parseFloat(commPct) / 100);
-  const platform  = Math.round(commTotal * 0.1);
-  const agentAmt  = Math.round((commTotal - platform) * calcLevel / 100);
-
-  const data = {
-    agent: agent, price: price, comm_pct: commPct, comm_total: commTotal,
-    platform: platform, agent_amt: agentAmt, agent_level: calcLevel,
-    is_exclusive: calcExclusive, deal_type: calcType,
-    link: link, rent_from: from, rent_to: to,
-  };
-
-  sendData('calc', data);
+  const aEl=document.getElementById('d-agent');
+  const price=parseFloat(document.getElementById('d-price').value)||0;
+  const commPct=parseFloat(document.getElementById('d-comm-pct').value)||50;
+  const comm=Math.round(price*commPct/100),plat=Math.round(comm*(100-dLvl)/100),agent=comm-plat;
+  const rEl=document.getElementById('d-recruit');
+  const data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,price,comm_pct:commPct,comm_total:comm,platform:plat,agent_amt:agent,agent_level:dLvl,is_exclusive:dExcl,deal_type:dType,deal_subtype:dSub,link:document.getElementById('d-link').value,cadastral:document.getElementById('d-cadastral').value,rent_from:document.getElementById('d-from').value,rent_to:document.getElementById('d-to').value};
+  send('calc',data);
   showToast('Расчёт отправлен! ✓');
 }
 
-// ── FILE PREVIEW ──
-function previewFile(input, previewId) {
-  const prev = document.getElementById(previewId);
-  if (input.files && input.files[0]) prev.textContent = '✓ ' + input.files[0].name;
+function send(type,data) {
+  const form=document.createElement('form'); form.method='POST'; form.action=API_URL; form.target='hf';
+  const inp=document.createElement('input'); inp.type='hidden'; inp.name='payload'; inp.value=JSON.stringify({type,data});
+  form.appendChild(inp); document.body.appendChild(form); form.submit(); document.body.removeChild(form);
 }
 
-// ── COUNTERS ──
-function renderCounters() {
-  // Agent counters
-  const agentList = document.getElementById('agent-counters-list');
-  if (agentList) {
-    if (Object.keys(AGENT_COUNTERS).length === 0 && AGENTS_DATA.length === 0) {
-      agentList.innerHTML = '<div class="info-box">Нет данных по агентам.</div>';
-    } else {
-      agentList.innerHTML = '';
-      // Show all agents, even those with 0 deals
-      AGENTS_DATA.forEach(function(a) {
-        const ac    = AGENT_COUNTERS[a.name] || {deals:0, level:'Агент 50%', next:'через 10 сделок → 70%'};
-        const deals = ac.deals || 0;
-        const level = ac.level || 'Агент 50%';
-        const next  = ac.next  || 'через ' + (10 - deals) + ' сделок → 70%';
-        // Progress bar: 0-10 → 50%, 10-100 → 70%, 100+ → 90%
-        var maxDeals = deals <= 10 ? 10 : deals <= 100 ? 100 : 100;
-        var pct = Math.min(Math.round(deals / maxDeals * 100), 100);
-        var levelColor = deals >= 100 ? 'var(--green)' : deals >= 10 ? 'var(--amber)' : 'var(--accent)';
-        agentList.innerHTML +=
-          '<div class="counter-card">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
-              '<div class="counter-name" style="margin-bottom:0">' + a.name + '</div>' +
-              '<span style="font-size:11px;font-weight:700;color:' + levelColor + ';background:var(--bg3);padding:3px 8px;border-radius:20px;">' + level + '</span>' +
-            '</div>' +
-            '<div class="counter-row">' +
-              '<span class="counter-icon">🏆</span>' +
-              '<span class="counter-type">Эксклюзивных сделок</span>' +
-              '<div class="counter-track" style="width:90px;"><div class="counter-fill" style="width:' + pct + '%;background:' + levelColor + '"></div></div>' +
-              '<span class="counter-val" style="color:' + levelColor + '">' + deals + '</span>' +
-            '</div>' +
-            '<div style="font-size:11px;color:var(--text3);margin-top:6px;">' + next + '</div>' +
-          '</div>';
-      });
-    }
-  }
+// CONTRACT
+function cRender() {
+  [1,2,3].forEach(i=>{
+    document.getElementById('csn'+i).className='csn '+(i<cStep?'done':i===cStep?'active':'idle');
+    document.getElementById('csl'+i).className='csl'+(i===cStep?' on':'');
+  });
+  document.getElementById('csl12').className='csline'+(cStep>1?' on':'');
+  document.getElementById('csl23').className='csline'+(cStep>2?' on':'');
+  ['cp1','cp2','cp3'].forEach((id,i)=>document.getElementById(id).style.display=(i+1===cStep)?'block':'none');
+  document.getElementById('cbback').style.display=cStep>1?'block':'none';
+  document.getElementById('cbnext').textContent=cStep===3?'Создать договор ✓':'Продолжить →';
+  document.getElementById('cresult').style.display='none';
+  document.getElementById('cscroll').scrollTop=0;
+}
 
-  // Recruit counters
-  const list = document.getElementById('counters-list');
-  if (!list) return;
-  if (COUNTERS_DATA.length === 0) {
-    list.innerHTML = '<div class="info-box">Нет данных по рекрутам.</div>';
-    return;
+function selLang(lang,el){cLang=lang;document.querySelectorAll('.lcbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');document.getElementById('cerr1').style.display='none';}
+function setCTab(id,el){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.ctpg').forEach(p=>p.classList.remove('on'));el.classList.add('on');document.getElementById(id).classList.add('on');}
+function syncDep(){const d=document.getElementById('c-dep');if(!d._t)d.value=document.getElementById('c-pr').value;}
+document.getElementById('c-dep').addEventListener('input',function(){this._t=true;});
+function gs(id){return(document.getElementById(id)||{}).value||'';}
+function fmt(iso){if(!iso)return'';const p=iso.split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:iso;}
+function onem(iso){if(!iso)return'';const p=iso.split('-');if(p.length!==3)return'';const d=new Date(+p[0],+p[1]-1,+p[2]),o=d.getDate();d.setMonth(d.getMonth()+1);if(d.getDate()!==o)d.setDate(0);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}
+
+function cValidate(){
+  if(cStep===1){if(!cLang){const e=document.getElementById('cerr1');e.textContent='Выбери язык';e.style.display='block';return false;}return true;}
+  if(cStep===2){const req=['c-ts','c-on','c-oi','c-cn','c-ci','c-cad','c-addr','c-area','c-start','c-end','c-mo','c-pr','c-dep','c-pd'];for(const id of req){if(!gs(id)){const e=document.getElementById('cerr2');e.textContent='Заполни все обязательные поля';e.style.display='block';return false;}}return true;}
+  return true;
+}
+
+function cBuildSum(){
+  const labels={'Язык':cLang,'Дата':fmt(gs('c-ts')),'Собственник':gs('c-on'),'ID соб.':gs('c-oi'),'Арендатор':gs('c-cn'),'ID арен.':gs('c-ci'),'Кадастр':gs('c-cad'),'Адрес':gs('c-addr'),'Этаж':gs('c-fl')||'—','Площадь':gs('c-area')+' м²','Начало':fmt(gs('c-start')),'Конец':fmt(gs('c-end')),'Срок':gs('c-mo')+' мес.','Цена':gs('c-pr')+'$','Депозит':gs('c-dep')+'$','День оплаты':gs('c-pd')};
+  document.getElementById('csum').innerHTML=Object.entries(labels).map(([k,v])=>`<div class="csumrow"><span class="csumk">${k}</span><span class="csumv">${v||'—'}</span></div>`).join('');
+}
+
+function cNext(){
+  if(!cValidate())return;
+  if(cStep===2)cBuildSum();
+  if(cStep<3){cStep++;cRender();return;}
+  const data={contract_language:cLang,timestamp:fmt(gs('c-ts')),owner_full_name:gs('c-on'),owner_personal_number:gs('c-oi'),client_full_name:gs('c-cn'),client_personal_number:gs('c-ci'),cadastral_code:gs('c-cad'),street_house:gs('c-addr'),floor:gs('c-fl'),apartment_number:gs('c-apt'),apartment_area:gs('c-area'),start_rent:fmt(gs('c-start')),end_rent:fmt(gs('c-end')),rent_duration_months:gs('c-mo'),price_usd:gs('c-pr'),deposit_usd:gs('c-dep'),pay_day:gs('c-pd'),one_month:onem(gs('c-start'))};
+  document.getElementById('ov').classList.add('on');
+  document.getElementById('cbnext').disabled=true;
+  if(typeof google!=='undefined'&&google.script&&google.script.run){
+    google.script.run.withSuccessHandler(function(r){document.getElementById('ov').classList.remove('on');document.getElementById('cbnext').disabled=false;document.getElementById('cdoclink').href=r.docUrl;document.getElementById('cpdflink').href=r.pdfUrl;document.getElementById('cresult').style.display='block';document.getElementById('cbnext').style.display='none';}).withFailureHandler(function(e){document.getElementById('ov').classList.remove('on');document.getElementById('cbnext').disabled=false;const err=document.getElementById('cerr3');err.textContent='Ошибка: '+(e.message||e);err.style.color='var(--red)';err.style.display='block';}).submitContract(data);
+  }else{
+    send('contract',data);
+    document.getElementById('ov').classList.remove('on');document.getElementById('cbnext').disabled=false;
+    const err=document.getElementById('cerr3');err.textContent='Запрос отправлен. Договор будет создан через минуту.';err.style.color='var(--green)';err.style.display='block';
   }
-  list.innerHTML = '';
-  COUNTERS_DATA.forEach(function(r) {
-    const rows = [
-      {icon:'🏠', label:'Показ',     done:r.showing[0],  plan:r.showing[1]},
-      {icon:'📌', label:'Расклейка', done:r.stickers[0], plan:r.stickers[1]},
-      {icon:'💰', label:'Сдача',     done:r.rental[0],   plan:r.rental[1]},
-    ];
-    list.innerHTML += '<div class="counter-card"><div class="counter-name">' + r.name + '</div>' +
-      rows.map(function(row) {
-        const pct = row.plan > 0 ? Math.round(row.done/row.plan*100) : 0;
-        return '<div class="counter-row"><span class="counter-icon">' + row.icon + '</span>' +
-          '<span class="counter-type">' + row.label + '</span>' +
-          '<div class="counter-track"><div class="counter-fill" style="width:' + pct + '%"></div></div>' +
-          '<span class="counter-val">' + row.done + '/' + row.plan + '</span></div>';
-      }).join('') + '</div>';
+}
+function cBack(){if(cStep>1){cStep--;cRender();}}
+
+// STATS
+function renderStats(){
+  const aList=document.getElementById('agent-list'),rList=document.getElementById('recruit-list');
+  aList.innerHTML='';
+  AGENTS.forEach(a=>{
+    const ac=AGENT_C[a.name]||{deals:0,level:'Агент '+(a.level||50)+'%',next:'через '+(10)+'→ следующий уровень'};
+    const deals=ac.deals||0,level=ac.level||('Агент '+(a.level||50)+'%'),next=ac.next||'';
+    const realLvl=a.level||50;
+    const maxD=realLvl>=90?deals+1:realLvl>=70?100:10;
+    const pct=Math.min(Math.round(deals/maxD*100),100);
+    const col=realLvl>=90?'var(--green)':realLvl>=70?'var(--amber)':'var(--accent)';
+    aList.innerHTML+=`<div class="cntcard"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="cntname" style="margin:0">${a.name}</div><span style="font-size:11px;font-weight:700;color:${col};background:var(--bg3);padding:3px 8px;border-radius:20px;">${realLvl}% · ${deals} сделок</span></div><div class="cntrow"><span class="cntic">🏆</span><span class="cnttype">Эксклюзивных сделок</span><div class="cnttrack"><div class="cntfill" style="width:${pct}%;background:${col}"></div></div><span class="cntval" style="color:${col}">${deals}</span></div><div style="font-size:11px;color:var(--text3);margin-top:5px;">${next}</div></div>`;
+  });
+  rList.innerHTML='';
+  COUNTERS.forEach(r=>{
+    const rows=[{ic:'🏠',lb:'Показ',done:r.showing[0],plan:r.showing[1]},{ic:'📌',lb:'Расклейка',done:r.stickers[0],plan:r.stickers[1]},{ic:'💰',lb:'Сдача',done:r.rental[0],plan:r.rental[1]}];
+    rList.innerHTML+=`<div class="cntcard"><div class="cntname">${r.name}</div>${rows.map(row=>{const pct=row.plan>0?Math.round(row.done/row.plan*100):0;return`<div class="cntrow"><span class="cntic">${row.ic}</span><span class="cnttype">${row.lb}</span><div class="cnttrack"><div class="cntfill" style="width:${pct}%"></div></div><span class="cntval">${row.done}/${row.plan}</span></div>`;}).join('')}</div>`;
   });
 }
 
-// ── SUBMIT ──
-function submitForm(type) {
-  let data = {};
+// QUIZ
+const QUIZ_QUESTIONS=[
+  {q:'Что такое эксклюзив в системе платформы?',opts:['Квартира только у нас в базе','Доверительное управление объектом','Объект с высокой ценой','Квартира с хорошим ремонтом'],correct:1,expl:'Эксклюзив = доверительное управление. Собственник дал согласие работать через платформу, объект закреплён за нами.'},
+  {q:'Какой процент платформа получает за эксклюзивный объект?',opts:['5%','10%','15%','20%'],correct:1,expl:'Платформа получает 10% навечно с каждой сделки по эксклюзивному объекту.'},
+  {q:'Сколько процентов получает агент на уровне 50%?',opts:['50% от цены','50% от комиссии агентства','50% от прибыли','50% от депозита'],correct:1,expl:'Агент 50% получает 50% от комиссии агентства (после вычета доли платформы).'},
+  {q:'Идут ли неэксклюзивные объекты в зачёт системы 90/10?',opts:['Да, всегда','Да, частично','Нет, никогда','Зависит от цены'],correct:2,expl:'Неэксклюзив никогда не идёт в зачёт системы 90/10 и не даёт наставнической выплаты.'},
+  {q:'Сколько раз наставник должен сходить с рекрутом на показ?',opts:['5 раз','10 раз','15 раз','20 раз'],correct:2,expl:'Обязательная практика — 15 раз по каждому типу действий: расклейка, фото, показ, договор.'},
+  {q:'Какой процент получает наставник с первых 10 сделок агента?',opts:['10%','15%','20%','25%'],correct:3,expl:'Наставник получает 25% от агентской доли с первых 10 эксклюзивных объектов рекрута.'},
+  {q:'Что происходит при обмане в системе?',opts:['Штраф','Предупреждение','Обнуление накопленного пути','Ничего'],correct:2,expl:'За обман — обнуление. Агент теряет статус, накопленный путь и наставнические права.'},
+  {q:'Какой процент получает внешний агент (не участник платформы)?',opts:['20%','25%','30%','40%'],correct:2,expl:'Внешний агент получает 30% за приведённую сделку.'},
+  {q:'На каком уровне агент получает 90% комиссии?',opts:['После 50 сделок','После 100 сделок','После 5 лет работы','После обучения'],correct:1,expl:'После 100 эксклюзивных сделок агент выходит на уровень 90/10.'},
+  {q:'Что такое T0?',opts:['Оценка через 14 дней','Оценка сразу после сдачи','Первый показ','Первый договор'],correct:1,expl:'T0 — оценка качества сделки сразу после её закрытия по системе H2O (Client / Owner / Process).'},
+  {q:'Что такое T14?',opts:['14-й показ','Оценка через 14 дней после сдачи','14% комиссия','14-я сделка'],correct:1,expl:'T14 — повторная оценка через 14 дней после сдачи. Проверяется как чувствуют себя клиент и собственник.'},
+  {q:'Сколько квартир рекрут сдаёт под 20% на объектах наставника?',opts:['3','5','10','15'],correct:1,expl:'Рекрут сдаёт 5 квартир под 20% на объектах наставника — первый этап обучения.'},
+  {q:'Какой процент получает агент за передачу клиента внутри системы?',opts:['5%','10%','15%','20%'],correct:1,expl:'За передачу клиента внутри системы агент получает 10% от комиссии по состоявшейся сделке.'},
+  {q:'Сколько процентов получает агент при передаче только на показ и сдачу (без фото)?',opts:['10%','20%','30%','40%'],correct:1,expl:'Только показ + сдача = 20%. Это когда основной фундамент объекта создан другим человеком.'},
+  {q:'Какая комиссия в долгосрочной аренде?',opts:['100% от месячной аренды','50% от месячной аренды','30% от месячной аренды','10% от годовой аренды'],correct:1,expl:'В долгосрочной аренде комиссия составляет 50% от месячной стоимости аренды.'},
+  {q:'Что нужно сделать чтобы стать наставником?',opts:['Проработать 1 год','Дойти до уровня 90/10','Пройти тест','Набрать 50 клиентов'],correct:1,expl:'Наставником может стать только тот, кто сам прошёл путь и дошёл до уровня 90/10.'},
+  {q:'Какой процент получает наставник с 11-100 сделок агента?',opts:['10%','15%','20%','25%'],correct:1,expl:'С 11 по 100 сделок агента наставник получает 15% от агентской доли.'},
+  {q:'Может ли агент уйти и вернуться в платформу?',opts:['Нет, никогда','Да, без условий','Да, 25 сделок 50/50 если ушёл добровольно','Да, но только через год'],correct:2,expl:'При добровольном уходе — возврат через 25 сделок 50/50. При уходе за обман — начинать с нуля.'},
+  {q:'Что входит в обязательный пакет для регистрации эксклюзивного объекта?',opts:['Только адрес','Только телефон','Адрес, фото, телефон, кадастр, условия, история коммуникации','Только договор'],correct:2,expl:'Эксклюзив требует полный пакет: адрес, фото/видео, контакт собственника, кадастр, условия, история и подтверждение доверия.'},
+  {q:'Кто считается создателем эксклюзивного объекта?',opts:['Тот кто его продал','Тот кто нашёл собственника и зафиксировал объект первым','Старший агент','Наставник'],correct:1,expl:'Создатель эксклюзива — тот, кто первым нашёл собственника, провёл коммуникацию и внёс полный пакет данных в систему.'},
+];
 
-  if (type === 'photo') {
-    const rEl = document.getElementById('photo-recruit');
-    const mEl = document.getElementById('photo-mentor');
-    data = {
-      recruit:            rEl ? rEl.options[rEl.selectedIndex].text : '',
-      mentor:             mEl ? mEl.value : '',
-      district_address:   document.getElementById('photo-address').value,
-      ad_link_advertising:document.getElementById('photo-adlink').value,
-      date:               document.getElementById('photo-date').value,
-    };
-  } else if (type === 'showing') {
-    const rEl = document.getElementById('showing-recruit');
-    const mEl = document.getElementById('showing-mentor');
-    data = {
-      recruit:            rEl ? rEl.options[rEl.selectedIndex].text : '',
-      mentor:             mEl ? mEl.value : '',
-      district_address:   document.getElementById('showing-address').value,
-      ad_link_advertising:document.getElementById('showing-adlink').value,
-      client_telegram:    document.getElementById('showing-client').value,
-      date:               document.getElementById('showing-date').value,
-      result:             selectedResult,
-    };
-  } else if (type === 'stickers') {
-    const rEl = document.getElementById('stickers-recruit');
-    const mEl = document.getElementById('stickers-mentor');
-    data = {
-      recruit:        rEl ? rEl.options[rEl.selectedIndex].text : '',
-      mentor:         mEl ? mEl.value : '',
-      district:       document.getElementById('stickers-district').value,
-      stickers_count: document.getElementById('stickers-count').value,
-      date:           document.getElementById('stickers-date').value,
-    };
-  } else if (type === 'rental') {
-    const aEl  = document.getElementById('rental-agent');
-    const rEl  = document.getElementById('rental-recruit');
-    const mcEl = document.getElementById('rental-mentor-comm');
-    const lvEl = document.getElementById('rental-agent-level');
-    data = {
-      agent:               aEl  ? aEl.options[aEl.selectedIndex].text  : '',
-      recruit:             rEl  ? rEl.options[rEl.selectedIndex].text  : '',
-      mentor_commission:   mcEl ? mcEl.options[mcEl.selectedIndex].text : '',
-      agent_level:         lvEl ? lvEl.value : '50',
-      ad_link_advertising: document.getElementById('rental-adlink').value,
-      cadastral_number:    document.getElementById('rental-cadastral').value,
-      is_exclusive:        isExclusive,
-      deal_type:           dealType,
-      rent_price:          document.getElementById('rental-price').value,
-      client_name:         document.getElementById('rental-client-name').value,
-      client_phone:        document.getElementById('rental-client-phone').value,
-      owner_name:          document.getElementById('rental-owner-name').value,
-      owner_phone:         document.getElementById('rental-owner-phone').value,
-      rent_from:           document.getElementById('rental-from').value,
-      rent_to:             document.getElementById('rental-to').value,
-      // T0
-      t0_h2o_client:  h2oScores.t0.client,
-      t0_h2o_owner:   h2oScores.t0.owner,
-      t0_h2o_process: h2oScores.t0.process,
-      t0_result:      t0ResultSel,
-      t0_comment:     document.getElementById('t0-comment').value,
-    };
-  } else if (type === 't14') {
-    const agEl = document.getElementById('t14-agent');
-    data = {
-      object:       document.getElementById('t14-object').value,
-      agent:        agEl ? agEl.options[agEl.selectedIndex].text : '',
-      deal_date:    document.getElementById('t14-deal-date').value,
-      changes:      document.getElementById('t14-changes').value,
-      complaints:   complaintsSel,
-      complaints_text: document.getElementById('t14-comp-text') ? document.getElementById('t14-comp-text').value : '',
-      deal_result:  t14ResultSel,
-      agent_comment:document.getElementById('t14-comment').value,
-      h2o_client:   h2oScores.t14.client,
-      h2o_owner:    h2oScores.t14.owner,
-      h2o_process:  h2oScores.t14.process,
-    };
+let qIdx=0, qAnswered=[], qScore=0;
+
+function startQuiz(){
+  qIdx=0; qAnswered=new Array(QUIZ_QUESTIONS.length).fill(null); qScore=0;
+  document.getElementById('std-content').style.display='none';
+  document.getElementById('quiz-wrap').style.display='block';
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-content').style.display='block';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q=QUIZ_QUESTIONS[qIdx];
+  const answered=qAnswered[qIdx];
+  document.getElementById('quiz-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span style="font-size:12px;color:var(--text2);">Вопрос ${qIdx+1} из ${QUIZ_QUESTIONS.length}</span>
+      <span style="font-size:12px;font-weight:700;color:var(--accent2);">Счёт: ${qScore}/${qIdx}</span>
+    </div>
+    <div class="qcard">
+      <div class="qnum">Вопрос ${qIdx+1}</div>
+      <div class="qtext">${q.q}</div>
+      <div class="qopts">
+        ${q.opts.map((opt,i)=>{
+          let cls='qopt';
+          if(answered!==null){
+            if(i===q.correct)cls+=' correct';
+            else if(i===answered&&i!==q.correct)cls+=' wrong';
+          }
+          return `<button class="qopt${answered!==null?(i===q.correct?' correct':i===answered?' wrong':''):''}" ${answered!==null?'disabled':''} onclick="answerQ(${i})">${opt}</button>`;
+        }).join('')}
+      </div>
+      ${answered!==null?`<div class="qexpl show">${answered===q.correct?'✅ Правильно! ':'❌ Неверно. '}${q.expl}</div>`:''}
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      ${qIdx>0?`<button class="sbtn navy" onclick="prevQ()" style="flex:0 0 auto;width:80px;">← Назад</button>`:''}
+      ${answered!==null&&qIdx<QUIZ_QUESTIONS.length-1?`<button class="sbtn" onclick="nextQ()">Следующий →</button>`:''}
+      ${answered!==null&&qIdx===QUIZ_QUESTIONS.length-1?`<button class="sbtn" onclick="showResult()">Завершить 🏆</button>`:''}
+    </div>
+  `;
+}
+
+function answerQ(i){
+  if(qAnswered[qIdx]!==null)return;
+  const q=QUIZ_QUESTIONS[qIdx];
+  qAnswered[qIdx]=i;
+  if(i===q.correct)qScore++;
+  renderQuestion();
+}
+
+function nextQ(){if(qIdx<QUIZ_QUESTIONS.length-1){qIdx++;renderQuestion();}}
+function prevQ(){if(qIdx>0){qIdx--;renderQuestion();}}
+
+function showResult(){
+  document.getElementById('quiz-content').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+  const pct=Math.round(qScore/QUIZ_QUESTIONS.length*100);
+  const ic=pct>=80?'🏆':pct>=60?'👍':'📚';
+  const msg=pct>=80?'Отличный результат! Ты знаешь стандарты платформы.':pct>=60?'Хороший результат! Повтори слабые места.':'Нужно повторить стандарты платформы.';
+  document.getElementById('qr-ic').textContent=ic;
+  document.getElementById('qr-t').textContent=`${qScore} из ${QUIZ_QUESTIONS.length} (${pct}%)`;
+  document.getElementById('qr-s').textContent=msg;
+}
+
+function resetQuiz(){startQuiz();}
+function showStandards(){document.getElementById('std-content').style.display='block';document.getElementById('quiz-wrap').style.display='none';}
+
+// MISC
+function prevFile(input,id){const el=document.getElementById(id);if(input.files&&input.files[0])el.textContent='✓ '+input.files[0].name;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// LOAD
+async function loadData(){
+  try{
+    const res=await fetch(API_URL+'?action=getLists',{cache:'no-cache'});
+    const data=await res.json();
+    if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
+    if(data.agents&&data.agents.length)AGENTS=data.agents;
+    if(data.agentCounters)AGENT_C=data.agentCounters;
+    if(data.recruits)COUNTERS=data.recruits.map(r=>{const c=data.counters&&data.counters[r.name]||{};return{name:r.name,showing:[c.showing?c.showing.done:0,c.showing?c.showing.plan:15],stickers:[c.stickers?c.stickers.done:0,c.stickers?c.stickers.plan:15],rental:[c.rental?c.rental.done:0,c.rental?c.rental.plan:10]};});
+    const me=COUNTERS[0];if(me){document.getElementById('pill-showing').textContent=me.showing[0]+'/'+me.showing[1];document.getElementById('pill-stickers').textContent=me.stickers[0]+'/'+me.stickers[1];document.getElementById('pill-rental').textContent=me.rental[0]+'/'+me.rental[1];}
+  }catch(e){
+    RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0',mentor_id:1},{id:2,name:'Artem',telegram:'@levittart',mentor_id:1},{id:3,name:'Mariam',telegram:'@sourlylight',mentor_id:1},{id:4,name:'Liana',telegram:'@lianagadzhikhana',mentor_id:1},{id:5,name:'Nikita',telegram:'@krezonik',mentor_id:2},{id:6,name:'Mikhail',telegram:'@Dumbadze_Mikhail',mentor_id:3},{id:7,name:'Irakli',telegram:'@iraklibu',mentor_id:1},{id:8,name:'Anton',telegram:'@Antonio_ozzz',mentor_id:4},{id:9,name:'Gio',telegram:'@giosar',mentor_id:1},{id:10,name:'Viktoriia',telegram:'@viktoriia_radaeva',mentor_id:2},{id:11,name:'Tunar',telegram:'@tunaotchenash',mentor_id:3}];
+    AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:70},{id:3,name:'Sergi',telegram:'@SergiTb',level:50},{id:4,name:'Zaza',telegram:'@eforit',level:70}];
+    COUNTERS=RECRUITS.map(r=>({name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]}));
   }
-
-  sendData(type, data);
-  showToast('Отправлено! ✓');
-  setTimeout(function() { goBack(); }, 1500);
+  populateDeals();
+  cRender();
 }
 
-function sendData(type, data) {
-  const form  = document.createElement('form');
-  form.method = 'POST';
-  form.action = API_URL;
-  form.target = 'hidden-frame';
-  const input = document.createElement('input');
-  input.type  = 'hidden';
-  input.name  = 'payload';
-  input.value = JSON.stringify({type: type, data: data});
-  form.appendChild(input);
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2500);
-}
-
-// ── LOAD DATA ──
-async function loadLists() {
-  try {
-    const res  = await fetch(API_URL + '?action=getLists', {cache:'no-cache'});
-    const data = await res.json();
-    if (data.recruits      && data.recruits.length > 0) RECRUITS_DATA  = data.recruits;
-    if (data.agents        && data.agents.length   > 0) AGENTS_DATA    = data.agents;
-    if (data.agentCounters) AGENT_COUNTERS = data.agentCounters;
-    if (data.recruits) {
-      COUNTERS_DATA = data.recruits.map(function(r) {
-        const c = data.counters && data.counters[r.name] || {};
-        return {
-          name:     r.name,
-          showing:  [c.showing  ? c.showing.done  : 0, c.showing  ? c.showing.plan  : 15],
-          stickers: [c.stickers ? c.stickers.done : 0, c.stickers ? c.stickers.plan : 15],
-          rental:   [c.rental   ? c.rental.done   : 0, c.rental   ? c.rental.plan   : 10],
-        };
-      });
-    }
-  } catch(err) {
-    console.log('Fallback data');
-    RECRUITS_DATA = [
-      {id:1,  name:'Danila',    telegram:'@DanilaPavlenk0',   mentor_id:1},
-      {id:2,  name:'Artem',     telegram:'@levittart',         mentor_id:1},
-      {id:3,  name:'Mariam',    telegram:'@sourlylight',       mentor_id:1},
-      {id:4,  name:'Liana',     telegram:'@lianagadzhikhana', mentor_id:1},
-      {id:5,  name:'Nikita',    telegram:'@krezonik',          mentor_id:2},
-      {id:6,  name:'Mikhail',   telegram:'@Dumbadze_Mikhail', mentor_id:3},
-      {id:7,  name:'Irakli',    telegram:'@iraklibu',          mentor_id:1},
-      {id:8,  name:'Anton',     telegram:'@Antonio_ozzz',      mentor_id:4},
-      {id:9,  name:'Gio',       telegram:'@giosar',            mentor_id:1},
-      {id:10, name:'Viktoriia', telegram:'@viktoriia_radaeva', mentor_id:2},
-      {id:11, name:'Tunar',     telegram:'@tunaotchenash',     mentor_id:3},
-    ];
-    AGENTS_DATA = [
-      {id:1, name:'David',  telegram:'@davidtibelashvili'},
-      {id:2, name:'Daniil', telegram:'@dogruller'},
-      {id:3, name:'Sergi',  telegram:'@SergiTb'},
-      {id:4, name:'Zaza',   telegram:'@eforit'},
-    ];
-    COUNTERS_DATA = RECRUITS_DATA.map(function(r) {
-      return {name:r.name, showing:[0,15], stickers:[0,15], rental:[0,10]};
-    });
-  } finally {
-    document.getElementById('loading').classList.add('hidden');
-    initDefaultTab();
-  }
-}
-
-// Telegram
-if (window.Telegram && window.Telegram.WebApp) {
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
-}
-
-loadLists();
+// TG
+if(window.Telegram&&window.Telegram.WebApp){const tg=window.Telegram.WebApp;tg.ready();tg.expand();try{tg.disableVerticalSwipes();}catch(e){}try{tg.setHeaderColor('#0a0a0f');}catch(e){}}
 </script>
 </body>
 </html>
