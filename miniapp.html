@@ -295,8 +295,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
               <span>Участвует рекрут?</span>
             </label>
             <div class="tg c2" style="margin-bottom:10px;">
-              <button class="tb" id="rn-has-recruit-n" onclick="setHasRecruit(false)">Без рекрута</button>
-              <button class="tb ag" id="rn-has-recruit-y" onclick="setHasRecruit(true)">✓ Есть рекрут</button>
+              <button class="tb ar" id="rn-has-recruit-n" onclick="setHasRecruit(false)">Без рекрута</button>
+              <button class="tb" id="rn-has-recruit-y" onclick="setHasRecruit(true)">+ Есть рекрут</button>
             </div>
           </div>
 
@@ -1249,23 +1249,57 @@ function prevFile(input,id){const el=document.getElementById(id);if(input.files&
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 // LOAD
-async function loadData(){
-  try{
-    const res=await fetch(API_URL+'?action=getLists',{cache:'no-cache'});
-    const data=await res.json();
-    if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
-    if(data.agents&&data.agents.length)AGENTS=data.agents;
-    if(data.agentCounters)AGENT_C=data.agentCounters;
-    if(data.recruits)COUNTERS=data.recruits.map(r=>{const c=data.counters&&data.counters[r.name]||{};return{name:r.name,showing:[c.showing?c.showing.done:0,c.showing?c.showing.plan:15],stickers:[c.stickers?c.stickers.done:0,c.stickers?c.stickers.plan:15],rental:[c.rental?c.rental.done:0,c.rental?c.rental.plan:10]};});
-    const me=COUNTERS[0];if(me){document.getElementById('pill-showing').textContent=me.showing[0]+'/'+me.showing[1];document.getElementById('pill-stickers').textContent=me.stickers[0]+'/'+me.stickers[1];document.getElementById('pill-rental').textContent=me.rental[0]+'/'+me.rental[1];}
-  }catch(e){
-    RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0',mentor_id:1},{id:2,name:'Artem',telegram:'@levittart',mentor_id:1},{id:3,name:'Mariam',telegram:'@sourlylight',mentor_id:1},{id:4,name:'Liana',telegram:'@lianagadzhikhana',mentor_id:1},{id:5,name:'Nikita',telegram:'@krezonik',mentor_id:2},{id:6,name:'Mikhail',telegram:'@Dumbadze_Mikhail',mentor_id:3},{id:7,name:'Irakli',telegram:'@iraklibu',mentor_id:1},{id:8,name:'Anton',telegram:'@Antonio_ozzz',mentor_id:4},{id:9,name:'Gio',telegram:'@giosar',mentor_id:1},{id:10,name:'Viktoriia',telegram:'@viktoriia_radaeva',mentor_id:2},{id:11,name:'Tunar',telegram:'@tunaotchenash',mentor_id:3}];
-    AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:70},{id:3,name:'Sergi',telegram:'@SergiTb',level:50},{id:4,name:'Zaza',telegram:'@eforit',level:70}];
-    COUNTERS=RECRUITS.map(r=>({name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]}));
-  }
-  // Populate all lists after data is ready
-  populateAllLists();
+function loadData(){
+  fetch(API_URL+'?action=getLists',{cache:'no-cache'})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.recruits&&data.recruits.length) RECRUITS=data.recruits;
+      if(data.agents&&data.agents.length) AGENTS=data.agents;
+      if(data.agentCounters) AGENT_C=data.agentCounters;
+      if(data.recruits) COUNTERS=data.recruits.map(function(r){
+        var c=data.counters&&data.counters[r.name]||{};
+        return{name:r.name,
+          showing:[c.showing&&c.showing.done?parseInt(c.showing.done)||0:0, c.showing?c.showing.plan:15],
+          stickers:[c.stickers&&c.stickers.done?parseInt(c.stickers.done)||0:0, c.stickers?c.stickers.plan:15],
+          rental:[c.rental&&c.rental.done?parseInt(c.rental.done)||0:0, c.rental?c.rental.plan:10]};
+      });
+      var pills=[['pill-showing','showing',15],['pill-stickers','stickers',15],['pill-rental','rental',10]];
+      pills.forEach(function(p){ var el=document.getElementById(p[0]); if(el&&COUNTERS[0]) el.textContent=COUNTERS[0][p[1]][0]+'/'+COUNTERS[0][p[1]][1]; });
+      afterLoad();
+    })
+    .catch(function(){
+      // Fallback
+      RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0',mentor_id:1},{id:2,name:'Artem',telegram:'@levittart',mentor_id:1},{id:3,name:'Mariam',telegram:'@sourlylight',mentor_id:1},{id:4,name:'Liana',telegram:'@lianagadzhikhana',mentor_id:1},{id:5,name:'Nikita',telegram:'@krezonik',mentor_id:2},{id:6,name:'Mikhail',telegram:'@Dumbadze_Mikhail',mentor_id:3},{id:7,name:'Irakli',telegram:'@iraklibu',mentor_id:1},{id:8,name:'Anton',telegram:'@Antonio_ozzz',mentor_id:4},{id:9,name:'Gio',telegram:'@giosar',mentor_id:1},{id:10,name:'Viktoriia',telegram:'@viktoriia_radaeva',mentor_id:2},{id:11,name:'Tunar',telegram:'@tunaotchenash',mentor_id:3}];
+      AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:70},{id:3,name:'Sergi',telegram:'@SergiTb',level:50},{id:4,name:'Zaza',telegram:'@eforit',level:70}];
+      COUNTERS=RECRUITS.map(function(r){ return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]}; });
+      afterLoad();
+    });
+}
+
+function afterLoad(){
+  fillSelect('rn-agent', AGENTS, function(a){ return {val:a.telegram, label:a.name+' ('+a.level+'%)', attr:'data-level="'+a.level+'"'}; }, 'Выбрать агента...');
+  fillSelect('rn-recruit', RECRUITS, function(r){ return {val:r.name, label:r.name}; }, 'Выбрать рекрута...');
+  fillSelect('d-agent', AGENTS, function(a){ return {val:a.telegram, label:a.name+' ('+a.level+'%)', attr:'data-level="'+a.level+'"'}; }, 'Выбрать агента...');
+  fillSelect('d-recruit', RECRUITS, function(r){ return {val:r.name, label:r.name}; }, 'Без рекрута');
+  fillSelect('t14-agent', AGENTS, function(a){ return {val:a.telegram, label:a.name}; }, 'Выбрать агента...');
+  var forms = [['ph-r','ph-m'],['sh-r','sh-m'],['st-r','st-m']];
+  forms.forEach(function(ids){
+    fillSelect(ids[0], RECRUITS, function(r){ return {val:r.name, label:r.name}; }, 'Выбрать рекрута...');
+    fillSelect(ids[1], AGENTS, function(a){ return {val:a.telegram, label:a.name}; }, 'Выбрать наставника...');
+  });
+  var today=new Date().toISOString().split('T')[0];
+  var fromEl=document.getElementById('rn-from'); if(fromEl&&!fromEl.value) fromEl.value=today;
   cRender();
+}
+
+function fillSelect(id, data, mapper, placeholder) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '<option value="">'+placeholder+'</option>';
+  data.forEach(function(item){
+    var m = mapper(item);
+    el.innerHTML += '<option value="'+m.val+'" '+(m.attr||'')+'>'+m.label+'</option>';
+  });
 }
 
 function populateAllLists() {
