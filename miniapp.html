@@ -277,7 +277,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
         <!-- 2. КАЛЬКУЛЯТОР -->
         <div class="section"><div class="sl">2. Участники и комиссия</div>
-          <div class="field"><label class="fl">Агент <span class="req">*</span></label>
+          <div class="field"><label class="fl">Агент / Наставник <span class="req">*</span></label>
             <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
           </div>
           <div class="field"><label class="fl">Уровень агента</label>
@@ -286,13 +286,38 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
               <button class="tb" id="rn-lvl-70" onclick="setRnLvl(70)">70%</button>
               <button class="tb aa" id="rn-lvl-90" onclick="setRnLvl(90)">90%</button>
             </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px;">Подставляется автоматически из профиля</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">Подставляется автоматически из профиля агента</div>
           </div>
-          <div class="field"><label class="fl">Рекрут (если есть)</label>
-            <select id="rn-recruit"><option value="">Без рекрута</option></select>
+
+          <!-- РЕКРУТ -->
+          <div class="field">
+            <label class="fl" style="margin-bottom:8px;">
+              <span>Участвует рекрут?</span>
+            </label>
+            <div class="tg c2" style="margin-bottom:10px;">
+              <button class="tb" id="rn-has-recruit-n" onclick="setHasRecruit(false)">Без рекрута</button>
+              <button class="tb ag" id="rn-has-recruit-y" onclick="setHasRecruit(true)">✓ Есть рекрут</button>
+            </div>
           </div>
-          <div class="field"><label class="fl">Наставник</label>
-            <select id="rn-mentor"><option value="">Без наставника</option></select>
+
+          <div id="rn-recruit-block" style="display:none;">
+            <div class="field"><label class="fl">Рекрут <span class="req">*</span></label>
+              <select id="rn-recruit" onchange="onRecruitChange()"><option value="">Выбрать рекрута...</option></select>
+            </div>
+
+            <div class="field"><label class="fl">Номер сделки рекрута <span class="req">*</span></label>
+              <input type="number" id="rn-recruit-deal-num" placeholder="напр. 3" min="1" oninput="onRecruitDealNumChange()">
+              <div id="rn-recruit-deal-hint" style="font-size:11px;margin-top:5px;padding:7px 10px;border-radius:var(--rsm);background:var(--bg3);color:var(--text2);display:none;"></div>
+            </div>
+
+            <div class="field"><label class="fl">% рекрута (от доли агента)</label>
+              <div class="tg c3">
+                <button class="tb" id="rpct-20" onclick="setRecruitPct(20)">20%<br><span style="font-size:9px;opacity:.7">сделки 1-5</span></button>
+                <button class="tb" id="rpct-50" onclick="setRecruitPct(50)">50%<br><span style="font-size:9px;opacity:.7">сделки 6-15</span></button>
+                <button class="tb" id="rpct-custom" onclick="setRecruitPct(0)">Свой %</button>
+              </div>
+              <input type="number" id="rn-recruit-pct" value="20" style="margin-top:8px;display:none;" oninput="calcRental()" placeholder="Введи %">
+            </div>
           </div>
           <div class="r2">
             <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
@@ -302,13 +327,14 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
 
           <!-- CALC RESULT -->
+
           <div class="cbox" id="rn-calc" style="display:none;">
-            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Распределение</div>
+            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">📊 Распределение комиссии</div>
             <div class="crow"><span class="ck">Комиссия агентства</span><span class="cv" id="rn-ct">—</span></div>
-            <div class="crow"><span class="ck" id="rn-agent-label">Агент</span><span class="cv g" id="rn-ca">—</span></div>
             <div class="crow"><span class="ck">Платформа</span><span class="cv a" id="rn-cp">—</span></div>
-            <div class="crow" id="rn-cm-row" style="display:none;"><span class="ck" id="rn-mentor-label">Наставник</span><span class="cv p" id="rn-cm">—</span></div>
-            <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck">Рекрут (доля агента)</span><span class="cv" id="rn-cr">—</span></div>
+            <div class="crow"><span class="ck" id="rn-agent-label">Агент/Наставник</span><span class="cv g" id="rn-ca">—</span></div>
+            <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck">Рекрут</span><span class="cv p" id="rn-cr">—</span></div>
+            <div class="crow" id="rn-cm-row" style="display:none;"><span class="ck" id="rn-mentor-label">Наставник</span><span class="cv" id="rn-cm">—</span></div>
           </div>
         </div>
 
@@ -624,7 +650,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxygxYSRH7Hhe1yc73LBxbF4N6fYps-Zv9zATLGVjphwGeSQWCNMV6wdtTTCFOP5c1Yzg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyIdgW0CY8gak48Aq6H8TKxpCV4mW6ZxrBB9FvxkL1nlF8xM4MHRSIEgnT-8xDS-Lwedw/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -641,8 +667,15 @@ let quizAnswers=[], quizCurrent=0, quizScore=0;
 
 // SPLASH
 window.addEventListener('load', function() {
-  setTimeout(function(){ document.getElementById('splash').classList.add('hide'); setTimeout(function(){ document.getElementById('splash').style.display='none'; },500); },1800);
-  loadData();
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(function(){ document.getElementById('splash').style.display='none'; },500);
+  },1800);
+  loadData().then(function(){
+    populateAllLists();
+  }).catch(function(){
+    populateAllLists();
+  });
 });
 
 // TABS
@@ -653,14 +686,7 @@ function goTab(tab) {
   document.getElementById('nav-'+tab).classList.add('on');
   if(tab==='stats') renderStats();
   if(tab==='contract') { cStep=1; cLang=''; cRender(); }
-  if(tab==='deals') {
-    populateDeals();
-    populateRentalInDeals();
-    // Set today's date
-    var today = new Date().toISOString().split('T')[0];
-    var fromEl = document.getElementById('rn-from');
-    if (fromEl && !fromEl.value) fromEl.value = today;
-  }
+  if(tab==='deals') { populateAllLists(); }
   window.scrollTo(0,0);
 }
 
@@ -846,62 +872,139 @@ function selComp(v){compSel=v;document.getElementById('t14-cn').className='tb'+(
 function selT14R(v){t14Res=v;document.getElementById('t14-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t14-dr').className='tb'+(v==='dirty'?' ar':'');}
 function setT0R(v){t0Res=v;document.getElementById('t0-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t0-dr').className='tb'+(v==='dirty'?' ar':'');}
 
+// Has recruit toggle
+var hasRecruit = false;
+
+function setHasRecruit(v) {
+  hasRecruit = v;
+  document.getElementById('rn-has-recruit-n').className = 'tb' + (!v ? ' ar' : '');
+  document.getElementById('rn-has-recruit-y').className = 'tb' + (v ? ' ag' : '');
+  document.getElementById('rn-recruit-block').style.display = v ? 'block' : 'none';
+  if (!v) {
+    // Reset recruit
+    var rEl = document.getElementById('rn-recruit');
+    if (rEl) rEl.value = '';
+    document.getElementById('rn-recruit-deal-num').value = '';
+    document.getElementById('rn-recruit-deal-hint').style.display = 'none';
+  }
+  calcRental();
+}
+
+function setRecruitPct(pct) {
+  var customEl = document.getElementById('rn-recruit-pct');
+  document.getElementById('rpct-20').className = 'tb' + (pct===20 ? ' aa' : '');
+  document.getElementById('rpct-50').className = 'tb' + (pct===50 ? ' aa' : '');
+  document.getElementById('rpct-custom').className = 'tb' + (pct===0 ? ' am' : '');
+  if (pct === 0) {
+    customEl.style.display = 'block';
+    customEl.focus();
+  } else {
+    customEl.style.display = 'none';
+    customEl.value = pct;
+  }
+  calcRental();
+}
+
+function onRecruitDealNumChange() {
+  var num = parseInt(document.getElementById('rn-recruit-deal-num').value) || 0;
+  var hint = document.getElementById('rn-recruit-deal-hint');
+  if (num <= 0) { hint.style.display = 'none'; return; }
+
+  var pct, label, desc;
+  if (num <= 5) {
+    pct = 20;
+    label = '20%';
+    desc = 'Сделки 1-5: рекрут получает 20% от доли агента (объекты наставника)';
+  } else if (num <= 15) {
+    pct = 50;
+    label = '50%';
+    desc = 'Сделки 6-15: рекрут получает 50% от доли агента';
+  } else {
+    pct = 50;
+    label = '50%';
+    desc = 'Рекрут > 15 сделок — скоро станет агентом';
+  }
+
+  hint.style.display = 'block';
+  hint.innerHTML = '📋 Сделка #' + num + ' рекрута → <strong style="color:var(--accent2)">' + label + '</strong><br><span style="font-size:10px;">' + desc + '</span>';
+
+  // Auto-set pct
+  setRecruitPct(pct);
+}
+
+function onRecruitChange() {
+  // When recruit selected, try to get their deal count from COUNTERS
+  var rEl = document.getElementById('rn-recruit');
+  if (!rEl || !rEl.value) return;
+  var recruitName = rEl.value;
+  var cd = COUNTERS.find(function(c) { return c.name === recruitName; });
+  if (cd) {
+    var dealsDone = cd.rental[0] + 1; // next deal number
+    var numEl = document.getElementById('rn-recruit-deal-num');
+    if (numEl && !numEl.value) {
+      numEl.value = dealsDone;
+      onRecruitDealNumChange();
+    }
+  }
+  calcRental();
+}
+
 // RENTAL CALC
+// Логика:
+// 1. Комиссия = цена * commPct%
+// 2. Платформа = 10% от комиссии (всегда)
+// 3. Агент = остаток (90% если агент 90%, 70% если 70% и тд)
+//    НО: уровень агента (50/70/90) означает что он получает столько из пула ПОСЛЕ платформы
+//    Платформа всегда = 100% - уровень агента
+// 4. Если есть рекрут — рекрут берёт % из доли агента
+// 5. Агент = его доля минус рекрут
+
 function calcRental() {
   var price = parseFloat(document.getElementById('rn-price').value) || 0;
   var commPct = parseFloat(document.getElementById('rn-comm-pct').value) || 50;
   var box = document.getElementById('rn-calc');
   if (price <= 0) { box.style.display = 'none'; return; }
-  
+
+  // Step 1: Общая комиссия агентства
   var comm = Math.round(price * commPct / 100);
+
+  // Step 2: Платформа = (100 - уровень агента)% от комиссии
   var platPct = 100 - rnLvl;
   var plat = Math.round(comm * platPct / 100);
-  var agentPool = comm - plat;
-  
-  // Mentor commission (25% first 10 deals, 15% 11-100)
-  var mentorEl = document.getElementById('rn-mentor');
-  var hasMentor = mentorEl && mentorEl.value !== '';
-  var mentorAmt = 0;
+
+  // Step 3: Доля агента/наставника до рекрута
+  var agentPool = comm - plat; // = rnLvl% от комиссии
+
+  // Step 4: Рекрут берёт % из доли агента
+  var recruitPctEl = document.getElementById('rn-recruit-pct');
+  var recruitPct = parseInt(recruitPctEl ? recruitPctEl.value : 20) || 20;
+  var recruitDealNum = parseInt(document.getElementById('rn-recruit-deal-num') ? document.getElementById('rn-recruit-deal-num').value : 0) || 0;
+  var recruitAmt = 0;
   var agentFinal = agentPool;
-  if (hasMentor) {
-    // Check agent deal count from AGENT_C
-    var agentEl = document.getElementById('rn-agent');
-    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
-    var dealCount = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
-    var mentorPct = dealCount < 10 ? 25 : 15;
-    mentorAmt = Math.round(agentPool * mentorPct / 100);
-    agentFinal = agentPool - mentorAmt;
-    document.getElementById('rn-mentor-label').textContent = 'Наставник (' + mentorPct + '%)';
-    document.getElementById('rn-cm-row').style.display = 'flex';
-    document.getElementById('rn-cm').textContent = mentorAmt + '$';
-  } else {
-    document.getElementById('rn-cm-row').style.display = 'none';
+
+  if (hasRecruit) {
+    recruitAmt = Math.round(agentPool * recruitPct / 100);
+    agentFinal = agentPool - recruitAmt;
   }
-  
+
+  // Display
   box.style.display = 'block';
   document.getElementById('rn-ct').textContent = comm + '$ (' + commPct + '% от ' + price + '$)';
-  document.getElementById('rn-agent-label').textContent = 'Агент ' + rnLvl + '%';
+  document.getElementById('rn-agent-label').textContent = 'Агент/Наставник (' + rnLvl + '%)';
   document.getElementById('rn-ca').textContent = agentFinal + '$';
   document.getElementById('rn-cp').textContent = plat + '$ (' + platPct + '%)';
-}
 
-// DEAL CALC
-function calcDeal() {
-  const price=parseFloat(document.getElementById('d-price').value)||0;
-  const commPct=parseFloat(document.getElementById('d-comm-pct').value)||50;
-  const box=document.getElementById('d-calc-box');
-  if(price<=0){box.innerHTML='<div style="font-size:13px;color:var(--text2);">💡 Введи цену для расчёта</div>';return;}
-  const comm=Math.round(price*commPct/100);
-  const platPct=100-dLvl, plat=Math.round(comm*platPct/100), agent=comm-plat;
-  const dealLabel=dExcl?'Эксклюзив':'Неэксклюзив';
-  let html='';
-  html+=`<div class="crow"><span class="ck">Цена объекта</span><span class="cv">${price}$</span></div>`;
-  html+=`<div class="crow"><span class="ck">Комиссия (${commPct}%) · ${dealLabel}</span><span class="cv">${comm}$</span></div>`;
-  html+=`<div class="crow"><span class="ck">Агент ${dLvl}%</span><span class="cv g">${agent}$</span></div>`;
-  html+=`<div class="crow"><span class="ck">Платформа ${platPct}%</span><span class="cv a">${plat}$</span></div>`;
-  html+=`<div class="ctot"><span class="ctot-l">Итого комиссия</span><span class="ctot-v">${comm}$</span></div>`;
-  if(!dExcl)html+=`<div class="info" style="margin-top:10px;margin-bottom:0;">⚠️ Неэксклюзив — не идёт в зачёт 90/10</div>`;
-  box.innerHTML=html;
+  var recRow = document.getElementById('rn-recruit-row');
+  if (hasRecruit && recRow) {
+    recRow.style.display = 'flex';
+    document.getElementById('rn-cr').textContent = recruitAmt + '$ (' + recruitPct + '% из ' + agentPool + '$)';
+  } else if (recRow) {
+    recRow.style.display = 'none';
+  }
+
+  // Hide mentor row — агент и наставник одно и то же
+  var mentorRow = document.getElementById('rn-cm-row');
+  if (mentorRow) mentorRow.style.display = 'none';
 }
 
 // PDF SEARCH
@@ -1158,9 +1261,14 @@ async function loadData(){
     AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:70},{id:3,name:'Sergi',telegram:'@SergiTb',level:50},{id:4,name:'Zaza',telegram:'@eforit',level:70}];
     COUNTERS=RECRUITS.map(r=>({name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]}));
   }
+  // Populate all lists after data is ready
+  populateAllLists();
+  cRender();
+}
+
+function populateAllLists() {
   populateDeals();
   populateRentalInDeals();
-  cRender();
   // Set today for rental form
   var today = new Date().toISOString().split('T')[0];
   var fromEl = document.getElementById('rn-from');
