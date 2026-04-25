@@ -238,118 +238,83 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     <!-- ═══ DEALS ═══ -->
     <div class="screen active" id="tab-deals">
-      <!-- Mode switcher -->
       <div style="padding:14px 16px 0;">
-        <div style="display:flex;background:var(--bg3);border-radius:var(--r);padding:3px;gap:3px;">
-          <button class="tb aa" id="deal-mode-calc" onclick="setDealMode('calc')" style="flex:1;padding:10px 8px;">💼 Калькулятор</button>
-          <button class="tb" id="deal-mode-rental" onclick="setDealMode('rental')" style="flex:1;padding:10px 8px;">💰 Сдача + T0</button>
-        </div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">💰 Сдача квартиры</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Калькулятор + отчёт + T0 оценка</div>
+        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-rental" style="width:0"></div></div><div class="prog-n" id="pn-rental">0/10</div></div>
       </div>
+      <div class="pad pb">
 
-      <!-- CALCULATOR MODE -->
-      <div id="deal-calc-mode" class="pad pb">
-        <div style="font-size:15px;font-weight:700;color:var(--text2);margin-bottom:14px;">Platform 90/10 · Распределение комиссии</div>
-
-        <div class="section"><div class="sl">Тип сделки</div>
-          <div class="tg c2">
-            <button class="tb aa" id="dt-rent" onclick="setDealType('rent')">🏠 Аренда</button>
-            <button class="tb" id="dt-sale" onclick="setDealType('sale')">🔑 Продажа</button>
+        <!-- 1. ОБЪЕКТ -->
+        <div class="section"><div class="sl">1. Объект</div>
+          <div class="field"><label class="fl">Ссылка на объект из канала <span class="req">*</span></label>
+            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
+          <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
+            <input type="text" id="rn-cadastral" placeholder="01.13.07.024.009.40.060a" oninput="searchPDF(this.value)">
+            <div id="pdf-status" style="font-size:12px;padding:5px 0;display:none;"></div>
+            <div id="pdf-wrap" style="margin-top:8px;border-radius:var(--rsm);overflow:hidden;display:none;">
+              <iframe id="pdf-frame" src="" style="width:100%;height:380px;border:none;"></iframe>
+            </div>
           </div>
-        </div>
-
-        <div id="d-subtype-wrap" class="section"><div class="sl">Подтип аренды</div>
-          <div class="tg c2">
-            <button class="tb aa" id="ds-long" onclick="setSubtype('long')">Долгосрочная<br><span style="font-size:10px;opacity:.7">50% комиссии</span></button>
-            <button class="tb" id="ds-comm" onclick="setSubtype('comm')">Коммерция<br><span style="font-size:10px;opacity:.7">100% комиссии</span></button>
-          </div>
-        </div>
-
-        <div class="section"><div class="sl">Объект</div>
-          <div class="field"><label class="fl">Ссылка на объект</label><input type="url" id="d-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
-          <div class="field"><label class="fl">Эксклюзив?</label>
+          <div class="field"><label class="fl">Тип объекта</label>
             <div class="tg c2">
-              <button class="tb ag" id="d-excl-y" onclick="setExcl(true)">✓ Эксклюзив</button>
-              <button class="tb" id="d-excl-n" onclick="setExcl(false)">Неэксклюзив</button>
+              <button class="tb ag" id="rn-ex-y" onclick="setRnExcl(true)">✓ Эксклюзив</button>
+              <button class="tb" id="rn-ex-n" onclick="setRnExcl(false)">Неэксклюзив</button>
+            </div>
+          </div>
+          <div class="field"><label class="fl">Тип сделки</label>
+            <div class="tg c2">
+              <button class="tb aa" id="rn-tp-r" onclick="setRnType('rent')">Аренда</button>
+              <button class="tb" id="rn-tp-s" onclick="setRnType('sale')">Продажа</button>
+            </div>
+          </div>
+          <div id="rn-subtype-wrap" class="field"><label class="fl">Подтип аренды</label>
+            <div class="tg c2">
+              <button class="tb aa" id="rn-sub-long" onclick="setRnSubtype('long')">Долгосрочная<br><span style="font-size:10px;opacity:.7">50%</span></button>
+              <button class="tb" id="rn-sub-comm" onclick="setRnSubtype('comm')">Коммерция<br><span style="font-size:10px;opacity:.7">100%</span></button>
             </div>
           </div>
         </div>
 
-        <div class="section"><div class="sl">Участники</div>
+        <!-- 2. КАЛЬКУЛЯТОР -->
+        <div class="section"><div class="sl">2. Участники и комиссия</div>
           <div class="field"><label class="fl">Агент <span class="req">*</span></label>
-            <select id="d-agent" onchange="onAgentChange()"><option value="">Выбрать агента...</option></select>
+            <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
           </div>
           <div class="field"><label class="fl">Уровень агента</label>
             <div class="tg c3">
-              <button class="tb" id="d-lvl-50" onclick="setLvl(50)">50%</button>
-              <button class="tb" id="d-lvl-70" onclick="setLvl(70)">70%</button>
-              <button class="tb aa" id="d-lvl-90" onclick="setLvl(90)">90%</button>
+              <button class="tb" id="rn-lvl-50" onclick="setRnLvl(50)">50%</button>
+              <button class="tb" id="rn-lvl-70" onclick="setRnLvl(70)">70%</button>
+              <button class="tb aa" id="rn-lvl-90" onclick="setRnLvl(90)">90%</button>
             </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:5px;">Подставляется автоматически из профиля агента</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">Подставляется автоматически из профиля</div>
           </div>
           <div class="field"><label class="fl">Рекрут (если есть)</label>
-            <select id="d-recruit"><option value="">Без рекрута</option></select>
+            <select id="rn-recruit"><option value="">Без рекрута</option></select>
           </div>
-        </div>
-
-        <div class="section"><div class="sl">Финансы</div>
+          <div class="field"><label class="fl">Наставник</label>
+            <select id="rn-mentor"><option value="">Без наставника</option></select>
+          </div>
           <div class="r2">
-            <div class="field"><label class="fl">Цена $ <span class="req">*</span></label><input type="number" id="d-price" placeholder="1200" oninput="calcDeal()"></div>
-            <div class="field"><label class="fl">Комиссия %</label><input type="number" id="d-comm-pct" value="50" oninput="calcDeal()"></div>
+            <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
+              <input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
+            <div class="field"><label class="fl">Комиссия %</label>
+              <input type="number" id="rn-comm-pct" value="50" oninput="calcRental()"></div>
           </div>
-        </div>
 
-        <div class="cbox" id="d-calc-box"><div style="font-size:13px;color:var(--text2);">💡 Введи цену для расчёта</div></div>
-
-        <div class="section"><div class="sl">Сроки</div>
-          <div class="r2">
-            <div class="field"><label class="fl">От</label><input type="date" id="d-from"></div>
-            <div class="field"><label class="fl">До</label><input type="date" id="d-to"></div>
-          </div>
-        </div>
-
-        <button class="sbtn" onclick="submitCalc()">Отправить расчёт в группу</button>
-      </div>
-
-      <!-- RENTAL + T0 MODE -->
-      <div id="deal-rental-mode" class="pad pb" style="display:none;">
-        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-rental" style="width:0"></div></div><div class="prog-n" id="pn-rental">0/10</div></div>
-
-        <div class="section"><div class="sl">Участники</div>
-          <div class="field"><label class="fl">Агент <span class="req">*</span></label><select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать...</option></select></div>
-          <div class="field"><label class="fl">Рекрут (если есть)</label><select id="rn-recruit" onchange="onRCRental()"><option value="">Без рекрута</option></select></div>
-          <div class="field"><label class="fl">Наставник</label><select id="rn-mentor"><option value="">Без наставника</option></select></div>
-        </div>
-
-        <div class="section"><div class="sl">Объект</div>
-          <div class="field"><label class="fl">Ссылка на объект <span class="req">*</span></label><input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
-          <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
-            <input type="text" id="rn-cadastral" placeholder="01.13.07.024.009.40.060a" oninput="searchPDF(this.value,'rn')">
-            <div class="pdf-status" id="rn-pdf-status"></div>
-            <div class="pdf-frame-wrap" id="rn-pdf-wrap"><iframe id="rn-pdf-frame" src=""></iframe></div>
-          </div>
-          <div class="field"><label class="fl">Тип объекта</label>
-            <div class="tg c2"><button class="tb ag" id="rn-ex-y" onclick="setRnExcl(true)">✓ Эксклюзив</button><button class="tb" id="rn-ex-n" onclick="setRnExcl(false)">Неэксклюзив</button></div>
-          </div>
-          <div class="field"><label class="fl">Тип сделки</label>
-            <div class="tg c2"><button class="tb aa" id="rn-tp-r" onclick="setRnType('rent')">Аренда</button><button class="tb" id="rn-tp-s" onclick="setRnType('sale')">Продажа</button></div>
-          </div>
-        </div>
-
-        <div class="section"><div class="sl">Финансы</div>
-          <div class="r2">
-            <div class="field"><label class="fl">Цена $ <span class="req">*</span></label><input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
-            <div class="field"><label class="fl">Уровень агента</label>
-              <select id="rn-lvl" onchange="calcRental()"><option value="50">50%</option><option value="70">70%</option><option value="90">90%</option></select>
-            </div>
-          </div>
-          <div class="cbox" id="rn-calc" style="display:none">
-            <div class="crow"><span class="ck">Комиссия (50%)</span><span class="cv" id="rn-ct">—</span></div>
+          <!-- CALC RESULT -->
+          <div class="cbox" id="rn-calc" style="display:none;">
+            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Распределение</div>
+            <div class="crow"><span class="ck">Комиссия агентства</span><span class="cv" id="rn-ct">—</span></div>
+            <div class="crow"><span class="ck" id="rn-agent-label">Агент</span><span class="cv g" id="rn-ca">—</span></div>
             <div class="crow"><span class="ck">Платформа</span><span class="cv a" id="rn-cp">—</span></div>
-            <div class="crow"><span class="ck">Агент</span><span class="cv g" id="rn-ca">—</span></div>
+            <div class="crow" id="rn-cm-row" style="display:none;"><span class="ck" id="rn-mentor-label">Наставник</span><span class="cv p" id="rn-cm">—</span></div>
+            <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck">Рекрут (доля агента)</span><span class="cv" id="rn-cr">—</span></div>
           </div>
         </div>
 
-        <div class="section"><div class="sl">Клиент и собственник</div>
+        <!-- 3. КЛИЕНТ И СОБСТВЕННИК -->
+        <div class="section"><div class="sl">3. Клиент и собственник</div>
           <div class="r2">
             <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Giorgi"></div>
             <div class="field"><label class="fl">Тел. клиента</label><input type="tel" id="rn-cphone" placeholder="+995 557..."></div>
@@ -360,30 +325,36 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
         </div>
 
-        <div class="section"><div class="sl">Период</div>
+        <!-- 4. ПЕРИОД -->
+        <div class="section"><div class="sl">4. Период аренды</div>
           <div class="r2">
             <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from"></div>
             <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to"></div>
           </div>
         </div>
 
+        <!-- 5. T0 -->
         <div class="divider"></div>
-        <div class="info">🔍 <strong>T0 — оценка сразу после сдачи</strong><br>Заполни качество сделки прямо сейчас</div>
-
-        <div class="section"><div class="sl">H2O — T0 оценка</div>
-          <div class="h2o"><div class="h2o-t">Client Delivery</div><div class="h2o-s">Клиент получил ожидаемое?</div>
+        <div class="info">🔍 <strong>T0 — оценка сразу после сдачи</strong><br>Заполни качество сделки прямо сейчас — H2O оценка по 3 критериям</div>
+        <div class="section"><div class="sl">5. H2O — T0 оценка</div>
+          <div class="h2o">
+            <div class="h2o-t">Client Delivery</div><div class="h2o-s">Клиент получил ожидаемое?</div>
             <div class="h2o-b" id="h0-c"><button class="hb" onclick="setH2O('t0','client',1,this)">1</button><button class="hb" onclick="setH2O('t0','client',2,this)">2</button><button class="hb" onclick="setH2O('t0','client',3,this)">3</button></div>
           </div>
-          <div class="h2o"><div class="h2o-t">Owner Result</div><div class="h2o-s">Собственник получил результат?</div>
+          <div class="h2o">
+            <div class="h2o-t">Owner Result</div><div class="h2o-s">Собственник получил результат?</div>
             <div class="h2o-b" id="h0-o"><button class="hb" onclick="setH2O('t0','owner',1,this)">1</button><button class="hb" onclick="setH2O('t0','owner',2,this)">2</button><button class="hb" onclick="setH2O('t0','owner',3,this)">3</button></div>
           </div>
-          <div class="h2o"><div class="h2o-t">Process Integrity</div><div class="h2o-s">Процесс прошёл чисто?</div>
+          <div class="h2o">
+            <div class="h2o-t">Process Integrity</div><div class="h2o-s">Процесс прошёл чисто?</div>
             <div class="h2o-b" id="h0-p"><button class="hb" onclick="setH2O('t0','process',1,this)">1</button><button class="hb" onclick="setH2O('t0','process',2,this)">2</button><button class="hb" onclick="setH2O('t0','process',3,this)">3</button></div>
           </div>
           <div class="section" style="margin-top:12px"><div class="sl">Итог T0</div>
             <div class="tg c2"><button class="tb" id="t0-cl" onclick="setT0R('clean')">✓ Чистая</button><button class="tb" id="t0-dr" onclick="setT0R('dirty')">✗ Грязная</button></div>
           </div>
-          <div class="field" style="margin-top:10px"><label class="fl">Комментарий</label><textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..."></textarea></div>
+          <div class="field" style="margin-top:10px"><label class="fl">Комментарий агента</label>
+            <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..."></textarea>
+          </div>
         </div>
 
         <button class="sbtn" onclick="sub('rental')">Отправить сдачу + T0</button>
@@ -662,7 +633,7 @@ let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
 // State
 let showRes='', h2o={t0:{client:0,owner:0,process:0},t14:{client:0,owner:0,process:0}};
 let t0Res='', t14Res='', compSel='';
-let rnExcl=true, rnType='rent';
+let rnExcl=true, rnType='rent', rnSub='long', rnLvl=50;
 let dExcl=true, dType='rent', dSub='long', dLvl=50;
 let prevTab='reports';
 let cStep=1, cLang='';
@@ -683,7 +654,7 @@ function goTab(tab) {
   document.getElementById('nav-'+tab).classList.add('on');
   if(tab==='stats') renderStats();
   if(tab==='contract') { cStep=1; cLang=''; cRender(); }
-  if(tab==='deals') populateDeals();
+  if(tab==='deals') { populateDeals(); populateRentalInDeals(); }
   window.scrollTo(0,0);
 }
 
@@ -753,10 +724,10 @@ function onAgentChange() {
 }
 
 function onAgentChangeRental() {
-  const aEl=document.getElementById('rn-agent');
-  const opt=aEl.options[aEl.selectedIndex];
-  const lvl=parseInt(opt.getAttribute('data-level')||50);
-  const lvlEl=document.getElementById('rn-lvl'); if(lvlEl) lvlEl.value=lvl;
+  var aEl = document.getElementById('rn-agent');
+  var opt = aEl.options[aEl.selectedIndex];
+  var lvl = parseInt(opt.getAttribute('data-level') || 50);
+  setRnLvl(lvl);
   calcRental();
 }
 
@@ -825,7 +796,30 @@ function setLvl(v) {
 }
 
 function setRnExcl(v){rnExcl=v;document.getElementById('rn-ex-y').className='tb'+(v?' ag':'');document.getElementById('rn-ex-n').className='tb'+(!v?' ar':'');}
-function setRnType(v){rnType=v;document.getElementById('rn-tp-r').className='tb'+(v==='rent'?' aa':'');document.getElementById('rn-tp-s').className='tb'+(v==='sale'?' aa':'');}
+
+function setRnSubtype(v) {
+  rnSub = v;
+  document.getElementById('rn-sub-long').className = 'tb' + (v==='long' ? ' aa' : '');
+  document.getElementById('rn-sub-comm').className = 'tb' + (v==='comm' ? ' aa' : '');
+  document.getElementById('rn-comm-pct').value = v==='comm' ? 100 : 50;
+  calcRental();
+}
+
+function setRnLvl(v) {
+  rnLvl = v;
+  [50,70,90].forEach(function(l){ var el=document.getElementById('rn-lvl-'+l); if(el) el.className='tb'+(l===v?' aa':''); });
+  calcRental();
+}
+function setRnType(v) {
+  rnType = v;
+  document.getElementById('rn-tp-r').className = 'tb' + (v==='rent' ? ' aa' : '');
+  document.getElementById('rn-tp-s').className = 'tb' + (v==='sale' ? ' aa' : '');
+  var subwrap = document.getElementById('rn-subtype-wrap');
+  if (subwrap) subwrap.style.display = v==='rent' ? 'block' : 'none';
+  var pct = v==='sale' ? 3 : rnSub==='comm' ? 100 : 50;
+  document.getElementById('rn-comm-pct').value = pct;
+  calcRental();
+}
 function selRes(v){showRes=v;document.getElementById('sh-ref').className='tb'+(v==='refused'?' ar':'');document.getElementById('sh-thk').className='tb'+(v==='thinking'?' ab':'');}
 function setH2O(form,type,val,btn){h2o[form][type]=val;const pre=form==='t0'?'h0':'h14';const id=pre+'-'+(type==='client'?'c':type==='owner'?'o':'p');document.getElementById(id).querySelectorAll('.hb').forEach(b=>b.className='hb');btn.classList.add('a'+val);}
 function selComp(v){compSel=v;document.getElementById('t14-cn').className='tb'+(v==='no'?' ag':'');document.getElementById('t14-cy').className='tb'+(v==='yes'?' ar':'');document.getElementById('t14-comp-det').style.display=v==='yes'?'block':'none';}
@@ -834,16 +828,41 @@ function setT0R(v){t0Res=v;document.getElementById('t0-cl').className='tb'+(v===
 
 // RENTAL CALC
 function calcRental() {
-  const price=parseFloat(document.getElementById('rn-price').value)||0;
-  const lvl=parseInt(document.getElementById('rn-lvl').value)||50;
-  const box=document.getElementById('rn-calc');
-  if(price<=0){box.style.display='none';return;}
-  const comm=Math.round(price*0.5);
-  const platPct=100-lvl, plat=Math.round(comm*platPct/100), agent=comm-plat;
-  box.style.display='block';
-  document.getElementById('rn-ct').textContent=comm+'$';
-  document.getElementById('rn-cp').textContent=plat+'$ ('+platPct+'%)';
-  document.getElementById('rn-ca').textContent=agent+'$ ('+lvl+'%)';
+  var price = parseFloat(document.getElementById('rn-price').value) || 0;
+  var commPct = parseFloat(document.getElementById('rn-comm-pct').value) || 50;
+  var box = document.getElementById('rn-calc');
+  if (price <= 0) { box.style.display = 'none'; return; }
+  
+  var comm = Math.round(price * commPct / 100);
+  var platPct = 100 - rnLvl;
+  var plat = Math.round(comm * platPct / 100);
+  var agentPool = comm - plat;
+  
+  // Mentor commission (25% first 10 deals, 15% 11-100)
+  var mentorEl = document.getElementById('rn-mentor');
+  var hasMentor = mentorEl && mentorEl.value !== '';
+  var mentorAmt = 0;
+  var agentFinal = agentPool;
+  if (hasMentor) {
+    // Check agent deal count from AGENT_C
+    var agentEl = document.getElementById('rn-agent');
+    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
+    var dealCount = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
+    var mentorPct = dealCount < 10 ? 25 : 15;
+    mentorAmt = Math.round(agentPool * mentorPct / 100);
+    agentFinal = agentPool - mentorAmt;
+    document.getElementById('rn-mentor-label').textContent = 'Наставник (' + mentorPct + '%)';
+    document.getElementById('rn-cm-row').style.display = 'flex';
+    document.getElementById('rn-cm').textContent = mentorAmt + '$';
+  } else {
+    document.getElementById('rn-cm-row').style.display = 'none';
+  }
+  
+  box.style.display = 'block';
+  document.getElementById('rn-ct').textContent = comm + '$ (' + commPct + '% от ' + price + '$)';
+  document.getElementById('rn-agent-label').textContent = 'Агент ' + rnLvl + '%';
+  document.getElementById('rn-ca').textContent = agentFinal + '$';
+  document.getElementById('rn-cp').textContent = plat + '$ (' + platPct + '%)';
 }
 
 // DEAL CALC
@@ -866,21 +885,37 @@ function calcDeal() {
 }
 
 // PDF SEARCH
-function searchPDF(kadastr,prefix) {
-  clearTimeout(pdfTimer[prefix]);
-  const st=document.getElementById(prefix+'-pdf-status');
-  const wr=document.getElementById(prefix+'-pdf-wrap');
-  const fr=document.getElementById(prefix+'-pdf-frame');
-  if(!kadastr||kadastr.length<5){if(st)st.className='pdf-status';if(wr)wr.classList.remove('show');return;}
-  if(st){st.className='pdf-status found';st.textContent='🔍 Ищем договор...';}
-  pdfTimer[prefix]=setTimeout(async function(){
-    try{
-      const res=await fetch(API_URL+'?action=findContract&kadastr='+encodeURIComponent(kadastr));
-      const data=await res.json();
-      if(data.found){st.className='pdf-status found';st.textContent='✓ Договор найден: '+data.name;fr.src=data.view;wr.classList.add('show');}
-      else{st.className='pdf-status notfound';st.textContent='✗ Договор не найден';wr.classList.remove('show');fr.src='';}
-    }catch(e){st.className='pdf-status notfound';st.textContent='✗ Ошибка поиска';}
-  },800);
+function searchPDF(kadastr) {
+  clearTimeout(pdfTimer['rn']);
+  var st = document.getElementById('pdf-status');
+  var wr = document.getElementById('pdf-wrap');
+  var fr = document.getElementById('pdf-frame');
+  if (!kadastr || kadastr.length < 5) {
+    if (st) { st.style.display='none'; st.textContent=''; }
+    if (wr) wr.style.display='none';
+    return;
+  }
+  if (st) { st.style.display='block'; st.style.color='var(--text2)'; st.textContent='🔍 Ищем договор...'; }
+  pdfTimer['rn'] = setTimeout(async function() {
+    try {
+      var res = await fetch(API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr));
+      var data = await res.json();
+      if (data.found) {
+        st.style.color = 'var(--green)';
+        st.textContent = '✓ Договор найден: ' + data.name;
+        fr.src = data.view;
+        wr.style.display = 'block';
+      } else {
+        st.style.color = 'var(--red)';
+        st.textContent = '✗ Договор не найден в папке';
+        wr.style.display = 'none';
+        fr.src = '';
+      }
+    } catch(e) {
+      st.style.color = 'var(--red)';
+      st.textContent = '✗ Ошибка соединения';
+    }
+  }, 800);
 }
 
 // SUBMIT
