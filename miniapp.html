@@ -306,8 +306,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             </div>
 
             <div class="field"><label class="fl">Номер сделки рекрута <span class="req">*</span></label>
+              <div id="rn-recruit-deal-hint" style="font-size:11px;margin-bottom:6px;padding:8px 11px;border-radius:var(--rsm);background:var(--bg3);color:var(--text2);display:none;line-height:1.5;"></div>
               <input type="number" id="rn-recruit-deal-num" placeholder="напр. 3" min="1" oninput="onRecruitDealNumChange()">
-              <div id="rn-recruit-deal-hint" style="font-size:11px;margin-top:5px;padding:7px 10px;border-radius:var(--rsm);background:var(--bg3);color:var(--text2);display:none;"></div>
             </div>
 
             <div class="field"><label class="fl">% рекрута (от доли агента)</label>
@@ -671,11 +671,7 @@ window.addEventListener('load', function() {
     document.getElementById('splash').classList.add('hide');
     setTimeout(function(){ document.getElementById('splash').style.display='none'; },500);
   },1800);
-  loadData().then(function(){
-    populateAllLists();
-  }).catch(function(){
-    populateAllLists();
-  });
+  loadData();
 });
 
 // TABS
@@ -738,6 +734,7 @@ function setDealMode(mode) {
 }
 
 function populateRentalInDeals() {
+  if (AGENTS.length === 0) { setTimeout(populateRentalInDeals, 500); return; }
   var agEl = document.getElementById('rn-agent');
   if (agEl) {
     agEl.innerHTML = '<option value="">Выбрать агента...</option>';
@@ -747,19 +744,24 @@ function populateRentalInDeals() {
   }
   var rEl = document.getElementById('rn-recruit');
   if (rEl) {
-    rEl.innerHTML = '<option value="">Без рекрута</option>';
+    rEl.innerHTML = '<option value="">Выбрать рекрута...</option>';
     RECRUITS.forEach(function(r) { rEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>'; });
-  }
-  var mEl = document.getElementById('rn-mentor');
-  if (mEl) {
-    mEl.innerHTML = '<option value="">Без наставника</option>';
-    AGENTS.forEach(function(a) { mEl.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>'; });
   }
 }
 
 function populateDeals() {
-  const aEl=document.getElementById('d-agent'); aEl.innerHTML='<option value="">Выбрать агента...</option>'; AGENTS.forEach(a=>aEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
-  const rEl=document.getElementById('d-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
+  var aEl = document.getElementById('d-agent');
+  if (aEl) {
+    aEl.innerHTML = '<option value="">Выбрать агента...</option>';
+    AGENTS.forEach(function(a) {
+      aEl.innerHTML += '<option value="' + a.telegram + '" data-level="' + (a.level||50) + '">' + a.name + ' (' + (a.level||50) + '%)</option>';
+    });
+  }
+  var rEl = document.getElementById('d-recruit');
+  if (rEl) {
+    rEl.innerHTML = '<option value="">Без рекрута</option>';
+    RECRUITS.forEach(function(r) { rEl.innerHTML += '<option value="' + r.name + '">' + r.name + '</option>'; });
+  }
 }
 
 function onAgentChange() {
@@ -1267,12 +1269,40 @@ async function loadData(){
 }
 
 function populateAllLists() {
-  populateDeals();
-  populateRentalInDeals();
+  try { populateDeals(); } catch(e) { console.log('populateDeals:', e); }
+  try { populateRentalInDeals(); } catch(e) { console.log('populateRental:', e); }
+  try {
+    // Populate photo/showing/stickers mentor selects
+    ['ph-m','sh-m','st-m'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.innerHTML = '<option value="">Выбрать наставника...</option>';
+        AGENTS.forEach(function(a) { el.innerHTML += '<option value="'+a.telegram+'">'+a.name+'</option>'; });
+      }
+    });
+    ['ph-r','sh-r','st-r'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.innerHTML = '<option value="">Выбрать рекрута...</option>';
+        RECRUITS.forEach(function(r) { el.innerHTML += '<option value="'+r.name+'">'+r.name+'</option>'; });
+      }
+    });
+    var t14El = document.getElementById('t14-agent');
+    if (t14El) {
+      t14El.innerHTML = '<option value="">Выбрать агента...</option>';
+      AGENTS.forEach(function(a) { t14El.innerHTML += '<option value="'+a.telegram+'">'+a.name+'</option>'; });
+    }
+  } catch(e) { console.log('populateAll extra:', e); }
   // Set today for rental form
   var today = new Date().toISOString().split('T')[0];
   var fromEl = document.getElementById('rn-from');
   if (fromEl && !fromEl.value) fromEl.value = today;
+  // T14 agents
+  var t14El = document.getElementById('t14-agent');
+  if (t14El) {
+    t14El.innerHTML = '<option value="">Выбрать агента...</option>';
+    AGENTS.forEach(function(a) { t14El.innerHTML += '<option value="' + a.telegram + '">' + a.name + '</option>'; });
+  }
 }
 
 // TG
