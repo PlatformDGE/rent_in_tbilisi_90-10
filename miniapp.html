@@ -4,7 +4,217 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Rent in Tbilisi</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js">
+// ═══ CONTRACT TAB JS ═══
+var cState = {type:'', lang:'', dep:false};
+var cStep = 1;
+var C_TYPE_NAMES = {rent:'Apartment Rental', comm:'Commercial Rental', sale:'Sale'};
+var C_LABELS = {
+  deal_type:'Тип сделки', contract_language:'Язык',
+  timestamp:'Дата договора', owner_full_name:'Собственник',
+  owner_personal_number:'Личный номер соб.', client_full_name:'Арендатор/Покупатель',
+  client_personal_number:'Личный номер арен.', cadastral_code:'Кадастровый код',
+  street_house:'Адрес', floor:'Этаж', apartment_number:'Кв. номер',
+  apartment_area:'Площадь (м²)', start_rent:'Дата начала', end_rent:'Дата конца',
+  rent_duration_months:'Срок (мес.)', price_usd:'Цена (USD)',
+  deposit_usd:'Депозит (USD)', pay_day:'День оплаты', one_month:'Первый платёж'
+};
+var C_HDR_SUBS = {1:'Выбор типа договора',2:'Выбор языка',3:'Детали договора',4:'Проверка данных'};
+
+function cFmt(iso){if(!iso)return'';var p=String(iso).split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:iso;}
+function cOnem(iso){if(!iso)return'';var p=iso.split('-');if(p.length!==3)return'';var d=new Date(+p[0],+p[1]-1,+p[2]),o=d.getDate();d.setMonth(d.getMonth()+1);if(d.getDate()!==o)d.setDate(0);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}
+function cSafe(v){return v==null?'':String(v).trim();}
+function cShowSt(n,m,t){var e=document.getElementById('cst'+n);if(e){e.className='cstatus on '+t;e.textContent=m;}}
+function cClrSt(n){var e=document.getElementById('cst'+n);if(e){e.className='cstatus';e.textContent='';}}
+function cOv(f){var e=document.getElementById('c-ov');if(e)e.style.display=f?'flex':'none';}
+
+function cRender(){
+  [1,2,3,4].forEach(function(i){
+    var sn=document.getElementById('csn'+i);
+    var sl=document.getElementById('csl'+i);
+    if(sn)sn.className='csn '+(i<cStep?'done':i===cStep?'active':'idle');
+    if(sl)sl.className='csl'+(i===cStep?' on':'');
+  });
+  [[1,2],[2,3],[3,4]].forEach(function(p){
+    var el=document.getElementById('csl'+p[0]+''+p[1]);
+    if(el)el.className='csline'+(cStep>p[0]?' on':'');
+  });
+  [1,2,3,4].forEach(function(i){
+    var el=document.getElementById('cp'+i);
+    if(el)el.className='cpg'+(i===cStep?' on':'');
+  });
+  var back=document.getElementById('c-backbtn');
+  var next=document.getElementById('c-nextbtn');
+  if(back)back.className='nb nb-back'+(cStep===1?' hid':'');
+  if(next){next.textContent=cStep===4?'Создать договор ✓':'Продолжить →';next.disabled=false;}
+  var res=document.getElementById('c-result');if(res)res.className='hid';
+  var scr=document.getElementById('c-scroll');if(scr)scr.scrollTop=0;
+  var sub=document.getElementById('c-hdr-sub');if(sub)sub.textContent=C_HDR_SUBS[cStep]||'';
+  if(cState.type==='sale'){
+    var cl=document.getElementById('c-client-label');if(cl)cl.textContent='Покупатель (ФИО)';
+    var ci=document.getElementById('c-client-id-label');if(ci)ci.textContent='Личный номер покупателя';
+    var pl=document.getElementById('c-price-label');if(pl)pl.textContent='Цена (USD)';
+    var pt=document.getElementById('cp3-title');if(pt)pt.textContent='Детали договора продажи';
+  } else {
+    var cl=document.getElementById('c-client-label');if(cl)cl.textContent='Арендатор (ФИО)';
+    var ci=document.getElementById('c-client-id-label');if(ci)ci.textContent='Личный номер арендатора';
+    var pl=document.getElementById('c-price-label');if(pl)pl.textContent='Ежемесячная цена (USD)';
+    var pt=document.getElementById('cp3-title');if(pt)pt.textContent='Детали договора аренды';
+  }
+}
+
+function cSelType(btn){
+  document.querySelectorAll('.ctc').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+  cState.type=btn.getAttribute('data-type');
+  cClrSt(1);
+}
+
+function cSelLang(btn){
+  document.querySelectorAll('.clc').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+  cState.lang=btn.getAttribute('data-lang');
+  cClrSt(2);
+}
+
+document.querySelectorAll('.ctb').forEach(function(b){
+  b.addEventListener('click',function(){
+    var tid=b.getAttribute('data-tab');
+    document.querySelectorAll('.ctb').forEach(function(x){x.className='ctb'+(x===b?' on':'');});
+    ['ct1','ct2','ct3'].forEach(function(id){var el=document.getElementById(id);if(el)el.className='ctp'+(id===tid?' on':'');});
+  });
+});
+
+var cDepTouched=false;
+var cPriceEl=document.getElementById('c-price');
+var cDepEl=document.getElementById('c-deposit');
+if(cPriceEl)cPriceEl.addEventListener('input',function(){if(!cDepTouched&&cDepEl)cDepEl.value=this.value;});
+if(cDepEl)cDepEl.addEventListener('input',function(){cDepTouched=cSafe(this.value)!=='';});
+
+function cSyncDep(){if(!cDepTouched&&cDepEl&&cPriceEl)cDepEl.value=cPriceEl.value;}
+
+function cCol(){
+  return {
+    deal_type:C_TYPE_NAMES[cState.type]||cState.type,
+    contract_language:cState.lang,
+    timestamp:cSafe(document.getElementById('c-timestamp')?document.getElementById('c-timestamp').value:''),
+    owner_full_name:cSafe(document.getElementById('c-owner-name')?document.getElementById('c-owner-name').value:''),
+    owner_personal_number:cSafe(document.getElementById('c-owner-id')?document.getElementById('c-owner-id').value:''),
+    client_full_name:cSafe(document.getElementById('c-client-name')?document.getElementById('c-client-name').value:''),
+    client_personal_number:cSafe(document.getElementById('c-client-id')?document.getElementById('c-client-id').value:''),
+    cadastral_code:cSafe(document.getElementById('c-cadastral')?document.getElementById('c-cadastral').value:''),
+    street_house:cSafe(document.getElementById('c-address')?document.getElementById('c-address').value:''),
+    floor:cSafe(document.getElementById('c-floor')?document.getElementById('c-floor').value:''),
+    apartment_number:cSafe(document.getElementById('c-apt')?document.getElementById('c-apt').value:''),
+    apartment_area:cSafe(document.getElementById('c-area')?document.getElementById('c-area').value:''),
+    start_rent:cSafe(document.getElementById('c-start')?document.getElementById('c-start').value:''),
+    end_rent:cSafe(document.getElementById('c-end')?document.getElementById('c-end').value:''),
+    rent_duration_months:cSafe(document.getElementById('c-months')?document.getElementById('c-months').value:''),
+    price_usd:cSafe(document.getElementById('c-price')?document.getElementById('c-price').value:''),
+    deposit_usd:cSafe(document.getElementById('c-deposit')?document.getElementById('c-deposit').value:''),
+    pay_day:cSafe(document.getElementById('c-payday')?document.getElementById('c-payday').value:'')
+  };
+}
+
+function cVtype(){cClrSt(1);if(!cState.type){cShowSt(1,'Выбери тип сделки','err');return false;}return true;}
+function cVlang(){cClrSt(2);if(!cState.lang){cShowSt(2,'Выбери язык договора','err');return false;}return true;}
+function cVform(){
+  cClrSt(3);
+  var d=cCol();
+  var req=['timestamp','owner_full_name','owner_personal_number','client_full_name','client_personal_number','cadastral_code','street_house','apartment_area','start_rent','end_rent','rent_duration_months','price_usd','deposit_usd','pay_day'];
+  for(var i=0;i<req.length;i++){if(!cSafe(d[req[i]])){cShowSt(3,'Заполни все обязательные поля','err');return false;}}
+  if(!/^01\.[0-9.]*[A-Za-zА-Яа-я]?$/.test(d.cadastral_code)){cShowSt(3,'Кадастровый код должен начинаться с 01.','err');return false;}
+  if(!/^[0-9]+([.,][0-9]+)?$/.test(d.apartment_area)){cShowSt(3,'Площадь: только цифры','err');return false;}
+  if(d.floor&&!/^[0-9A-Za-z\-]*$/.test(d.floor)){cShowSt(3,'Этаж: цифры, буквы или "-"','err');return false;}
+  return true;
+}
+
+function cBsum(){
+  var d=cCol(),om=cOnem(d.start_rent),list=document.getElementById('c-sumlist');
+  if(!list)return;
+  list.innerHTML='';
+  var c=Object.assign({},d,{one_month:om});
+  Object.keys(C_LABELS).forEach(function(k){
+    var v=c[k];
+    if(k==='timestamp'||k==='start_rent'||k==='end_rent')v=v?cFmt(v):'';
+    if(!v)v='—';
+    var r=document.createElement('div');
+    r.style.cssText='display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:3.5vw;border:.4vw solid rgba(29,53,96,.09);padding:3.5vw 4vw;gap:3vw;margin-bottom:2.5vw;';
+    r.innerHTML='<span style="font-size:3.5vw;color:#6b7a99;font-weight:600;flex-shrink:0;">'+C_LABELS[k]+'</span><span style="font-size:4vw;font-weight:700;text-align:right;word-break:break-word;">'+String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>';
+    list.appendChild(r);
+  });
+}
+
+function cNext(){
+  if(cStep===1){if(!cVtype())return;cStep=2;cRender();}
+  else if(cStep===2){if(!cVlang())return;cStep=3;cRender();}
+  else if(cStep===3){if(!cVform())return;cBsum();cStep=4;cRender();}
+  else{cSubmit();}
+}
+
+function cBack(){if(cStep>1){cStep--;cRender();}}
+
+function cSubmit(){
+  if(!cVtype()||!cVlang()||!cVform())return;
+  var d=cCol(),om=cOnem(d.start_rent);
+  cOv(true);cClrSt(4);
+  var next=document.getElementById('c-nextbtn');
+  var back=document.getElementById('c-backbtn');
+  if(next)next.disabled=true;if(back)back.disabled=true;
+
+  // Send via form POST to contract script
+  var CONTRACT_URL='https://script.google.com/macros/s/AKfycbxPfJAFnJAhBK426zhNv1HSV0dD3Za0TBSpThbBKIr0ZuGwCVFRrbiR4Lmv0unA30uRXA/exec';
+  var payload=JSON.stringify({
+    contract_language:cState.lang,
+    deal_type:d.deal_type,
+    timestamp:cFmt(d.timestamp),
+    owner_full_name:d.owner_full_name,
+    owner_personal_number:d.owner_personal_number,
+    client_full_name:d.client_full_name,
+    client_personal_number:d.client_personal_number,
+    cadastral_code:d.cadastral_code,
+    street_house:d.street_house,
+    floor:d.floor,
+    apartment_number:d.apartment_number,
+    apartment_area:d.apartment_area,
+    start_rent:cFmt(d.start_rent),
+    end_rent:cFmt(d.end_rent),
+    rent_duration_months:d.rent_duration_months,
+    price_usd:d.price_usd,
+    deposit_usd:d.deposit_usd,
+    pay_day:d.pay_day,
+    one_month:om
+  });
+
+  var ifr=document.getElementById('c-iframe');
+  if(!ifr){ifr=document.createElement('iframe');ifr.id='c-iframe';ifr.name='c-iframe';ifr.style.display='none';document.body.appendChild(ifr);}
+  var frm=document.getElementById('c-form');
+  if(!frm){frm=document.createElement('form');frm.id='c-form';frm.method='POST';frm.target='c-iframe';frm.style.display='none';document.body.appendChild(frm);}
+  frm.action=CONTRACT_URL;
+  frm.innerHTML='<input name="payload" value=''+payload.replace(/'/g,"&apos;")+''>';
+  frm.submit();
+
+  // Show success after 5s (no callback available via form POST)
+  setTimeout(function(){
+    cOv(false);
+    if(next)next.disabled=false;if(back)back.disabled=false;
+    cShowSt(4,'Запрос отправлен! Договор создаётся — проверь папку Drive через несколько секунд.','ok');
+  },5000);
+}
+
+// Reset contract tab when opening
+function cReset(){
+  cState={type:'',lang:'',dep:false};
+  cStep=1;
+  cDepTouched=false;
+  document.querySelectorAll('.ctc').forEach(function(b){b.classList.remove('sel');});
+  document.querySelectorAll('.clc').forEach(function(b){b.classList.remove('sel');});
+  var ts=document.getElementById('c-timestamp');
+  if(ts){var d=new Date();ts.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  cRender();
+}
+
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -202,6 +412,39 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:80px;left:16px;right:16px;background:var(--green);color:#fff;padding:14px 18px;border-radius:var(--r);font-weight:600;font-size:14px;text-align:center;transform:translateY(20px);opacity:0;transition:all .3s;z-index:150;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
+
+/* CONTRACT TAB */
+.cpg{display:none;}.cpg.on{display:block;}
+.ctc{background:#fff;border:.6vw solid rgba(29,53,96,.12);border-radius:5vw;padding:4.5vw;display:flex;align-items:center;gap:4vw;width:100%;margin-bottom:3vw;text-align:left;cursor:pointer;-webkit-user-select:none;user-select:none;transition:all .15s;}
+.ctc:active{opacity:.82;}.ctc.sel{border-color:#1d3560;background:#e8eef8;}
+.ctc-name{font-size:5vw;font-weight:800;color:#111;display:block;line-height:1.2;}
+.ctc-note{font-size:3.2vw;color:#6b7a99;display:block;margin-top:.5vw;}
+.ctc-check{margin-left:auto;width:6vw;height:6vw;border-radius:50%;border:.5vw solid rgba(29,53,96,.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.ctc.sel .ctc-check{background:#1d3560;border-color:#1d3560;}
+.ctc.sel .ctc-check::after{content:"✓";color:#fff;font-size:3.5vw;font-weight:800;}
+.clc{background:#fff;border:.6vw solid rgba(29,53,96,.12);border-radius:5vw;padding:4.5vw;display:flex;align-items:center;gap:4vw;width:100%;margin-bottom:3vw;text-align:left;cursor:pointer;-webkit-user-select:none;user-select:none;}
+.clc:active{opacity:.82;}.clc.sel{border-color:#1d3560;background:#e8eef8;}
+.clc-name{font-size:5.5vw;font-weight:800;color:#111;display:block;line-height:1.15;}
+.clc-note{font-size:3.5vw;color:#6b7a99;display:block;margin-top:.8vw;}
+.clc-code{margin-left:auto;font-size:3.5vw;font-weight:800;color:#1d3560;background:#e8eef8;border:.4vw solid #2a4f8f;border-radius:2vw;padding:1.5vw 3.5vw;flex-shrink:0;}
+.clc.sel .clc-code{background:#1d3560;color:#fff;border-color:#1d3560;}
+.ctabs{display:flex;background:rgba(29,53,96,.09);border-radius:3.5vw;padding:1vw;margin-bottom:4vw;gap:1vw;}
+.ctb{flex:1;padding:3.2vw 1vw;text-align:center;font-size:3.8vw;font-weight:700;color:#6b7a99;border-radius:2.8vw;cursor:pointer;line-height:1;-webkit-user-select:none;}
+.ctb.on{background:#fff;color:#1d3560;}
+.ctp{display:none;}.ctp.on{display:block;}
+.cstatus{display:none;margin-top:4vw;padding:4vw;border-radius:3.5vw;font-size:3.8vw;font-weight:700;line-height:1.4;}
+.cstatus.on{display:block;}.cstatus.err{background:#fff0f0;border:.4vw solid #fca5a5;color:#991b1b;}
+.cstatus.ok{background:#f0fdf4;border:.4vw solid #86efac;color:#166534;}
+.csn{width:10vw;height:10vw;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4vw;font-weight:700;}
+.csn.done{background:rgba(255,255,255,.88);color:#1d3560;}
+.csn.active{background:#fff;color:#1d3560;}
+.csn.idle{background:rgba(255,255,255,.15);color:rgba(255,255,255,.45);}
+.csl{font-size:2.6vw;font-weight:600;color:rgba(255,255,255,.5);}
+.csl.on{color:#fff;}
+.csline{flex:1;height:.6vw;border-radius:1vw;background:rgba(255,255,255,.2);margin-bottom:5vw;}
+.csline.on{background:rgba(255,255,255,.75);}
+.ph-title{font-size:6.5vw;font-weight:800;color:#1d3560;letter-spacing:-.02em;margin-bottom:1.5vw;display:block;}
+.ph-sub{font-size:3.8vw;color:#6b7a99;line-height:1.4;display:block;margin-bottom:5vw;}
 </style>
 </head>
 <body>
@@ -492,147 +735,158 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     </div>
 
     <!-- ═══ TAB: CONTRACT ═══ -->
-    <div class="screen" id="tab-contract">
-      <div class="hdr" style="background:var(--navy);border-bottom-color:rgba(255,255,255,.1);">
-        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" alt="">
-        <div class="hdr-info"><div class="hdr-title" style="color:#fff;">📄 Договор аренды</div><div class="hdr-sub" style="color:rgba(255,255,255,.6);">Rent in Tbilisi · Contract</div></div>
-        <span style="font-size:22px;">🇬🇪</span>
-      </div>
-      <div class="steps" id="c-steps">
-        <div class="sc"><div class="sn active" id="csn1">1</div><span class="sl on" id="csl1">Язык</span></div>
-        <div class="sline" id="csl12"></div>
-        <div class="sc"><div class="sn idle" id="csn2">2</div><span class="sl" id="csl2">Детали</span></div>
-        <div class="sline" id="csl23"></div>
-        <div class="sc"><div class="sn idle" id="csn3">3</div><span class="sl" id="csl3">Проверка</span></div>
-      </div>
-      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;" id="c-scroll">
+    <div class="screen" id="tab-contract" style="display:flex;flex-direction:column;overflow:hidden;">
 
-        <!-- Page 1: Language -->
-        <div class="pad" id="cp1">
-          <div style="font-size:18px;font-weight:800;margin-bottom:4px;">Выбери язык договора</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">Выбери нужную версию</div>
-          <div class="lc-btn" data-lang="GEO" onclick="selLang('GEO',this)">
-            <span style="font-size:28px;">🇬🇪</span>
-            <div style="flex:1"><div style="font-size:15px;font-weight:700;">ქართული</div><div style="font-size:12px;color:var(--text2);">Georgian version</div></div>
-            <span class="lang-badge">GEO</span>
-          </div>
-          <div class="lc-btn" data-lang="RU" onclick="selLang('RU',this)">
-            <span style="font-size:28px;">🇷🇺</span>
-            <div style="flex:1"><div style="font-size:15px;font-weight:700;">Русский</div><div style="font-size:12px;color:var(--text2);">Russian version</div></div>
-            <span class="lang-badge">RU</span>
-          </div>
-          <div class="lc-btn" data-lang="EN" onclick="selLang('EN',this)">
-            <span style="font-size:28px;">🇬🇧</span>
-            <div style="flex:1"><div style="font-size:15px;font-weight:700;">English</div><div style="font-size:12px;color:var(--text2);">English version</div></div>
-            <span class="lang-badge">EN</span>
-          </div>
-          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="c-err1"></div>
+      <div class="hdr" style="background:#1d3560;padding:3vw 4vw;display:flex;align-items:center;gap:3vw;flex-shrink:0;">
+        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" style="width:12vw;height:12vw;border-radius:50%;object-fit:cover;flex-shrink:0;">
+        <div>
+          <span style="font-size:4.5vw;font-weight:700;color:#fff;display:block;line-height:1.2;">Rent in Tbilisi</span>
+          <span style="font-size:3vw;color:rgba(255,255,255,.6);display:block;margin-top:.5vw;" id="c-hdr-sub">Выбор типа договора</span>
+        </div>
+        <span style="font-size:6vw;margin-left:auto;flex-shrink:0;">🇬🇪</span>
+      </div>
+
+      <div style="background:#1d3560;padding:1vw 4vw 4vw;display:flex;align-items:center;flex-shrink:0;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1.5vw;">
+          <div class="csn active" id="csn1">1</div><span class="csl on" id="csl1">Тип</span>
+        </div>
+        <div class="csline" id="csl12"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1.5vw;">
+          <div class="csn idle" id="csn2">2</div><span class="csl" id="csl2">Язык</span>
+        </div>
+        <div class="csline" id="csl23"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1.5vw;">
+          <div class="csn idle" id="csn3">3</div><span class="csl" id="csl3">Детали</span>
+        </div>
+        <div class="csline" id="csl34"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1.5vw;">
+          <div class="csn idle" id="csn4">4</div><span class="csl" id="csl4">Проверка</span>
+        </div>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:5vw 4vw 6vw;background:#eef2fa;" id="c-scroll">
+
+        <!-- PAGE 1: TYPE -->
+        <div class="cpg on" id="cp1">
+          <span class="ph-title">Тип сделки</span>
+          <span class="ph-sub">Выбери тип договора который нужно создать</span>
+
+          <button class="ctc" type="button" data-type="rent" onclick="cSelType(this)">
+            <span style="font-size:8vw;flex-shrink:0;line-height:1;">🏠</span>
+            <div><span class="ctc-name">Apartment Rental</span><span class="ctc-note">Long-term residential lease</span></div>
+            <div class="ctc-check"></div>
+          </button>
+          <button class="ctc" type="button" data-type="comm" onclick="cSelType(this)">
+            <span style="font-size:8vw;flex-shrink:0;line-height:1;">🏢</span>
+            <div><span class="ctc-name">Commercial Rental</span><span class="ctc-note">Office, shop, warehouse, restaurant</span></div>
+            <div class="ctc-check"></div>
+          </button>
+          <button class="ctc" type="button" data-type="sale" onclick="cSelType(this)">
+            <span style="font-size:8vw;flex-shrink:0;line-height:1;">🔑</span>
+            <div><span class="ctc-name">Sale</span><span class="ctc-note">Real estate purchase agreement</span></div>
+            <div class="ctc-check"></div>
+          </button>
+          <div class="cstatus" id="cst1"></div>
         </div>
 
-        <!-- Page 2: Details -->
-        <div class="pad" id="cp2" style="display:none">
+        <!-- PAGE 2: LANGUAGE -->
+        <div class="cpg" id="cp2">
+          <span class="ph-title">Язык договора</span>
+          <span class="ph-sub">На каком языке создать документ?</span>
+
+          <button class="clc" type="button" data-lang="GEO" onclick="cSelLang(this)">
+            <span style="font-size:9vw;flex-shrink:0;line-height:1;">🇬🇪</span>
+            <div><span class="clc-name">ქართული</span><span class="clc-note">Georgian version</span></div>
+            <span class="clc-code">GEO</span>
+          </button>
+          <button class="clc" type="button" data-lang="RU" onclick="cSelLang(this)">
+            <span style="font-size:9vw;flex-shrink:0;line-height:1;">🇷🇺</span>
+            <div><span class="clc-name">Русский</span><span class="clc-note">Russian version</span></div>
+            <span class="clc-code">RU</span>
+          </button>
+          <button class="clc" type="button" data-lang="EN" onclick="cSelLang(this)">
+            <span style="font-size:9vw;flex-shrink:0;line-height:1;">🇬🇧</span>
+            <div><span class="clc-name">English</span><span class="clc-note">English version</span></div>
+            <span class="clc-code">EN</span>
+          </button>
+          <div class="cstatus" id="cst2"></div>
+        </div>
+
+        <!-- PAGE 3: DETAILS -->
+        <div class="cpg" id="cp3">
+          <span class="ph-title" id="cp3-title">Детали договора</span>
+          <span class="ph-sub">Заполни все разделы ниже</span>
+
           <div class="ctabs">
-            <div class="ctab on" onclick="setCTab('ct1',this)">Стороны</div>
-            <div class="ctab" onclick="setCTab('ct2',this)">Объект</div>
-            <div class="ctab" onclick="setCTab('ct3',this)">Финансы</div>
+            <div class="ctb on" data-tab="ct1">Стороны</div>
+            <div class="ctb" data-tab="ct2">Объект</div>
+            <div class="ctb" data-tab="ct3">Финансы</div>
           </div>
-          <div class="ctpg on" id="ct1">
-            <div class="field"><label class="flabel">Дата договора <span class="req">*</span></label><input type="date" id="c-timestamp"></div>
-            <div class="field"><label class="flabel">Собственник (ФИО) <span class="req">*</span></label><input type="text" id="c-owner-name" placeholder="Полное имя"></div>
-            <div class="field"><label class="flabel">ID собственника <span class="req">*</span></label><input type="text" id="c-owner-id" placeholder="Личный номер"></div>
-            <div class="field"><label class="flabel">Арендатор (ФИО) <span class="req">*</span></label><input type="text" id="c-client-name" placeholder="Полное имя"></div>
-            <div class="field"><label class="flabel">ID арендатора <span class="req">*</span></label><input type="text" id="c-client-id" placeholder="Личный номер"></div>
+
+          <div class="ctp on" id="ct1">
+            <div class="field"><label class="fl">Дата договора</label><input id="c-timestamp" type="date"></div>
+            <div class="field"><label class="fl">Собственник (ФИО)</label><input id="c-owner-name" type="text" placeholder="Полное имя"></div>
+            <div class="field"><label class="fl">Личный номер собственника</label><input id="c-owner-id" type="text" placeholder="Личный номер"></div>
+            <div class="field"><label class="fl" id="c-client-label">Арендатор (ФИО)</label><input id="c-client-name" type="text" placeholder="Полное имя"></div>
+            <div class="field"><label class="fl" id="c-client-id-label">Личный номер арендатора</label><input id="c-client-id" type="text" placeholder="Личный номер"></div>
           </div>
-          <div class="ctpg" id="ct2">
-            <div class="field"><label class="flabel">Кадастровый код <span class="req">*</span></label><input type="text" id="c-cadastral" placeholder="01.10.10.02.20.0.01.01.84A"></div>
-            <div class="field"><label class="flabel">Адрес <span class="req">*</span></label><input type="text" id="c-address" placeholder="Улица, дом"></div>
-            <div class="row2">
-              <div class="field"><label class="flabel">Этаж</label><input type="text" id="c-floor" placeholder="2 / B / —"></div>
-              <div class="field"><label class="flabel">Кв. номер</label><input type="text" id="c-apt" placeholder="Номер"></div>
+          <div class="ctp" id="ct2">
+            <div class="field"><label class="fl">Кадастровый код</label><input id="c-cadastral" type="text" placeholder="01.10.10.02.20.0.01.01.84A"></div>
+            <div class="field"><label class="fl">Адрес</label><input id="c-address" type="text" placeholder="Улица, дом"></div>
+            <div class="r2">
+              <div class="field"><label class="fl">Этаж</label><input id="c-floor" type="text" placeholder="2"></div>
+              <div class="field"><label class="fl">Кв. номер</label><input id="c-apt" type="text" placeholder="Номер"></div>
             </div>
-            <div class="field"><label class="flabel">Площадь (м²) <span class="req">*</span></label><input type="text" id="c-area" placeholder="45 или 45.05"></div>
+            <div class="field"><label class="fl">Площадь (м²)</label><input id="c-area" type="text" placeholder="45 или 45.05"></div>
           </div>
-          <div class="ctpg" id="ct3">
-            <div class="row2">
-              <div class="field"><label class="flabel">Дата начала <span class="req">*</span></label><input type="date" id="c-start"></div>
-              <div class="field"><label class="flabel">Дата конца <span class="req">*</span></label><input type="date" id="c-end"></div>
+          <div class="ctp" id="ct3">
+            <div class="r2">
+              <div class="field"><label class="fl">Дата начала</label><input id="c-start" type="date"></div>
+              <div class="field"><label class="fl">Дата конца</label><input id="c-end" type="date"></div>
             </div>
-            <div class="field"><label class="flabel">Срок (месяцев) <span class="req">*</span></label><input type="text" id="c-months" placeholder="12"></div>
-            <div class="row2">
-              <div class="field"><label class="flabel">Цена (USD) <span class="req">*</span></label><input type="text" id="c-price" placeholder="600" oninput="syncDeposit()"></div>
-              <div class="field"><label class="flabel">Депозит (USD) <span class="req">*</span></label><input type="text" id="c-deposit" placeholder="600"></div>
+            <div class="field"><label class="fl">Срок (месяцев)</label><input id="c-months" type="text" placeholder="Кол-во месяцев"></div>
+            <div class="r2">
+              <div class="field"><label class="fl" id="c-price-label">Цена (USD)</label><input id="c-price" type="text" placeholder="600" oninput="cSyncDep()"></div>
+              <div class="field"><label class="fl">Депозит (USD)</label><input id="c-deposit" type="text" placeholder="600"></div>
             </div>
-            <div class="field"><label class="flabel">День оплаты (1-31) <span class="req">*</span></label><input type="text" id="c-payday" placeholder="1"></div>
+            <div class="field"><label class="fl">День оплаты (1–31)</label><input id="c-payday" type="text" placeholder="День месяца"></div>
           </div>
-          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="c-err2"></div>
+          <div class="cstatus" id="cst3"></div>
         </div>
 
-        <!-- Page 3: Review -->
-        <div class="pad" id="cp3" style="display:none">
-          <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Проверь данные</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Убедись что всё верно перед созданием</div>
-          <div id="c-sum"></div>
-          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="c-err3"></div>
-          <div id="c-result" style="display:none">
-            <div class="contract-result">
-              <span class="cr-icon">✅</span>
-              <span class="cr-title">Договор создан!</span>
-              <span class="cr-sub">Документы готовы к использованию</span>
-              <div class="cr-btns">
-                <a class="cr-doc" id="c-doc-link" href="#" target="_blank">📄 Открыть DOC</a>
-                <a class="cr-pdf" id="c-pdf-link" href="#" target="_blank">📋 Открыть PDF</a>
+        <!-- PAGE 4: REVIEW -->
+        <div class="cpg" id="cp4">
+          <span class="ph-title">Проверь данные</span>
+          <span class="ph-sub">Убедись что всё верно перед созданием</span>
+          <div id="c-sumlist"></div>
+          <div class="cstatus" id="cst4"></div>
+          <div id="c-result" class="hid">
+            <div style="background:#f0fdf4;border:.5vw solid #86efac;border-radius:5vw;padding:6vw;text-align:center;margin-top:5vw;">
+              <span style="font-size:12vw;display:block;margin-bottom:2.5vw;line-height:1;">✅</span>
+              <span style="font-size:6vw;font-weight:800;color:#166534;display:block;margin-bottom:1vw;">Договор создан!</span>
+              <span style="font-size:3.8vw;color:#15803d;display:block;">Документы готовы к использованию</span>
+              <div style="display:flex;gap:3vw;margin-top:5vw;">
+                <a id="c-doclink" href="#" target="_blank" style="flex:1;text-align:center;text-decoration:none;padding:4vw;border-radius:3.5vw;font-size:4.5vw;font-weight:700;background:#1d3560;color:#fff;display:block;">📄 DOC</a>
+                <a id="c-pdflink" href="#" target="_blank" style="flex:1;text-align:center;text-decoration:none;padding:4vw;border-radius:3.5vw;font-size:4.5vw;font-weight:700;background:#fff;color:#1d3560;border:.5vw solid #e8eef8;display:block;">📋 PDF</a>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div style="padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;gap:10px;flex-shrink:0;">
-        <button class="sbtn navy" id="c-back-btn" onclick="cBack()" style="display:none;flex:0 0 auto;width:80px;">← Назад</button>
-        <button class="sbtn" id="c-next-btn" onclick="cNext()">Продолжить →</button>
-      </div>
-    </div>
 
-    <!-- ═══ TAB: T14 ═══ -->
-    <div class="screen" id="tab-t14">
-      <div style="padding:20px 16px 8px;">
-        <div style="font-size:18px;font-weight:800;">🔍 T14 — Проверка сделки</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Оценка через 14 дней после сдачи</div>
       </div>
-      <div class="pad pb">
-        <div class="section"><div class="slabel">Объект и агент</div>
-          <div class="field"><label class="flabel">Объект / Адрес <span class="req">*</span></label><input type="text" id="t14-obj" placeholder="#Vera, ул. Мира 12..."></div>
-          <div class="field"><label class="flabel">Агент <span class="req">*</span></label><select id="t14-agent"><option value="">Выбрать...</option></select></div>
-          <div class="field"><label class="flabel">Дата сделки <span class="req">*</span></label><input type="date" id="t14-date"></div>
-        </div>
-        <div class="section"><div class="slabel">H2O — T14 оценка</div>
-          <div class="h2o-blk"><div class="h2o-title">Client Delivery</div><div class="h2o-sub">Клиент получил ожидаемое?</div>
-            <div class="h2o-btns" id="h14-client"><button class="h2o-btn" onclick="setH2O('t14','client',1,this)">1</button><button class="h2o-btn" onclick="setH2O('t14','client',2,this)">2</button><button class="h2o-btn" onclick="setH2O('t14','client',3,this)">3</button></div>
-          </div>
-          <div class="h2o-blk"><div class="h2o-title">Owner Result</div><div class="h2o-sub">Собственник получил результат?</div>
-            <div class="h2o-btns" id="h14-owner"><button class="h2o-btn" onclick="setH2O('t14','owner',1,this)">1</button><button class="h2o-btn" onclick="setH2O('t14','owner',2,this)">2</button><button class="h2o-btn" onclick="setH2O('t14','owner',3,this)">3</button></div>
-          </div>
-          <div class="h2o-blk"><div class="h2o-title">Process Integrity</div><div class="h2o-sub">Процесс прошёл чисто?</div>
-            <div class="h2o-btns" id="h14-process"><button class="h2o-btn" onclick="setH2O('t14','process',1,this)">1</button><button class="h2o-btn" onclick="setH2O('t14','process',2,this)">2</button><button class="h2o-btn" onclick="setH2O('t14','process',3,this)">3</button></div>
-          </div>
-        </div>
-        <div class="section"><div class="slabel">Изменения после сделки</div>
-          <div class="field"><textarea id="t14-changes" rows="3" placeholder="Что стало лучше или хуже..."></textarea></div>
-        </div>
-        <div class="section"><div class="slabel">Жалобы после заселения</div>
-          <div class="tg c2" style="margin-bottom:10px;">
-            <button class="tb" id="t14-cn" onclick="selComp('no')">Нет</button>
-            <button class="tb" id="t14-cy" onclick="selComp('yes')">Да</button>
-          </div>
-          <div id="t14-comp-det" style="display:none"><textarea id="t14-comp-txt" rows="3" placeholder="Опиши проблемы..."></textarea></div>
-        </div>
-        <div class="section"><div class="slabel">Итог T14</div>
-          <div class="tg c2"><button class="tb" id="t14-cl" onclick="selT14R('clean')">✓ Чистая</button><button class="tb" id="t14-dr" onclick="selT14R('dirty')">✗ Грязная</button></div>
-        </div>
-        <div class="section"><div class="slabel">Комментарий агента</div>
-          <div class="field"><textarea id="t14-comment" rows="4" placeholder="Честно: что было не идеально..."></textarea></div>
-        </div>
-        <div class="submit-wrap" style="padding:0;"><button class="sbtn" onclick="sub('t14')">Отправить T14</button></div>
+
+      <div style="padding:3vw 4vw;padding-bottom:calc(env(safe-area-inset-bottom,4vw)+3vw);display:flex;gap:3vw;flex-shrink:0;background:#fff;border-top:.5vw solid rgba(29,53,96,.09);">
+        <button class="nb nb-back hid" id="c-backbtn" type="button" onclick="cBack()">← Назад</button>
+        <button class="nb nb-main" id="c-nextbtn" type="button" onclick="cNext()">Продолжить →</button>
       </div>
+
+      <div class="ov" id="c-ov" style="display:none;">
+        <div style="background:#fff;border-radius:6vw;padding:8vw 10vw;text-align:center;">
+          <div class="sp" style="width:9vw;height:9vw;border-radius:50%;border:.7vw solid #e8eef8;border-top-color:#1d3560;margin:0 auto 4vw;display:block;animation:spin .7s linear infinite;"></div>
+          <span style="font-size:4.5vw;font-weight:700;color:#1d3560;">Создаём договор…</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- ═══ TAB: STATS ═══ -->
@@ -676,8 +930,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
 <script>
 // ── CONFIG ──
-const API_URL = 'https://script.google.com/macros/s/AKfycbxMqLVasIbwcupjEAqLZd2FYbZFJvwM7FpYwLA_DIJs3pARc7G0tZbk2RVLbOLfsJOaJQ/exec';
-const CONTRACT_API = 'https://script.google.com/macros/s/AKfycbxMqLVasIbwcupjEAqLZd2FYbZFJvwM7FpYwLA_DIJs3pARc7G0tZbk2RVLbOLfsJOaJQ/exec'; // same or separate
+const API_URL = 'https://script.google.com/macros/s/AKfycbz_Hw3zxs66YL8oYSVdXoAEGXayM46gP43OT0bDBEsvAmxAlfsUzP0MYjYdjDRZ90gttg/exec';
+const CONTRACT_API = 'https://script.google.com/macros/s/AKfycbz_Hw3zxs66YL8oYSVdXoAEGXayM46gP43OT0bDBEsvAmxAlfsUzP0MYjYdjDRZ90gttg/exec'; // same or separate
 
 // ── DATA ──
 let RECRUITS = [];
