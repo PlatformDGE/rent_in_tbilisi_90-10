@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Rent in Tbilisi</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js">
+
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -464,68 +466,128 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     <!-- ═══ CONTRACT ═══ -->
     <div class="screen" id="tab-contract">
+      <!-- Header -->
       <div class="hdr" style="background:var(--navy);border-bottom-color:rgba(255,255,255,.1);">
-        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png">
-        <div class="hi"><div class="ht" style="color:#fff;">📄 Договор аренды</div><div class="hs" style="color:rgba(255,255,255,.6);">Rent in Tbilisi · Contract</div></div>
+        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" style="width:28px;height:28px;border-radius:50%;">
+        <div class="hi"><div class="ht" style="color:#fff;">📄 Contract</div><div class="hs" id="cx-sub" style="color:rgba(255,255,255,.6);">Select Deal Type</div></div>
         <span style="font-size:20px;">🇬🇪</span>
       </div>
-      <div class="csteps" id="csteps">
-        <div class="csc"><div class="csn active" id="csn1">1</div><span class="csl on" id="csl1">Язык</span></div>
-        <div class="csline" id="csl12"></div>
-        <div class="csc"><div class="csn idle" id="csn2">2</div><span class="csl" id="csl2">Детали</span></div>
-        <div class="csline" id="csl23"></div>
-        <div class="csc"><div class="csn idle" id="csn3">3</div><span class="csl" id="csl3">Проверка</span></div>
+      <!-- Steps -->
+      <div style="background:var(--navy);padding:8px 16px 14px;display:flex;align-items:center;flex-shrink:0;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn active" id="cx-sn1">1</div><span class="csl on" id="cx-sl1">Type</span></div>
+        <div class="csline" id="cx-sl12"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn idle" id="cx-sn2">2</div><span class="csl" id="cx-sl2">Lang</span></div>
+        <div class="csline" id="cx-sl23"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn idle" id="cx-sn3">3</div><span class="csl" id="cx-sl3">Details</span></div>
+        <div class="csline" id="cx-sl34"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn idle" id="cx-sn4">4</div><span class="csl" id="cx-sl4">Review</span></div>
       </div>
-      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;" id="cscroll">
-        <div class="pad" id="cp1">
-          <div style="font-size:16px;font-weight:800;margin-bottom:4px;">Выбери язык договора</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Выбери нужную версию</div>
-          <div class="lcbtn" data-lang="GEO" onclick="selLang('GEO',this)"><span style="font-size:26px;">🇬🇪</span><div style="flex:1"><div style="font-size:14px;font-weight:700;">ქართული</div><div style="font-size:11px;color:var(--text2);">Georgian version</div></div><span class="lbadge">GEO</span></div>
-          <div class="lcbtn" data-lang="RU" onclick="selLang('RU',this)"><span style="font-size:26px;">🇷🇺</span><div style="flex:1"><div style="font-size:14px;font-weight:700;">Русский</div><div style="font-size:11px;color:var(--text2);">Russian version</div></div><span class="lbadge">RU</span></div>
-          <div class="lcbtn" data-lang="EN" onclick="selLang('EN',this)"><span style="font-size:26px;">🇬🇧</span><div style="flex:1"><div style="font-size:14px;font-weight:700;">English</div><div style="font-size:11px;color:var(--text2);">English version</div></div><span class="lbadge">EN</span></div>
-          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr1"></div>
+      <!-- Pages -->
+      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;" id="cx-scroll">
+
+        <!-- STEP 1: TYPE -->
+        <div class="pad" id="cx-p1">
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px;">Deal Type</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:18px;">Select the type of contract to create</div>
+          <div class="ctype-btn" onclick="cxSelType('rent',this)">
+            <span style="font-size:28px;">🏠</span>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Apartment Rental</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Long-term residential lease</div></div>
+            <div class="ctype-check" id="cxc-rent"></div>
+          </div>
+          <div class="ctype-btn" onclick="cxSelType('comm',this)">
+            <span style="font-size:28px;">🏢</span>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Commercial Rental</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Office, shop, warehouse, restaurant</div></div>
+            <div class="ctype-check" id="cxc-comm"></div>
+          </div>
+          <div class="ctype-btn" onclick="cxSelType('sale',this)">
+            <span style="font-size:28px;">🔑</span>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Sale</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Real estate purchase agreement</div></div>
+            <div class="ctype-check" id="cxc-sale"></div>
+          </div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cx-err1"></div>
         </div>
-        <div class="pad" id="cp2" style="display:none">
-          <div class="ctabs"><div class="ctab on" onclick="setCTab('ct1',this)">Стороны</div><div class="ctab" onclick="setCTab('ct2',this)">Объект</div><div class="ctab" onclick="setCTab('ct3',this)">Финансы</div></div>
-          <div class="ctpg on" id="ct1">
-            <div class="field"><label class="fl">Дата договора <span class="req">*</span></label><input type="date" id="c-ts"></div>
-            <div class="field"><label class="fl">Собственник (ФИО) <span class="req">*</span></label><input type="text" id="c-on" placeholder="Полное имя"></div>
-            <div class="field"><label class="fl">ID собственника <span class="req">*</span></label><input type="text" id="c-oi" placeholder="Личный номер"></div>
-            <div class="field"><label class="fl">Арендатор (ФИО) <span class="req">*</span></label><input type="text" id="c-cn" placeholder="Полное имя"></div>
-            <div class="field"><label class="fl">ID арендатора <span class="req">*</span></label><input type="text" id="c-ci" placeholder="Личный номер"></div>
-          </div>
-          <div class="ctpg" id="ct2">
-            <div class="field"><label class="fl">Кадастровый код <span class="req">*</span></label><input type="text" id="c-cad" placeholder="01.10.10.02.20.0.01.01.84A"></div>
-            <div class="field"><label class="fl">Адрес <span class="req">*</span></label><input type="text" id="c-addr" placeholder="Улица, дом"></div>
-            <div class="r2"><div class="field"><label class="fl">Этаж</label><input type="text" id="c-fl" placeholder="2"></div><div class="field"><label class="fl">Кв. номер</label><input type="text" id="c-apt" placeholder="Номер"></div></div>
-            <div class="field"><label class="fl">Площадь (м²) <span class="req">*</span></label><input type="text" id="c-area" placeholder="45"></div>
-          </div>
-          <div class="ctpg" id="ct3">
-            <div class="r2"><div class="field"><label class="fl">Начало <span class="req">*</span></label><input type="date" id="c-start"></div><div class="field"><label class="fl">Конец <span class="req">*</span></label><input type="date" id="c-end"></div></div>
-            <div class="field"><label class="fl">Срок (мес.) <span class="req">*</span></label><input type="text" id="c-mo" placeholder="12"></div>
-            <div class="r2"><div class="field"><label class="fl">Цена (USD) <span class="req">*</span></label><input type="text" id="c-pr" placeholder="600" oninput="syncDep()"></div><div class="field"><label class="fl">Депозит (USD) <span class="req">*</span></label><input type="text" id="c-dep" placeholder="600"></div></div>
-            <div class="field"><label class="fl">День оплаты <span class="req">*</span></label><input type="text" id="c-pd" placeholder="1"></div>
-          </div>
-          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr2"></div>
+
+        <!-- STEP 2: LANGUAGE -->
+        <div class="pad" id="cx-p2" style="display:none">
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px;">Contract Language</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:18px;">In which language should the document be created?</div>
+          <div class="lcbtn" onclick="cxSelLang('GEO',this)"><span style="font-size:26px;">🇬🇪</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">ქართული</div><div style="font-size:11px;color:var(--text2);">Georgian version</div></div><span class="lbadge">GEO</span></div>
+          <div class="lcbtn" onclick="cxSelLang('RU',this)"><span style="font-size:26px;">🇷🇺</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">Русский</div><div style="font-size:11px;color:var(--text2);">Russian version</div></div><span class="lbadge">RU</span></div>
+          <div class="lcbtn" onclick="cxSelLang('EN',this)"><span style="font-size:26px;">🇬🇧</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">English</div><div style="font-size:11px;color:var(--text2);">English version</div></div><span class="lbadge">EN</span></div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cx-err2"></div>
         </div>
-        <div class="pad" id="cp3" style="display:none">
-          <div style="font-size:15px;font-weight:700;margin-bottom:12px;">Проверь данные</div>
-          <div id="csum"></div>
-          <div style="font-size:12px;margin-top:8px;display:none" id="cerr3"></div>
-          <div id="cresult" style="display:none">
-            <div class="cresult"><span class="cric">✅</span><span class="crt">Договор создан!</span><span class="crs">Документы готовы</span>
-              <div class="crbtns"><a class="crdoc" id="cdoclink" href="#" target="_blank">📄 DOC</a><a class="crpdf" id="cpdflink" href="#" target="_blank">📋 PDF</a></div>
+
+        <!-- STEP 3: DETAILS -->
+        <div class="pad" id="cx-p3" style="display:none">
+          <div class="ctabs">
+            <div class="ctab on" onclick="setCTab2('cx-t1',this)">Parties</div>
+            <div class="ctab" onclick="setCTab2('cx-t2',this)">Property</div>
+            <div class="ctab" onclick="setCTab2('cx-t3',this)">Financials</div>
+          </div>
+          <div class="ctpg on" id="cx-t1">
+            <div class="field"><label class="fl">Contract Date <span class="req">*</span></label><input type="date" id="cx-ts"></div>
+            <div class="field"><label class="fl">Owner (Full Name) <span class="req">*</span></label><input type="text" id="cx-on" placeholder="Full name"></div>
+            <div class="field"><label class="fl">Owner ID Number <span class="req">*</span></label><input type="text" id="cx-oi" placeholder="Personal ID number"></div>
+            <div class="field" id="cx-odob-row" style="display:none"><label class="fl">Owner Date of Birth <span class="req">*</span></label><input type="date" id="cx-odob"></div>
+            <div class="field"><label class="fl" id="cx-cl">Tenant (Full Name) <span class="req">*</span></label><input type="text" id="cx-cn" placeholder="Full name"></div>
+            <div class="field"><label class="fl" id="cx-cil">Tenant ID Number <span class="req">*</span></label><input type="text" id="cx-ci" placeholder="Personal ID number"></div>
+            <div class="field" id="cx-cdob-row" style="display:none"><label class="fl">Buyer Date of Birth <span class="req">*</span></label><input type="date" id="cx-cdob"></div>
+          </div>
+          <div class="ctpg" id="cx-t2">
+            <div class="field"><label class="fl">Cadastral Code <span class="req">*</span></label><input type="text" id="cx-cad" placeholder="01.10.10.02.20.0.01.01.84A"></div>
+            <div class="field"><label class="fl">Address <span class="req">*</span></label><input type="text" id="cx-addr" placeholder="Street, house number"></div>
+            <div class="r2">
+              <div class="field"><label class="fl">Floor</label><input type="text" id="cx-fl" placeholder="2"></div>
+              <div class="field"><label class="fl">Apt. No.</label><input type="text" id="cx-apt" placeholder="Number"></div>
+            </div>
+            <div class="field"><label class="fl">Area (m²) <span class="req">*</span></label><input type="text" id="cx-area" placeholder="45 or 45.05"></div>
+          </div>
+          <div class="ctpg" id="cx-t3">
+            <div id="cx-rent-fields">
+              <div class="r2">
+                <div class="field"><label class="fl">Start Date <span class="req">*</span></label><input type="date" id="cx-start"></div>
+                <div class="field"><label class="fl">End Date <span class="req">*</span></label><input type="date" id="cx-end"></div>
+              </div>
+              <div class="field"><label class="fl">Duration (months) <span class="req">*</span></label><input type="text" id="cx-mo" placeholder="Number of months"></div>
+              <div class="r2">
+                <div class="field"><label class="fl">Monthly Price (USD) <span class="req">*</span></label><input type="text" id="cx-pr" placeholder="Monthly price" oninput="cxSyncDep()"></div>
+                <div class="field"><label class="fl">Deposit (USD) <span class="req">*</span></label><input type="text" id="cx-dep" placeholder="Deposit amount"></div>
+              </div>
+              <div class="field"><label class="fl">Payment Day (1–31) <span class="req">*</span></label><input type="text" id="cx-pd" placeholder="Day of month"></div>
+            </div>
+            <div id="cx-sale-fields" style="display:none">
+              <div class="field"><label class="fl">Sale Price (USD) <span class="req">*</span></label><input type="text" id="cx-sp" placeholder="Total sale price"></div>
+              <div class="field"><label class="fl">Transfer Date <span class="req">*</span></label><input type="date" id="cx-td"></div>
+            </div>
+          </div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cx-err3"></div>
+        </div>
+
+        <!-- STEP 4: REVIEW -->
+        <div class="pad" id="cx-p4" style="display:none">
+          <div style="font-size:16px;font-weight:700;margin-bottom:12px;">Review & Submit</div>
+          <div id="cx-sum"></div>
+          <div id="cx-err4" style="font-size:12px;margin-top:8px;display:none;"></div>
+          <div id="cx-result" style="display:none;">
+            <div class="cresult">
+              <span class="cric">✅</span>
+              <span class="crt">Contract Created!</span>
+              <span class="crs">Your documents are ready</span>
+              <div class="crbtns">
+                <a class="crdoc" id="cx-doclink" href="#" target="_blank">📄 DOC</a>
+                <a class="crpdf" id="cx-pdflink" href="#" target="_blank">📋 PDF</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div style="padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom,0px)+12px);display:flex;gap:10px;flex-shrink:0;">
-        <button class="sbtn navy" id="cbback" onclick="cBack()" style="display:none;flex:0 0 auto;width:80px;">← Назад</button>
-        <button class="sbtn" id="cbnext" onclick="cNext()">Продолжить →</button>
+      <!-- Nav -->
+      <div style="padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom,0px)+12px);display:flex;gap:10px;flex-shrink:0;background:var(--bg);border-top:1px solid var(--border);">
+        <button class="sbtn navy" id="cx-back" onclick="cxBack()" style="display:none;flex:0 0 auto;width:90px;font-size:14px;">← Back</button>
+        <button class="sbtn" id="cx-next" onclick="cxNext()">Continue →</button>
       </div>
     </div>
 
-    <!-- ═══ STATS ═══ -->
     <div class="screen" id="tab-stats">
       <div style="padding:18px 16px 8px;"><div style="font-size:18px;font-weight:800;">📊 Счётчики</div><div style="font-size:12px;color:var(--text2);margin-top:3px;">Агенты и рекруты · Platform 90/10</div></div>
       <div class="pad pb">
@@ -625,7 +687,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxXWRbGSAGRIDIjXTyJz7gYxbZGHUZo8NV-3CQzkk3QxAQfiUNwQRsL0hKAEIRrrOEXUg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxTVqXkAjBhiprMCp1cvbVLiXzWInOZo9JeeTtZgXzF6TWaXGd7CTenoAQ5TozCX3R-Lg/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -653,7 +715,7 @@ function goTab(tab) {
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('nav-'+tab).classList.add('on');
   if(tab==='stats') renderStats();
-  if(tab==='contract') { cStep=1; cLang=''; cRender(); }
+  if(tab==='contract') {cxReset(); cStep=1; cLang=''; cRender(); }
   if(tab==='deals') { populateDeals(); populateRentalInDeals(); }
   window.scrollTo(0,0);
 }
@@ -706,13 +768,13 @@ function setDealMode(mode) {
 }
 
 function populateRentalInDeals() {
-  const agEl=document.getElementById('rn-agent'); agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
+  const agEl=document.getElementById('rn-agent'); if(!agEl)return; agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
   const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
   const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
 }
 
 function populateDeals() {
-  const aEl=document.getElementById('d-agent'); aEl.innerHTML='<option value="">Выбрать агента...</option>'; AGENTS.forEach(a=>aEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
+  const aEl=document.getElementById('d-agent'); if(!aEl)return; aEl.innerHTML='<option value="">Выбрать агента...</option>'; AGENTS.forEach(a=>aEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
   const rEl=document.getElementById('d-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
 }
 
@@ -896,25 +958,34 @@ function searchPDF(kadastr) {
     return;
   }
   if (st) { st.style.display='block'; st.style.color='var(--text2)'; st.textContent='🔍 Ищем договор...'; }
-  pdfTimer['rn'] = setTimeout(async function() {
-    try {
-      var res = await fetch(API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr));
-      var data = await res.json();
-      if (data.found) {
-        st.style.color = 'var(--green)';
-        st.textContent = '✓ Договор найден: ' + data.name;
-        fr.src = data.view;
-        wr.style.display = 'block';
-      } else {
+  pdfTimer['rn'] = setTimeout(function() {
+    var url = API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function() {
+      try {
+        var data = JSON.parse(xhr.responseText);
+        if (data.found) {
+          st.style.color = 'var(--green)';
+          st.textContent = '✓ Договор найден: ' + data.name;
+          if (fr) { fr.src = data.view; }
+          if (wr) wr.style.display = 'block';
+        } else {
+          st.style.color = 'var(--red)';
+          st.textContent = '✗ Договор не найден в папке';
+          if (wr) wr.style.display = 'none';
+          if (fr) fr.src = '';
+        }
+      } catch(e) {
         st.style.color = 'var(--red)';
-        st.textContent = '✗ Договор не найден в папке';
-        wr.style.display = 'none';
-        fr.src = '';
+        st.textContent = '✗ Ошибка разбора ответа';
       }
-    } catch(e) {
+    };
+    xhr.onerror = function() {
       st.style.color = 'var(--red)';
       st.textContent = '✗ Ошибка соединения';
-    }
+    };
+    xhr.send();
   }, 800);
 }
 
@@ -955,19 +1026,6 @@ function send(type,data) {
 }
 
 // CONTRACT
-function cRender() {
-  [1,2,3].forEach(i=>{
-    document.getElementById('csn'+i).className='csn '+(i<cStep?'done':i===cStep?'active':'idle');
-    document.getElementById('csl'+i).className='csl'+(i===cStep?' on':'');
-  });
-  document.getElementById('csl12').className='csline'+(cStep>1?' on':'');
-  document.getElementById('csl23').className='csline'+(cStep>2?' on':'');
-  ['cp1','cp2','cp3'].forEach((id,i)=>document.getElementById(id).style.display=(i+1===cStep)?'block':'none');
-  document.getElementById('cbback').style.display=cStep>1?'block':'none';
-  document.getElementById('cbnext').textContent=cStep===3?'Создать договор ✓':'Продолжить →';
-  document.getElementById('cresult').style.display='none';
-  document.getElementById('cscroll').scrollTop=0;
-}
 
 function selLang(lang,el){cLang=lang;document.querySelectorAll('.lcbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');document.getElementById('cerr1').style.display='none';}
 function setCTab(id,el){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.ctpg').forEach(p=>p.classList.remove('on'));el.classList.add('on');document.getElementById(id).classList.add('on');}
@@ -1122,25 +1180,222 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 
 // LOAD
 async function loadData(){
-  try{
-    const res=await fetch(API_URL+'?action=getLists',{cache:'no-cache'});
-    const data=await res.json();
-    if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
-    if(data.agents&&data.agents.length)AGENTS=data.agents;
-    if(data.agentCounters)AGENT_C=data.agentCounters;
-    if(data.recruits)COUNTERS=data.recruits.map(r=>{const c=data.counters&&data.counters[r.name]||{};return{name:r.name,showing:[c.showing?c.showing.done:0,c.showing?c.showing.plan:15],stickers:[c.stickers?c.stickers.done:0,c.stickers?c.stickers.plan:15],rental:[c.rental?c.rental.done:0,c.rental?c.rental.plan:10]};});
-    const me=COUNTERS[0];if(me){document.getElementById('pill-showing').textContent=me.showing[0]+'/'+me.showing[1];document.getElementById('pill-stickers').textContent=me.stickers[0]+'/'+me.stickers[1];document.getElementById('pill-rental').textContent=me.rental[0]+'/'+me.rental[1];}
-  }catch(e){
-    RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0',mentor_id:1},{id:2,name:'Artem',telegram:'@levittart',mentor_id:1},{id:3,name:'Mariam',telegram:'@sourlylight',mentor_id:1},{id:4,name:'Liana',telegram:'@lianagadzhikhana',mentor_id:1},{id:5,name:'Nikita',telegram:'@krezonik',mentor_id:2},{id:6,name:'Mikhail',telegram:'@Dumbadze_Mikhail',mentor_id:3},{id:7,name:'Irakli',telegram:'@iraklibu',mentor_id:1},{id:8,name:'Anton',telegram:'@Antonio_ozzz',mentor_id:4},{id:9,name:'Gio',telegram:'@giosar',mentor_id:1},{id:10,name:'Viktoriia',telegram:'@viktoriia_radaeva',mentor_id:2},{id:11,name:'Tunar',telegram:'@tunaotchenash',mentor_id:3}];
-    AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:70},{id:3,name:'Sergi',telegram:'@SergiTb',level:50},{id:4,name:'Zaza',telegram:'@eforit',level:70}];
-    COUNTERS=RECRUITS.map(r=>({name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]}));
-  }
-  populateDeals();
-  cRender();
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', API_URL + '?action=getLists', true);
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if(data.recruits&&data.recruits.length) RECRUITS=data.recruits;
+      if(data.agents&&data.agents.length) AGENTS=data.agents;
+      if(data.agentCounters) AGENT_C=data.agentCounters;
+      if(data.recruits) COUNTERS=data.recruits.map(function(r){
+        var c=data.counters&&data.counters[r.name]||{};
+        return{name:r.name,
+          showing:[c.showing&&c.showing.done?parseInt(c.showing.done)||0:0, c.showing?c.showing.plan:15],
+          stickers:[c.stickers&&c.stickers.done?parseInt(c.stickers.done)||0:0, c.stickers?c.stickers.plan:15],
+          rental:[c.rental&&c.rental.done?parseInt(c.rental.done)||0:0, c.rental?c.rental.plan:10]};
+      });
+      afterLoad();
+    } catch(e) {
+      console.log('loadData parse error:', e);
+      useFallback();
+    }
+  };
+  xhr.onerror = function() {
+    console.log('loadData network error');
+    useFallback();
+  };
+  xhr.send();
 }
 
-// TG
-if(window.Telegram&&window.Telegram.WebApp){const tg=window.Telegram.WebApp;tg.ready();tg.expand();try{tg.disableVerticalSwipes();}catch(e){}try{tg.setHeaderColor('#0a0a0f');}catch(e){}}
+function afterLoad(){
+  try { populateRentalInDeals(); } catch(e){}
+  try { populateDeals(); } catch(e){}
+  // populate report selects
+  ['ph-r','ph-m','sh-r','sh-m','st-r','st-m'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    var isRecruit=id.endsWith('-r')||id==='ph-r'||id==='sh-r'||id==='st-r';
+    if(isRecruit){el.innerHTML='<option value="">Выбрать рекрута...</option>';RECRUITS.forEach(function(r){el.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});}
+    else{el.innerHTML='<option value="">Выбрать наставника...</option>';AGENTS.forEach(function(a){el.innerHTML+='<option value="'+a.telegram+'">'+a.name+'</option>';});}
+  });
+  var today=new Date().toISOString().split('T')[0];
+  var fromEl=document.getElementById('rn-from');if(fromEl&&!fromEl.value)fromEl.value=today;
+  cRender();
+  renderStats();
+}
+
+function useFallback(){
+  RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0'},{id:2,name:'Artem',telegram:'@levittart'},{id:3,name:'Mariam',telegram:'@sourlylight'},{id:4,name:'Liana',telegram:'@lianagadzhikhana'},{id:5,name:'Mari',telegram:'@marikhitarishvili'},{id:6,name:'Nikita',telegram:'@krezonik'},{id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail'},{id:8,name:'Irakli',telegram:'@iraklibu'},{id:9,name:'Anton',telegram:'@Antonio_ozzz'},{id:10,name:'Gio',telegram:'@giosar'},{id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva'},{id:12,name:'Tunar',telegram:'@tunaotchenash'}];
+  AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:90},{id:3,name:'Sergi',telegram:'@SergiTb',level:90},{id:4,name:'Zaza',telegram:'@eforit',level:90},{id:5,name:'Omari',telegram:'@thatomss',level:90},{id:6,name:'Shorena',telegram:'@shorena_jvaridze',level:70},{id:7,name:'Giorgi',telegram:'@chuluxagio',level:70},{id:8,name:'Dmitri',telegram:'@Aion82',level:70},{id:9,name:'Alex',telegram:'@Alexunder90',level:70}];
+  COUNTERS=RECRUITS.map(function(r){return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]};});
+  afterLoad();
+}
+
+function cxG(id){return document.getElementById(id);}
+function cxSafe(v){return v==null?'':String(v).trim();}
+function cxFmt(iso){if(!iso)return'';var p=String(iso).split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:iso;}
+function cxOnem(iso){if(!iso)return'';var p=iso.split('-');if(p.length!==3)return'';var d=new Date(+p[0],+p[1]-1,+p[2]),o=d.getDate();d.setMonth(d.getMonth()+1);if(d.getDate()!==o)d.setDate(0);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}
+function cxSyncDep(){var p=cxG('cx-pr'),d=cxG('cx-dep');if(p&&d&&!cxDepTouched)d.value=p.value;}
+function cxOv(f){var e=document.getElementById('ov');if(e)e.classList.toggle('on',f);}
+
+function cxRender2(){
+  [1,2,3,4].forEach(function(i){
+    var sn=cxG('cx-sn'+i),sl=cxG('cx-sl'+i);
+    if(sn)sn.className='csn '+(i<cxStep2?'done':i===cxStep2?'active':'idle');
+    if(sl)sl.className='csl'+(i===cxStep2?' on':'');
+  });
+  [[1,2],[2,3],[3,4]].forEach(function(p){
+    var el=cxG('cx-sl'+p[0]+''+p[1]);
+    if(el)el.className='csline'+(cxStep2>p[0]?' on':'');
+  });
+  [1,2,3,4].forEach(function(i){
+    var el=cxG('cx-p'+i);
+    if(el)el.style.display=(i===cxStep2)?'block':'none';
+  });
+  var back=cxG('cx-back'),next=cxG('cx-next');
+  if(back)back.style.display=cxStep2>1?'block':'none';
+  if(next){next.textContent=cxStep2===4?'Create Contract ✓':'Continue →';next.disabled=false;}
+  var res=cxG('cx-result');if(res)res.style.display='none';
+  var scr=cxG('cx-scroll');if(scr)scr.scrollTop=0;
+  var sub=cxG('cx-sub');if(sub)sub.textContent=CX_SUBS[cxStep2]||'';
+  var isSale=cxType==='sale';
+  var cl=cxG('cx-cl'),cil=cxG('cx-cil');
+  if(cl)cl.innerHTML=(isSale?'Buyer':'Tenant')+' (Full Name) <span class="req">*</span>';
+  if(cil)cil.innerHTML=(isSale?'Buyer':'Tenant')+' ID Number <span class="req">*</span>';
+  var odr=cxG('cx-odob-row'),cdr=cxG('cx-cdob-row');
+  if(odr)odr.style.display=isSale?'block':'none';
+  if(cdr)cdr.style.display=isSale?'block':'none';
+  var rf=cxG('cx-rent-fields'),sf=cxG('cx-sale-fields');
+  if(rf)rf.style.display=isSale?'none':'block';
+  if(sf)sf.style.display=isSale?'block':'none';
+}
+
+function cxSelType(type,el){
+  cxType=type;
+  document.querySelectorAll('.ctype-btn').forEach(function(b){b.classList.remove('sel');});
+  if(el)el.classList.add('sel');
+  var e=cxG('cx-err1');if(e)e.style.display='none';
+}
+
+function cxSelLang(lang,el){
+  cxLang=lang;
+  document.querySelectorAll('.lcbtn').forEach(function(b){b.classList.remove('sel');});
+  if(el)el.classList.add('sel');
+  var e=cxG('cx-err2');if(e)e.style.display='none';
+}
+
+function setCTab2(id,el){
+  document.querySelectorAll('#cx-p3 .ctab').forEach(function(b){b.classList.remove('on');});
+  if(el)el.classList.add('on');
+  ['cx-t1','cx-t2','cx-t3'].forEach(function(tid){
+    var t=cxG(tid);if(t)t.className='ctpg'+(tid===id?' on':'');
+  });
+}
+
+
+
+function cxCol(){
+  return{deal_type:CX_TYPES[cxType]||cxType,contract_language:cxLang,
+    timestamp:cxSafe(cxG('cx-ts')?cxG('cx-ts').value:''),
+    owner_full_name:cxSafe(cxG('cx-on')?cxG('cx-on').value:''),
+    owner_personal_number:cxSafe(cxG('cx-oi')?cxG('cx-oi').value:''),
+    owner_birth_day:cxSafe(cxG('cx-odob')?cxG('cx-odob').value:''),
+    client_full_name:cxSafe(cxG('cx-cn')?cxG('cx-cn').value:''),
+    client_personal_number:cxSafe(cxG('cx-ci')?cxG('cx-ci').value:''),
+    client_birth_day:cxSafe(cxG('cx-cdob')?cxG('cx-cdob').value:''),
+    cadastral_code:cxSafe(cxG('cx-cad')?cxG('cx-cad').value:''),
+    street_house:cxSafe(cxG('cx-addr')?cxG('cx-addr').value:''),
+    floor:cxSafe(cxG('cx-fl')?cxG('cx-fl').value:''),
+    apartment_number:cxSafe(cxG('cx-apt')?cxG('cx-apt').value:''),
+    apartment_area:cxSafe(cxG('cx-area')?cxG('cx-area').value:''),
+    start_rent:cxSafe(cxG('cx-start')?cxG('cx-start').value:''),
+    end_rent:cxSafe(cxG('cx-end')?cxG('cx-end').value:''),
+    rent_duration_months:cxSafe(cxG('cx-mo')?cxG('cx-mo').value:''),
+    price_usd:cxSafe(cxG('cx-pr')?cxG('cx-pr').value:''),
+    deposit_usd:cxSafe(cxG('cx-dep')?cxG('cx-dep').value:''),
+    pay_day:cxSafe(cxG('cx-pd')?cxG('cx-pd').value:''),
+    sale_price:cxSafe(cxG('cx-sp')?cxG('cx-sp').value:''),
+    transfer_date:cxSafe(cxG('cx-td')?cxG('cx-td').value:'')};
+}
+
+function cxNext(){
+  if(cxStep2===1){
+    if(!cxType){var e=cxG('cx-err1');if(e){e.textContent='Please select a deal type';e.style.display='block';}return;}
+    cxStep2=2;cxRender2();
+  } else if(cxStep2===2){
+    if(!cxLang){var e=cxG('cx-err2');if(e){e.textContent='Please select a language';e.style.display='block';}return;}
+    cxStep2=3;cxRender2();
+  } else if(cxStep2===3){
+    var d=cxCol(),isSale=cxType==='sale';
+    var req=['timestamp','owner_full_name','owner_personal_number','client_full_name','client_personal_number','cadastral_code','street_house','apartment_area'];
+    if(isSale)req=req.concat(['sale_price','transfer_date','owner_birth_day','client_birth_day']);
+    else req=req.concat(['start_rent','end_rent','rent_duration_months','price_usd','deposit_usd','pay_day']);
+    var e3=cxG('cx-err3');
+    for(var i=0;i<req.length;i++){if(!cxSafe(d[req[i]])){if(e3){e3.textContent='Please fill in all required fields';e3.style.display='block';}return;}}
+    if(e3)e3.style.display='none';
+    cxBuildSum(d);cxStep2=4;cxRender2();
+  } else {
+    cxSubmit();
+  }
+}
+
+function cxBack(){if(cxStep2>1){cxStep2--;cxRender2();}}
+
+function cxBuildSum(d){
+  var isSale=cxType==='sale',LABELS=isSale?CX_LS:CX_LR;
+  var list=cxG('cx-sum');if(!list)return;list.innerHTML='';
+  var om=isSale?'':cxOnem(d.start_rent);
+  var c=Object.assign({},d,{one_month:om});
+  Object.keys(LABELS).forEach(function(k){
+    var v=c[k];
+    if(['timestamp','start_rent','end_rent','transfer_date','owner_birth_day','client_birth_day'].indexOf(k)>=0)v=v?cxFmt(v):'';
+    if(!v)v='—';
+    var r=document.createElement('div');r.className='csumrow';
+    r.innerHTML='<span class="csumk">'+LABELS[k]+'</span><span class="csumv">'+String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>';
+    list.appendChild(r);
+  });
+}
+
+function cxSubmit(){
+  var d=cxCol(),isSale=cxType==='sale',om=isSale?'':cxOnem(d.start_rent);
+  cxOv(true);
+  var next=cxG('cx-next');if(next)next.disabled=true;
+  var payload=JSON.stringify({
+    contract_language:cxLang,deal_type:CX_TYPES[cxType]||cxType,
+    timestamp:cxFmt(d.timestamp),owner_full_name:d.owner_full_name,
+    owner_personal_number:d.owner_personal_number,owner_birth_day:cxFmt(d.owner_birth_day),
+    client_full_name:d.client_full_name,client_personal_number:d.client_personal_number,
+    client_birth_day:cxFmt(d.client_birth_day),cadastral_code:d.cadastral_code,
+    street_house:d.street_house,floor:d.floor,apartment_number:d.apartment_number,
+    apartment_area:d.apartment_area,start_rent:cxFmt(d.start_rent),end_rent:cxFmt(d.end_rent),
+    rent_duration_months:d.rent_duration_months,price_usd:d.price_usd,
+    deposit_usd:d.deposit_usd,pay_day:d.pay_day,one_month:om,
+    sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date)
+  });
+  var ifr=document.getElementById('cx-ifr');
+  if(!ifr){ifr=document.createElement('iframe');ifr.id='cx-ifr';ifr.name='cx-ifr';ifr.style.display='none';document.body.appendChild(ifr);}
+  var frm=document.getElementById('cx-frm');
+  if(!frm){frm=document.createElement('form');frm.id='cx-frm';frm.method='POST';frm.target='cx-ifr';frm.style.display='none';document.body.appendChild(frm);}
+  frm.action='https://script.google.com/macros/s/AKfycbwsfLdLsAJbeXnsTmpLKzx1mUT3PSKYCRmc5XDx52MLZkYa2qfVPIiEH38gWzlog1m5nw/exec';
+  frm.innerHTML='<input name="payload" value="'+payload.replace(/"/g,'&quot;')+'">';
+  frm.submit();
+  setTimeout(function(){
+    cxOv(false);if(next)next.disabled=false;
+    var res=cxG('cx-result');if(res)res.style.display='block';
+    var e4=cxG('cx-err4');if(e4){e4.textContent='Contract sent! Check your Drive folder.';e4.style.display='block';e4.style.color='var(--green)';}
+  },4000);
+}
+
+function cxReset(){
+  cxType='';cxLang='';cxStep2=1;cxDepTouched=false;
+  document.querySelectorAll('.ctype-btn').forEach(function(b){b.classList.remove('sel');});
+  document.querySelectorAll('.lcbtn').forEach(function(b){b.classList.remove('sel');});
+  var ts=cxG('cx-ts');
+  if(ts){var d=new Date();ts.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  cxRender2();
+}
+
 </script>
 </body>
 </html>
