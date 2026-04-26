@@ -1204,6 +1204,14 @@ function cRender() {
 }
 
 
+function selDealType(type, el) {
+  cDealType = type;
+  document.querySelectorAll('.ctype-btn').forEach(function(b){ b.classList.remove('sel'); });
+  if (el) el.classList.add('sel');
+  var err = document.getElementById('cerr1');
+  if (err) err.style.display = 'none';
+}
+
 function selLang(lang, el) {
   cLang = lang;
   document.querySelectorAll('.lcbtn').forEach(function(b) { b.classList.remove('sel'); });
