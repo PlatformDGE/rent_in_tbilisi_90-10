@@ -24,9 +24,8 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 
 /* SPLASH */
-#splash{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;animation:splashHide 0.5s ease 1.5s forwards;}
+#splash{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s;}
 #splash.hide{opacity:0;pointer-events:none;}
-@keyframes splashHide{0%{opacity:1;pointer-events:all}99%{opacity:0;pointer-events:none}100%{opacity:0;display:none;pointer-events:none;}}
 #splash img{width:90px;height:90px;border-radius:50%;box-shadow:0 0 40px rgba(255,255,255,.2);}
 #splash .st{font-size:22px;font-weight:800;color:#fff;}
 #splash .ss{font-size:12px;color:rgba(255,255,255,.5);}
@@ -751,10 +750,13 @@ let quizAnswers=[], quizCurrent=0, quizScore=0;
 // SPLASH
 function hideSplash() {
   var s = document.getElementById('splash');
-  if (s) { s.classList.add('hide'); setTimeout(function(){ s.style.display='none'; }, 500); }
+  if (s) {
+    s.style.opacity = '0';
+    s.style.pointerEvents = 'none';
+    setTimeout(function(){ s.style.display='none'; }, 600);
+  }
 }
 
-// Hide splash after 1.5s AND load data immediately
 setTimeout(hideSplash, 1500);
 loadData();
 
@@ -1523,6 +1525,7 @@ function afterLoad(){
   var today=new Date().toISOString().split('T')[0];
   var fromEl=document.getElementById('rn-from'); if(fromEl&&!fromEl.value) fromEl.value=today;
   cRender();
+  goTab('deals');
 }
 
 function fillSelect(id, data, mapper, placeholder) {
