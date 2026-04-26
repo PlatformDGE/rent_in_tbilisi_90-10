@@ -748,13 +748,19 @@ let quizAnswers=[], quizCurrent=0, quizScore=0;
 
 
 // SPLASH
-window.addEventListener('load', function() {
+function initApp() {
   setTimeout(function(){
-    document.getElementById('splash').classList.add('hide');
-    setTimeout(function(){ document.getElementById('splash').style.display='none'; },500);
-  },1800);
+    var s = document.getElementById('splash');
+    if(s) { s.classList.add('hide'); setTimeout(function(){ s.style.display='none'; },500); }
+  },1500);
   loadData();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
 
 // TABS
 function goTab(tab) {
