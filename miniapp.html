@@ -504,13 +504,21 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     </div>
 
     <!-- ═══ CONTRACT ═══ -->
-    <div class="screen" id="tab-contract" style="display:flex;flex-direction:column;">
-      <iframe
-        src="https://script.google.com/macros/s/AKfycbxPfJAFnJAhBK426zhNv1HSV0dD3Za0TBSpThbBKIr0ZuGwCVFRrbiR4Lmv0unA30uRXA/exec"
-        style="flex:1;border:none;width:100%;height:100%;"
-        allow="clipboard-write"
-        id="contract-iframe">
-      </iframe>
+    <div class="screen" id="tab-contract">
+      <div class="hdr" style="background:var(--navy);border-bottom-color:rgba(255,255,255,.1);">
+        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" style="width:28px;height:28px;border-radius:50%;">
+        <div class="hi"><div class="ht" style="color:#fff;">📄 Договор</div><div class="hs" style="color:rgba(255,255,255,.6);">Rent in Tbilisi · Contract</div></div>
+        <span style="font-size:20px;">🇬🇪</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:16px;">
+        <div style="font-size:56px;line-height:1;">📄</div>
+        <div style="font-size:18px;font-weight:800;text-align:center;">Создание договора</div>
+        <div style="font-size:13px;color:var(--text2);text-align:center;line-height:1.5;">Выбери тип сделки, язык и заполни данные для создания договора аренды или продажи</div>
+        <button onclick="openContract()" style="margin-top:8px;background:var(--navy);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:320px;">
+          📝 Открыть форму договора
+        </button>
+        <div style="font-size:11px;color:var(--text3);text-align:center;">Откроется в браузере</div>
+      </div>
     </div>
 
         <!-- ═══ STATS ═══ -->
@@ -917,6 +925,15 @@ function onRecruitChange() {
     }
   }
   calcRental();
+}
+
+function openContract() {
+  var url = "https://script.google.com/macros/s/AKfycbxPfJAFnJAhBK426zhNv1HSV0dD3Za0TBSpThbBKIr0ZuGwCVFRrbiR4Lmv0unA30uRXA/exec";
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.openLink(url);
+  } else {
+    window.open(url, '_blank');
+  }
 }
 
 // RENTAL CALC
