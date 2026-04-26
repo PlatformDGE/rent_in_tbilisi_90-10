@@ -507,17 +507,128 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     <div class="screen" id="tab-contract">
       <div class="hdr" style="background:var(--navy);border-bottom-color:rgba(255,255,255,.1);">
         <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" style="width:28px;height:28px;border-radius:50%;">
-        <div class="hi"><div class="ht" style="color:#fff;">📄 Договор</div><div class="hs" style="color:rgba(255,255,255,.6);">Rent in Tbilisi · Contract</div></div>
+        <div class="hi"><div class="ht" style="color:#fff;">📄 Договор</div><div class="hs" id="c-hdr-sub" style="color:rgba(255,255,255,.6);">Создание договора</div></div>
         <span style="font-size:20px;">🇬🇪</span>
       </div>
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;gap:16px;">
-        <div style="font-size:56px;line-height:1;">📄</div>
-        <div style="font-size:18px;font-weight:800;text-align:center;">Создание договора</div>
-        <div style="font-size:13px;color:var(--text2);text-align:center;line-height:1.5;">Выбери тип сделки, язык и заполни данные для создания договора аренды или продажи</div>
-        <button onclick="openContract()" style="margin-top:8px;background:var(--navy);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:16px;font-weight:700;cursor:pointer;width:100%;max-width:320px;">
-          📝 Открыть форму договора
-        </button>
-        <div style="font-size:11px;color:var(--text3);text-align:center;">Откроется в браузере</div>
+
+      <!-- Steps -->
+      <div style="background:var(--navy);padding:0 16px 14px;display:flex;align-items:center;flex-shrink:0;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn active" id="csn1">1</div><span class="csl on" id="csl1">Тип</span></div>
+        <div class="csline" id="csl12"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn idle" id="csn2">2</div><span class="csl" id="csl2">Язык</span></div>
+        <div class="csline" id="csl23"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn idle" id="csn3">3</div><span class="csl" id="csl3">Детали</span></div>
+        <div class="csline" id="csl34"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div class="csn idle" id="csn4">4</div><span class="csl" id="csl4">Проверка</span></div>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;" id="cscroll">
+
+        <!-- STEP 1: Deal type -->
+        <div class="pad" id="cp1">
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px;">Тип сделки</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:18px;">Выбери тип договора который нужно создать</div>
+          <div class="ctype-btn" id="ct-rent" onclick="selDealType('rent',this)">
+            <span style="font-size:28px;">🏠</span>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Аренда жилья</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Долгосрочная аренда квартиры или дома</div></div>
+            <div class="ctype-check" id="ctc-rent"></div>
+          </div>
+          <div class="ctype-btn" id="ct-comm" onclick="selDealType('comm',this)">
+            <span style="font-size:28px;">🏢</span>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Аренда коммерции</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Офис, магазин, склад, ресторан</div></div>
+            <div class="ctype-check" id="ctc-comm"></div>
+          </div>
+          <div class="ctype-btn" id="ct-sale" onclick="selDealType('sale',this)">
+            <span style="font-size:28px;">🔑</span>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Продажа</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Договор купли-продажи недвижимости</div></div>
+            <div class="ctype-check" id="ctc-sale"></div>
+          </div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr1">Выбери тип сделки</div>
+        </div>
+
+        <!-- STEP 2: Language -->
+        <div class="pad" id="cp2" style="display:none">
+          <div style="font-size:17px;font-weight:800;margin-bottom:4px;">Язык договора</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:18px;">На каком языке создать документ?</div>
+          <div class="lcbtn" onclick="selLang('GEO',this)">
+            <span style="font-size:26px;">🇬🇪</span>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:700;">ქართული</div><div style="font-size:11px;color:var(--text2);">Georgian version</div></div>
+            <span class="lbadge">GEO</span>
+          </div>
+          <div class="lcbtn" onclick="selLang('RU',this)">
+            <span style="font-size:26px;">🇷🇺</span>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:700;">Русский</div><div style="font-size:11px;color:var(--text2);">Russian version</div></div>
+            <span class="lbadge">RU</span>
+          </div>
+          <div class="lcbtn" onclick="selLang('EN',this)">
+            <span style="font-size:26px;">🇬🇧</span>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:700;">English</div><div style="font-size:11px;color:var(--text2);">English version</div></div>
+            <span class="lbadge">EN</span>
+          </div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr2">Выбери язык договора</div>
+        </div>
+
+        <!-- STEP 3: Details -->
+        <div class="pad" id="cp3" style="display:none">
+          <div class="ctabs">
+            <div class="ctab on" onclick="setCTab('ct1',this)">Стороны</div>
+            <div class="ctab" onclick="setCTab('ct2',this)">Объект</div>
+            <div class="ctab" onclick="setCTab('ct3',this)">Финансы</div>
+          </div>
+          <div class="ctpg on" id="ct1">
+            <div class="field"><label class="fl">Дата договора <span class="req">*</span></label><input type="date" id="c-ts"></div>
+            <div class="field"><label class="fl">Собственник (ФИО) <span class="req">*</span></label><input type="text" id="c-on" placeholder="Полное имя"></div>
+            <div class="field"><label class="fl">ID собственника <span class="req">*</span></label><input type="text" id="c-oi" placeholder="Личный номер"></div>
+            <div class="field"><label class="fl">Арендатор / Покупатель (ФИО) <span class="req">*</span></label><input type="text" id="c-cn" placeholder="Полное имя"></div>
+            <div class="field"><label class="fl">ID арендатора / покупателя <span class="req">*</span></label><input type="text" id="c-ci" placeholder="Личный номер"></div>
+          </div>
+          <div class="ctpg" id="ct2">
+            <div class="field"><label class="fl">Кадастровый код <span class="req">*</span></label><input type="text" id="c-cad" placeholder="01.10.10.02.20.0.01.01.84A"></div>
+            <div class="field"><label class="fl">Адрес <span class="req">*</span></label><input type="text" id="c-addr" placeholder="Улица, дом"></div>
+            <div class="r2">
+              <div class="field"><label class="fl">Этаж</label><input type="text" id="c-fl" placeholder="2"></div>
+              <div class="field"><label class="fl">Кв. номер</label><input type="text" id="c-apt" placeholder="Номер"></div>
+            </div>
+            <div class="field"><label class="fl">Площадь (м²) <span class="req">*</span></label><input type="text" id="c-area" placeholder="45"></div>
+          </div>
+          <div class="ctpg" id="ct3">
+            <div class="r2">
+              <div class="field"><label class="fl">Начало <span class="req">*</span></label><input type="date" id="c-start"></div>
+              <div class="field"><label class="fl">Конец <span class="req">*</span></label><input type="date" id="c-end"></div>
+            </div>
+            <div class="field"><label class="fl">Срок (мес.) <span class="req">*</span></label><input type="text" id="c-mo" placeholder="12"></div>
+            <div class="r2">
+              <div class="field"><label class="fl">Цена (USD) <span class="req">*</span></label><input type="text" id="c-pr" placeholder="600" oninput="syncDep()"></div>
+              <div class="field"><label class="fl">Депозит (USD) <span class="req">*</span></label><input type="text" id="c-dep" placeholder="600"></div>
+            </div>
+            <div class="field"><label class="fl">День оплаты <span class="req">*</span></label><input type="text" id="c-pd" placeholder="1"></div>
+          </div>
+          <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cerr3">Заполни все обязательные поля</div>
+        </div>
+
+        <!-- STEP 4: Review -->
+        <div class="pad" id="cp4" style="display:none">
+          <div style="font-size:16px;font-weight:700;margin-bottom:12px;">Проверь данные</div>
+          <div id="csum"></div>
+          <div id="cerr4" style="font-size:12px;margin-top:8px;display:none;color:var(--red);"></div>
+          <div id="cresult" style="display:none;">
+            <div class="cresult">
+              <span class="cric">✅</span>
+              <span class="crt">Договор создан!</span>
+              <span class="crs">Документы готовы</span>
+              <div class="crbtns">
+                <a class="crdoc" id="cdoclink" href="#" target="_blank">📄 DOC</a>
+                <a class="crpdf" id="cpdflink" href="#" target="_blank">📋 PDF</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nav buttons -->
+      <div style="padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom,0px)+12px);display:flex;gap:10px;flex-shrink:0;background:var(--bg);border-top:1px solid var(--border);">
+        <button class="sbtn navy" id="cbback" onclick="cBack()" style="display:none;flex:0 0 auto;width:90px;font-size:14px;">← Назад</button>
+        <button class="sbtn" id="cbnext" onclick="cNext()">Продолжить →</button>
       </div>
     </div>
 
@@ -925,15 +1036,6 @@ function onRecruitChange() {
     }
   }
   calcRental();
-}
-
-function openContract() {
-  var url = "https://script.google.com/macros/s/AKfycbxPfJAFnJAhBK426zhNv1HSV0dD3Za0TBSpThbBKIr0ZuGwCVFRrbiR4Lmv0unA30uRXA/exec";
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.openLink(url);
-  } else {
-    window.open(url, '_blank');
-  }
 }
 
 // RENTAL CALC
