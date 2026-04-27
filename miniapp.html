@@ -958,12 +958,10 @@ function calcRental() {
   var plat = Math.round(comm * platPct / 100);
   var agentPool = comm - plat;
 
-  // Agent name
   var agentEl = document.getElementById('rn-agent');
   var agentName = agentEl && agentEl.value ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : 'Агент';
   document.getElementById('rn-agent-label').textContent = agentName + ' ' + rnLvl + '%';
 
-  // Recruit share
   var recruitEl = document.getElementById('rn-recruit');
   var hasRecruit = recruitEl && recruitEl.value !== '';
   var recruitAmt = 0;
@@ -1073,8 +1071,7 @@ function sub(type) {
     const agentName=aEl?aEl.options[aEl.selectedIndex].text.split(' (')[0]:'';
     const recruitName=hasRecruit?rEl.options[rEl.selectedIndex].text:'';
     const pdfFrame=document.getElementById('pdf-frame');
-    const pdfUrl=pdfFrame&&pdfFrame.src&&pdfFrame.src!==''&&!pdfFrame.src.includes('about:')?pdfFrame.src:'';
-    const dealTag='#сдача';
+    const pdfUrl=pdfFrame&&pdfFrame.src&&!pdfFrame.src.includes('about:')?pdfFrame.src:'';
     const typeTag=rnType==='sale'?'#продажа':rnSub==='long'?'#аренда':'#коммерция';
     const exclTag=rnExcl?'#эксклюзив':'#неэксклюзив';
     const agentTag=agentName?'#'+agentName.replace(/\s/g,''):'';
@@ -1095,7 +1092,7 @@ function sub(type) {
       t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,
       t0_h2o_process:h2o.t0.process,t0_result:t0Res,
       t0_comment:document.getElementById('t0-comment').value,
-      hashtags:dealTag+' '+typeTag+' '+exclTag+' '+agentTag,
+      hashtags:'#сдача '+typeTag+' '+exclTag+' '+agentTag,
       pdf_contract:pdfUrl};
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
@@ -1190,19 +1187,6 @@ function cxFmt(iso){if(!iso)return'';var p=String(iso).split('-');return p.lengt
 function cxOnem(iso){if(!iso)return'';var p=iso.split('-');if(p.length!==3)return'';var d=new Date(+p[0],+p[1]-1,+p[2]),o=d.getDate();d.setMonth(d.getMonth()+1);if(d.getDate()!==o)d.setDate(0);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}
 function cxSyncDep(){var p=cxG('cx-pr'),d=cxG('cx-dep');if(p&&d&&!cxDepTouched)d.value=p.value;}
 function cxOv(f){var e=document.getElementById('ov');if(e)e.classList.toggle('on',f);}
-function cxShowSt(n,m,t){
-  var e=document.getElementById('cx-err'+n);
-  if(!e)return;
-  e.textContent=m;
-  e.style.display='block';
-  e.style.color=t==='ok'?'var(--green)':'var(--red)';
-  e.style.background=t==='ok'?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)';
-  e.style.padding='10px 14px';
-  e.style.borderRadius='8px';
-  e.style.fontWeight='600';
-  e.style.fontSize='13px';
-}
-function cxClrSt(n){var e=document.getElementById('cx-err'+n);if(e){e.style.display='none';e.textContent='';}}
 
 function cxRender2(){
   [1,2,3,4].forEach(function(i){
@@ -1326,9 +1310,7 @@ function cxSubmit(){
   var d=cxCol(),isSale=cxType==='sale',om=isSale?'':cxOnem(d.start_rent);
   cxOv(true);
   var next=cxG('cx-next');if(next)next.disabled=true;
-  var back=cxG('cx-back');if(back)back.disabled=true;
-
-  var formData={
+  var payload=JSON.stringify({
     contract_language:cxLang,deal_type:CX_TYPES[cxType]||cxType,
     timestamp:cxFmt(d.timestamp),owner_full_name:d.owner_full_name,
     owner_personal_number:d.owner_personal_number,owner_birth_day:cxFmt(d.owner_birth_day),
@@ -1339,59 +1321,20 @@ function cxSubmit(){
     rent_duration_months:d.rent_duration_months,price_usd:d.price_usd,
     deposit_usd:d.deposit_usd,pay_day:d.pay_day,one_month:om,
     sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date)
-  };
-
-  var cbName='__cxCb'+Date.now();
-  window[cbName]=function(r){
-    delete window[cbName];
-    cxOv(false);
-    if(next)next.disabled=false;
-    if(back)back.disabled=false;
-    if(r&&r.ok){
-      var dl=cxG('cx-doclink'),pl=cxG('cx-pdflink');
-      if(dl&&r.docUrl){
-        dl.href=r.docUrl;
-        dl.onclick=function(e){
-          e.preventDefault();
-          if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openLink(r.docUrl);
-          else window.open(r.docUrl,'_blank');
-          return false;
-        };
-      }
-      if(pl&&r.pdfUrl){
-        pl.href=r.pdfUrl;
-        pl.onclick=function(e){
-          e.preventDefault();
-          if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openLink(r.pdfUrl);
-          else window.open(r.pdfUrl,'_blank');
-          return false;
-        };
-      }
-      var res=cxG('cx-result');if(res)res.style.display='block';
-      var nxt=cxG('cx-next');if(nxt)nxt.style.display='none';
-      cxShowSt(4,'Contract created successfully!','ok');
-    } else {
-      cxShowSt(4,'Error: '+(r&&r.error?r.error:'Unknown error'),'err');
-    }
-  };
-
-  var s=document.createElement('script');
-  s.src='https://script.google.com/macros/s/AKfycbxlW40BzTQW9xQE8J7nAvNFE3Z8ncnOX6vWOkOcjHYsfVh2PuQuhFqd25UV9NF-TKfJzw/exec?callback='+cbName+'&payload='+encodeURIComponent(JSON.stringify(formData));
-  s.onerror=function(){
-    delete window[cbName];cxOv(false);
-    if(next)next.disabled=false;if(back)back.disabled=false;
-    cxShowSt(4,'Connection error. Try again.','err');
-  };
-  document.head.appendChild(s);
+  });
+  var ifr=document.getElementById('cx-ifr');
+  if(!ifr){ifr=document.createElement('iframe');ifr.id='cx-ifr';ifr.name='cx-ifr';ifr.style.display='none';document.body.appendChild(ifr);}
+  var frm=document.getElementById('cx-frm');
+  if(!frm){frm=document.createElement('form');frm.id='cx-frm';frm.method='POST';frm.target='cx-ifr';frm.style.display='none';document.body.appendChild(frm);}
+  frm.action='https://script.google.com/macros/s/AKfycbwsfLdLsAJbeXnsTmpLKzx1mUT3PSKYCRmc5XDx52MLZkYa2qfVPIiEH38gWzlog1m5nw/exec';
+  frm.innerHTML='<input name="payload" value="'+payload.replace(/"/g,'&quot;')+'">';
+  frm.submit();
   setTimeout(function(){
-    if(window[cbName]){
-      delete window[cbName];cxOv(false);
-      if(next)next.disabled=false;if(back)back.disabled=false;
-      cxShowSt(4,'Timeout — check your Drive folder.','err');
-    }
-  },30000);
+    cxOv(false);if(next)next.disabled=false;
+    var res=cxG('cx-result');if(res)res.style.display='block';
+    var e4=cxG('cx-err4');if(e4){e4.textContent='Contract sent! Check your Drive folder.';e4.style.display='block';e4.style.color='var(--green)';}
+  },4000);
 }
-
 
 function cxReset(){
   cxType='';cxLang='';cxStep2=1;cxDepTouched=false;
