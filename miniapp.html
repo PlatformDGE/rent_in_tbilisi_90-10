@@ -1096,7 +1096,8 @@ function sub(type) {
       t0_h2o_process:h2o.t0.process,t0_result:t0Res,
       t0_comment:document.getElementById('t0-comment').value,
       hashtags:dealTag+' '+typeTag+' '+exclTag+' '+agentTag,
-      pdf_contract:pdfUrl}
+      pdf_contract:pdfUrl};
+  }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
   send(type,data);
   showToast('Отправлено! ✓');
