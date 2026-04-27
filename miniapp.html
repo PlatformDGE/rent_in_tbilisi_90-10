@@ -1246,7 +1246,9 @@ function cxSubmit(){
   var d=cxCol(),isSale=cxType==='sale',om=isSale?'':cxOnem(d.start_rent);
   cxOv(true);
   var next=cxG('cx-next');if(next)next.disabled=true;
-  var payload=JSON.stringify({
+  var back=cxG('cx-back');if(back)back.disabled=true;
+
+  var formData={
     contract_language:cxLang,deal_type:CX_TYPES[cxType]||cxType,
     timestamp:cxFmt(d.timestamp),owner_full_name:d.owner_full_name,
     owner_personal_number:d.owner_personal_number,owner_birth_day:cxFmt(d.owner_birth_day),
@@ -1257,15 +1259,34 @@ function cxSubmit(){
     rent_duration_months:d.rent_duration_months,price_usd:d.price_usd,
     deposit_usd:d.deposit_usd,pay_day:d.pay_day,one_month:om,
     sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date)
-  });
+  };
+
   var cbName='__cxCb'+Date.now();
   window[cbName]=function(r){
     delete window[cbName];
-    cxOv(false);if(next)next.disabled=false;
+    cxOv(false);
+    if(next)next.disabled=false;
+    if(back)back.disabled=false;
     if(r&&r.ok){
       var dl=cxG('cx-doclink'),pl=cxG('cx-pdflink');
-      if(dl&&r.docUrl)dl.href=r.docUrl;
-      if(pl&&r.pdfUrl)pl.href=r.pdfUrl;
+      if(dl&&r.docUrl){
+        dl.href=r.docUrl;
+        dl.onclick=function(e){
+          e.preventDefault();
+          if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openLink(r.docUrl);
+          else window.open(r.docUrl,'_blank');
+          return false;
+        };
+      }
+      if(pl&&r.pdfUrl){
+        pl.href=r.pdfUrl;
+        pl.onclick=function(e){
+          e.preventDefault();
+          if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openLink(r.pdfUrl);
+          else window.open(r.pdfUrl,'_blank');
+          return false;
+        };
+      }
       var res=cxG('cx-result');if(res)res.style.display='block';
       var nxt=cxG('cx-next');if(nxt)nxt.style.display='none';
       cxShowSt(4,'Contract created successfully!','ok');
@@ -1273,17 +1294,24 @@ function cxSubmit(){
       cxShowSt(4,'Error: '+(r&&r.error?r.error:'Unknown error'),'err');
     }
   };
+
   var s=document.createElement('script');
-  s.src='https://script.google.com/macros/s/AKfycbwsfLdLsAJbeXnsTmpLKzx1mUT3PSKYCRmc5XDx52MLZkYa2qfVPIiEH38gWzlog1m5nw/exec'+'?callback='+cbName+'&payload='+encodeURIComponent(payload);
+  s.src='https://script.google.com/macros/s/AKfycbwsfLdLsAJbeXnsTmpLKzx1mUT3PSKYCRmc5XDx52MLZkYa2qfVPIiEH38gWzlog1m5nw/exec?callback='+cbName+'&payload='+encodeURIComponent(JSON.stringify(formData));
   s.onerror=function(){
-    delete window[cbName];cxOv(false);if(next)next.disabled=false;
-    cxShowSt(4,'Connection error. Please try again.','err');
+    delete window[cbName];cxOv(false);
+    if(next)next.disabled=false;if(back)back.disabled=false;
+    cxShowSt(4,'Connection error. Try again.','err');
   };
   document.head.appendChild(s);
   setTimeout(function(){
-    if(window[cbName]){delete window[cbName];cxOv(false);if(next)next.disabled=false;cxShowSt(4,'Timeout. Check your Drive folder in a few seconds.','err');}
+    if(window[cbName]){
+      delete window[cbName];cxOv(false);
+      if(next)next.disabled=false;if(back)back.disabled=false;
+      cxShowSt(4,'Timeout — check your Drive folder.','err');
+    }
   },30000);
 }
+
 
 function cxReset(){
   cxType='';cxLang='';cxStep2=1;cxDepTouched=false;
