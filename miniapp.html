@@ -272,7 +272,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       <div style="padding:14px 16px 0;">
         <div style="font-size:18px;font-weight:800;margin-bottom:3px;">💰 Сдача квартиры</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Калькулятор + отчёт + T0 оценка</div>
-        <div class="prog"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-rental" style="width:0"></div></div><div class="prog-n" id="pn-rental">0/10</div></div>
+        </div>
       </div>
       <div class="pad pb">
 
@@ -321,11 +321,18 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             <div style="font-size:11px;color:var(--text3);margin-top:4px;">Подставляется автоматически из профиля</div>
           </div>
           <div class="field"><label class="fl">Рекрут (если есть)</label>
-            <select id="rn-recruit"><option value="">Без рекрута</option></select>
+            <select id="rn-recruit" onchange="onRecruitChange()"><option value="">Без рекрута</option></select>
           </div>
-          <div class="field"><label class="fl">Наставник</label>
-            <select id="rn-mentor"><option value="">Без наставника</option></select>
+          <div class="field" id="rn-recruit-pct-row" style="display:none;">
+            <label class="fl">% рекрута от доли агента</label>
+            <div class="tg c4">
+              <button class="tb" id="rn-rp-20" onclick="setRnRecruitPct(20,this)">20%<br><span style="font-size:10px;opacity:.7;">1-5 сд.</span></button>
+              <button class="tb" id="rn-rp-50" onclick="setRnRecruitPct(50,this)">50%<br><span style="font-size:10px;opacity:.7;">6-15 сд.</span></button>
+              <button class="tb" id="rn-rp-30" onclick="setRnRecruitPct(30,this)">30%<br><span style="font-size:10px;opacity:.7;">Внешний</span></button>
+              <button class="tb" id="rn-rp-10" onclick="setRnRecruitPct(10,this)">10%<br><span style="font-size:10px;opacity:.7;">Передача</span></button>
+            </div>
           </div>
+          
           <div class="r2">
             <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
               <input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
@@ -339,8 +346,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             <div class="crow"><span class="ck">Комиссия агентства</span><span class="cv" id="rn-ct">—</span></div>
             <div class="crow"><span class="ck" id="rn-agent-label">Агент</span><span class="cv g" id="rn-ca">—</span></div>
             <div class="crow"><span class="ck">Платформа</span><span class="cv a" id="rn-cp">—</span></div>
-            <div class="crow" id="rn-cm-row" style="display:none;"><span class="ck" id="rn-mentor-label">Наставник</span><span class="cv p" id="rn-cm">—</span></div>
-            <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck">Рекрут (доля агента)</span><span class="cv" id="rn-cr">—</span></div>
+            <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck" id="rn-recruit-label">Рекрут</span><span class="cv p" id="rn-cr">—</span></div>
+            <div class="crow" id="rn-agent-final-row" style="display:none;"><span class="ck" id="rn-agent-final-label">Агент итого</span><span class="cv g" id="rn-ca-final">—</span></div>
           </div>
         </div>
 
@@ -724,7 +731,7 @@ let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
 // State
 let showRes='', h2o={t0:{client:0,owner:0,process:0},t14:{client:0,owner:0,process:0}};
 let t0Res='', t14Res='', compSel='';
-let rnExcl=true, rnType='rent', rnSub='long', rnLvl=50;
+let rnExcl=true, rnType='rent', rnSub='long', rnLvl=50, rnRecruitPct=20;
 let dExcl=true, dType='rent', dSub='long', dLvl=50;
 let prevTab='reports';
 let cStep=1, cLang='';
@@ -918,41 +925,68 @@ function selT14R(v){t14Res=v;document.getElementById('t14-cl').className='tb'+(v
 function setT0R(v){t0Res=v;document.getElementById('t0-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t0-dr').className='tb'+(v==='dirty'?' ar':'');}
 
 // RENTAL CALC
+function onRecruitChange() {
+  var el = document.getElementById('rn-recruit');
+  var hasRecruit = el && el.value !== '';
+  var row = document.getElementById('rn-recruit-pct-row');
+  if (row) row.style.display = hasRecruit ? 'block' : 'none';
+  if (hasRecruit) {
+    var agentEl = document.getElementById('rn-agent');
+    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
+    var deals = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
+    var autoPct = deals <= 5 ? 20 : deals <= 15 ? 50 : 20;
+    setRnRecruitPct(autoPct, document.getElementById('rn-rp-' + autoPct));
+  }
+  calcRental();
+}
+
+function setRnRecruitPct(pct, btn) {
+  rnRecruitPct = pct;
+  document.querySelectorAll('#rn-recruit-pct-row .tb').forEach(function(b){ b.classList.remove('aa'); });
+  if (btn) btn.classList.add('aa');
+  calcRental();
+}
+
 function calcRental() {
   var price = parseFloat(document.getElementById('rn-price').value) || 0;
   var commPct = parseFloat(document.getElementById('rn-comm-pct').value) || 50;
   var box = document.getElementById('rn-calc');
   if (price <= 0) { box.style.display = 'none'; return; }
-  
+
   var comm = Math.round(price * commPct / 100);
   var platPct = 100 - rnLvl;
   var plat = Math.round(comm * platPct / 100);
   var agentPool = comm - plat;
-  
-  // Mentor commission (25% first 10 deals, 15% 11-100)
-  var mentorEl = document.getElementById('rn-mentor');
-  var hasMentor = mentorEl && mentorEl.value !== '';
-  var mentorAmt = 0;
+
+  // Agent name
+  var agentEl = document.getElementById('rn-agent');
+  var agentName = agentEl && agentEl.value ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : 'Агент';
+  document.getElementById('rn-agent-label').textContent = agentName + ' ' + rnLvl + '%';
+
+  // Recruit share
+  var recruitEl = document.getElementById('rn-recruit');
+  var hasRecruit = recruitEl && recruitEl.value !== '';
+  var recruitAmt = 0;
   var agentFinal = agentPool;
-  if (hasMentor) {
-    // Check agent deal count from AGENT_C
-    var agentEl = document.getElementById('rn-agent');
-    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
-    var dealCount = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
-    var mentorPct = dealCount < 10 ? 25 : 15;
-    mentorAmt = Math.round(agentPool * mentorPct / 100);
-    agentFinal = agentPool - mentorAmt;
-    document.getElementById('rn-mentor-label').textContent = 'Наставник (' + mentorPct + '%)';
-    document.getElementById('rn-cm-row').style.display = 'flex';
-    document.getElementById('rn-cm').textContent = mentorAmt + '$';
+
+  if (hasRecruit) {
+    recruitAmt = Math.round(agentPool * rnRecruitPct / 100);
+    agentFinal = agentPool - recruitAmt;
+    var recruitName = recruitEl.options[recruitEl.selectedIndex].text;
+    document.getElementById('rn-recruit-label').textContent = recruitName + ' (' + rnRecruitPct + '%)';
+    document.getElementById('rn-cr').textContent = recruitAmt + '$';
+    document.getElementById('rn-recruit-row').style.display = 'flex';
+    document.getElementById('rn-agent-final-label').textContent = agentName + ' итого';
+    document.getElementById('rn-ca-final').textContent = agentFinal + '$';
+    document.getElementById('rn-agent-final-row').style.display = 'flex';
   } else {
-    document.getElementById('rn-cm-row').style.display = 'none';
+    document.getElementById('rn-recruit-row').style.display = 'none';
+    document.getElementById('rn-agent-final-row').style.display = 'none';
   }
-  
+
   box.style.display = 'block';
   document.getElementById('rn-ct').textContent = comm + '$ (' + commPct + '% от ' + price + '$)';
-  document.getElementById('rn-agent-label').textContent = 'Агент ' + rnLvl + '%';
-  document.getElementById('rn-ca').textContent = agentFinal + '$';
+  document.getElementById('rn-ca').textContent = agentPool + '$';
   document.getElementById('rn-cp').textContent = plat + '$ (' + platPct + '%)';
 }
 
@@ -1025,12 +1059,44 @@ function sub(type) {
   else if(type==='showing'){const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('sh-addr').value,ad_link_advertising:document.getElementById('sh-link').value,client_telegram:document.getElementById('sh-client').value,date:document.getElementById('sh-date').value,result:showRes};}
   else if(type==='stickers'){const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district:document.getElementById('st-dist').value,stickers_count:document.getElementById('st-cnt').value,date:document.getElementById('st-date').value};}
   else if(type==='rental'){
-    const aEl=document.getElementById('rn-agent'),rEl=document.getElementById('rn-recruit'),mEl=document.getElementById('rn-mentor');
-    const lvl=document.getElementById('rn-lvl').value;
+    const aEl=document.getElementById('rn-agent');
+    const rEl=document.getElementById('rn-recruit');
     const price=parseFloat(document.getElementById('rn-price').value)||0;
-    const comm=Math.round(price*0.5),plat=Math.round(comm*(100-parseInt(lvl))/100),agent=comm-plat;
-    data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.options[mEl.selectedIndex].text,agent_level:lvl,ad_link_advertising:document.getElementById('rn-link').value,cadastral_number:document.getElementById('rn-cadastral').value,is_exclusive:rnExcl,deal_type:rnType,rent_price:price,commission_total:comm,commission_platform:plat,commission_agent:agent,client_name:document.getElementById('rn-cname').value,client_phone:document.getElementById('rn-cphone').value,owner_name:document.getElementById('rn-oname').value,owner_phone:document.getElementById('rn-ophone').value,rent_from:document.getElementById('rn-from').value,rent_to:document.getElementById('rn-to').value,t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,t0_h2o_process:h2o.t0.process,t0_result:t0Res,t0_comment:document.getElementById('t0-comment').value};
-  }
+    const commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
+    const comm=Math.round(price*commPct/100);
+    const platPct=100-rnLvl;
+    const plat=Math.round(comm*platPct/100);
+    const agentPool=comm-plat;
+    const hasRecruit=rEl&&rEl.value!=='';
+    const recruitAmt=hasRecruit?Math.round(agentPool*rnRecruitPct/100):0;
+    const agentFinal=agentPool-recruitAmt;
+    const agentName=aEl?aEl.options[aEl.selectedIndex].text.split(' (')[0]:'';
+    const recruitName=hasRecruit?rEl.options[rEl.selectedIndex].text:'';
+    const pdfFrame=document.getElementById('pdf-frame');
+    const pdfUrl=pdfFrame&&pdfFrame.src&&pdfFrame.src!==''&&!pdfFrame.src.includes('about:')?pdfFrame.src:'';
+    const dealTag='#сдача';
+    const typeTag=rnType==='sale'?'#продажа':rnSub==='long'?'#аренда':'#коммерция';
+    const exclTag=rnExcl?'#эксклюзив':'#неэксклюзив';
+    const agentTag=agentName?'#'+agentName.replace(/\s/g,''):'';
+    data={agent:agentName,agent_level:rnLvl,
+      recruit:recruitName,recruit_pct:hasRecruit?rnRecruitPct:0,
+      ad_link_advertising:document.getElementById('rn-link').value,
+      cadastral_number:document.getElementById('rn-cadastral').value,
+      is_exclusive:rnExcl,deal_type:rnType,deal_subtype:rnSub,
+      rent_price:price,commission_pct:commPct,
+      commission_total:comm,commission_platform:plat,
+      commission_agent:agentFinal,commission_recruit:recruitAmt,
+      client_name:document.getElementById('rn-cname').value,
+      client_phone:document.getElementById('rn-cphone').value,
+      owner_name:document.getElementById('rn-oname').value,
+      owner_phone:document.getElementById('rn-ophone').value,
+      rent_from:document.getElementById('rn-from').value,
+      rent_to:document.getElementById('rn-to').value,
+      t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,
+      t0_h2o_process:h2o.t0.process,t0_result:t0Res,
+      t0_comment:document.getElementById('t0-comment').value,
+      hashtags:dealTag+' '+typeTag+' '+exclTag+' '+agentTag,
+      pdf_contract:pdfUrl}
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
   send(type,data);
   showToast('Отправлено! ✓');
