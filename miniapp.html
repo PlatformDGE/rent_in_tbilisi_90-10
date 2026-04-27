@@ -224,6 +224,35 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 @keyframes sp{to{transform:rotate(360deg);}}
 .toast{position:fixed;bottom:76px;left:16px;right:16px;background:var(--green);color:#fff;padding:13px 18px;border-radius:var(--r);font-weight:600;font-size:14px;text-align:center;transform:translateY(20px);opacity:0;transition:all .3s;z-index:150;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
+
+/* Contract type buttons */
+.ctype-btn{display:flex;align-items:center;gap:14px;background:var(--bg2);border:2px solid var(--border);border-radius:var(--rlg);padding:14px 16px;margin-bottom:10px;cursor:pointer;width:100%;text-align:left;-webkit-user-select:none;user-select:none;transition:all .15s;color:#fff;}
+.ctype-btn:active{opacity:.8;}
+.ctype-btn.sel{border-color:var(--accent)!important;background:#1e2a5a!important;box-shadow:0 0 0 1px var(--accent);}
+.ctype-check{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ctype-btn.sel .ctype-check{background:var(--accent);border-color:var(--accent);}
+.ctype-btn.sel .ctype-check::after{content:"✓";color:#fff;font-size:12px;font-weight:800;}
+/* Contract steps */
+.csn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;}
+.csn.done{background:rgba(255,255,255,.8);color:var(--navy);}
+.csn.active{background:#fff;color:var(--navy);}
+.csn.idle{background:rgba(255,255,255,.2);color:rgba(255,255,255,.5);}
+.csl{font-size:10px;font-weight:600;color:rgba(255,255,255,.5);}
+.csl.on{color:#fff;}
+.csline{flex:1;height:2px;border-radius:2px;background:rgba(255,255,255,.2);margin-bottom:18px;}
+.csline.on{background:rgba(255,255,255,.7);}
+/* Contract summary rows */
+.csumrow{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border-radius:var(--rsm);border:1px solid var(--border);padding:10px 14px;gap:12px;margin-bottom:8px;}
+.csumk{font-size:12px;color:var(--text2);font-weight:600;flex-shrink:0;}
+.csumv{font-size:13px;font-weight:700;text-align:right;word-break:break-word;}
+/* Contract result */
+.cresult{background:#f0fdf4;border:1px solid #86efac;border-radius:var(--rlg);padding:20px;text-align:center;margin-top:16px;}
+.cric{font-size:40px;display:block;margin-bottom:8px;}
+.crt{font-size:18px;font-weight:800;color:#166534;display:block;margin-bottom:4px;}
+.crs{font-size:13px;color:#15803d;display:block;}
+.crbtns{display:flex;gap:10px;margin-top:16px;}
+.crdoc{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;background:var(--navy);color:#fff;display:block;}
+.crpdf{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;background:#fff;color:var(--navy);border:1px solid var(--border);display:block;}
 </style>
 </head>
 <body>
@@ -491,17 +520,17 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           <div style="font-size:12px;color:var(--text2);margin-bottom:18px;">Select the type of contract to create</div>
           <div class="ctype-btn" onclick="cxSelType('rent',this)">
             <span style="font-size:28px;">🏠</span>
-            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Apartment Rental</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Long-term residential lease</div></div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Apartment Rental</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Long-term residential lease</div></div>
             <div class="ctype-check" id="cxc-rent"></div>
           </div>
           <div class="ctype-btn" onclick="cxSelType('comm',this)">
             <span style="font-size:28px;">🏢</span>
-            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Commercial Rental</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Office, shop, warehouse, restaurant</div></div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Commercial Rental</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Office, shop, warehouse, restaurant</div></div>
             <div class="ctype-check" id="cxc-comm"></div>
           </div>
           <div class="ctype-btn" onclick="cxSelType('sale',this)">
             <span style="font-size:28px;">🔑</span>
-            <div style="flex:1;"><div style="font-size:15px;font-weight:700;">Sale</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Real estate purchase agreement</div></div>
+            <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#fff;">Sale</div><div style="font-size:11px;color:var(--text2);margin-top:2px;">Real estate purchase agreement</div></div>
             <div class="ctype-check" id="cxc-sale"></div>
           </div>
           <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cx-err1"></div>
@@ -687,7 +716,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxTVqXkAjBhiprMCp1cvbVLiXzWInOZo9JeeTtZgXzF6TWaXGd7CTenoAQ5TozCX3R-Lg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx6EiayK9WmQQkRhKpis9Up5VR2o0OiI00ubujGRYF3dP76K7Frkh6nsCXH4eb_Er0_/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -715,7 +744,7 @@ function goTab(tab) {
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('nav-'+tab).classList.add('on');
   if(tab==='stats') renderStats();
-  if(tab==='contract') {cxReset(); cStep=1; cLang=''; cRender(); }
+  if(tab==='contract') {cxReset();}
   if(tab==='deals') { populateDeals(); populateRentalInDeals(); }
   window.scrollTo(0,0);
 }
@@ -756,10 +785,10 @@ function populateForm(type) {
 }
 
 function setDealMode(mode) {
-  document.getElementById('deal-mode-calc').className = 'tb' + (mode==='calc' ? ' aa' : '');
-  document.getElementById('deal-mode-rental').className = 'tb' + (mode==='rental' ? ' aa' : '');
-  document.getElementById('deal-calc-mode').style.display = mode==='calc' ? 'block' : 'none';
-  document.getElementById('deal-rental-mode').style.display = mode==='rental' ? 'block' : 'none';
+  (document.getElementById('deal-mode-calc')||{})['className'] = 'tb' + (mode==='calc' ? ' aa' : '');
+  (document.getElementById('deal-mode-rental')||{})['className'] = 'tb' + (mode==='rental' ? ' aa' : '');
+  (document.getElementById('deal-calc-mode')||{})['style'].display = mode==='calc' ? 'block' : 'none';
+  (document.getElementById('deal-rental-mode')||{})['style'].display = mode==='rental' ? 'block' : 'none';
   if (mode==='rental') {
     populateRentalInDeals();
     const today = new Date().toISOString().split('T')[0];
@@ -828,9 +857,9 @@ function setToday(type) {
 // DEAL TYPE
 function setDealType(v) {
   dType=v;
-  document.getElementById('dt-rent').className='tb'+(v==='rent'?' aa':'');
-  document.getElementById('dt-sale').className='tb'+(v==='sale'?' aa':'');
-  document.getElementById('d-subtype-wrap').style.display=v==='rent'?'block':'none';
+  (document.getElementById('dt-rent')||{})['className']='tb'+(v==='rent'?' aa':'');
+  (document.getElementById('dt-sale')||{})['className']='tb'+(v==='sale'?' aa':'');
+  (document.getElementById('d-subtype-wrap')||{})['style'].display=v==='rent'?'block':'none';
   const pct=v==='sale'?3:dSub==='comm'?100:50;
   document.getElementById('d-comm-pct').value=pct;
   calcDeal();
@@ -838,16 +867,16 @@ function setDealType(v) {
 
 function setSubtype(v) {
   dSub=v;
-  document.getElementById('ds-long').className='tb'+(v==='long'?' aa':'');
-  document.getElementById('ds-comm').className='tb'+(v==='comm'?' aa':'');
+  (document.getElementById('ds-long')||{})['className']='tb'+(v==='long'?' aa':'');
+  (document.getElementById('ds-comm')||{})['className']='tb'+(v==='comm'?' aa':'');
   document.getElementById('d-comm-pct').value=v==='comm'?100:50;
   calcDeal();
 }
 
 function setExcl(v) {
   dExcl=v;
-  document.getElementById('d-excl-y').className='tb'+(v?' ag':'');
-  document.getElementById('d-excl-n').className='tb'+(!v?' ar':'');
+  (document.getElementById('d-excl-y')||{})['className']='tb'+(v?' ag':'');
+  (document.getElementById('d-excl-n')||{})['className']='tb'+(!v?' ar':'');
   calcDeal();
 }
 
@@ -1025,204 +1054,31 @@ function send(type,data) {
   form.appendChild(inp); document.body.appendChild(form); form.submit(); document.body.removeChild(form);
 }
 
-// CONTRACT
-
-function selLang(lang,el){cLang=lang;document.querySelectorAll('.lcbtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');document.getElementById('cerr1').style.display='none';}
-function setCTab(id,el){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.ctpg').forEach(p=>p.classList.remove('on'));el.classList.add('on');document.getElementById(id).classList.add('on');}
-function syncDep(){const d=document.getElementById('c-dep');if(!d._t)d.value=document.getElementById('c-pr').value;}
-document.getElementById('c-dep').addEventListener('input',function(){this._t=true;});
-function gs(id){return(document.getElementById(id)||{}).value||'';}
-function fmt(iso){if(!iso)return'';const p=iso.split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:iso;}
-function onem(iso){if(!iso)return'';const p=iso.split('-');if(p.length!==3)return'';const d=new Date(+p[0],+p[1]-1,+p[2]),o=d.getDate();d.setMonth(d.getMonth()+1);if(d.getDate()!==o)d.setDate(0);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}
-
-function cValidate(){
-  if(cStep===1){if(!cLang){const e=document.getElementById('cerr1');e.textContent='Выбери язык';e.style.display='block';return false;}return true;}
-  if(cStep===2){const req=['c-ts','c-on','c-oi','c-cn','c-ci','c-cad','c-addr','c-area','c-start','c-end','c-mo','c-pr','c-dep','c-pd'];for(const id of req){if(!gs(id)){const e=document.getElementById('cerr2');e.textContent='Заполни все обязательные поля';e.style.display='block';return false;}}return true;}
-  return true;
-}
-
-function cBuildSum(){
-  const labels={'Язык':cLang,'Дата':fmt(gs('c-ts')),'Собственник':gs('c-on'),'ID соб.':gs('c-oi'),'Арендатор':gs('c-cn'),'ID арен.':gs('c-ci'),'Кадастр':gs('c-cad'),'Адрес':gs('c-addr'),'Этаж':gs('c-fl')||'—','Площадь':gs('c-area')+' м²','Начало':fmt(gs('c-start')),'Конец':fmt(gs('c-end')),'Срок':gs('c-mo')+' мес.','Цена':gs('c-pr')+'$','Депозит':gs('c-dep')+'$','День оплаты':gs('c-pd')};
-  document.getElementById('csum').innerHTML=Object.entries(labels).map(([k,v])=>`<div class="csumrow"><span class="csumk">${k}</span><span class="csumv">${v||'—'}</span></div>`).join('');
-}
-
-function cNext(){
-  if(!cValidate())return;
-  if(cStep===2)cBuildSum();
-  if(cStep<3){cStep++;cRender();return;}
-  const data={contract_language:cLang,timestamp:fmt(gs('c-ts')),owner_full_name:gs('c-on'),owner_personal_number:gs('c-oi'),client_full_name:gs('c-cn'),client_personal_number:gs('c-ci'),cadastral_code:gs('c-cad'),street_house:gs('c-addr'),floor:gs('c-fl'),apartment_number:gs('c-apt'),apartment_area:gs('c-area'),start_rent:fmt(gs('c-start')),end_rent:fmt(gs('c-end')),rent_duration_months:gs('c-mo'),price_usd:gs('c-pr'),deposit_usd:gs('c-dep'),pay_day:gs('c-pd'),one_month:onem(gs('c-start'))};
-  document.getElementById('ov').classList.add('on');
-  document.getElementById('cbnext').disabled=true;
-  if(typeof google!=='undefined'&&google.script&&google.script.run){
-    google.script.run.withSuccessHandler(function(r){document.getElementById('ov').classList.remove('on');document.getElementById('cbnext').disabled=false;document.getElementById('cdoclink').href=r.docUrl;document.getElementById('cpdflink').href=r.pdfUrl;document.getElementById('cresult').style.display='block';document.getElementById('cbnext').style.display='none';}).withFailureHandler(function(e){document.getElementById('ov').classList.remove('on');document.getElementById('cbnext').disabled=false;const err=document.getElementById('cerr3');err.textContent='Ошибка: '+(e.message||e);err.style.color='var(--red)';err.style.display='block';}).submitContract(data);
-  }else{
-    send('contract',data);
-    document.getElementById('ov').classList.remove('on');document.getElementById('cbnext').disabled=false;
-    const err=document.getElementById('cerr3');err.textContent='Запрос отправлен. Договор будет создан через минуту.';err.style.color='var(--green)';err.style.display='block';
-  }
-}
-function cBack(){if(cStep>1){cStep--;cRender();}}
-
-// STATS
-function renderStats(){
-  const aList=document.getElementById('agent-list'),rList=document.getElementById('recruit-list');
-  aList.innerHTML='';
-  AGENTS.forEach(a=>{
-    const ac=AGENT_C[a.name]||{deals:0,level:'Агент '+(a.level||50)+'%',next:'через '+(10)+'→ следующий уровень'};
-    const deals=ac.deals||0,level=ac.level||('Агент '+(a.level||50)+'%'),next=ac.next||'';
-    const realLvl=a.level||50;
-    const maxD=realLvl>=90?deals+1:realLvl>=70?100:10;
-    const pct=Math.min(Math.round(deals/maxD*100),100);
-    const col=realLvl>=90?'var(--green)':realLvl>=70?'var(--amber)':'var(--accent)';
-    aList.innerHTML+=`<div class="cntcard"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="cntname" style="margin:0">${a.name}</div><span style="font-size:11px;font-weight:700;color:${col};background:var(--bg3);padding:3px 8px;border-radius:20px;">${realLvl}% · ${deals} сделок</span></div><div class="cntrow"><span class="cntic">🏆</span><span class="cnttype">Эксклюзивных сделок</span><div class="cnttrack"><div class="cntfill" style="width:${pct}%;background:${col}"></div></div><span class="cntval" style="color:${col}">${deals}</span></div><div style="font-size:11px;color:var(--text3);margin-top:5px;">${next}</div></div>`;
-  });
-  rList.innerHTML='';
-  COUNTERS.forEach(r=>{
-    const rows=[{ic:'🏠',lb:'Показ',done:r.showing[0],plan:r.showing[1]},{ic:'📌',lb:'Расклейка',done:r.stickers[0],plan:r.stickers[1]},{ic:'💰',lb:'Сдача',done:r.rental[0],plan:r.rental[1]}];
-    rList.innerHTML+=`<div class="cntcard"><div class="cntname">${r.name}</div>${rows.map(row=>{const pct=row.plan>0?Math.round(row.done/row.plan*100):0;return`<div class="cntrow"><span class="cntic">${row.ic}</span><span class="cnttype">${row.lb}</span><div class="cnttrack"><div class="cntfill" style="width:${pct}%"></div></div><span class="cntval">${row.done}/${row.plan}</span></div>`;}).join('')}</div>`;
-  });
-}
-
-// QUIZ
-const QUIZ_QUESTIONS=[
-  {q:'Что такое эксклюзив в системе платформы?',opts:['Квартира только у нас в базе','Доверительное управление объектом','Объект с высокой ценой','Квартира с хорошим ремонтом'],correct:1,expl:'Эксклюзив = доверительное управление. Собственник дал согласие работать через платформу, объект закреплён за нами.'},
-  {q:'Какой процент платформа получает за эксклюзивный объект?',opts:['5%','10%','15%','20%'],correct:1,expl:'Платформа получает 10% навечно с каждой сделки по эксклюзивному объекту.'},
-  {q:'Сколько процентов получает агент на уровне 50%?',opts:['50% от цены','50% от комиссии агентства','50% от прибыли','50% от депозита'],correct:1,expl:'Агент 50% получает 50% от комиссии агентства (после вычета доли платформы).'},
-  {q:'Идут ли неэксклюзивные объекты в зачёт системы 90/10?',opts:['Да, всегда','Да, частично','Нет, никогда','Зависит от цены'],correct:2,expl:'Неэксклюзив никогда не идёт в зачёт системы 90/10 и не даёт наставнической выплаты.'},
-  {q:'Сколько раз наставник должен сходить с рекрутом на показ?',opts:['5 раз','10 раз','15 раз','20 раз'],correct:2,expl:'Обязательная практика — 15 раз по каждому типу действий: расклейка, фото, показ, договор.'},
-  {q:'Какой процент получает наставник с первых 10 сделок агента?',opts:['10%','15%','20%','25%'],correct:3,expl:'Наставник получает 25% от агентской доли с первых 10 эксклюзивных объектов рекрута.'},
-  {q:'Что происходит при обмане в системе?',opts:['Штраф','Предупреждение','Обнуление накопленного пути','Ничего'],correct:2,expl:'За обман — обнуление. Агент теряет статус, накопленный путь и наставнические права.'},
-  {q:'Какой процент получает внешний агент (не участник платформы)?',opts:['20%','25%','30%','40%'],correct:2,expl:'Внешний агент получает 30% за приведённую сделку.'},
-  {q:'На каком уровне агент получает 90% комиссии?',opts:['После 50 сделок','После 100 сделок','После 5 лет работы','После обучения'],correct:1,expl:'После 100 эксклюзивных сделок агент выходит на уровень 90/10.'},
-  {q:'Что такое T0?',opts:['Оценка через 14 дней','Оценка сразу после сдачи','Первый показ','Первый договор'],correct:1,expl:'T0 — оценка качества сделки сразу после её закрытия по системе H2O (Client / Owner / Process).'},
-  {q:'Что такое T14?',opts:['14-й показ','Оценка через 14 дней после сдачи','14% комиссия','14-я сделка'],correct:1,expl:'T14 — повторная оценка через 14 дней после сдачи. Проверяется как чувствуют себя клиент и собственник.'},
-  {q:'Сколько квартир рекрут сдаёт под 20% на объектах наставника?',opts:['3','5','10','15'],correct:1,expl:'Рекрут сдаёт 5 квартир под 20% на объектах наставника — первый этап обучения.'},
-  {q:'Какой процент получает агент за передачу клиента внутри системы?',opts:['5%','10%','15%','20%'],correct:1,expl:'За передачу клиента внутри системы агент получает 10% от комиссии по состоявшейся сделке.'},
-  {q:'Сколько процентов получает агент при передаче только на показ и сдачу (без фото)?',opts:['10%','20%','30%','40%'],correct:1,expl:'Только показ + сдача = 20%. Это когда основной фундамент объекта создан другим человеком.'},
-  {q:'Какая комиссия в долгосрочной аренде?',opts:['100% от месячной аренды','50% от месячной аренды','30% от месячной аренды','10% от годовой аренды'],correct:1,expl:'В долгосрочной аренде комиссия составляет 50% от месячной стоимости аренды.'},
-  {q:'Что нужно сделать чтобы стать наставником?',opts:['Проработать 1 год','Дойти до уровня 90/10','Пройти тест','Набрать 50 клиентов'],correct:1,expl:'Наставником может стать только тот, кто сам прошёл путь и дошёл до уровня 90/10.'},
-  {q:'Какой процент получает наставник с 11-100 сделок агента?',opts:['10%','15%','20%','25%'],correct:1,expl:'С 11 по 100 сделок агента наставник получает 15% от агентской доли.'},
-  {q:'Может ли агент уйти и вернуться в платформу?',opts:['Нет, никогда','Да, без условий','Да, 25 сделок 50/50 если ушёл добровольно','Да, но только через год'],correct:2,expl:'При добровольном уходе — возврат через 25 сделок 50/50. При уходе за обман — начинать с нуля.'},
-  {q:'Что входит в обязательный пакет для регистрации эксклюзивного объекта?',opts:['Только адрес','Только телефон','Адрес, фото, телефон, кадастр, условия, история коммуникации','Только договор'],correct:2,expl:'Эксклюзив требует полный пакет: адрес, фото/видео, контакт собственника, кадастр, условия, история и подтверждение доверия.'},
-  {q:'Кто считается создателем эксклюзивного объекта?',opts:['Тот кто его продал','Тот кто нашёл собственника и зафиксировал объект первым','Старший агент','Наставник'],correct:1,expl:'Создатель эксклюзива — тот, кто первым нашёл собственника, провёл коммуникацию и внёс полный пакет данных в систему.'},
-];
-
-let qIdx=0, qAnswered=[], qScore=0;
-
-function startQuiz(){
-  qIdx=0; qAnswered=new Array(QUIZ_QUESTIONS.length).fill(null); qScore=0;
-  document.getElementById('std-content').style.display='none';
-  document.getElementById('quiz-wrap').style.display='block';
-  document.getElementById('quiz-result').style.display='none';
-  document.getElementById('quiz-content').style.display='block';
-  renderQuestion();
-}
-
-function renderQuestion(){
-  const q=QUIZ_QUESTIONS[qIdx];
-  const answered=qAnswered[qIdx];
-  document.getElementById('quiz-content').innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <span style="font-size:12px;color:var(--text2);">Вопрос ${qIdx+1} из ${QUIZ_QUESTIONS.length}</span>
-      <span style="font-size:12px;font-weight:700;color:var(--accent2);">Счёт: ${qScore}/${qIdx}</span>
-    </div>
-    <div class="qcard">
-      <div class="qnum">Вопрос ${qIdx+1}</div>
-      <div class="qtext">${q.q}</div>
-      <div class="qopts">
-        ${q.opts.map((opt,i)=>{
-          let cls='qopt';
-          if(answered!==null){
-            if(i===q.correct)cls+=' correct';
-            else if(i===answered&&i!==q.correct)cls+=' wrong';
-          }
-          return `<button class="qopt${answered!==null?(i===q.correct?' correct':i===answered?' wrong':''):''}" ${answered!==null?'disabled':''} onclick="answerQ(${i})">${opt}</button>`;
-        }).join('')}
-      </div>
-      ${answered!==null?`<div class="qexpl show">${answered===q.correct?'✅ Правильно! ':'❌ Неверно. '}${q.expl}</div>`:''}
-    </div>
-    <div style="display:flex;gap:10px;margin-top:4px;">
-      ${qIdx>0?`<button class="sbtn navy" onclick="prevQ()" style="flex:0 0 auto;width:80px;">← Назад</button>`:''}
-      ${answered!==null&&qIdx<QUIZ_QUESTIONS.length-1?`<button class="sbtn" onclick="nextQ()">Следующий →</button>`:''}
-      ${answered!==null&&qIdx===QUIZ_QUESTIONS.length-1?`<button class="sbtn" onclick="showResult()">Завершить 🏆</button>`:''}
-    </div>
-  `;
-}
-
-function answerQ(i){
-  if(qAnswered[qIdx]!==null)return;
-  const q=QUIZ_QUESTIONS[qIdx];
-  qAnswered[qIdx]=i;
-  if(i===q.correct)qScore++;
-  renderQuestion();
-}
-
-function nextQ(){if(qIdx<QUIZ_QUESTIONS.length-1){qIdx++;renderQuestion();}}
-function prevQ(){if(qIdx>0){qIdx--;renderQuestion();}}
-
-function showResult(){
-  document.getElementById('quiz-content').style.display='none';
-  document.getElementById('quiz-result').style.display='block';
-  const pct=Math.round(qScore/QUIZ_QUESTIONS.length*100);
-  const ic=pct>=80?'🏆':pct>=60?'👍':'📚';
-  const msg=pct>=80?'Отличный результат! Ты знаешь стандарты платформы.':pct>=60?'Хороший результат! Повтори слабые места.':'Нужно повторить стандарты платформы.';
-  document.getElementById('qr-ic').textContent=ic;
-  document.getElementById('qr-t').textContent=`${qScore} из ${QUIZ_QUESTIONS.length} (${pct}%)`;
-  document.getElementById('qr-s').textContent=msg;
-}
-
-function resetQuiz(){startQuiz();}
-function showStandards(){document.getElementById('std-content').style.display='block';document.getElementById('quiz-wrap').style.display='none';}
-
-// MISC
-function prevFile(input,id){const el=document.getElementById(id);if(input.files&&input.files[0])el.textContent='✓ '+input.files[0].name;}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-
-// LOAD
-async function loadData(){
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', API_URL + '?action=getLists', true);
-  xhr.onload = function() {
+function loadData(){
+  // Use script tag to bypass CORS in Telegram WebApp
+  window.__onListsLoaded = function(data) {
     try {
-      var data = JSON.parse(xhr.responseText);
-      if(data.recruits&&data.recruits.length) RECRUITS=data.recruits;
-      if(data.agents&&data.agents.length) AGENTS=data.agents;
-      if(data.agentCounters) AGENT_C=data.agentCounters;
-      if(data.recruits) COUNTERS=data.recruits.map(function(r){
+      if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
+      if(data.agents&&data.agents.length)AGENTS=data.agents;
+      if(data.agentCounters)AGENT_C=data.agentCounters;
+      if(data.recruits)COUNTERS=data.recruits.map(function(r){
         var c=data.counters&&data.counters[r.name]||{};
         return{name:r.name,
-          showing:[c.showing&&c.showing.done?parseInt(c.showing.done)||0:0, c.showing?c.showing.plan:15],
-          stickers:[c.stickers&&c.stickers.done?parseInt(c.stickers.done)||0:0, c.stickers?c.stickers.plan:15],
-          rental:[c.rental&&c.rental.done?parseInt(c.rental.done)||0:0, c.rental?c.rental.plan:10]};
+          showing:[c.showing?parseInt(c.showing.done)||0:0,c.showing?c.showing.plan:15],
+          stickers:[c.stickers?parseInt(c.stickers.done)||0:0,c.stickers?c.stickers.plan:15],
+          rental:[c.rental?parseInt(c.rental.done)||0:0,c.rental?c.rental.plan:10]};
       });
       afterLoad();
-    } catch(e) {
-      console.log('loadData parse error:', e);
-      useFallback();
-    }
+    } catch(e) { console.log('loadData error:',e); useFallback(); }
   };
-  xhr.onerror = function() {
-    console.log('loadData network error');
-    useFallback();
-  };
-  xhr.send();
-}
-
-function afterLoad(){
-  try { populateRentalInDeals(); } catch(e){}
-  try { populateDeals(); } catch(e){}
-  // populate report selects
-  ['ph-r','ph-m','sh-r','sh-m','st-r','st-m'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(!el)return;
-    var isRecruit=id.endsWith('-r')||id==='ph-r'||id==='sh-r'||id==='st-r';
-    if(isRecruit){el.innerHTML='<option value="">Выбрать рекрута...</option>';RECRUITS.forEach(function(r){el.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});}
-    else{el.innerHTML='<option value="">Выбрать наставника...</option>';AGENTS.forEach(function(a){el.innerHTML+='<option value="'+a.telegram+'">'+a.name+'</option>';});}
-  });
-  var today=new Date().toISOString().split('T')[0];
-  var fromEl=document.getElementById('rn-from');if(fromEl&&!fromEl.value)fromEl.value=today;
-  cRender();
-  renderStats();
+  var s = document.createElement('script');
+  s.src = API_URL + '?action=getLists&callback=__onListsLoaded';
+  s.onerror = function() { console.log('loadData script error'); useFallback(); };
+  document.head.appendChild(s);
+  // Fallback if no response in 5s
+  setTimeout(function(){
+    if(AGENTS.length===0) useFallback();
+  }, 5000);
 }
 
 function useFallback(){
@@ -1231,6 +1087,35 @@ function useFallback(){
   COUNTERS=RECRUITS.map(function(r){return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]};});
   afterLoad();
 }
+
+function renderStats(){
+  try{
+    var list=document.getElementById('stats-list');
+    if(!list)return;
+    list.innerHTML='';
+    AGENTS.forEach(function(a){
+      var ac=AGENT_C[a.name]||{deals:0,level:'Agent '+(a.level||50)+'%',next:'-'};
+      var row=document.createElement('div');row.className='scard';
+      row.innerHTML='<div class="sn">'+a.name+'</div><div class="sd">'+ac.level+' · '+ac.deals+' deals</div>';
+      list.appendChild(row);
+    });
+  }catch(e){}
+}
+
+function afterLoad(){
+  try{populateRentalInDeals();}catch(e){}
+  try{populateDeals();}catch(e){}
+  var today=new Date().toISOString().split('T')[0];
+  var fromEl=document.getElementById('rn-from');if(fromEl&&!fromEl.value)fromEl.value=today;
+  try{renderStats();}catch(e){}
+}
+
+// ── CONTRACT STATE ──
+var cxType='', cxLang='', cxStep2=1, cxDepTouched=false;
+var CX_TYPES={rent:'Apartment Rental',comm:'Commercial Rental',sale:'Sale'};
+var CX_SUBS={1:'Select Deal Type',2:'Select Language',3:'Contract Details',4:'Review & Submit'};
+var CX_LR={deal_type:'Deal Type',contract_language:'Language',timestamp:'Contract Date',owner_full_name:'Owner',owner_personal_number:'Owner ID',client_full_name:'Tenant',client_personal_number:'Tenant ID',cadastral_code:'Cadastral Code',street_house:'Address',floor:'Floor',apartment_number:'Apt. No.',apartment_area:'Area (m²)',start_rent:'Start Date',end_rent:'End Date',rent_duration_months:'Duration (mo.)',price_usd:'Price (USD)',deposit_usd:'Deposit (USD)',pay_day:'Payment Day',one_month:'First Payment'};
+var CX_LS={deal_type:'Deal Type',contract_language:'Language',timestamp:'Contract Date',owner_full_name:'Owner',owner_personal_number:'Owner ID',owner_birth_day:'Owner DOB',client_full_name:'Buyer',client_personal_number:'Buyer ID',client_birth_day:'Buyer DOB',cadastral_code:'Cadastral Code',street_house:'Address',floor:'Floor',apartment_number:'Apt. No.',apartment_area:'Area (m²)',sale_price:'Sale Price (USD)',transfer_date:'Transfer Date'};
 
 function cxG(id){return document.getElementById(id);}
 function cxSafe(v){return v==null?'':String(v).trim();}
@@ -1261,8 +1146,8 @@ function cxRender2(){
   var sub=cxG('cx-sub');if(sub)sub.textContent=CX_SUBS[cxStep2]||'';
   var isSale=cxType==='sale';
   var cl=cxG('cx-cl'),cil=cxG('cx-cil');
-  if(cl)cl.innerHTML=(isSale?'Buyer':'Tenant')+' (Full Name) <span class="req">*</span>';
-  if(cil)cil.innerHTML=(isSale?'Buyer':'Tenant')+' ID Number <span class="req">*</span>';
+  if(cl)cl.innerHTML=(isSale?'Buyer (Full Name)':'Tenant (Full Name)')+'<span class="req"> *</span>';
+  if(cil)cil.innerHTML=(isSale?'Buyer ID Number':'Tenant ID Number')+'<span class="req"> *</span>';
   var odr=cxG('cx-odob-row'),cdr=cxG('cx-cdob-row');
   if(odr)odr.style.display=isSale?'block':'none';
   if(cdr)cdr.style.display=isSale?'block':'none';
