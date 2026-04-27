@@ -1258,18 +1258,31 @@ function cxSubmit(){
     deposit_usd:d.deposit_usd,pay_day:d.pay_day,one_month:om,
     sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date)
   });
-  var ifr=document.getElementById('cx-ifr');
-  if(!ifr){ifr=document.createElement('iframe');ifr.id='cx-ifr';ifr.name='cx-ifr';ifr.style.display='none';document.body.appendChild(ifr);}
-  var frm=document.getElementById('cx-frm');
-  if(!frm){frm=document.createElement('form');frm.id='cx-frm';frm.method='POST';frm.target='cx-ifr';frm.style.display='none';document.body.appendChild(frm);}
-  frm.action='https://script.google.com/macros/s/AKfycbwsfLdLsAJbeXnsTmpLKzx1mUT3PSKYCRmc5XDx52MLZkYa2qfVPIiEH38gWzlog1m5nw/exec';
-  frm.innerHTML='<input name="payload" value="'+payload.replace(/"/g,'&quot;')+'">';
-  frm.submit();
-  setTimeout(function(){
+  var cbName='__cxCb'+Date.now();
+  window[cbName]=function(r){
+    delete window[cbName];
     cxOv(false);if(next)next.disabled=false;
-    var res=cxG('cx-result');if(res)res.style.display='block';
-    var e4=cxG('cx-err4');if(e4){e4.textContent='Contract sent! Check your Drive folder.';e4.style.display='block';e4.style.color='var(--green)';}
-  },4000);
+    if(r&&r.ok){
+      var dl=cxG('cx-doclink'),pl=cxG('cx-pdflink');
+      if(dl&&r.docUrl)dl.href=r.docUrl;
+      if(pl&&r.pdfUrl)pl.href=r.pdfUrl;
+      var res=cxG('cx-result');if(res)res.style.display='block';
+      var nxt=cxG('cx-next');if(nxt)nxt.style.display='none';
+      cxShowSt(4,'Contract created successfully!','ok');
+    } else {
+      cxShowSt(4,'Error: '+(r&&r.error?r.error:'Unknown error'),'err');
+    }
+  };
+  var s=document.createElement('script');
+  s.src='https://script.google.com/macros/s/AKfycbwsfLdLsAJbeXnsTmpLKzx1mUT3PSKYCRmc5XDx52MLZkYa2qfVPIiEH38gWzlog1m5nw/exec'+'?callback='+cbName+'&payload='+encodeURIComponent(payload);
+  s.onerror=function(){
+    delete window[cbName];cxOv(false);if(next)next.disabled=false;
+    cxShowSt(4,'Connection error. Please try again.','err');
+  };
+  document.head.appendChild(s);
+  setTimeout(function(){
+    if(window[cbName]){delete window[cbName];cxOv(false);if(next)next.disabled=false;cxShowSt(4,'Timeout. Check your Drive folder in a few seconds.','err');}
+  },30000);
 }
 
 function cxReset(){
