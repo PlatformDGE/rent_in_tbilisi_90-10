@@ -4,144 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Rent in Tbilisi</title>
-<script src="https://telegram.org/js/telegram-web-app.js">
-
-
-// ══ RECRUIT PCT ══
-var rnRecruitPct = 20;
-var rnMentorPct = 0; // 0 = auto
-
-function onMentorChange() {
-  var el=document.getElementById('rn-mentor');
-  var hasMentor=el&&el.value!=='';
-  var row=document.getElementById('rn-mentor-pct-row');
-  if(row) row.style.display=hasMentor?'block':'none';
-  if(hasMentor){
-    // Auto-select based on agent deals
-    var agentEl=document.getElementById('rn-agent');
-    var agentName=agentEl?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'';
-    var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
-    var autoPct=deals<10?25:15;
-    setRnMentorPct(autoPct,document.getElementById('rn-mp-'+autoPct));
-  } else {
-    rnMentorPct=0;
-  }
-  calcRental();
-}
-
-function setRnMentorPct(pct,btn){
-  rnMentorPct=pct;
-  document.querySelectorAll('#rn-mentor-pct-row button').forEach(function(b){b.classList.remove('aa');});
-  if(btn)btn.classList.add('aa');
-  calcRental();
-}
-
-function onRecruitChange() {
-  var el = document.getElementById('rn-recruit');
-  var hasRecruit = el && el.value !== '';
-  var row = document.getElementById('rn-recruit-pct-row');
-  if (row) row.style.display = hasRecruit ? 'block' : 'none';
-  if (hasRecruit) {
-    var agentEl = document.getElementById('rn-agent');
-    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
-    var deals = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
-    var autoPct = deals <= 5 ? 20 : deals <= 15 ? 50 : 20;
-    setRnRecruitPct(autoPct, document.getElementById('rn-rp-' + autoPct));
-  }
-  calcRental();
-}
-
-function setRnRecruitPct(pct, btn) {
-  rnRecruitPct = pct;
-  document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
-  if (btn) btn.classList.add('aa');
-  calcRental();
-}
-
-// ══ QUIZ ══
-var QUIZ_ALL = [
-  {q:'Сколько % получает агент на начальном уровне (1-10 сделок)?',a:['50%','70%','90%','30%'],c:0},
-  {q:'С какой сделки агент переходит на уровень 70%?',a:['11-й','6-й','21-й','16-й'],c:0},
-  {q:'Сколько % получает платформа при агенте 90%?',a:['10%','30%','50%','20%'],c:0},
-  {q:'Что такое эксклюзив в Platform 90/10?',a:['Доверительное управление объектом','Разовая сделка','Объект без договора','Коммерческая аренда'],c:0},
-  {q:'Какой % комиссии при долгосрочной аренде?',a:['50%','100%','3%','30%'],c:0},
-  {q:'Какой % комиссии при аренде коммерции?',a:['100%','50%','3%','70%'],c:0},
-  {q:'Какой % комиссии при продаже?',a:['3%','5%','50%','1%'],c:0},
-  {q:'Сколько % получает рекрут в первые 5 сделок?',a:['20%','50%','30%','10%'],c:0},
-  {q:'Сколько % получает рекрут с 6 по 15 сделку?',a:['50%','20%','30%','70%'],c:0},
-  {q:'Какой % платформы за эксклюзивный объект навечно?',a:['10%','20%','5%','30%'],c:0},
-  {q:'Что такое T0 оценка?',a:['Оценка сразу после сдачи','Оценка через 14 дней','Оценка до сделки','Финансовый отчёт'],c:0},
-  {q:'Сколько критериев в H2O оценке?',a:['3','2','5','4'],c:0},
-  {q:'Какой % получает внешний агент?',a:['30%','50%','20%','40%'],c:0},
-  {q:'Какой % при передаче клиента внутри системы?',a:['10%','20%','5%','15%'],c:0},
-  {q:'Какой % при сделке "Только показ → сдача"?',a:['20%','40%','10%','30%'],c:0},
-  {q:'Какой % при "Фото + показ + сдача эксклюзива"?',a:['40%','20%','60%','30%'],c:0},
-  {q:'Сколько сделок нужно для уровня 90%?',a:['100+','50+','200+','75+'],c:0},
-  {q:'Что обязательно делать до показа квартиры?',a:['Сфотографировать объект','Подписать договор','Оплатить комиссию','Получить ключи'],c:0},
-  {q:'Что такое T14 оценка?',a:['Оценка через 14 дней после сдачи','Оценка на 14-й сделке','Оценка за 14%','Первичный осмотр'],c:0},
-  {q:'Сколько % при уровне агента 70%?',a:['70%','50%','90%','30%'],c:0}
-];
-
-function startQuiz() {
-  var shuffled = QUIZ_ALL.slice().sort(function(){ return Math.random()-0.5; }).slice(0,10);
-  quizAnswers = shuffled.map(function(q) {
-    var ans = q.a.slice(); var correct = ans[q.c];
-    ans.sort(function(){ return Math.random()-0.5; });
-    return {q:q.q, a:ans, c:ans.indexOf(correct)};
-  });
-  quizCurrent=0; quizScore=0;
-  document.getElementById('quiz-wrap').style.display='block';
-  document.getElementById('std-content').style.display='none';
-  document.getElementById('quiz-result').style.display='none';
-  renderQuizQ();
-}
-
-function renderQuizQ() {
-  var q=quizAnswers[quizCurrent];
-  var html='<div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Вопрос '+(quizCurrent+1)+' из '+quizAnswers.length+'</div>';
-  html+='<div style="font-size:16px;font-weight:700;margin-bottom:20px;line-height:1.4;">'+q.q+'</div>';
-  q.a.forEach(function(ans,i){
-    html+='<button onclick="answerQuiz('+i+')" style="display:block;width:100%;text-align:left;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:14px;font-weight:600;color:var(--text1);cursor:pointer;">'+ans+'</button>';
-  });
-  document.getElementById('quiz-content').innerHTML=html;
-}
-
-function answerQuiz(idx) {
-  var q=quizAnswers[quizCurrent];
-  if(idx===q.c) quizScore++;
-  var btns=document.querySelectorAll('#quiz-content button');
-  btns.forEach(function(b,i){
-    b.style.pointerEvents='none';
-    if(i===q.c) b.style.background='var(--gbg)';
-    else if(i===idx) b.style.background='var(--rbg)';
-  });
-  setTimeout(function(){
-    quizCurrent++;
-    if(quizCurrent<quizAnswers.length){ renderQuizQ(); }
-    else { showQuizResult(); }
-  },800);
-}
-
-function showQuizResult() {
-  document.getElementById('quiz-content').innerHTML='';
-  var pct=Math.round(quizScore/quizAnswers.length*100);
-  var ic=pct>=80?'🏆':pct>=60?'👍':'📚';
-  var msg=pct>=80?'Отлично! Ты знаешь стандарты!':pct>=60?'Хороший результат!':'Нужно повторить стандарты';
-  document.getElementById('qr-ic').textContent=ic;
-  document.getElementById('qr-t').textContent=quizScore+'/'+quizAnswers.length+' — '+pct+'%';
-  var sub=document.getElementById('qr-s')||document.getElementById('qr-sub');
-  if(sub) sub.textContent=msg;
-  document.getElementById('quiz-result').style.display='block';
-}
-
-function resetQuiz(){ startQuiz(); }
-function retryQuiz(){ startQuiz(); }
-function closeQuiz(){
-  document.getElementById('quiz-wrap').style.display='none';
-  document.getElementById('std-content').style.display='block';
-}
-function showStandards(){ closeQuiz(); }
-</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1451,6 +1314,145 @@ function cxReset(){
   if(ts){var d=new Date();ts.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   cxRender2();
 }
+
+
+
+
+
+// ══ RECRUIT PCT ══
+var rnRecruitPct = 20;
+var rnMentorPct = 0; // 0 = auto
+
+function onMentorChange() {
+  var el=document.getElementById('rn-mentor');
+  var hasMentor=el&&el.value!=='';
+  var row=document.getElementById('rn-mentor-pct-row');
+  if(row) row.style.display=hasMentor?'block':'none';
+  if(hasMentor){
+    // Auto-select based on agent deals
+    var agentEl=document.getElementById('rn-agent');
+    var agentName=agentEl?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'';
+    var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
+    var autoPct=deals<10?25:15;
+    setRnMentorPct(autoPct,document.getElementById('rn-mp-'+autoPct));
+  } else {
+    rnMentorPct=0;
+  }
+  calcRental();
+}
+
+function setRnMentorPct(pct,btn){
+  rnMentorPct=pct;
+  document.querySelectorAll('#rn-mentor-pct-row button').forEach(function(b){b.classList.remove('aa');});
+  if(btn)btn.classList.add('aa');
+  calcRental();
+}
+
+function onRecruitChange() {
+  var el = document.getElementById('rn-recruit');
+  var hasRecruit = el && el.value !== '';
+  var row = document.getElementById('rn-recruit-pct-row');
+  if (row) row.style.display = hasRecruit ? 'block' : 'none';
+  if (hasRecruit) {
+    var agentEl = document.getElementById('rn-agent');
+    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
+    var deals = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
+    var autoPct = deals <= 5 ? 20 : deals <= 15 ? 50 : 20;
+    setRnRecruitPct(autoPct, document.getElementById('rn-rp-' + autoPct));
+  }
+  calcRental();
+}
+
+function setRnRecruitPct(pct, btn) {
+  rnRecruitPct = pct;
+  document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
+  if (btn) btn.classList.add('aa');
+  calcRental();
+}
+
+// ══ QUIZ ══
+var QUIZ_ALL = [
+  {q:'Сколько % получает агент на начальном уровне (1-10 сделок)?',a:['50%','70%','90%','30%'],c:0},
+  {q:'С какой сделки агент переходит на уровень 70%?',a:['11-й','6-й','21-й','16-й'],c:0},
+  {q:'Сколько % получает платформа при агенте 90%?',a:['10%','30%','50%','20%'],c:0},
+  {q:'Что такое эксклюзив в Platform 90/10?',a:['Доверительное управление объектом','Разовая сделка','Объект без договора','Коммерческая аренда'],c:0},
+  {q:'Какой % комиссии при долгосрочной аренде?',a:['50%','100%','3%','30%'],c:0},
+  {q:'Какой % комиссии при аренде коммерции?',a:['100%','50%','3%','70%'],c:0},
+  {q:'Какой % комиссии при продаже?',a:['3%','5%','50%','1%'],c:0},
+  {q:'Сколько % получает рекрут в первые 5 сделок?',a:['20%','50%','30%','10%'],c:0},
+  {q:'Сколько % получает рекрут с 6 по 15 сделку?',a:['50%','20%','30%','70%'],c:0},
+  {q:'Какой % платформы за эксклюзивный объект навечно?',a:['10%','20%','5%','30%'],c:0},
+  {q:'Что такое T0 оценка?',a:['Оценка сразу после сдачи','Оценка через 14 дней','Оценка до сделки','Финансовый отчёт'],c:0},
+  {q:'Сколько критериев в H2O оценке?',a:['3','2','5','4'],c:0},
+  {q:'Какой % получает внешний агент?',a:['30%','50%','20%','40%'],c:0},
+  {q:'Какой % при передаче клиента внутри системы?',a:['10%','20%','5%','15%'],c:0},
+  {q:'Какой % при сделке "Только показ → сдача"?',a:['20%','40%','10%','30%'],c:0},
+  {q:'Какой % при "Фото + показ + сдача эксклюзива"?',a:['40%','20%','60%','30%'],c:0},
+  {q:'Сколько сделок нужно для уровня 90%?',a:['100+','50+','200+','75+'],c:0},
+  {q:'Что обязательно делать до показа квартиры?',a:['Сфотографировать объект','Подписать договор','Оплатить комиссию','Получить ключи'],c:0},
+  {q:'Что такое T14 оценка?',a:['Оценка через 14 дней после сдачи','Оценка на 14-й сделке','Оценка за 14%','Первичный осмотр'],c:0},
+  {q:'Сколько % при уровне агента 70%?',a:['70%','50%','90%','30%'],c:0}
+];
+
+function startQuiz() {
+  var shuffled = QUIZ_ALL.slice().sort(function(){ return Math.random()-0.5; }).slice(0,10);
+  quizAnswers = shuffled.map(function(q) {
+    var ans = q.a.slice(); var correct = ans[q.c];
+    ans.sort(function(){ return Math.random()-0.5; });
+    return {q:q.q, a:ans, c:ans.indexOf(correct)};
+  });
+  quizCurrent=0; quizScore=0;
+  document.getElementById('quiz-wrap').style.display='block';
+  document.getElementById('std-content').style.display='none';
+  document.getElementById('quiz-result').style.display='none';
+  renderQuizQ();
+}
+
+function renderQuizQ() {
+  var q=quizAnswers[quizCurrent];
+  var html='<div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Вопрос '+(quizCurrent+1)+' из '+quizAnswers.length+'</div>';
+  html+='<div style="font-size:16px;font-weight:700;margin-bottom:20px;line-height:1.4;">'+q.q+'</div>';
+  q.a.forEach(function(ans,i){
+    html+='<button onclick="answerQuiz('+i+')" style="display:block;width:100%;text-align:left;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:14px;font-weight:600;color:var(--text1);cursor:pointer;">'+ans+'</button>';
+  });
+  document.getElementById('quiz-content').innerHTML=html;
+}
+
+function answerQuiz(idx) {
+  var q=quizAnswers[quizCurrent];
+  if(idx===q.c) quizScore++;
+  var btns=document.querySelectorAll('#quiz-content button');
+  btns.forEach(function(b,i){
+    b.style.pointerEvents='none';
+    if(i===q.c) b.style.background='var(--gbg)';
+    else if(i===idx) b.style.background='var(--rbg)';
+  });
+  setTimeout(function(){
+    quizCurrent++;
+    if(quizCurrent<quizAnswers.length){ renderQuizQ(); }
+    else { showQuizResult(); }
+  },800);
+}
+
+function showQuizResult() {
+  document.getElementById('quiz-content').innerHTML='';
+  var pct=Math.round(quizScore/quizAnswers.length*100);
+  var ic=pct>=80?'🏆':pct>=60?'👍':'📚';
+  var msg=pct>=80?'Отлично! Ты знаешь стандарты!':pct>=60?'Хороший результат!':'Нужно повторить стандарты';
+  document.getElementById('qr-ic').textContent=ic;
+  document.getElementById('qr-t').textContent=quizScore+'/'+quizAnswers.length+' — '+pct+'%';
+  var sub=document.getElementById('qr-s')||document.getElementById('qr-sub');
+  if(sub) sub.textContent=msg;
+  document.getElementById('quiz-result').style.display='block';
+}
+
+function resetQuiz(){ startQuiz(); }
+function retryQuiz(){ startQuiz(); }
+function closeQuiz(){
+  document.getElementById('quiz-wrap').style.display='none';
+  document.getElementById('std-content').style.display='block';
+}
+function showStandards(){ closeQuiz(); }
 
 </script>
 </body>
