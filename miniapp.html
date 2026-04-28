@@ -957,7 +957,7 @@ function calcRental() {
     agentPool=comm-plat-mentorAmt;
     var mentorName=mentorEl.options[mentorEl.selectedIndex].text;
     document.getElementById('rn-mentor-calc-label').textContent=mentorName+' ('+mentorPct+'%)';
-    document.getElementById('rn-cm-val').textContent=mentorAmt+'$';
+    document.getElementById('rn-cm-val').textContent=mentorAmt+'$ ('+mentorPct+'%)';
     document.getElementById('rn-mentor-row').style.display='flex';
   } else {
     // Without mentor: platform = (100-rnLvl)%
@@ -980,7 +980,7 @@ function calcRental() {
     agentFinal=agentPool-recruitAmt;
     var recruitName=recruitEl.options[recruitEl.selectedIndex].text;
     document.getElementById('rn-recruit-label').textContent=recruitName+' ('+rnRecruitPct+'%)';
-    document.getElementById('rn-cr').textContent=recruitAmt+'$';
+    document.getElementById('rn-cr').textContent=recruitAmt+'$ ('+rnRecruitPct+'%)';
     document.getElementById('rn-recruit-row').style.display='flex';
   } else {
     var el2=document.getElementById('rn-recruit-row');if(el2)el2.style.display='none';
@@ -989,12 +989,13 @@ function calcRental() {
   // Agent final
   var platPctShow=hasMentor?10:(100-rnLvl);
   document.getElementById('rn-agent-final-label').textContent=agentName+' итого';
-  document.getElementById('rn-ca-final').textContent=agentFinal+'$';
+  var agentFinalPct=Math.round(agentFinal/comm*100);
+    document.getElementById('rn-ca-final').textContent=agentFinal+'$ ('+agentFinalPct+'%)';
   document.getElementById('rn-agent-final-row').style.display='flex';
 
   box.style.display='block';
   document.getElementById('rn-ct').textContent=comm+'$ ('+commPct+'% от '+price+'$)';
-  document.getElementById('rn-ca').textContent=agentPool+'$';
+  document.getElementById('rn-ca').textContent=agentPool+'$ ('+rnLvl+'%)';
   document.getElementById('rn-cp').textContent=plat+'$ ('+platPctShow+'%)';
 }
 
