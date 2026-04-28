@@ -937,50 +937,57 @@ function calcRental() {
   if(price<=0){box.style.display='none';return;}
 
   var comm=Math.round(price*commPct/100);
-  var platPct=100-rnLvl;
-  var plat=Math.round(comm*platPct/100);
-  var agentPool=comm-plat;
 
-  // Agent name
+  // Agent name & deal count
   var agentEl=document.getElementById('rn-agent');
   var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'Агент';
-  document.getElementById('rn-agent-label').textContent=agentName+' '+rnLvl+'%';
+  var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
 
-  // Mentor: auto pct based on agent deal count
+  // Mentor
   var mentorEl=document.getElementById('rn-mentor');
   var hasMentor=mentorEl&&mentorEl.value!=='';
-  var mentorAmt=0;
-  var afterMentor=agentPool;
+
+  var plat, mentorAmt, agentPool;
+
   if(hasMentor){
-    var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
+    // With mentor: platform=10%, mentor=25% or 15%, agent=rest
+    plat=Math.round(comm*0.10);
     var mentorPct=rnMentorPct||(deals<10?25:15);
-    mentorAmt=Math.round(agentPool*mentorPct/100);
-    afterMentor=agentPool-mentorAmt;
+    mentorAmt=Math.round(comm*mentorPct/100);
+    agentPool=comm-plat-mentorAmt;
     var mentorName=mentorEl.options[mentorEl.selectedIndex].text;
     document.getElementById('rn-mentor-calc-label').textContent=mentorName+' ('+mentorPct+'%)';
     document.getElementById('rn-cm-val').textContent=mentorAmt+'$';
     document.getElementById('rn-mentor-row').style.display='flex';
   } else {
-    var e=document.getElementById('rn-mentor-row');if(e)e.style.display='none';
+    // Without mentor: platform = (100-rnLvl)%
+    var platPct=100-rnLvl;
+    plat=Math.round(comm*platPct/100);
+    mentorAmt=0;
+    agentPool=comm-plat;
+    var el=document.getElementById('rn-mentor-row');if(el)el.style.display='none';
   }
 
-  // Recruit: % from agent pool after mentor
+  document.getElementById('rn-agent-label').textContent=agentName+' '+rnLvl+'%';
+
+  // Recruit: % from agent pool
   var recruitEl=document.getElementById('rn-recruit');
   var hasRecruit=recruitEl&&recruitEl.value!=='';
   var recruitAmt=0;
-  var agentFinal=afterMentor;
+  var agentFinal=agentPool;
   if(hasRecruit){
-    recruitAmt=Math.round(afterMentor*rnRecruitPct/100);
-    agentFinal=afterMentor-recruitAmt;
+    recruitAmt=Math.round(agentPool*rnRecruitPct/100);
+    agentFinal=agentPool-recruitAmt;
     var recruitName=recruitEl.options[recruitEl.selectedIndex].text;
     document.getElementById('rn-recruit-label').textContent=recruitName+' ('+rnRecruitPct+'%)';
     document.getElementById('rn-cr').textContent=recruitAmt+'$';
     document.getElementById('rn-recruit-row').style.display='flex';
   } else {
-    var e2=document.getElementById('rn-recruit-row');if(e2)e2.style.display='none';
+    var el2=document.getElementById('rn-recruit-row');if(el2)el2.style.display='none';
   }
 
   // Agent final
+  var platPctShow=hasMentor?10:(100-rnLvl);
   document.getElementById('rn-agent-final-label').textContent=agentName+' итого';
   document.getElementById('rn-ca-final').textContent=agentFinal+'$';
   document.getElementById('rn-agent-final-row').style.display='flex';
@@ -988,7 +995,7 @@ function calcRental() {
   box.style.display='block';
   document.getElementById('rn-ct').textContent=comm+'$ ('+commPct+'% от '+price+'$)';
   document.getElementById('rn-ca').textContent=agentPool+'$';
-  document.getElementById('rn-cp').textContent=plat+'$ ('+platPct+'%)';
+  document.getElementById('rn-cp').textContent=plat+'$ ('+platPctShow+'%)';
 }
 
 function calcDeal() {
