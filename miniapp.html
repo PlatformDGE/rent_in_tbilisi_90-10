@@ -9,6 +9,32 @@
 
 // ══ RECRUIT PCT ══
 var rnRecruitPct = 20;
+var rnMentorPct = 0; // 0 = auto
+
+function onMentorChange() {
+  var el=document.getElementById('rn-mentor');
+  var hasMentor=el&&el.value!=='';
+  var row=document.getElementById('rn-mentor-pct-row');
+  if(row) row.style.display=hasMentor?'block':'none';
+  if(hasMentor){
+    // Auto-select based on agent deals
+    var agentEl=document.getElementById('rn-agent');
+    var agentName=agentEl?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'';
+    var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
+    var autoPct=deals<10?25:15;
+    setRnMentorPct(autoPct,document.getElementById('rn-mp-'+autoPct));
+  } else {
+    rnMentorPct=0;
+  }
+  calcRental();
+}
+
+function setRnMentorPct(pct,btn){
+  rnMentorPct=pct;
+  document.querySelectorAll('#rn-mentor-pct-row button').forEach(function(b){b.classList.remove('aa');});
+  if(btn)btn.classList.add('aa');
+  calcRental();
+}
 
 function onRecruitChange() {
   var el = document.getElementById('rn-recruit');
@@ -437,7 +463,14 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             <div style="display:flex;gap:8px;"><button class="tb" id="rn-rp-10" onclick="setRnRecruitPct(10,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">10%</button><button class="tb" id="rn-rp-20" onclick="setRnRecruitPct(20,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">20%</button><button class="tb" id="rn-rp-30" onclick="setRnRecruitPct(30,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">30%</button><button class="tb" id="rn-rp-40" onclick="setRnRecruitPct(40,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">40%</button><button class="tb" id="rn-rp-50" onclick="setRnRecruitPct(50,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">50%</button></div>
           </div>
           <div class="field"><label class="fl">Наставник (если есть)</label>
-            <select id="rn-mentor"><option value="">Без наставника</option></select>
+            <select id="rn-mentor" onchange="onMentorChange()"><option value="">Без наставника</option></select>
+          </div>
+          <div class="field" id="rn-mentor-pct-row" style="display:none;">
+            <label class="fl">% наставника (авто по сделкам)</label>
+            <div style="display:flex;gap:8px;">
+              <button class="tb" id="rn-mp-25" onclick="setRnMentorPct(25,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">25%<br><span style="font-size:10px;opacity:.7;">1-10 сд.</span></button>
+              <button class="tb" id="rn-mp-15" onclick="setRnMentorPct(15,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">15%<br><span style="font-size:10px;opacity:.7;">11-100 сд.</span></button>
+            </div>
           </div>
           <div class="r2">
             <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
@@ -453,6 +486,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             <div class="crow"><span class="ck" id="rn-agent-label">Агент</span><span class="cv g" id="rn-ca">—</span></div>
             <div class="crow"><span class="ck">Платформа</span><span class="cv a" id="rn-cp">—</span></div>
             <div class="crow" id="rn-cm-row" style="display:none;"><span class="ck" id="rn-mentor-label">Наставник</span><span class="cv p" id="rn-cm">—</span></div>
+            <div class="crow" id="rn-mentor-row" style="display:none;"><span class="ck" id="rn-mentor-calc-label">Наставник</span><span class="cv p" id="rn-cm-val">—</span></div>
             <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck" id="rn-recruit-label">Рекрут</span><span class="cv p" id="rn-cr">—</span></div>
             <div class="crow" id="rn-mentor-row" style="display:none;"><span class="ck" id="rn-mentor-calc-label">Наставник</span><span class="cv p" id="rn-cm-val">—</span></div>
             <div class="crow" id="rn-agent-final-row" style="display:none;"><span class="ck" id="rn-agent-final-label">Агент итого</span><span class="cv g" id="rn-ca-final">—</span></div>
@@ -1038,45 +1072,49 @@ function calcRental() {
   var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
   var box=document.getElementById('rn-calc');
   if(price<=0){box.style.display='none';return;}
+
   var comm=Math.round(price*commPct/100);
   var platPct=100-rnLvl;
   var plat=Math.round(comm*platPct/100);
   var agentPool=comm-plat;
 
+  // Agent name
   var agentEl=document.getElementById('rn-agent');
   var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'Агент';
   document.getElementById('rn-agent-label').textContent=agentName+' '+rnLvl+'%';
 
-  // Mentor logic: 25% from agent pool for first 10 deals, 15% for next 90
+  // Mentor: auto pct based on agent deal count
   var mentorEl=document.getElementById('rn-mentor');
   var hasMentor=mentorEl&&mentorEl.value!=='';
   var mentorAmt=0;
+  var afterMentor=agentPool;
   if(hasMentor){
     var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
-    var mentorPct=deals<10?25:15;
+    var mentorPct=rnMentorPct||(deals<10?25:15);
     mentorAmt=Math.round(agentPool*mentorPct/100);
+    afterMentor=agentPool-mentorAmt;
     var mentorName=mentorEl.options[mentorEl.selectedIndex].text;
-    document.getElementById('rn-mentor-calc-label').textContent=mentorName+' ('+mentorPct+'%, сделка '+(deals+1)+')';
+    document.getElementById('rn-mentor-calc-label').textContent=mentorName+' ('+mentorPct+'%)';
     document.getElementById('rn-cm-val').textContent=mentorAmt+'$';
     document.getElementById('rn-mentor-row').style.display='flex';
   } else {
-    document.getElementById('rn-mentor-row').style.display='none';
+    var e=document.getElementById('rn-mentor-row');if(e)e.style.display='none';
   }
 
-  // Recruit logic
+  // Recruit: % from agent pool after mentor
   var recruitEl=document.getElementById('rn-recruit');
   var hasRecruit=recruitEl&&recruitEl.value!=='';
   var recruitAmt=0;
-  var agentFinal=agentPool-mentorAmt;
+  var agentFinal=afterMentor;
   if(hasRecruit){
-    recruitAmt=Math.round(agentFinal*rnRecruitPct/100);
-    agentFinal=agentFinal-recruitAmt;
+    recruitAmt=Math.round(afterMentor*rnRecruitPct/100);
+    agentFinal=afterMentor-recruitAmt;
     var recruitName=recruitEl.options[recruitEl.selectedIndex].text;
     document.getElementById('rn-recruit-label').textContent=recruitName+' ('+rnRecruitPct+'%)';
     document.getElementById('rn-cr').textContent=recruitAmt+'$';
     document.getElementById('rn-recruit-row').style.display='flex';
   } else {
-    document.getElementById('rn-recruit-row').style.display='none';
+    var e2=document.getElementById('rn-recruit-row');if(e2)e2.style.display='none';
   }
 
   // Agent final
