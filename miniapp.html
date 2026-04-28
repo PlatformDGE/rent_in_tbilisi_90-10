@@ -952,7 +952,7 @@ function calcRental() {
   if(hasMentor){
     // With mentor: platform=10%, mentor=25% or 15%, agent=rest
     plat=Math.round(comm*0.10);
-    var mentorPct=rnMentorPct||(deals<10?25:15);
+    var mentorPct=rnMentorPct||(rnLvl<=50?25:15);
     mentorAmt=Math.round(comm*mentorPct/100);
     agentPool=comm-plat-mentorAmt;
     var mentorName=mentorEl.options[mentorEl.selectedIndex].text;
