@@ -6,6 +6,102 @@
 <title>Rent in Tbilisi</title>
 <script src="https://telegram.org/js/telegram-web-app.js">
 
+
+// ══════════ QUIZ ══════════
+var QUIZ_QUESTIONS = [
+  {q:'Сколько % получает агент на начальном уровне (1-10 сделок)?', a:['50%','70%','90%','30%'], c:0},
+  {q:'С какой сделки агент переходит на уровень 70%?', a:['11-й','6-й','21-й','16-й'], c:0},
+  {q:'Сколько % получает платформа при агенте 90%?', a:['10%','30%','50%','20%'], c:0},
+  {q:'Что такое эксклюзив в Platform 90/10?', a:['Доверительное управление объектом','Разовая сделка','Объект без договора','Коммерческая аренда'], c:0},
+  {q:'Какой % комиссии берётся при долгосрочной аренде?', a:['50%','100%','3%','30%'], c:0},
+  {q:'Какой % комиссии при аренде коммерции?', a:['100%','50%','3%','70%'], c:0},
+  {q:'Какой % комиссии при продаже?', a:['3%','5%','50%','1%'], c:0},
+  {q:'Сколько % получает рекрут в первые 5 сделок агента?', a:['20%','50%','30%','10%'], c:0},
+  {q:'Сколько % получает рекрут с 6 по 15 сделку?', a:['50%','20%','30%','70%'], c:0},
+  {q:'Какой % платформы навечно за эксклюзивный объект?', a:['10%','20%','5%','30%'], c:0},
+  {q:'Что такое T0 оценка?', a:['Оценка сразу после сдачи','Оценка через 14 дней','Оценка до сделки','Финансовый отчёт'], c:0},
+  {q:'Сколько критериев в H2O оценке?', a:['3','2','5','4'], c:0},
+  {q:'Что означает H2O?', a:['Client, Owner, Process','Happy, Order, Open','Help, Observe, Optimize','High, Output, OK'], c:0},
+  {q:'Какой % получает внешний агент?', a:['30%','50%','20%','40%'], c:0},
+  {q:'Какой % при передаче клиента внутри системы?', a:['10%','20%','5%','15%'], c:0},
+  {q:'Какой % при сделке "Только показ → сдача"?', a:['20%','40%','10%','30%'], c:0},
+  {q:'Какой % при сделке "Фото + показ + сдача эксклюзива"?', a:['40%','20%','60%','30%'], c:0},
+  {q:'Сколько сделок нужно для уровня 90%?', a:['100+','50+','200+','75+'], c:0},
+  {q:'Что обязательно делать до показа квартиры?', a:['Сфотографировать объект','Подписать договор','Оплатить комиссию','Получить ключи'], c:0},
+  {q:'Что такое T14 оценка?', a:['Оценка через 14 дней после сдачи','Оценка на 14-й сделке','Оценка за 14%','Первичный осмотр'], c:0}
+];
+
+function startQuiz() {
+  // Shuffle questions and pick 10
+  var shuffled = QUIZ_QUESTIONS.slice().sort(function(){ return Math.random()-0.5; });
+  var selected = shuffled.slice(0, 10);
+  // Shuffle answers for each question
+  quizAnswers = selected.map(function(q) {
+    var answers = q.a.slice();
+    var correct = answers[q.c];
+    answers.sort(function(){ return Math.random()-0.5; });
+    return { q: q.q, a: answers, c: answers.indexOf(correct) };
+  });
+  quizCurrent = 0;
+  quizScore = 0;
+  document.getElementById('quiz-wrap').style.display = 'block';
+  document.getElementById('std-content').style.display = 'none';
+  document.getElementById('quiz-result').style.display = 'none';
+  renderQuizQ();
+}
+
+function renderQuizQ() {
+  var q = quizAnswers[quizCurrent];
+  var html = '<div style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">' +
+    'Вопрос ' + (quizCurrent+1) + ' из ' + quizAnswers.length + '</div>' +
+    '<div style="font-size:16px;font-weight:700;margin-bottom:20px;line-height:1.4;">' + q.q + '</div>';
+  q.a.forEach(function(ans, i) {
+    html += '<button onclick="answerQuiz(' + i + ')" style="display:block;width:100%;text-align:left;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:14px;font-weight:600;color:var(--text1);cursor:pointer;">' + ans + '</button>';
+  });
+  document.getElementById('quiz-content').innerHTML = html;
+}
+
+function answerQuiz(idx) {
+  var q = quizAnswers[quizCurrent];
+  var correct = idx === q.c;
+  if (correct) quizScore++;
+  // Show feedback
+  var btns = document.querySelectorAll('#quiz-content button');
+  btns.forEach(function(b, i) {
+    b.style.pointerEvents = 'none';
+    if (i === q.c) b.style.background = 'var(--gbg)';
+    else if (i === idx && !correct) b.style.background = 'var(--rbg)';
+  });
+  setTimeout(function() {
+    quizCurrent++;
+    if (quizCurrent < quizAnswers.length) {
+      renderQuizQ();
+    } else {
+      showQuizResult();
+    }
+  }, 800);
+}
+
+function showQuizResult() {
+  document.getElementById('quiz-content').innerHTML = '';
+  var pct = Math.round(quizScore / quizAnswers.length * 100);
+  var ic = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
+  var msg = pct >= 80 ? 'Отлично! Ты знаешь стандарты!' : pct >= 60 ? 'Хороший результат!' : 'Нужно повторить стандарты';
+  document.getElementById('qr-ic').textContent = ic;
+  document.getElementById('qr-t').textContent = quizScore + '/' + quizAnswers.length + ' — ' + pct + '%';
+  document.getElementById('qr-sub').textContent = msg;
+  document.getElementById('quiz-result').style.display = 'block';
+}
+
+function retryQuiz() {
+  startQuiz();
+}
+
+function closeQuiz() {
+  document.getElementById('quiz-wrap').style.display = 'none';
+  document.getElementById('std-content').style.display = 'block';
+}
+
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -272,7 +368,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       <div style="padding:14px 16px 0;">
         <div style="font-size:18px;font-weight:800;margin-bottom:3px;">💰 Сдача квартиры</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Калькулятор + отчёт + T0 оценка</div>
-        </div>
+        
       </div>
       <div class="pad pb">
 
@@ -325,11 +421,25 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
           <div class="field" id="rn-recruit-pct-row" style="display:none;">
             <label class="fl">% рекрута от доли агента</label>
-            <div class="tg c4">
-              <button class="tb" id="rn-rp-20" onclick="setRnRecruitPct(20,this)">20%<br><span style="font-size:10px;opacity:.7;">1-5 сд.</span></button>
-              <button class="tb" id="rn-rp-50" onclick="setRnRecruitPct(50,this)">50%<br><span style="font-size:10px;opacity:.7;">6-15 сд.</span></button>
-              <button class="tb" id="rn-rp-30" onclick="setRnRecruitPct(30,this)">30%<br><span style="font-size:10px;opacity:.7;">Внешний</span></button>
-              <button class="tb" id="rn-rp-10" onclick="setRnRecruitPct(10,this)">10%<br><span style="font-size:10px;opacity:.7;">Передача</span></button>
+            <div class="tg" style="display:flex;flex-wrap:wrap;gap:6px;">
+              <button class="tb" id="rn-rp-5" onclick="setRnRecruitPct(5,this)">5%</button>
+              <button class="tb" id="rn-rp-10" onclick="setRnRecruitPct(10,this)">10%</button>
+              <button class="tb" id="rn-rp-15" onclick="setRnRecruitPct(15,this)">15%</button>
+              <button class="tb" id="rn-rp-20" onclick="setRnRecruitPct(20,this)">20%</button>
+              <button class="tb" id="rn-rp-25" onclick="setRnRecruitPct(25,this)">25%</button>
+              <button class="tb" id="rn-rp-30" onclick="setRnRecruitPct(30,this)">30%</button>
+              <button class="tb" id="rn-rp-35" onclick="setRnRecruitPct(35,this)">35%</button>
+              <button class="tb" id="rn-rp-40" onclick="setRnRecruitPct(40,this)">40%</button>
+              <button class="tb" id="rn-rp-45" onclick="setRnRecruitPct(45,this)">45%</button>
+              <button class="tb" id="rn-rp-50" onclick="setRnRecruitPct(50,this)">50%</button>
+              <button class="tb" id="rn-rp-55" onclick="setRnRecruitPct(55,this)">55%</button>
+              <button class="tb" id="rn-rp-60" onclick="setRnRecruitPct(60,this)">60%</button>
+              <button class="tb" id="rn-rp-65" onclick="setRnRecruitPct(65,this)">65%</button>
+              <button class="tb" id="rn-rp-70" onclick="setRnRecruitPct(70,this)">70%</button>
+              <button class="tb" id="rn-rp-75" onclick="setRnRecruitPct(75,this)">75%</button>
+              <button class="tb" id="rn-rp-80" onclick="setRnRecruitPct(80,this)">80%</button>
+              <button class="tb" id="rn-rp-85" onclick="setRnRecruitPct(85,this)">85%</button>
+              <button class="tb" id="rn-rp-90" onclick="setRnRecruitPct(90,this)">90%</button>
             </div>
           </div>
           
@@ -699,10 +809,10 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           <div class="qscore">
             <span class="qs-ic" id="qr-ic">🏆</span>
             <span class="qs-t" id="qr-t">Результат</span>
-            <span class="qs-s" id="qr-s"></span>
+            <span class="qs-s" id="qr-sub"></span>
           </div>
-          <button class="sbtn" onclick="resetQuiz()" style="margin-bottom:20px;">Пройти ещё раз</button>
-          <button class="sbtn navy" onclick="showStandards()" style="margin-bottom:20px;">← Стандарты</button>
+          <button class="sbtn" onclick="retryQuiz()" style="margin-bottom:20px;">Пройти ещё раз</button>
+          <button class="sbtn navy" onclick="closeQuiz()" style="margin-bottom:20px;">← Стандарты</button>
         </div>
       </div>
     </div>
@@ -939,37 +1049,29 @@ function onRecruitChange() {
   }
   calcRental();
 }
-
 function setRnRecruitPct(pct, btn) {
   rnRecruitPct = pct;
   document.querySelectorAll('#rn-recruit-pct-row .tb').forEach(function(b){ b.classList.remove('aa'); });
   if (btn) btn.classList.add('aa');
   calcRental();
 }
-
 function calcRental() {
   var price = parseFloat(document.getElementById('rn-price').value) || 0;
   var commPct = parseFloat(document.getElementById('rn-comm-pct').value) || 50;
   var box = document.getElementById('rn-calc');
   if (price <= 0) { box.style.display = 'none'; return; }
-
   var comm = Math.round(price * commPct / 100);
   var platPct = 100 - rnLvl;
   var plat = Math.round(comm * platPct / 100);
   var agentPool = comm - plat;
-
   var agentEl = document.getElementById('rn-agent');
   var agentName = agentEl && agentEl.value ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : 'Агент';
   document.getElementById('rn-agent-label').textContent = agentName + ' ' + rnLvl + '%';
-
   var recruitEl = document.getElementById('rn-recruit');
   var hasRecruit = recruitEl && recruitEl.value !== '';
-  var recruitAmt = 0;
-  var agentFinal = agentPool;
-
   if (hasRecruit) {
-    recruitAmt = Math.round(agentPool * rnRecruitPct / 100);
-    agentFinal = agentPool - recruitAmt;
+    var recruitAmt = Math.round(agentPool * rnRecruitPct / 100);
+    var agentFinal = agentPool - recruitAmt;
     var recruitName = recruitEl.options[recruitEl.selectedIndex].text;
     document.getElementById('rn-recruit-label').textContent = recruitName + ' (' + rnRecruitPct + '%)';
     document.getElementById('rn-cr').textContent = recruitAmt + '$';
@@ -981,7 +1083,6 @@ function calcRental() {
     document.getElementById('rn-recruit-row').style.display = 'none';
     document.getElementById('rn-agent-final-row').style.display = 'none';
   }
-
   box.style.display = 'block';
   document.getElementById('rn-ct').textContent = comm + '$ (' + commPct + '% от ' + price + '$)';
   document.getElementById('rn-ca').textContent = agentPool + '$';
@@ -1062,8 +1163,7 @@ function sub(type) {
     const price=parseFloat(document.getElementById('rn-price').value)||0;
     const commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
     const comm=Math.round(price*commPct/100);
-    const platPct=100-rnLvl;
-    const plat=Math.round(comm*platPct/100);
+    const plat=Math.round(comm*(100-rnLvl)/100);
     const agentPool=comm-plat;
     const hasRecruit=rEl&&rEl.value!=='';
     const recruitAmt=hasRecruit?Math.round(agentPool*rnRecruitPct/100):0;
@@ -1075,14 +1175,12 @@ function sub(type) {
     const typeTag=rnType==='sale'?'#продажа':rnSub==='long'?'#аренда':'#коммерция';
     const exclTag=rnExcl?'#эксклюзив':'#неэксклюзив';
     const agentTag=agentName?'#'+agentName.replace(/\s/g,''):'';
-    data={agent:agentName,agent_level:rnLvl,
-      recruit:recruitName,recruit_pct:hasRecruit?rnRecruitPct:0,
+    data={agent:agentName,agent_level:rnLvl,recruit:recruitName,recruit_pct:hasRecruit?rnRecruitPct:0,
       ad_link_advertising:document.getElementById('rn-link').value,
       cadastral_number:document.getElementById('rn-cadastral').value,
       is_exclusive:rnExcl,deal_type:rnType,deal_subtype:rnSub,
-      rent_price:price,commission_pct:commPct,
-      commission_total:comm,commission_platform:plat,
-      commission_agent:agentFinal,commission_recruit:recruitAmt,
+      rent_price:price,commission_pct:commPct,commission_total:comm,
+      commission_platform:plat,commission_agent:agentFinal,commission_recruit:recruitAmt,
       client_name:document.getElementById('rn-cname').value,
       client_phone:document.getElementById('rn-cphone').value,
       owner_name:document.getElementById('rn-oname').value,
@@ -1092,8 +1190,7 @@ function sub(type) {
       t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,
       t0_h2o_process:h2o.t0.process,t0_result:t0Res,
       t0_comment:document.getElementById('t0-comment').value,
-      hashtags:'#сдача '+typeTag+' '+exclTag+' '+agentTag,
-      pdf_contract:pdfUrl};
+      hashtags:'#сдача '+typeTag+' '+exclTag+' '+agentTag,pdf_contract:pdfUrl};
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
   send(type,data);
