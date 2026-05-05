@@ -318,6 +318,13 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             </div>
             <div style="font-size:11px;color:var(--text3);margin-top:4px;">Подставляется автоматически из профиля</div>
           </div>
+          <div class="field">
+            <label class="fl">Чей объект?</label>
+            <div class="tg">
+              <button class="tb aa" id="obj-agent" onclick="setObjOwner('agent',this)">Агента</button>
+              <button class="tb" id="obj-recruit" onclick="setObjOwner('recruit',this)">Рекрута</button>
+            </div>
+          </div>
           <div class="field"><label class="fl">Рекрут (если есть)</label>
             <select id="rn-recruit" onchange="onRecruitChange()"><option value="">Без рекрута</option></select>
           </div>
@@ -728,7 +735,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbx6EiayK9WmQQkRhKpis9Up5VR2o0OiI00ubujGRYF3dP76K7Frkh6nsCXH4eb_Er0_/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz2PD50YC3036DPFAhDfTZZDhKaEuG5Q3b7yGpuPmm6l0jOs768HabIBjGM68PrlBIksA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -976,11 +983,13 @@ function calcRental() {
   var recruitAmt=0;
   var agentFinal=agentPool;
   if(hasRecruit){
-    recruitAmt=Math.round(agentPool*rnRecruitPct/100);
+    var autoRecruitPct=(rnObjOwner==='recruit')?40:20;
+    var effectiveRecruitPct=rnRecruitPct||autoRecruitPct;
+    recruitAmt=Math.round(agentPool*effectiveRecruitPct/100);
     agentFinal=agentPool-recruitAmt;
     var recruitName=recruitEl.options[recruitEl.selectedIndex].text;
-    document.getElementById('rn-recruit-label').textContent=recruitName+' ('+rnRecruitPct+'%)';
-    document.getElementById('rn-cr').textContent=recruitAmt+'$ ('+rnRecruitPct+'%)';
+    document.getElementById('rn-recruit-label').textContent=recruitName+' ('+effectiveRecruitPct+'%)';
+    document.getElementById('rn-cr').textContent=recruitAmt+'$ ('+effectiveRecruitPct+'%)';
     document.getElementById('rn-recruit-row').style.display='flex';
   } else {
     var el2=document.getElementById('rn-recruit-row');if(el2)el2.style.display='none';
@@ -1105,10 +1114,11 @@ function loadData(){
       if(data.agentCounters)AGENT_C=data.agentCounters;
       if(data.recruits)COUNTERS=data.recruits.map(function(r){
         var c=data.counters&&data.counters[r.name]||{};
+        function n(v){return v===''||v===null||v===undefined?0:parseInt(v)||0;}
         return{name:r.name,
-          showing:[c.showing?parseInt(c.showing.done)||0:0,c.showing?c.showing.plan:15],
-          stickers:[c.stickers?parseInt(c.stickers.done)||0:0,c.stickers?c.stickers.plan:15],
-          rental:[c.rental?parseInt(c.rental.done)||0:0,c.rental?c.rental.plan:10]};
+          showing:[n(c.showing&&c.showing.done), c.showing?n(c.showing.plan):15],
+          stickers:[n(c.stickers&&c.stickers.done), c.stickers?n(c.stickers.plan):15],
+          rental:[n(c.rental&&c.rental.done), c.rental?n(c.rental.plan):10]};
       });
       afterLoad();
     } catch(e) { console.log('loadData error:',e); useFallback(); }
@@ -1132,16 +1142,40 @@ function useFallback(){
 
 function renderStats(){
   try{
-    var list=document.getElementById('stats-list');
-    if(!list)return;
-    list.innerHTML='';
-    AGENTS.forEach(function(a){
-      var ac=AGENT_C[a.name]||{deals:0,level:'Agent '+(a.level||50)+'%',next:'-'};
-      var row=document.createElement('div');row.className='scard';
-      row.innerHTML='<div class="sn">'+a.name+'</div><div class="sd">'+ac.level+' · '+ac.deals+' deals</div>';
-      list.appendChild(row);
-    });
-  }catch(e){}
+    var aList=document.getElementById('agent-list');
+    if(aList){
+      aList.innerHTML='';
+      AGENTS.forEach(function(a){
+        var ac=AGENT_C[a.name]||{deals:0,level:'Агент '+(a.level||50)+'%',next:''};
+        var deals=parseInt(ac.deals)||0;
+        var level=ac.level||('Агент '+(a.level||50)+'%');
+        var next=deals>=100?'🏆 Высший уровень':deals>=10?'до 90%: '+(100-deals)+' сд.':'до 70%: '+(10-deals)+' сд.';
+        var row=document.createElement('div');row.className='scard';
+        row.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;">'
+          +'<div><div style="font-weight:700;font-size:14px;">'+a.name+'</div>'
+          +'<div style="font-size:12px;color:var(--text2);margin-top:2px;">'+level+' · '+deals+' сделок</div></div>'
+          +'<div style="font-size:11px;color:var(--accent);text-align:right;">'+next+'</div></div>';
+        aList.appendChild(row);
+      });
+    }
+    var rList=document.getElementById('recruit-list');
+    if(rList){
+      rList.innerHTML='';
+      COUNTERS.forEach(function(r){
+        var show=r.showing||[0,15];
+        var stick=r.stickers||[0,15];
+        var rent=r.rental||[0,10];
+        var row=document.createElement('div');row.className='scard';
+        row.innerHTML='<div style="font-weight:700;font-size:14px;margin-bottom:6px;">'+r.name+'</div>'
+          +'<div style="display:flex;gap:16px;font-size:12px;">'
+          +'<span>👁 <b>'+show[0]+'</b>/'+show[1]+'</span>'
+          +'<span>📌 <b>'+stick[0]+'</b>/'+stick[1]+'</span>'
+          +'<span>🏠 <b>'+rent[0]+'</b>/'+rent[1]+'</span>'
+          +'</div>';
+        rList.appendChild(row);
+      });
+    }
+  }catch(e){console.log('renderStats error:',e);}
 }
 
 function afterLoad(){
@@ -1330,6 +1364,23 @@ function cxReset(){
 // ══ RECRUIT PCT ══
 var rnRecruitPct = 20;
 var rnMentorPct = 0; // 0 = auto
+var rnObjOwner = 'agent'; // 'agent' or 'recruit'
+
+function setObjOwner(owner, btn) {
+  rnObjOwner = owner;
+  document.querySelectorAll('#obj-agent,#obj-recruit').forEach(function(b){ b.classList.remove('aa'); });
+  if(btn) btn.classList.add('aa');
+  // Auto-set recruit pct based on object owner
+  var recruitEl = document.getElementById('rn-recruit');
+  if(recruitEl && recruitEl.value !== '') {
+    rnRecruitPct = (owner === 'recruit') ? 40 : 20;
+    // Update active button
+    document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
+    var btn2 = document.getElementById('rn-rp-' + rnRecruitPct);
+    if(btn2) btn2.classList.add('aa');
+  }
+  calcRental();
+}
 
 function onMentorChange() {
   var el=document.getElementById('rn-mentor');
@@ -1362,11 +1413,12 @@ function onRecruitChange() {
   var row = document.getElementById('rn-recruit-pct-row');
   if (row) row.style.display = hasRecruit ? 'block' : 'none';
   if (hasRecruit) {
-    var agentEl = document.getElementById('rn-agent');
-    var agentName = agentEl ? agentEl.options[agentEl.selectedIndex].text.split(' (')[0] : '';
-    var deals = (AGENT_C[agentName] && AGENT_C[agentName].deals) || 0;
-    var autoPct = deals <= 5 ? 20 : deals <= 15 ? 50 : 20;
-    setRnRecruitPct(autoPct, document.getElementById('rn-rp-' + autoPct));
+    // Auto-set based on object owner
+    var autoPct = (rnObjOwner === 'recruit') ? 40 : 20;
+    rnRecruitPct = autoPct;
+    document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
+    var btn = document.getElementById('rn-rp-' + autoPct);
+    if(btn) btn.classList.add('aa');
   }
   calcRental();
 }
