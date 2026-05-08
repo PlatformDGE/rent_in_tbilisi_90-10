@@ -638,7 +638,14 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     <div class="screen" id="tab-stats">
       <div style="padding:18px 16px 8px;"><div style="font-size:18px;font-weight:800;">📊 Счётчики</div><div style="font-size:12px;color:var(--text2);margin-top:3px;">Агенты и рекруты · Platform 90/10</div></div>
-      <div class="pad pb">
+      <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg2);">
+        <button id="stab-agents" onclick="switchStab('agents',this)" style="flex:1;padding:10px 4px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text1);cursor:pointer;">Агенты</button>
+        <button id="stab-recruits" onclick="switchStab('recruits',this)" style="flex:1;padding:10px 4px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;">Рекруты</button>
+        <button id="stab-standards" onclick="switchStab('standards',this)" style="flex:1;padding:10px 4px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;">Стандарты</button>
+        <button id="stab-quiz" onclick="switchStab('quiz',this)" style="flex:1;padding:10px 4px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;">Викторина</button>
+      </div>
+      <div id="stab-agents-panel" style="overflow-y:auto;flex:1;">
+        <div class="pad pb">
         <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:8px 10px;background:var(--bg3);border-radius:var(--rsm);">💡 Для изменения уровня агента — отредактируй колонку <strong style="color:var(--text)">level</strong> в листе <strong style="color:var(--text)">Agents</strong> в Google Sheets (50, 70 или 90)</div>
         <div class="sl" style="margin-bottom:10px;">Агенты — эксклюзивные сделки</div>
         <div id="agent-list"></div>
@@ -649,14 +656,16 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     </div>
 
     <!-- ═══ STANDARDS + QUIZ ═══ -->
-    <div class="screen" id="tab-standards">
-      <div style="padding:18px 16px 8px;display:flex;align-items:center;justify-content:space-between;">
-        <div><div style="font-size:18px;font-weight:800;">📚 Стандарты</div><div style="font-size:12px;color:var(--text2);margin-top:3px;">Platform 90/10 · Правила</div></div>
-        <button class="sbtn" style="width:auto;padding:8px 14px;font-size:13px;" onclick="startQuiz()">🎯 Викторина</button>
+    
       </div>
-
-      <!-- Standards content -->
-      <div class="pad pb" id="std-content">
+      <div id="stab-recruits-panel" style="display:none;overflow-y:auto;flex:1;">
+        <div class="pad pb">
+          <div class="sl" style="margin-bottom:10px;">Рекруты — прогресс отчётов</div>
+          <div id="recruit-list"></div>
+        </div>
+      </div>
+      <div id="stab-standards-panel" style="display:none;overflow-y:auto;flex:1;">
+        <div class="pad pb" id="std-content">
         <div class="std-section">
           <div class="std-title">💡 Главный принцип</div>
           <div class="std-item"><strong>Эксклюзив = доверительное управление.</strong> Только эксклюзивные объекты идут в зачёт системы 90/10 и в рост агента.</div>
@@ -718,6 +727,18 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         </div>
       </div>
     </div>
+      </div>
+      <div id="stab-quiz-panel" style="display:none;overflow-y:auto;flex:1;">
+        <div class="pad pb">
+          <div style="text-align:center;padding:20px 0 12px;">
+            <div style="font-size:40px;margin-bottom:8px;">🧠</div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:6px;">Проверь знания</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">10 случайных вопросов</div>
+            <button class="sbtn" onclick="startQuiz()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div><!-- /screens -->
 
@@ -725,8 +746,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     <button class="bni on" id="nav-deals" onclick="goTab('deals')"><span class="bni-ic">💼</span><span class="bni-lb">Сделка</span></button>
     <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Отчёты</span></button>
     <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Договор</span></button>
-    <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Счётчики</span></button>
-    <button class="bni" id="nav-standards" onclick="goTab('standards')"><span class="bni-ic">📚</span><span class="bni-lb">Стандарты</span></button>
+    <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Агент</span></button>
+    <button class="bni" id="nav-standards" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
   </nav>
 </div>
 
@@ -762,7 +783,7 @@ function goTab(tab) {
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('nav-'+tab).classList.add('on');
-  if(tab==='stats') renderStats();
+  if(tab==='stats') switchStab('agents', document.getElementById('stab-agents'));
   if(tab==='contract') {cxReset();}
   if(tab==='deals') { populateDeals(); populateRentalInDeals(); }
   window.scrollTo(0,0);
@@ -1149,7 +1170,7 @@ function renderStats(){
         var ac=AGENT_C[a.name]||{deals:0,level:'Агент '+(a.level||50)+'%',next:''};
         var deals=parseInt(ac.deals)||0;
         var level=ac.level||('Агент '+(a.level||50)+'%');
-        var next=deals>=100?'🏆 Высший уровень':deals>=10?'до 90%: '+(100-deals)+' сд.':'до 70%: '+(10-deals)+' сд.';
+        var next=deals>=100?'❄️ Snowflake':deals>=10?'до 90%: '+(100-deals)+' сд.':'до 70%: '+(10-deals)+' сд.';
         var row=document.createElement('div');row.className='scard';
         row.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;">'
           +'<div><div style="font-weight:700;font-size:14px;">'+a.name+'</div>'
@@ -1514,6 +1535,24 @@ function closeQuiz(){
 }
 function showStandards(){ closeQuiz(); }
 
+
+function openCRM() {
+  if(window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');
+  } else {
+    window.open('https://t.me/real_estating_bot/crm', '_blank');
+  }
+}
+
+function switchStab(tab, btn) {
+  ['agents','recruits','standards','quiz'].forEach(function(t){
+    var p = document.getElementById('stab-'+t+'-panel');
+    var b = document.getElementById('stab-'+t);
+    if(p) p.style.display = t===tab ? 'block' : 'none';
+    if(b){ b.style.color = t===tab?'var(--text1)':'var(--text2)'; b.style.borderBottomColor = t===tab?'var(--accent)':'transparent'; }
+  });
+  if(tab==='agents'||tab==='recruits') renderStats();
+}
 </script>
 </body>
 </html>
