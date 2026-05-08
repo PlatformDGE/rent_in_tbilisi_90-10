@@ -1593,16 +1593,15 @@ function showStandards(){ closeQuiz(); }
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
 
-function switchStab(tab, btn) {
+function switchStab(tab,btn){
   ['a','r','s','q'].forEach(function(t){
     var p=document.getElementById('stab-'+t+'-panel');
     var b=document.getElementById('stab-'+t);
-    if(p) p.style.display=t===tab?'block':'none';
+    if(p)p.style.display=t===tab?'block':'none';
     if(b){b.style.color=t===tab?'var(--text1)':'var(--text2)';b.style.borderBottomColor=t===tab?'var(--accent)':'transparent';}
   });
-  if(tab==='a'||tab==='r') renderStats();
+  if(tab==='a'||tab==='r')renderStats();
 }
-
 function openCRM(){
   if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');
   else window.open('https://t.me/real_estating_bot/crm','_blank');
