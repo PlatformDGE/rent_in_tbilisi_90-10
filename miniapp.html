@@ -1589,7 +1589,7 @@ function answerQuizInTab(idx) {
 
 function openCRM() {
   var url = 'https://t.me/real_estating_bot/crm';
-  if(window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.openLink(url);
+  if(window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.openTelegramLink(url);
   else window.open(url, '_blank');
 }
 
