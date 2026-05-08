@@ -178,6 +178,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 .crdoc{background:var(--navy);color:#fff;}
 .crpdf{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
 
+/* STATS SUBTABS */
+.stats-tab{flex:1;padding:7px 2px;text-align:center;font-size:11px;font-weight:700;color:var(--text2);border-radius:6px;cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;}
+.stats-tab.on{background:var(--bg2);color:var(--text);}
+.stats-panel{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
 /* COUNTERS */
 .cntcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
 .cntname{font-size:14px;font-weight:600;margin-bottom:10px;}
@@ -637,160 +642,113 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     </div>
 
     <div class="screen" id="tab-stats">
-      <div style="padding:14px 16px 8px;flex-shrink:0;"><div style="font-size:18px;font-weight:800;">📊 Агент</div></div>
-      <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;">
-        <button id="stab-a" onclick="switchStab('a',this)" style="flex:1;padding:9px 2px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid var(--accent);color:var(--text1);cursor:pointer;">Агенты</button>
-        <button id="stab-r" onclick="switchStab('r',this)" style="flex:1;padding:9px 2px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;">Рекруты</button>
-        <button id="stab-s" onclick="switchStab('s',this)" style="flex:1;padding:9px 2px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;">Стандарты</button>
-        <button id="stab-q" onclick="switchStab('q',this)" style="flex:1;padding:9px 2px;font-size:11px;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);cursor:pointer;">Викторина</button>
+      <!-- Header -->
+      <div style="padding:14px 16px 0;flex-shrink:0;">
+        <div style="font-size:18px;font-weight:800;">📊 Агент</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:12px;">Platform 90/10</div>
+        <!-- Sub-tabs -->
+        <div style="display:flex;background:var(--bg3);border-radius:var(--rsm);padding:3px;gap:3px;margin-bottom:0;">
+          <button class="stats-tab on" id="stab-agents" onclick="switchStatsTab('agents')">👤 Агенты</button>
+          <button class="stats-tab" id="stab-recruits" onclick="switchStatsTab('recruits')">🌱 Рекруты</button>
+          <button class="stats-tab" id="stab-standards" onclick="switchStatsTab('standards')">📚 Стандарты</button>
+          <button class="stats-tab" id="stab-news" onclick="switchStatsTab('news')">📰 Новости</button>
+        </div>
       </div>
-      <div id="stab-a-panel" class="pad pb" style="overflow-y:auto;">
-        <div class="sl" style="margin-bottom:10px;">Агенты — эксклюзивные сделки</div>
-        <div id="agent-list"></div>
+
+      <!-- Agents sub-tab -->
+      <div id="spanel-agents" class="stats-panel" style="display:block;">
+        <div class="pad pb">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:8px 10px;background:var(--bg3);border-radius:var(--rsm);">💡 Для изменения уровня агента — отредактируй колонку <strong style="color:var(--text)">level</strong> в листе <strong style="color:var(--text)">Agents</strong> в Google Sheets (50, 70 или 90)</div>
+          <div class="sl" style="margin-bottom:10px;">Эксклюзивные сделки</div>
+          <div id="agent-list"></div>
+        </div>
       </div>
-      <div id="stab-r-panel" class="pad pb" style="display:none;overflow-y:auto;">
-        <div class="sl" style="margin-bottom:10px;">Рекруты — прогресс отчётов</div>
-        <div id="recruit-list"></div>
+
+      <!-- Recruits sub-tab -->
+      <div id="spanel-recruits" class="stats-panel" style="display:none;">
+        <div class="pad pb">
+          <div class="sl" style="margin-bottom:10px;">Прогресс отчётов</div>
+          <div id="recruit-list"></div>
+        </div>
       </div>
-      <div id="stab-s-panel" style="display:none;overflow-y:auto;">
+
+      <!-- Standards sub-tab -->
+      <div id="spanel-standards" class="stats-panel" style="display:none;">
+        <div style="padding:12px 16px 4px;display:flex;justify-content:flex-end;">
+          <button class="sbtn" style="width:auto;padding:8px 14px;font-size:13px;" onclick="startQuiz()">🎯 Викторина</button>
+        </div>
         <div class="pad pb" id="std-content">
-        <div class="std-section">
-          <div class="std-title">💡 Главный принцип</div>
-          <div class="std-item"><strong>Эксклюзив = доверительное управление.</strong> Только эксклюзивные объекты идут в зачёт системы 90/10 и в рост агента.</div>
-          <div class="std-item"><strong>Неэксклюзив</strong> — инструмент выживания, не строит платформу и не даёт наставнической выплаты.</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">💰 Распределение комиссии</div>
-          <div class="std-item"><strong>Платформа</strong> — 10% навечно за эксклюзивный объект</div>
-          <div class="std-item"><strong>Агент 50%</strong> — начальный уровень (сделки 1-10)</div>
-          <div class="std-item"><strong>Агент 70%</strong> — доказал стабильность (сделки 11-100)</div>
-          <div class="std-item"><strong>Агент 90%</strong> — высший уровень зрелости (100+ сделок)</div>
-          <div class="std-item"><strong>Внешний агент</strong> — 30%</div>
-          <div class="std-item"><strong>Передача клиента</strong> внутри системы — 10%</div>
-          <div class="std-item"><strong>Только показ → сдача</strong> — 20%</div>
-          <div class="std-item"><strong>Фото + показ + сдача</strong> эксклюзива — 40%</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">👨‍🏫 Наставник</div>
-          <div class="std-item"><strong>Первые 10 сделок агента</strong> — наставник получает 25%</div>
-          <div class="std-item"><strong>Следующие 90 сделок</strong> — наставник получает 15%</div>
-          <div class="std-item">Только от эксклюзивных объектов агента-рекрута</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">📈 Путь рекрута → агента</div>
-          <div class="std-item"><strong>15 раз</strong> — расклейка с наставником</div>
-          <div class="std-item"><strong>15 раз</strong> — фото с наставником</div>
-          <div class="std-item"><strong>15 раз</strong> — показ с наставником</div>
-          <div class="std-item"><strong>15 раз</strong> — подписание договора с наставником</div>
-          <div class="std-item"><strong>5 квартир</strong> — под 20% на объектах наставника</div>
-          <div class="std-item"><strong>10 квартир</strong> — под 50/50</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">🚫 Запрещено</div>
-          <div class="std-item">Уводить объект или клиента мимо платформы</div>
-          <div class="std-item">Скрывать собственника или клиента</div>
-          <div class="std-item">Выдавать неэксклюзив за эксклюзив</div>
-          <div class="std-item">Выпускать рекрута без 15-кратной практики</div>
-          <div class="std-item"><strong>За обман — обнуление</strong> накопленного пути</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">⏰ T0 и T14 оценка</div>
-          <div class="std-item"><strong>T0</strong> — заполняется сразу после сдачи. H2O: Client / Owner / Process (1-3)</div>
-          <div class="std-item"><strong>T14</strong> — через 14 дней. Повторная оценка + жалобы + итог (чистая/грязная)</div>
-          <div class="std-item">Итог: <strong>чистая сделка</strong> — всё по стандарту. <strong>Грязная</strong> — нарушения процесса.</div>
-        </div>
-      </div>
-
-      <!-- Quiz -->
-      <div id="quiz-wrap" style="display:none;">
-        <div class="quiz-wrap" id="quiz-content"></div>
-        <div class="quiz-wrap" id="quiz-result" style="display:none;">
-          <div class="qscore">
-            <span class="qs-ic" id="qr-ic">🏆</span>
-            <span class="qs-t" id="qr-t">Результат</span>
-            <span class="qs-s" id="qr-s"></span>
+          <div class="std-section">
+            <div class="std-title">💡 Главный принцип</div>
+            <div class="std-item"><strong>Эксклюзив = доверительное управление.</strong> Только эксклюзивные объекты идут в зачёт системы 90/10 и в рост агента.</div>
+            <div class="std-item"><strong>Неэксклюзив</strong> — инструмент выживания, не строит платформу и не даёт наставнической выплаты.</div>
           </div>
-          <button class="sbtn" onclick="resetQuiz()" style="margin-bottom:20px;">Пройти ещё раз</button>
-          <button class="sbtn navy" onclick="showStandards()" style="margin-bottom:20px;">← Стандарты</button>
-        </div>
-      </div>
-    </div>
-      </div>
-      <div id="stab-q-panel" class="pad pb" style="display:none;overflow-y:auto;text-align:center;padding-top:30px;">
-        <div style="font-size:40px;margin-bottom:12px;">🧠</div>
-        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Проверь знания</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">10 случайных вопросов</div>
-        <button class="sbtn" onclick="startQuiz()">Начать викторину</button>
-      </div>
-    </div>
-
-    <!-- ═══ STANDARDS + QUIZ ═══ -->
-    <div class="screen" id="tab-standards">
-      <div style="padding:18px 16px 8px;display:flex;align-items:center;justify-content:space-between;">
-        <div><div style="font-size:18px;font-weight:800;">📚 Стандарты</div><div style="font-size:12px;color:var(--text2);margin-top:3px;">Platform 90/10 · Правила</div></div>
-        <button class="sbtn" style="width:auto;padding:8px 14px;font-size:13px;" onclick="startQuiz()">🎯 Викторина</button>
-      </div>
-
-      <!-- Standards content -->
-      <div class="pad pb" id="std-content">
-        <div class="std-section">
-          <div class="std-title">💡 Главный принцип</div>
-          <div class="std-item"><strong>Эксклюзив = доверительное управление.</strong> Только эксклюзивные объекты идут в зачёт системы 90/10 и в рост агента.</div>
-          <div class="std-item"><strong>Неэксклюзив</strong> — инструмент выживания, не строит платформу и не даёт наставнической выплаты.</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">💰 Распределение комиссии</div>
-          <div class="std-item"><strong>Платформа</strong> — 10% навечно за эксклюзивный объект</div>
-          <div class="std-item"><strong>Агент 50%</strong> — начальный уровень (сделки 1-10)</div>
-          <div class="std-item"><strong>Агент 70%</strong> — доказал стабильность (сделки 11-100)</div>
-          <div class="std-item"><strong>Агент 90%</strong> — высший уровень зрелости (100+ сделок)</div>
-          <div class="std-item"><strong>Внешний агент</strong> — 30%</div>
-          <div class="std-item"><strong>Передача клиента</strong> внутри системы — 10%</div>
-          <div class="std-item"><strong>Только показ → сдача</strong> — 20%</div>
-          <div class="std-item"><strong>Фото + показ + сдача</strong> эксклюзива — 40%</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">👨‍🏫 Наставник</div>
-          <div class="std-item"><strong>Первые 10 сделок агента</strong> — наставник получает 25%</div>
-          <div class="std-item"><strong>Следующие 90 сделок</strong> — наставник получает 15%</div>
-          <div class="std-item">Только от эксклюзивных объектов агента-рекрута</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">📈 Путь рекрута → агента</div>
-          <div class="std-item"><strong>15 раз</strong> — расклейка с наставником</div>
-          <div class="std-item"><strong>15 раз</strong> — фото с наставником</div>
-          <div class="std-item"><strong>15 раз</strong> — показ с наставником</div>
-          <div class="std-item"><strong>15 раз</strong> — подписание договора с наставником</div>
-          <div class="std-item"><strong>5 квартир</strong> — под 20% на объектах наставника</div>
-          <div class="std-item"><strong>10 квартир</strong> — под 50/50</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">🚫 Запрещено</div>
-          <div class="std-item">Уводить объект или клиента мимо платформы</div>
-          <div class="std-item">Скрывать собственника или клиента</div>
-          <div class="std-item">Выдавать неэксклюзив за эксклюзив</div>
-          <div class="std-item">Выпускать рекрута без 15-кратной практики</div>
-          <div class="std-item"><strong>За обман — обнуление</strong> накопленного пути</div>
-        </div>
-        <div class="std-section">
-          <div class="std-title">⏰ T0 и T14 оценка</div>
-          <div class="std-item"><strong>T0</strong> — заполняется сразу после сдачи. H2O: Client / Owner / Process (1-3)</div>
-          <div class="std-item"><strong>T14</strong> — через 14 дней. Повторная оценка + жалобы + итог (чистая/грязная)</div>
-          <div class="std-item">Итог: <strong>чистая сделка</strong> — всё по стандарту. <strong>Грязная</strong> — нарушения процесса.</div>
-        </div>
-      </div>
-
-      <!-- Quiz -->
-      <div id="quiz-wrap" style="display:none;">
-        <div class="quiz-wrap" id="quiz-content"></div>
-        <div class="quiz-wrap" id="quiz-result" style="display:none;">
-          <div class="qscore">
-            <span class="qs-ic" id="qr-ic">🏆</span>
-            <span class="qs-t" id="qr-t">Результат</span>
-            <span class="qs-s" id="qr-s"></span>
+          <div class="std-section">
+            <div class="std-title">💰 Распределение комиссии</div>
+            <div class="std-item"><strong>Платформа</strong> — 10% навечно за эксклюзивный объект</div>
+            <div class="std-item"><strong>Агент 50%</strong> — начальный уровень (сделки 1-10)</div>
+            <div class="std-item"><strong>Агент 70%</strong> — доказал стабильность (сделки 11-100)</div>
+            <div class="std-item"><strong>Агент 90%</strong> — высший уровень зрелости (100+ сделок)</div>
+            <div class="std-item"><strong>Внешний агент</strong> — 30%</div>
+            <div class="std-item"><strong>Передача клиента</strong> внутри системы — 10%</div>
+            <div class="std-item"><strong>Только показ → сдача</strong> — 20%</div>
+            <div class="std-item"><strong>Фото + показ + сдача</strong> эксклюзива — 40%</div>
           </div>
-          <button class="sbtn" onclick="resetQuiz()" style="margin-bottom:20px;">Пройти ещё раз</button>
-          <button class="sbtn navy" onclick="showStandards()" style="margin-bottom:20px;">← Стандарты</button>
+          <div class="std-section">
+            <div class="std-title">👨‍🏫 Наставник</div>
+            <div class="std-item"><strong>Первые 10 сделок агента</strong> — наставник получает 25%</div>
+            <div class="std-item"><strong>Следующие 90 сделок</strong> — наставник получает 15%</div>
+            <div class="std-item">Только от эксклюзивных объектов агента-рекрута</div>
+          </div>
+          <div class="std-section">
+            <div class="std-title">📈 Путь рекрута → агента</div>
+            <div class="std-item"><strong>15 раз</strong> — расклейка с наставником</div>
+            <div class="std-item"><strong>15 раз</strong> — фото с наставником</div>
+            <div class="std-item"><strong>15 раз</strong> — показ с наставником</div>
+            <div class="std-item"><strong>15 раз</strong> — подписание договора с наставником</div>
+            <div class="std-item"><strong>5 квартир</strong> — под 20% на объектах наставника</div>
+            <div class="std-item"><strong>10 квартир</strong> — под 50/50</div>
+          </div>
+          <div class="std-section">
+            <div class="std-title">🚫 Запрещено</div>
+            <div class="std-item">Уводить объект или клиента мимо платформы</div>
+            <div class="std-item">Скрывать собственника или клиента</div>
+            <div class="std-item">Выдавать неэксклюзив за эксклюзив</div>
+            <div class="std-item">Выпускать рекрута без 15-кратной практики</div>
+            <div class="std-item"><strong>За обман — обнуление</strong> накопленного пути</div>
+          </div>
+          <div class="std-section">
+            <div class="std-title">⏰ T0 и T14 оценка</div>
+            <div class="std-item"><strong>T0</strong> — заполняется сразу после сдачи. H2O: Client / Owner / Process (1-3)</div>
+            <div class="std-item"><strong>T14</strong> — через 14 дней. Повторная оценка + жалобы + итог (чистая/грязная)</div>
+            <div class="std-item">Итог: <strong>чистая сделка</strong> — всё по стандарту. <strong>Грязная</strong> — нарушения процесса.</div>
+          </div>
+        </div>
+        <!-- Quiz -->
+        <div id="quiz-wrap" style="display:none;">
+          <div class="quiz-wrap" id="quiz-content"></div>
+          <div class="quiz-wrap" id="quiz-result" style="display:none;">
+            <div class="qscore">
+              <span class="qs-ic" id="qr-ic">🏆</span>
+              <span class="qs-t" id="qr-t">Результат</span>
+              <span class="qs-s" id="qr-s"></span>
+            </div>
+            <button class="sbtn" onclick="resetQuiz()" style="margin-bottom:20px;">Пройти ещё раз</button>
+            <button class="sbtn navy" onclick="showStandards()" style="margin-bottom:20px;">← Стандарты</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- News sub-tab -->
+      <div id="spanel-news" class="stats-panel" style="display:none;">
+        <div class="pad pb">
+          <div id="news-list">
+            <div style="text-align:center;padding:40px 20px;color:var(--text3);">
+              <div style="font-size:36px;margin-bottom:12px;">📰</div>
+              <div style="font-size:14px;font-weight:600;">Новостей пока нет</div>
+              <div style="font-size:12px;margin-top:6px;">Следите за обновлениями платформы</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -802,7 +760,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Отчёты</span></button>
     <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Договор</span></button>
     <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Агент</span></button>
-    <button class="bni" id="nav-standards" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
+    <button class="bni" id="nav-crm" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
   </nav>
 </div>
 
@@ -838,7 +796,7 @@ function goTab(tab) {
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('active');
   document.getElementById('nav-'+tab).classList.add('on');
-  if(tab==='stats'){renderStats();switchStab('a',document.getElementById('stab-a'));}
+  if(tab==='stats') { switchStatsTab('agents'); renderStats(); }
   if(tab==='contract') {cxReset();}
   if(tab==='deals') { populateDeals(); populateRentalInDeals(); }
   window.scrollTo(0,0);
@@ -1531,6 +1489,7 @@ var QUIZ_ALL = [
 ];
 
 function startQuiz() {
+  switchStatsTab('standards');
   var shuffled = QUIZ_ALL.slice().sort(function(){ return Math.random()-0.5; }).slice(0,10);
   quizAnswers = shuffled.map(function(q) {
     var ans = q.a.slice(); var correct = ans[q.c];
@@ -1591,21 +1550,15 @@ function closeQuiz(){
 function showStandards(){ closeQuiz(); }
 
 
-function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
-
-function switchStab(tab,btn){
-  ['a','r','s','q'].forEach(function(t){
-    var p=document.getElementById('stab-'+t+'-panel');
-    var b=document.getElementById('stab-'+t);
-    if(p)p.style.display=t===tab?'block':'none';
-    if(b){b.style.color=t===tab?'var(--text1)':'var(--text2)';b.style.borderBottomColor=t===tab?'var(--accent)':'transparent';}
+function switchStatsTab(tab) {
+  ['agents','recruits','standards','news'].forEach(function(t){
+    document.getElementById('stab-'+t).classList.toggle('on', t===tab);
+    document.getElementById('spanel-'+t).style.display = t===tab ? 'block' : 'none';
   });
-  if(tab==='a'||tab==='r')renderStats();
+  if(tab==='agents'||tab==='recruits') renderStats();
 }
-function openCRM(){
-  if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');
-  else window.open('https://t.me/real_estating_bot/crm','_blank');
-}
+
+function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
 </script>
 </body>
 </html>
