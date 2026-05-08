@@ -636,7 +636,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       </div>
     </div>
 
-    <div class="screen" id="tab-stats" style="display:flex;flex-direction:column;">
+    <div class="screen" id="tab-stats" style="display:flex;flex-direction:column;overflow:hidden;">
       <div style="padding:14px 16px 0;flex-shrink:0;">
         <div style="font-size:18px;font-weight:800;">📊 Агент</div>
         <div style="font-size:12px;color:var(--text2);margin-top:3px;">Счётчики · Стандарты · Викторина</div>
@@ -649,17 +649,17 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <button class="agent-tab" id="atab-quiz" onclick="switchAgentTab('quiz',this)" style="flex:1;padding:10px 4px;font-size:12px;font-weight:700;background:none;border:none;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;">Викторина</button>
       </div>
       <!-- Agents panel -->
-      <div id="agent-panel" class="pad pb" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">
+      <div id="agent-panel" class="pad pb" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;min-height:0;">
         <div class="sl" style="margin-bottom:10px;">Агенты — сделки и уровни</div>
         <div id="agent-list"></div>
       </div>
       <!-- Recruits panel -->
-      <div id="recruit-panel" class="pad pb" style="display:none;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">
+      <div id="recruit-panel" class="pad pb" style="display:none;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;min-height:0;">
         <div class="sl" style="margin-bottom:10px;">Рекруты — прогресс отчётов</div>
         <div id="recruit-list"></div>
       </div>
       <!-- Standards panel -->
-      <div id="standards-panel" style="display:none;overflow-y:auto;flex:1;">
+      <div id="standards-panel" style="display:none;overflow-y:auto;flex:1;min-height:0;">
         <div class="pad pb" id="std-content">
         <div class="std-section">
           <div class="std-title">💡 Главный принцип</div>
@@ -712,7 +712,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       
       </div>
       <!-- Quiz panel -->
-      <div id="quiz-panel" style="display:none;overflow-y:auto;flex:1;">
+      <div id="quiz-panel" style="display:none;overflow-y:auto;flex:1;min-height:0;">
         <div class="pad pb">
           <div style="text-align:center;padding:20px 0;">
             <div style="font-size:40px;margin-bottom:12px;">🧠</div>
