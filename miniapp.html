@@ -752,9 +752,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <div class="pad pb">
           <div id="news-list">
             <div style="text-align:center;padding:40px 20px;color:var(--text3);">
-              <div style="font-size:36px;margin-bottom:12px;">📰</div>
-              <div style="font-size:14px;font-weight:600;">Новостей пока нет</div>
-              <div style="font-size:12px;margin-top:6px;">Следите за обновлениями платформы</div>
+              <div style="font-size:36px;margin-bottom:12px;">⏳</div>
+              <div style="font-size:14px;font-weight:600;">Загрузка новостей...</div>
             </div>
           </div>
         </div>
@@ -985,7 +984,7 @@ function calcRental() {
   var box=document.getElementById('rn-calc');
   if(price<=0){box.style.display='none';return;}
 
-  var comm=Math.round(price*commPct/100);
+  var comm=Math.round(price*0.5);
 
   // Agent name & deal count
   var agentEl=document.getElementById('rn-agent');
@@ -1045,7 +1044,7 @@ function calcRental() {
   document.getElementById('rn-agent-final-row').style.display='flex';
 
   box.style.display='block';
-  document.getElementById('rn-ct').textContent=comm+'$ ('+commPct+'% от '+price+'$)';
+  document.getElementById('rn-ct').textContent=comm+'$ (50% от '+price+'$)';
   document.getElementById('rn-ca').textContent=agentPool+'$ ('+rnLvl+'%)';
   document.getElementById('rn-cp').textContent=plat+'$ ('+platPctShow+'%)';
 }
@@ -1378,7 +1377,7 @@ function cxSubmit(){
     sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date)
   };
 
-  var GAS_URL='https://script.google.com/macros/s/AKfycbwysesUAwI4lSH0VVuPW1yGa7NJOaMXyKv2gPT7VZ2rJ7wg7ribfTuD-_sH6VOT2NimFg/exec';
+  var GAS_URL='https://script.google.com/macros/s/AKfycbwpHlcwrWPZAds5XPCQLwZgyqPmK8V_pU_oWD9uRFC9eFGXDBZOv0X5-nXWKmSztvEUJQ/exec';
 
   // JSONP — единственный способ получить ответ от GAS без CORS
   var cbName='__cxCb'+Date.now();
@@ -1617,12 +1616,49 @@ function closeQuiz(){
 function showStandards(){ closeQuiz(); }
 
 
+function loadNews(){
+  var BOT_TOKEN='8692499827:AAHsM_Ttebgn6wDJfsBUMKn0hESHbSI-5uc';
+  var CHAT_ID='-1002252468572';
+  var TOPIC_ID='107';
+  var list=document.getElementById('news-list');
+  var url='https://api.telegram.org/bot'+BOT_TOKEN+'/getUpdates?allowed_updates=["message"]';
+
+  // Используем forwardMessages approach — читаем историю через getChatHistory
+  // Telegram Bot API не даёт читать историю напрямую, используем webhook-кэш в GAS
+  var gasUrl=API_URL+'?action=getNews&chat_id='+CHAT_ID+'&topic_id='+TOPIC_ID;
+  var s=document.createElement('script');
+  s.src=gasUrl+'&callback=__onNewsLoaded';
+  window.__onNewsLoaded=function(data){
+    try{document.head.removeChild(s);}catch(e){}
+    if(!data||!data.messages||!data.messages.length){
+      list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3);"><div style="font-size:36px;margin-bottom:12px;">📰</div><div style="font-size:14px;font-weight:600;">Новостей пока нет</div></div>';
+      return;
+    }
+    list.innerHTML='';
+    data.messages.forEach(function(msg){
+      var d=document.createElement('div');
+      d.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;';
+      var date=msg.date?new Date(msg.date*1000).toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'';
+      d.innerHTML='<div style="font-size:11px;color:var(--text3);margin-bottom:6px;">📰 '+date+'</div>'
+        +'<div style="font-size:13px;color:var(--text);line-height:1.6;">'+escapeHtml(msg.text||'')+'</div>';
+      list.appendChild(d);
+    });
+  };
+  s.onerror=function(){
+    list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3);"><div style="font-size:36px;margin-bottom:12px;">📰</div><div style="font-size:14px;font-weight:600;">Новостей пока нет</div></div>';
+  };
+  document.head.appendChild(s);
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
 function switchStatsTab(tab) {
   ['agents','recruits','standards','news'].forEach(function(t){
     document.getElementById('stab-'+t).classList.toggle('on', t===tab);
     document.getElementById('spanel-'+t).style.display = t===tab ? 'block' : 'none';
   });
   if(tab==='agents'||tab==='recruits') renderStats();
+  if(tab==='news') loadNews();
 }
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
