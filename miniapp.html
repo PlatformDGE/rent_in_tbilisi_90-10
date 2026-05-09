@@ -776,7 +776,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbygedaemXmBDe7nVT663V_od_ldQV4RoeED2lzngGEHvoVpwMg2aU20Tk9aUL3-kyVHpw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzoV9uk0FnE28K0hoFvvelddSpIwBI7w1oo0h2NzmFSD5ZmR_pYeYlk71sAtxSu2myV/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -1187,7 +1187,13 @@ function renderStats(){
     if(aList){
       aList.innerHTML='';
       AGENTS.forEach(function(a){
-        var ac=AGENT_C[a.name]||{deals:0,level:'Агент '+(a.level||50)+'%',next:''};
+        var ac=AGENT_C[a.name];
+        if(!ac){
+          // Попробуем найти без учёта регистра
+          var key=Object.keys(AGENT_C).find(function(k){ return k.toLowerCase()===a.name.toLowerCase(); });
+          if(key) ac=AGENT_C[key];
+        }
+        ac=ac||{deals:0,level:'Агент '+(a.level||50)+'%',next:''};
         var deals=parseInt(ac.deals)||0;
         var level=ac.level||('Агент '+(a.level||50)+'%');
         var next=deals>=100?'❄️ Snowflake':deals>=10?'до 90%: '+(100-deals)+' сд.':'до 70%: '+(10-deals)+' сд.';
