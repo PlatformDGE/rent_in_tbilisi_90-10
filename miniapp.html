@@ -1442,15 +1442,10 @@ function openPdf(e){
   var btn=cxG('cx-pdflink');
   var url=btn&&btn.dataset&&btn.dataset.pdf?btn.dataset.pdf:(btn?btn.href:'');
   if(!url||url==='#'){showToast('PDF ещё не готов');return;}
-  // Прямая ссылка на скачивание из Google Drive
-  var fileId='';
-  var m=url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if(m)fileId=m[1];
-  var downloadUrl=fileId?'https://drive.google.com/uc?export=download&id='+fileId:url;
   if(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.openLink){
-    window.Telegram.WebApp.openLink(downloadUrl);
+    window.Telegram.WebApp.openLink(url);
   } else {
-    window.open(downloadUrl,'_blank');
+    window.open(url,'_blank');
   }
 }
 
