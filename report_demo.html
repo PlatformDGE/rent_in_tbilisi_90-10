@@ -88,7 +88,10 @@ html,body{height:100%;background:#0a0a0f;font-family:-apple-system,BlinkMacSyste
         <div class="picker-line"></div>
         <div class="picker-list" id="plist"></div>
       </div>
-      <div class="picker-selected">Выбрано: <span id="sel-name">—</span></div>
+      <div class="picker-selected" id="sel-out" style="display:flex;align-items:center;justify-content:space-between;">
+        <span id="sel-name" style="color:#55556a;font-size:13px;">Выбери и нажми →</span>
+        <button onclick="confirmPicker()" style="background:#7c6fff;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;padding:7px 16px;cursor:pointer;font-family:inherit;">Выбрать</button>
+      </div>
     </div>
 
     <!-- ФОТО -->
@@ -213,8 +216,15 @@ function snapTo(idx){
   plist.style.transition='transform .25s cubic-bezier(.25,.46,.45,.94)';
   plist.style.transform='translateY('+pickerOffset+'px)';
   plist.querySelectorAll('.picker-item').forEach(function(el,i){el.classList.toggle('active',i===idx);});
-  selectedAuthor=allAuthors[idx].name;
-  document.getElementById('sel-name').textContent='#'+allAuthors[idx].name;
+  document.getElementById('sel-name').textContent=allAuthors[idx].name+' ('+allAuthors[idx].role+')';
+}
+
+function confirmPicker(){
+  selectedAuthor=allAuthors[pickerCurrent].name;
+  var sel=document.getElementById('sel-name');
+  sel.textContent='#'+selectedAuthor;
+  sel.style.color='#7c6fff';
+  sel.style.fontWeight='600';
   updatePreview();
 }
 
