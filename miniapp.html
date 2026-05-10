@@ -282,9 +282,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <!-- 1. ОБЪЕКТ -->
         <div class="section"><div class="sl">1. Объект</div>
           <div class="field"><label class="fl">Ссылка на объект из канала <span class="req">*</span></label>
-            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..."></div>
+            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="updateRentalPreview()"></div>
           <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
-            <input type="text" id="rn-cadastral" placeholder="01.13.07.024.009.40.060a" oninput="searchPDF(this.value)">
+            <input type="text" id="rn-cadastral" placeholder="01.10.10.xxx.xxx.xx.xx.xxx" oninput="updateRentalPreview();searchPDF(this.value)">
             <div id="pdf-status" style="font-size:12px;padding:5px 0;display:none;"></div>
             <div id="pdf-wrap" style="margin-top:8px;border-radius:var(--rsm);overflow:hidden;display:none;">
               <iframe id="pdf-frame" src="" style="width:100%;height:380px;border:none;"></iframe>
@@ -371,20 +371,20 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <!-- 3. КЛИЕНТ И СОБСТВЕННИК -->
         <div class="section"><div class="sl">3. Клиент и собственник</div>
           <div class="r2">
-            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Giorgi"></div>
-            <div class="field"><label class="fl">Тел. клиента</label><input type="tel" id="rn-cphone" placeholder="+995 557..."></div>
+            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Anna" oninput="updateRentalPreview()"></div>
+            <div class="field"><label class="fl">Telegram клиента или телефон</label><input type="text" id="rn-cphone" placeholder="@username / телефон" oninput="updateRentalPreview()"></div>
           </div>
           <div class="r2">
-            <div class="field"><label class="fl">Собственник</label><input type="text" id="rn-oname" placeholder="Ucha"></div>
-            <div class="field"><label class="fl">Тел. соб.</label><input type="tel" id="rn-ophone" placeholder="+995 551..."></div>
+            <div class="field"><label class="fl">Собственник (имя)</label><input type="text" id="rn-oname" placeholder="Giorgi" oninput="updateRentalPreview()"></div>
+            <div class="field"><label class="fl">Telegram собственника или телефон</label><input type="text" id="rn-ophone" placeholder="@username / телефон" oninput="updateRentalPreview()"></div>
           </div>
         </div>
 
         <!-- 4. ПЕРИОД -->
         <div class="section"><div class="sl">4. Период аренды</div>
           <div class="r2">
-            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from"></div>
-            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to"></div>
+            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from" oninput="updateRentalPreview()"></div>
+            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to" oninput="updateRentalPreview()"></div>
           </div>
         </div>
 
@@ -412,23 +412,175 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
         </div>
 
+        <div class="divider"></div>
+        <div class="sl" style="margin-bottom:8px;">Предпросмотр сдачи</div>
+        <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
+
         <button class="sbtn" onclick="sub('rental')">Отправить сдачу + T0</button>
       </div>
     </div>
 
         <!-- ═══ REPORTS ═══ -->
     <div class="screen" id="tab-reports">
-      <div style="text-align:center;padding:20px 16px 14px;">
-        <img src="https://platformdge.github.io/rent_in_tbilisi_90-10/Logo_rent.png" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
-        <div style="font-size:18px;font-weight:800;">Отчёты</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Выбери тип отчёта</div>
+      <div style="padding:14px 16px 0;">
+        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">📋 Отчёты</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Выбери тип отчёта</div>
       </div>
       <div class="cards">
-        <div class="card" style="--cc:#7c6fff" onclick="openForm('photo')"><span class="card-ic">📷</span><div class="card-lb">Фото</div><div class="card-sub">Отчёт по фото</div></div>
-        <div class="card" style="--cc:#22c55e" onclick="openForm('showing')"><span class="card-ic">🏠</span><div class="card-lb">Показ</div><div class="card-sub">Отчёт</div><div class="pill" id="pill-showing">0/15</div></div>
-        <div class="card" style="--cc:#f59e0b" onclick="openForm('stickers')"><span class="card-ic">📌</span><div class="card-lb">Расклейка</div><div class="card-sub">Отчёт</div><div class="pill" id="pill-stickers">0/15</div></div>
-        <div class="card" style="--cc:#ef4444" onclick="openForm('rental')"><span class="card-ic">💰</span><div class="card-lb">Сдача</div><div class="card-sub">+ T0 оценка</div><div class="pill" id="pill-rental">0/10</div></div>
-        <div class="card" style="--cc:#06b6d4;grid-column:span 2" onclick="openForm('t14')"><span class="card-ic">🔍</span><div class="card-lb">T14 — Проверка сделки</div><div class="card-sub">Через 14 дней после сдачи</div></div>
+        <div class="card" style="--cc:#a78bfa;grid-column:span 2" onclick="openGeneralReport()"><span class="card-ic">📊</span><div class="card-lb">Общий отчёт</div><div class="card-sub">Фото · Показ · Расклейка · Обзвон · Сделка</div></div>
+      </div>
+    </div>
+
+
+    <!-- ═══ GENERAL REPORT ═══ -->
+    <div class="screen" id="form-general">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📊 Общий отчёт</div><div class="hs">Заполни нужные секции</div></div></div>
+      <div class="pad pb">
+
+        <!-- PICKER -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+          <div class="sl" style="padding:10px 14px 6px;margin-bottom:0;">Кто отправляет</div>
+          <div style="position:relative;height:180px;overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;"
+            id="gr-picker"
+            ontouchstart="grPtStart(event)" ontouchmove="grPtMove(event)" ontouchend="grPtEnd(event)"
+            onmousedown="grPmStart(event)">
+            <div style="position:absolute;top:0;left:0;right:0;height:65px;background:linear-gradient(to bottom,var(--bg2),transparent);pointer-events:none;z-index:2;"></div>
+            <div style="position:absolute;bottom:0;left:0;right:0;height:65px;background:linear-gradient(to top,var(--bg2),transparent);pointer-events:none;z-index:2;"></div>
+            <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px;border-top:1px solid var(--accent);border-bottom:1px solid var(--accent);opacity:.3;pointer-events:none;z-index:1;"></div>
+            <div id="gr-plist" style="position:absolute;left:0;right:0;top:0;"></div>
+          </div>
+          <div style="padding:8px 14px 12px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);">
+            <span id="gr-sel-name" style="font-size:13px;color:var(--text2);">Выбери и нажми →</span>
+            <button onclick="grConfirmPicker()" style="background:var(--accent);border:none;border-radius:var(--rsm);color:#fff;font-size:13px;font-weight:700;padding:7px 16px;cursor:pointer;font-family:'Inter',sans-serif;">Выбрать</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ФОТО -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;" onclick="grToggle('photo')">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📸</span><span style="font-size:14px;font-weight:600;">Фото</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="pill" id="gr-badge-photo" style="background:var(--bg3);color:var(--text3);">не заполнено</span><span id="gr-chev-photo" style="font-size:11px;color:var(--text3);transition:transform .2s;">▼</span></div>
+          </div>
+          <div id="gr-body-photo" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border);">
+            <div class="field" style="margin-top:10px;"><label class="fl">Участник</label><select class="field-input" id="gr-photo-member"><option value="">Выбрать...</option></select></div>
+            <div class="sl" style="margin-top:10px;">Ссылки на Advertising</div>
+            <div id="gr-photo-links"><div style="display:flex;gap:8px;margin-top:6px;"><input type="url" placeholder="https://t.me/..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:13px;padding:8px 10px;"><button onclick="this.parentNode.remove()" style="width:30px;height:30px;background:var(--rbg);border:none;border-radius:var(--rsm);color:var(--red);font-size:18px;cursor:pointer;">×</button></div></div>
+            <button onclick="grAddLink('gr-photo-links')" style="background:none;border:none;color:var(--accent);font-size:12px;padding:6px 0;cursor:pointer;font-family:'Inter',sans-serif;">＋ добавить ссылку</button>
+            <div class="field" style="margin-top:4px;"><label class="fl">Адрес</label><input type="text" id="gr-photo-addr" placeholder="#Rustaveli 2" oninput="grUpdatePreview()"></div>
+          </div>
+        </div>
+
+        <!-- ПОКАЗ -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;" onclick="grToggle('showing')">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">🚪</span><span style="font-size:14px;font-weight:600;">Показ</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="pill" id="gr-badge-showing" style="background:var(--bg3);color:var(--text3);">не заполнено</span><span id="gr-chev-showing" style="font-size:11px;color:var(--text3);transition:transform .2s;">▼</span></div>
+          </div>
+          <div id="gr-body-showing" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border);">
+            <div class="field" style="margin-top:10px;"><label class="fl">Участник</label><select class="field-input" id="gr-showing-member"><option value="">Выбрать...</option></select></div>
+            <div class="sl" style="margin-top:10px;">Ссылки с канала</div>
+            <div id="gr-showing-links"><div style="display:flex;gap:8px;margin-top:6px;"><input type="url" placeholder="https://t.me/..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:13px;padding:8px 10px;"><button onclick="this.parentNode.remove()" style="width:30px;height:30px;background:var(--rbg);border:none;border-radius:var(--rsm);color:var(--red);font-size:18px;cursor:pointer;">×</button></div></div>
+            <button onclick="grAddLink('gr-showing-links')" style="background:none;border:none;color:var(--accent);font-size:12px;padding:6px 0;cursor:pointer;font-family:'Inter',sans-serif;">＋ добавить ссылку</button>
+            <div class="field" style="margin-top:4px;"><label class="fl">Адрес</label><input type="text" placeholder="#Rustaveli 2" oninput="grUpdatePreview()"></div>
+            <div class="field"><label class="fl">Клиент</label><input type="text" placeholder="@username" oninput="grUpdatePreview()"></div>
+          </div>
+        </div>
+
+        <!-- РАСКЛЕЙКА -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;" onclick="grToggle('stickers')">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📌</span><span style="font-size:14px;font-weight:600;">Расклейка</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="pill" id="gr-badge-stickers" style="background:var(--bg3);color:var(--text3);">не заполнено</span><span id="gr-chev-stickers" style="font-size:11px;color:var(--text3);transition:transform .2s;">▼</span></div>
+          </div>
+          <div id="gr-body-stickers" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border);">
+            <div class="field" style="margin-top:10px;"><label class="fl">Участник</label><select class="field-input" id="gr-stickers-member"><option value="">Выбрать...</option></select></div>
+            <div class="field"><label class="fl">Район</label><input type="text" id="gr-stickers-dist" placeholder="#Vake" oninput="grUpdatePreview()"></div>
+            <div class="field"><label class="fl">Кол-во стикеров</label><input type="number" id="gr-stickers-cnt" placeholder="0" min="0" oninput="grUpdatePreview()"></div>
+          </div>
+        </div>
+
+        <!-- ОБЗВОН -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;" onclick="grToggle('calling')">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">📞</span><span style="font-size:14px;font-weight:600;">Обзвон</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="pill" id="gr-badge-calling" style="background:var(--bg3);color:var(--text3);">не заполнено</span><span id="gr-chev-calling" style="font-size:11px;color:var(--text3);transition:transform .2s;">▼</span></div>
+          </div>
+          <div id="gr-body-calling" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border);">
+            <div class="field" style="margin-top:10px;"><label class="fl">Участник</label><select class="field-input" id="gr-calling-member"><option value="">Выбрать...</option></select></div>
+            <div class="r2" style="margin-top:10px;">
+              <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:10px;text-align:center;"><div style="font-size:10px;color:var(--text3);margin-bottom:6px;">📞 Обзвонено</div><input type="number" id="gr-calls-total" value="0" min="0" oninput="grCalcCalls()" style="width:100%;background:none;border:none;color:var(--text);font-size:22px;font-weight:600;text-align:center;outline:none;"></div>
+              <div style="background:var(--rbg);border:1px solid var(--red);border-radius:var(--rsm);padding:10px;text-align:center;"><div style="font-size:10px;color:var(--red);margin-bottom:6px;">❌ Not Agreed</div><input type="number" id="gr-calls-no" value="0" min="0" oninput="grCalcCalls()" style="width:100%;background:none;border:none;color:var(--red);font-size:22px;font-weight:600;text-align:center;outline:none;"></div>
+            </div>
+            <div style="background:var(--gbg);border:1px solid var(--green);border-radius:var(--rsm);padding:10px;text-align:center;margin-top:8px;"><div style="font-size:10px;color:var(--green);margin-bottom:6px;">✅ Agreed</div><input type="number" id="gr-calls-yes" value="0" readonly style="width:100%;background:none;border:none;color:var(--green);font-size:22px;font-weight:600;text-align:center;outline:none;"></div>
+          </div>
+        </div>
+
+        <!-- СДЕЛКА -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;" onclick="grToggle('deal')">
+            <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:20px;">💰</span><span style="font-size:14px;font-weight:600;">Сделка</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span class="pill" id="gr-badge-deal" style="background:var(--bg3);color:var(--text3);">не заполнено</span><span id="gr-chev-deal" style="font-size:11px;color:var(--text3);transition:transform .2s;">▼</span></div>
+          </div>
+          <div id="gr-body-deal" style="display:none;padding:0 14px 14px;border-top:1px solid var(--border);">
+            <div class="field" style="margin-top:10px;"><label class="fl">Участник</label><select class="field-input" id="gr-deal-member"><option value="">Выбрать...</option></select></div>
+            <div class="field"><label class="fl">Количество сделок</label><input type="number" id="gr-deal-cnt" placeholder="0" min="0" oninput="grUpdatePreview()"></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sl" style="margin-bottom:8px;">Предпросмотр</div>
+        <div id="gr-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
+
+        <button class="sbtn" onclick="grSubmit()">Отправить отчёт</button>
+      </div>
+    </div>
+
+    <!-- ═══ DAILY REPORT ═══ -->
+    <div class="screen" id="form-daily">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📅 Ежедневный отчёт</div><div class="hs">Заполни и отправь одной кнопкой</div></div></div>
+      <div class="pad pb">
+
+        <!-- КТО ОТПРАВЛЯЕТ -->
+        <div class="section"><div class="sl">🧾 Report by <span class="req">*</span></div>
+          <div class="field"><select id="daily-author" onchange="updateDailyPreview()"><option value="">Выбрать себя...</option></select></div>
+        </div>
+
+        <div class="field"><label class="fl">Дата <span class="req">*</span></label><input type="date" id="daily-date" oninput="updateDailyPreview()"></div>
+
+        <div class="divider"></div>
+
+        <!-- ЗВОНКИ -->
+        <div class="section"><div class="sl">📞 Calling</div>
+          <div class="r2">
+            <div class="field"><label class="fl">Обзвонено</label><input type="number" id="daily-calls" placeholder="0" min="0" oninput="calcAgreed()"></div>
+            <div class="field"><label class="fl">❌ Not Agreed</label><input type="number" id="daily-calls-no" placeholder="0" min="0" oninput="calcAgreed()"></div>
+          </div>
+          <div class="field"><label class="fl">✅ Agreed</label><input type="number" id="daily-calls-yes" placeholder="0" min="0" readonly style="opacity:.6;"></div>
+        </div>
+
+        <!-- РАСКЛЕЙКА -->
+        <div class="section"><div class="sl">📍 Stickers</div>
+          <div class="field"><label class="fl">Кол-во стикеров</label><input type="number" id="daily-stickers" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
+        </div>
+
+        <!-- ФОТО -->
+        <div class="section"><div class="sl">📸 Photo</div>
+          <div class="field"><label class="fl">Кол-во объектов</label><input type="number" id="daily-photos" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
+        </div>
+
+        <!-- ПОКАЗЫ -->
+        <div class="section"><div class="sl">🚪 Showing</div>
+          <div class="field"><label class="fl">Кол-во показов</label><input type="number" id="daily-showings" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
+        </div>
+
+        <!-- ПРЕВЬЮ -->
+        <div class="divider"></div>
+        <div class="sl" style="margin-bottom:8px;">Предпросмотр</div>
+        <div id="daily-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
+
+        <button class="sbtn" onclick="subDaily()">Отправить ежедневный отчёт</button>
       </div>
     </div>
 
@@ -776,7 +928,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzoV9uk0FnE28K0hoFvvelddSpIwBI7w1oo0h2NzmFSD5ZmR_pYeYlk71sAtxSu2myV/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwucuK07ZYizGIU8k5jiW1ALsaHk6tWCOzsiVZA0s0es0a9yvCow3sR550FDdVy1f-qUg/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -799,6 +951,7 @@ window.addEventListener('load', function() {
 
 // TABS
 function goTab(tab) {
+  if(tab==='reports') { openGeneralReport(); return; }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('active');
@@ -980,73 +1133,124 @@ function setT0R(v){t0Res=v;document.getElementById('t0-cl').className='tb'+(v===
 // RENTAL CALC
 function calcRental() {
   var price=parseFloat(document.getElementById('rn-price').value)||0;
-  var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
   var box=document.getElementById('rn-calc');
   if(price<=0){box.style.display='none';return;}
 
   var comm=Math.round(price*0.5);
 
-  // Agent name & deal count
   var agentEl=document.getElementById('rn-agent');
   var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'Агент';
-  var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
 
-  // Mentor
+  var recruitEl=document.getElementById('rn-recruit');
+  var hasRecruit=recruitEl&&recruitEl.value!=='';
+  var recruitName=hasRecruit?recruitEl.options[recruitEl.selectedIndex].text:'';
+
   var mentorEl=document.getElementById('rn-mentor');
   var hasMentor=mentorEl&&mentorEl.value!=='';
 
-  var plat, mentorAmt, agentPool;
+  var plat, agentAmt, recruitAmt=0, mentorAmt=0, agentFinal;
+  var platPctShow, agentPctShow;
 
+  if(!hasRecruit){
+    // Сценарий 1: без рекрута
+    // Агент: agentLvl%, Платформа: (100-agentLvl)%
+    agentAmt=Math.round(comm*rnLvl/100);
+    plat=comm-agentAmt;
+    agentFinal=agentAmt;
+    platPctShow=100-rnLvl;
+    agentPctShow=rnLvl;
+
+  } else if(rnObjOwner==='agent'){
+    // Сценарий 2: с рекрутом, квартира агента
+    // Рекрут: 20%, Остаток 80% делится: Агент agentLvl%, Платформа (100-agentLvl)%
+    recruitAmt=Math.round(comm*0.20);
+    var rest=comm-recruitAmt;
+    agentAmt=Math.round(rest*rnLvl/100);
+    plat=rest-agentAmt;
+    agentFinal=agentAmt;
+    platPctShow=Math.round(plat/comm*100);
+    agentPctShow=Math.round(agentAmt/comm*100);
+
+  } else {
+    // Сценарий 3: с рекрутом, квартира рекрута
+    // Рекрут: 40%, Агент: 10%, Платформа: 50%
+    recruitAmt=Math.round(comm*0.40);
+    agentAmt=Math.round(comm*0.10);
+    plat=comm-recruitAmt-agentAmt;
+    agentFinal=agentAmt;
+    platPctShow=50;
+    agentPctShow=10;
+  }
+
+  // Наставник (если есть)
   if(hasMentor){
-    // With mentor: platform=10%, mentor=25% or 15%, agent=rest
-    plat=Math.round(comm*0.10);
     var mentorPct=rnMentorPct||(rnLvl<=50?25:15);
     mentorAmt=Math.round(comm*mentorPct/100);
-    agentPool=comm-plat-mentorAmt;
+    agentFinal=agentFinal-mentorAmt;
     var mentorName=mentorEl.options[mentorEl.selectedIndex].text;
     document.getElementById('rn-mentor-calc-label').textContent=mentorName+' ('+mentorPct+'%)';
     document.getElementById('rn-cm-val').textContent=mentorAmt+'$ ('+mentorPct+'%)';
     document.getElementById('rn-mentor-row').style.display='flex';
   } else {
-    // Without mentor: platform = (100-rnLvl)%
-    var platPct=100-rnLvl;
-    plat=Math.round(comm*platPct/100);
-    mentorAmt=0;
-    agentPool=comm-plat;
-    var el=document.getElementById('rn-mentor-row');if(el)el.style.display='none';
+    var mrEl=document.getElementById('rn-mentor-row');if(mrEl)mrEl.style.display='none';
   }
 
-  document.getElementById('rn-agent-label').textContent=agentName+' '+rnLvl+'%';
-
-  // Recruit: % from agent pool
-  var recruitEl=document.getElementById('rn-recruit');
-  var hasRecruit=recruitEl&&recruitEl.value!=='';
-  var recruitAmt=0;
-  var agentFinal=agentPool;
+  // Показываем рекрута
   if(hasRecruit){
-    var autoRecruitPct=(rnObjOwner==='recruit')?40:20;
-    var effectiveRecruitPct=rnRecruitPct||autoRecruitPct;
-    recruitAmt=Math.round(agentPool*effectiveRecruitPct/100);
-    agentFinal=agentPool-recruitAmt;
-    var recruitName=recruitEl.options[recruitEl.selectedIndex].text;
-    document.getElementById('rn-recruit-label').textContent=recruitName+' ('+effectiveRecruitPct+'%)';
-    document.getElementById('rn-cr').textContent=recruitAmt+'$ ('+effectiveRecruitPct+'%)';
+    var rPct=rnObjOwner==='agent'?20:40;
+    document.getElementById('rn-recruit-label').textContent=recruitName+' ('+rPct+'%)';
+    document.getElementById('rn-cr').textContent=recruitAmt+'$ ('+rPct+'%)';
     document.getElementById('rn-recruit-row').style.display='flex';
   } else {
-    var el2=document.getElementById('rn-recruit-row');if(el2)el2.style.display='none';
+    var rrEl=document.getElementById('rn-recruit-row');if(rrEl)rrEl.style.display='none';
   }
 
-  // Agent final
-  var platPctShow=hasMentor?10:(100-rnLvl);
-  document.getElementById('rn-agent-final-label').textContent=agentName+' итого';
+  // Агент итого
   var agentFinalPct=Math.round(agentFinal/comm*100);
-    document.getElementById('rn-ca-final').textContent=agentFinal+'$ ('+agentFinalPct+'%)';
+  document.getElementById('rn-agent-label').textContent=agentName+' '+agentPctShow+'%';
+  document.getElementById('rn-agent-final-label').textContent=agentName+' итого';
+  document.getElementById('rn-ca-final').textContent=agentFinal+'$ ('+agentFinalPct+'%)';
   document.getElementById('rn-agent-final-row').style.display='flex';
 
   box.style.display='block';
   document.getElementById('rn-ct').textContent=comm+'$ (50% от '+price+'$)';
-  document.getElementById('rn-ca').textContent=agentPool+'$ ('+rnLvl+'%)';
+  document.getElementById('rn-ca').textContent=agentAmt+'$ ('+agentPctShow+'%)';
   document.getElementById('rn-cp').textContent=plat+'$ ('+platPctShow+'%)';
+  updateRentalPreview();
+}
+
+function updateRentalPreview(){
+  var agentEl=document.getElementById('rn-agent');
+  var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'—';
+  var recruitEl=document.getElementById('rn-recruit');
+  var recruitName=recruitEl&&recruitEl.value?recruitEl.options[recruitEl.selectedIndex].text:'';
+  var price=parseFloat(document.getElementById('rn-price').value)||0;
+  var comm=price?Math.round(price*0.5):0;
+  var linkEl=document.getElementById('rn-link');
+  var cadEl=document.getElementById('rn-cadastral');
+  var cnameEl=document.getElementById('rn-cname');
+  var cphoneEl=document.getElementById('rn-cphone');
+  var onameEl=document.getElementById('rn-oname');
+  var ophoneEl=document.getElementById('rn-ophone');
+  var fromEl=document.getElementById('rn-from');
+  var toEl=document.getElementById('rn-to');
+  var excl=rnExcl?'#Эксклюзив':'#Неэксклюзив';
+  var type=rnType==='sale'?'Продажа':'Аренда';
+  var lines=[
+    '💰 Сдача | '+excl+' | '+type,
+    'Агент: #'+(agentName||'—')+' ('+rnLvl+'%)',
+    recruitName?'Рекрут: #'+recruitName:'',
+    '',
+    'Цена: '+(price||'—')+'$ | Комиссия: '+(comm||'—')+'$',
+    'Кадастр: '+(cadEl&&cadEl.value?cadEl.value:'—'),
+    'Ссылка: '+(linkEl&&linkEl.value?linkEl.value:'—'),
+    '',
+    'Клиент: '+(cnameEl&&cnameEl.value?cnameEl.value:'—')+' '+(cphoneEl&&cphoneEl.value?cphoneEl.value:''),
+    'Собственник: '+(onameEl&&onameEl.value?onameEl.value:'—')+' '+(ophoneEl&&ophoneEl.value?ophoneEl.value:''),
+    'Период: '+(fromEl&&fromEl.value?fromEl.value:'—')+' – '+(toEl&&toEl.value?toEl.value:'—'),
+  ].filter(function(l){return l!==null;}).join('\n');
+  var el=document.getElementById('rental-preview');
+  if(el) el.textContent=lines;
 }
 
 function calcDeal() {
@@ -1111,8 +1315,9 @@ function searchPDF(kadastr) {
 }
 
 // SUBMIT
-function sub(type) {
+function sub(type, directData) {
   let data={};
+  if(directData){ data=directData; send(type,data); return; }
   if(type==='photo'){const rEl=document.getElementById('ph-r'),mEl=document.getElementById('ph-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('ph-addr').value,ad_link_advertising:document.getElementById('ph-link').value,date:document.getElementById('ph-date').value};}
   else if(type==='showing'){const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('sh-addr').value,ad_link_advertising:document.getElementById('sh-link').value,client_telegram:document.getElementById('sh-client').value,date:document.getElementById('sh-date').value,result:showRes};}
   else if(type==='stickers'){const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district:document.getElementById('st-dist').value,stickers_count:document.getElementById('st-cnt').value,date:document.getElementById('st-date').value};}
@@ -1666,6 +1871,225 @@ function switchStatsTab(tab) {
   if(tab==='agents'||tab==='recruits') renderStats();
   if(tab==='news') loadNews();
 }
+
+// ══ DAILY REPORT ══
+function openDailyReport(){
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-daily').classList.add('active');
+
+  // Заполняем автора — все агенты + все рекруты
+  var aEl=document.getElementById('daily-author');
+  aEl.innerHTML='<option value="">Выбрать себя...</option>';
+  AGENTS.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+' (агент)</option>';});
+  RECRUITS.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+' (рекрут)</option>';});
+
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('daily-date').value=today;
+  ['daily-calls','daily-calls-no','daily-calls-yes','daily-stickers','daily-photos','daily-showings'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  ['daily-st-dist','daily-ph-addr','daily-sh-addr'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  updateDailyPreview();
+  window.scrollTo(0,0);
+}
+
+function onDailyRecruit(){}
+
+function calcAgreed(){
+  var calls=parseInt(document.getElementById('daily-calls').value)||0;
+  var no=parseInt(document.getElementById('daily-calls-no').value)||0;
+  document.getElementById('daily-calls-yes').value=Math.max(0,calls-no);
+  updateDailyPreview();
+}
+
+function updateDailyPreview(){
+  var date=document.getElementById('daily-date').value||new Date().toISOString().split('T')[0];
+  var d=new Date(date);
+  var months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  var dateStr=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  var monthTag='#'+months[d.getMonth()];
+  var calls=parseInt(document.getElementById('daily-calls').value)||0;
+  var callsNo=parseInt(document.getElementById('daily-calls-no').value)||0;
+  var callsYes=parseInt(document.getElementById('daily-calls-yes').value)||0;
+  var stickers=parseInt(document.getElementById('daily-stickers').value)||0;
+  var photos=parseInt(document.getElementById('daily-photos').value)||0;
+  var showings=parseInt(document.getElementById('daily-showings').value)||0;
+  var author=document.getElementById('daily-author').value||'—';
+
+  var text=
+    '📊 DAILY REPORT | '+dateStr+' | '+monthTag+'\n\n'+
+    '📞 Calling: '+calls+' объявления\n'+
+    '❌ Not Agreed: '+callsNo+'\n'+
+    '✅ Agreed: '+callsYes+'\n\n'+
+    '📍 Stickers: '+stickers+' стикеров\n'+
+    '📸 Photo: '+photos+' объект'+(photos===1?'а':'ов')+'\n'+
+    '🚪 Showing: '+showings+' объект'+(showings===1?'а':'ов')+'\n\n'+
+    '👤 Photo Master: -\n'+
+    '👤 Showing Master: -\n\n'+
+    '🧾 Report by: #'+author;
+
+  document.getElementById('daily-preview').textContent=text;
+}
+
+function setDailyCheck(){}
+function setDailyShowRes(){}
+
+function subDaily(){
+  var author=document.getElementById('daily-author').value;
+  var date=document.getElementById('daily-date').value;
+  if(!author){showToast('Выбери себя из списка');return;}
+
+  var data={
+    author:author, date:date,
+    calls:parseInt(document.getElementById('daily-calls').value)||0,
+    calls_no:parseInt(document.getElementById('daily-calls-no').value)||0,
+    calls_yes:parseInt(document.getElementById('daily-calls-yes').value)||0,
+    stickers:parseInt(document.getElementById('daily-stickers').value)||0,
+    stickers_district:document.getElementById('daily-st-dist').value,
+    photos:parseInt(document.getElementById('daily-photos').value)||0,
+    photo_address:document.getElementById('daily-ph-addr').value,
+    showings:parseInt(document.getElementById('daily-showings').value)||0,
+    showing_address:document.getElementById('daily-sh-addr').value,
+    preview:document.getElementById('daily-preview').textContent
+  };
+
+  send('daily', data);
+  showToast('Ежедневный отчёт отправлен! ✓');
+  setTimeout(goBack,1500);
+}
+
+
+// ══ GENERAL REPORT ══
+var grAuthor='', grOpen={photo:false,showing:false,stickers:false,calling:false,deal:false};
+var grPickerCurrent=0, grPickerOffset=0, grIsDrag=false, grStartY=0, grStartOffset=0;
+var GR_ITEM_H=44;
+
+function openGeneralReport(){
+  prevTab='deals';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-general').classList.add('active');
+
+  // Build picker
+  var plist=document.getElementById('gr-plist');
+  plist.innerHTML='';
+  var all=[];
+  AGENTS.forEach(function(a){all.push({name:a.name,role:'агент'});});
+  RECRUITS.forEach(function(r){all.push({name:r.name,role:'рекрут'});});
+  plist.style.height=(all.length*GR_ITEM_H)+'px';
+  all.forEach(function(a){
+    var d=document.createElement('div');
+    d.style.cssText='height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;';
+    d.innerHTML='<span style="font-size:15px;color:var(--text2);font-weight:500;">'+a.name+'</span><span style="font-size:11px;color:var(--text3);">'+a.role+'</span>';
+    d.dataset.name=a.name;
+    plist.appendChild(d);
+  });
+  window._grAuthors=all;
+
+  // Populate member selects
+  var opts='<option value="">Выбрать...</option>'+all.map(function(a){return '<option value="'+a.name+'">'+a.name+' ('+a.role+')</option>';}).join('');
+  ['gr-photo-member','gr-showing-member','gr-stickers-member','gr-calling-member','gr-deal-member'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.innerHTML=opts;
+  });
+
+  grAuthor='';
+  grOpen={photo:false,showing:false,stickers:false,calling:false,deal:false};
+  document.getElementById('gr-sel-name').textContent='Выбери и нажми →';
+  document.getElementById('gr-sel-name').style.color='var(--text2)';
+  grSnapTo(0);
+  grUpdatePreview();
+  window.scrollTo(0,0);
+}
+
+function grGetOffset(idx){return -(idx*GR_ITEM_H-(180/2-GR_ITEM_H/2));}
+
+function grSnapTo(idx){
+  var all=window._grAuthors||[];
+  idx=Math.max(0,Math.min(all.length-1,idx));
+  grPickerCurrent=idx; grPickerOffset=grGetOffset(idx);
+  var plist=document.getElementById('gr-plist');
+  plist.style.transition='transform .25s cubic-bezier(.25,.46,.45,.94)';
+  plist.style.transform='translateY('+grPickerOffset+'px)';
+  plist.querySelectorAll('div').forEach(function(el,i){
+    var nameEl=el.querySelector('span');
+    if(nameEl) nameEl.style.color=i===idx?'var(--accent2)':'var(--text2)';
+  });
+  var selEl=document.getElementById('gr-sel-name');
+  if(all[idx]) selEl.textContent=all[idx].name+' ('+all[idx].role+')';
+}
+
+function grPtStart(e){grIsDrag=true;grStartY=e.touches[0].clientY;grStartOffset=grPickerOffset;document.getElementById('gr-plist').style.transition='none';}
+function grPtMove(e){if(!grIsDrag)return;e.preventDefault();grPickerOffset=grStartOffset+(e.touches[0].clientY-grStartY);document.getElementById('gr-plist').style.transform='translateY('+grPickerOffset+'px)';}
+function grPtEnd(){grIsDrag=false;grSnapTo(Math.round(-(grPickerOffset-(180/2-GR_ITEM_H/2))/GR_ITEM_H));}
+function grPmStart(e){
+  grIsDrag=true;grStartY=e.clientY;grStartOffset=grPickerOffset;
+  document.getElementById('gr-plist').style.transition='none';
+  document.onmousemove=function(e){if(!grIsDrag)return;grPickerOffset=grStartOffset+(e.clientY-grStartY);document.getElementById('gr-plist').style.transform='translateY('+grPickerOffset+'px)';};
+  document.onmouseup=function(){grIsDrag=false;grSnapTo(Math.round(-(grPickerOffset-(180/2-GR_ITEM_H/2))/GR_ITEM_H));document.onmousemove=null;document.onmouseup=null;};
+}
+
+function grConfirmPicker(){
+  var all=window._grAuthors||[];
+  if(!all[grPickerCurrent])return;
+  grAuthor=all[grPickerCurrent].name;
+  var sel=document.getElementById('gr-sel-name');
+  sel.textContent='#'+grAuthor;
+  sel.style.color='var(--accent2)';
+  grUpdatePreview();
+}
+
+function grToggle(id){
+  grOpen[id]=!grOpen[id];
+  var body=document.getElementById('gr-body-'+id);
+  body.style.display=grOpen[id]?'block':'none';
+  var chev=document.getElementById('gr-chev-'+id);
+  if(chev) chev.style.transform=grOpen[id]?'rotate(180deg)':'';
+  var badge=document.getElementById('gr-badge-'+id);
+  if(badge){badge.textContent=grOpen[id]?'заполняется':'не заполнено';badge.style.background=grOpen[id]?'var(--glow)':'var(--bg3)';badge.style.color=grOpen[id]?'var(--accent2)':'var(--text3)';}
+  grUpdatePreview();
+}
+
+function grAddLink(cid){
+  var c=document.getElementById(cid);
+  var d=document.createElement('div');
+  d.style.cssText='display:flex;gap:8px;margin-top:6px;';
+  d.innerHTML='<input type="url" placeholder="https://t.me/..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:13px;padding:8px 10px;"><button onclick="this.parentNode.remove()" style="width:30px;height:30px;background:var(--rbg);border:none;border-radius:var(--rsm);color:var(--red);font-size:18px;cursor:pointer;">×</button>';
+  c.appendChild(d);
+}
+
+function grCalcCalls(){
+  var t=parseInt(document.getElementById('gr-calls-total').value)||0;
+  var n=parseInt(document.getElementById('gr-calls-no').value)||0;
+  document.getElementById('gr-calls-yes').value=Math.max(0,t-n);
+  grUpdatePreview();
+}
+
+function grUpdatePreview(){
+  var d=new Date();
+  var months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  var dateStr=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  var lines=['📊 ОБЩИЙ ОТЧЁТ | '+dateStr+' | #'+months[d.getMonth()],'','🧾 Report by: '+(grAuthor?'#'+grAuthor:'—')];
+  if(grOpen.photo){var c=document.querySelectorAll('#gr-photo-links input');var n=Array.from(c).filter(function(i){return i.value.trim();}).length;lines.push('\n📸 Фото: '+n+' объект'+(n===1?'а':'ов'));}
+  if(grOpen.showing){var c2=document.querySelectorAll('#gr-showing-links input');var n2=Array.from(c2).filter(function(i){return i.value.trim();}).length;lines.push('🚪 Показ: '+n2+' показ'+(n2===1?'':'ов'));}
+  if(grOpen.stickers){var s=parseInt(document.getElementById('gr-stickers-cnt').value)||0;lines.push('📌 Расклейка: '+s+' стикер'+(s===1?'':'ов'));}
+  if(grOpen.calling){var t=parseInt(document.getElementById('gr-calls-total').value)||0;var no=parseInt(document.getElementById('gr-calls-no').value)||0;lines.push('\n📞 Calling: '+t+'\n❌ Not Agreed: '+no+'\n✅ Agreed: '+Math.max(0,t-no));}
+  if(grOpen.deal){var dl=parseInt(document.getElementById('gr-deal-cnt').value)||0;lines.push('\n💰 Сделка: '+dl+' сделок');}
+  document.getElementById('gr-preview').textContent=lines.join('\n');
+}
+
+function grSubmit(){
+  if(!grAuthor){showToast('Выбери себя из списка');return;}
+  var data={author:grAuthor,preview:document.getElementById('gr-preview').textContent};
+  send('general',data);
+  showToast('Отчёт отправлен! ✓');
+  setTimeout(goBack,1500);
+}
+
+function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
 </script>
