@@ -1223,7 +1223,8 @@ function updateRentalPreview(){
   var agentEl=document.getElementById('rn-agent');
   var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'—';
   var recruitEl=document.getElementById('rn-recruit');
-  var recruitName=recruitEl&&recruitEl.value?recruitEl.options[recruitEl.selectedIndex].text:'';
+  var hasRecruit=recruitEl&&recruitEl.value!=='';
+  var recruitName=hasRecruit?recruitEl.options[recruitEl.selectedIndex].text:'';
   var price=parseFloat(document.getElementById('rn-price').value)||0;
   var comm=price?Math.round(price*0.5):0;
   var linkEl=document.getElementById('rn-link');
@@ -1234,23 +1235,61 @@ function updateRentalPreview(){
   var ophoneEl=document.getElementById('rn-ophone');
   var fromEl=document.getElementById('rn-from');
   var toEl=document.getElementById('rn-to');
+
+  // Calc distribution
+  var agentAmt=0, platAmt=0, recruitAmt=0;
+  var agentPct=rnLvl, platPct=100-rnLvl, recruitPct=0;
+  if(!hasRecruit){
+    agentAmt=Math.round(comm*rnLvl/100);
+    platAmt=comm-agentAmt;
+    platPct=100-rnLvl;
+  } else if(rnObjOwner==='agent'){
+    recruitPct=20;
+    recruitAmt=Math.round(comm*0.20);
+    var rest=comm-recruitAmt;
+    agentAmt=Math.round(rest*rnLvl/100);
+    platAmt=rest-agentAmt;
+    platPct=Math.round(platAmt/comm*100);
+    agentPct=Math.round(agentAmt/comm*100);
+  } else {
+    recruitPct=40;
+    recruitAmt=Math.round(comm*0.40);
+    agentAmt=Math.round(comm*0.10);
+    agentPct=10;
+    platAmt=comm-recruitAmt-agentAmt;
+    platPct=50;
+  }
+
   var excl=rnExcl?'#Эксклюзив':'#Неэксклюзив';
-  var type=rnType==='sale'?'Продажа':'Аренда';
+  var link=linkEl&&linkEl.value?linkEl.value:'—';
+  var cad=cadEl&&cadEl.value?cadEl.value:'—';
+  var client=(cnameEl&&cnameEl.value?cnameEl.value:'—')+(cphoneEl&&cphoneEl.value?' '+cphoneEl.value:'');
+  var owner=(onameEl&&onameEl.value?onameEl.value:'—')+(ophoneEl&&ophoneEl.value?' '+ophoneEl.value:'');
+  var from=fromEl&&fromEl.value?fromEl.value:'—';
+  var to=toEl&&toEl.value?toEl.value:'—';
+
   var lines=[
-    '💰 Сдача | '+excl+' | '+type,
-    'Агент: #'+(agentName||'—')+' ('+rnLvl+'%)',
-    recruitName?'Рекрут: #'+recruitName:'',
+    '#Rented | '+excl+' | '+rnLvl+'%',
     '',
-    'Цена: '+(price||'—')+'$ | Комиссия: '+(comm||'—')+'$',
-    'Кадастр: '+(cadEl&&cadEl.value?cadEl.value:'—'),
-    'Ссылка: '+(linkEl&&linkEl.value?linkEl.value:'—'),
+    'Link 🔗 '+link,
+    'Price: '+(price||'—')+'$',
+    'Commission: '+comm+'$',
     '',
-    'Клиент: '+(cnameEl&&cnameEl.value?cnameEl.value:'—')+' '+(cphoneEl&&cphoneEl.value?cphoneEl.value:''),
-    'Собственник: '+(onameEl&&onameEl.value?onameEl.value:'—')+' '+(ophoneEl&&ophoneEl.value?ophoneEl.value:''),
-    'Период: '+(fromEl&&fromEl.value?fromEl.value:'—')+' – '+(toEl&&toEl.value?toEl.value:'—'),
-  ].filter(function(l){return l!==null;}).join('\n');
+    '📊 Распределение:',
+    'Platforms Commission ('+platPct+'%): '+platAmt+'$',
+    '#'+(agentName||'—')+' Commission ('+agentPct+'%): '+agentAmt+'$',
+  ];
+  if(hasRecruit) lines.push('#'+recruitName+' Commission ('+recruitPct+'%): '+recruitAmt+'$');
+  lines.push('');
+  lines.push('Cadastral number:');
+  lines.push(cad);
+  lines.push('');
+  lines.push('Client: '+client);
+  lines.push('Owner: '+owner);
+  lines.push('Date of Rent: '+from+' – '+to);
+
   var el=document.getElementById('rental-preview');
-  if(el) el.textContent=lines;
+  if(el) el.textContent=lines.join('\n');
 }
 
 function calcDeal() {
