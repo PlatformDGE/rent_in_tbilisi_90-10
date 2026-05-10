@@ -14,21 +14,20 @@ html,body{height:100%;background:#0a0a0f;font-family:-apple-system,BlinkMacSyste
 .hdr-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
 .body{padding:14px 14px 100px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;}
 
-.author-card{background:#111118;border:0.5px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
-.author-search-wrap{padding:10px 12px;border-bottom:0.5px solid rgba(255,255,255,.06);}
-.author-search{width:100%;background:#1a1a24;border:0.5px solid rgba(255,255,255,.08);border-radius:10px;color:#eeeef5;font-size:14px;padding:9px 14px;outline:none;-webkit-appearance:none;}
-.author-search::placeholder{color:#55556a;}
-.author-scroll{max-height:200px;overflow-y:scroll;-webkit-overflow-scrolling:touch;}
-.author-scroll::-webkit-scrollbar{width:0;}
-.author-item{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,.04);}
-.author-item:last-child{border-bottom:none;}
-.author-item:active{background:rgba(255,255,255,.04);}
-.author-item.sel{background:rgba(124,111,255,.08);}
-.author-item-info{}
-.author-item-name{font-size:14px;color:#eeeef5;font-weight:500;}
-.author-item-role{font-size:11px;color:#55556a;margin-top:1px;}
-.author-item-check{color:#7c6fff;font-size:17px;opacity:0;font-weight:600;}
-.author-item.sel .author-item-check{opacity:1;}
+.author-card{background:#111118;border:0.5px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;padding-bottom:0;}
+.author-label{font-size:10px;font-weight:600;color:#6060a0;letter-spacing:.06em;text-transform:uppercase;padding:12px 16px 8px;}
+.picker-wrap{position:relative;height:180px;overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;}
+.picker-mask-top{position:absolute;top:0;left:0;right:0;height:65px;background:linear-gradient(to bottom,#111118 0%,rgba(17,17,24,0) 100%);pointer-events:none;z-index:2;}
+.picker-mask-bot{position:absolute;bottom:0;left:0;right:0;height:65px;background:linear-gradient(to top,#111118 0%,rgba(17,17,24,0) 100%);pointer-events:none;z-index:2;}
+.picker-line{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px;border-top:0.5px solid rgba(124,111,255,.3);border-bottom:0.5px solid rgba(124,111,255,.3);pointer-events:none;z-index:1;}
+.picker-list{position:absolute;left:0;right:0;top:0;}
+.picker-item{height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.picker-item-name{font-size:16px;color:#55556a;font-weight:500;transition:color .15s;}
+.picker-item-role{font-size:11px;color:#3a3a50;transition:color .15s;}
+.picker-item.active .picker-item-name{color:#7c6fff;font-weight:600;}
+.picker-item.active .picker-item-role{color:#a89fff;}
+.picker-selected{padding:10px 16px 13px;font-size:12px;color:#55556a;border-top:0.5px solid rgba(255,255,255,.06);}
+.picker-selected span{color:#7c6fff;font-weight:600;}
 
 .section{background:#111118;border:0.5px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;-webkit-user-select:none;}
@@ -78,10 +77,18 @@ html,body{height:100%;background:#0a0a0f;font-family:-apple-system,BlinkMacSyste
   <div class="body">
 
     <div class="author-card">
-      <div class="author-search-wrap">
-        <input class="author-search" type="text" placeholder="Поиск..." oninput="filterAuthors(this.value)">
+      <div class="author-label">Кто отправляет</div>
+      <div class="picker-wrap" id="picker"
+        ontouchstart="ptStart(event)"
+        ontouchmove="ptMove(event)"
+        ontouchend="ptEnd(event)"
+        onmousedown="pmStart(event)">
+        <div class="picker-mask-top"></div>
+        <div class="picker-mask-bot"></div>
+        <div class="picker-line"></div>
+        <div class="picker-list" id="plist"></div>
       </div>
-      <div class="author-scroll" id="author-list"></div>
+      <div class="picker-selected">Выбрано: <span id="sel-name">—</span></div>
     </div>
 
     <!-- ФОТО -->
@@ -187,31 +194,45 @@ var allAuthors=[
 ];
 var selectedAuthor='';
 var openSecs={photo:false,showing:false,stickers:false,calling:false,deal:false};
+var ITEM_H=44,pickerCurrent=0,pickerOffset=0,isDrag=false,startY=0,startOffset=0;
 
-function renderAuthors(filter){
-  var list=document.getElementById('author-list');
-  var f=(filter||'').toLowerCase();
-  var filtered=allAuthors.filter(function(a){return a.name.toLowerCase().indexOf(f)!==-1;});
-  list.innerHTML=filtered.map(function(a){
-    var sel=selectedAuthor===a.name?' sel':'';
-    return '<div class="author-item'+sel+'" onclick="selectAuthor(\''+a.name+'\')">'+
-      '<div class="author-item-info"><div class="author-item-name">'+a.name+'</div><div class="author-item-role">'+a.role+'</div></div>'+
-      '<span class="author-item-check">✓</span></div>';
-  }).join('');
-  // populate member selects
-  var opts='<option value="">Выбрать...</option>'+allAuthors.map(function(a){return '<option value="'+a.name+'">'+a.name+' ('+a.role+')</option>';}).join('');
-  ['photo-member','showing-member','stickers-member','calling-member','deal-member'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.innerHTML=opts;
-  });
-}
+var plist=document.getElementById('plist');
+plist.style.height=(allAuthors.length*ITEM_H)+'px';
+allAuthors.forEach(function(a){
+  var d=document.createElement('div');
+  d.className='picker-item';
+  d.innerHTML='<span class="picker-item-name">'+a.name+'</span><span class="picker-item-role">'+a.role+'</span>';
+  plist.appendChild(d);
+});
 
-function selectAuthor(name){
-  selectedAuthor=name;
-  renderAuthors('');
+function getPickerOffset(idx){return -(idx*ITEM_H-(180/2-ITEM_H/2));}
+
+function snapTo(idx){
+  idx=Math.max(0,Math.min(allAuthors.length-1,idx));
+  pickerCurrent=idx;pickerOffset=getPickerOffset(idx);
+  plist.style.transition='transform .25s cubic-bezier(.25,.46,.45,.94)';
+  plist.style.transform='translateY('+pickerOffset+'px)';
+  plist.querySelectorAll('.picker-item').forEach(function(el,i){el.classList.toggle('active',i===idx);});
+  selectedAuthor=allAuthors[idx].name;
+  document.getElementById('sel-name').textContent='#'+allAuthors[idx].name;
   updatePreview();
 }
 
-function filterAuthors(val){renderAuthors(val);}
+function ptStart(e){isDrag=true;startY=e.touches[0].clientY;startOffset=pickerOffset;plist.style.transition='none';}
+function ptMove(e){if(!isDrag)return;e.preventDefault();pickerOffset=startOffset+(e.touches[0].clientY-startY);plist.style.transform='translateY('+pickerOffset+'px)';}
+function ptEnd(){isDrag=false;snapTo(Math.round(-(pickerOffset-(180/2-ITEM_H/2))/ITEM_H));}
+function pmStart(e){
+  isDrag=true;startY=e.clientY;startOffset=pickerOffset;plist.style.transition='none';
+  document.onmousemove=function(e){if(!isDrag)return;pickerOffset=startOffset+(e.clientY-startY);plist.style.transform='translateY('+pickerOffset+'px)';};
+  document.onmouseup=function(){isDrag=false;snapTo(Math.round(-(pickerOffset-(180/2-ITEM_H/2))/ITEM_H));document.onmousemove=null;document.onmouseup=null;};
+}
+
+function populateSelects(){
+  var opts='<option value="">Выбрать...</option>'+allAuthors.map(function(a){return '<option value="'+a.name+'">'+a.name+' ('+a.role+')</option>';}).join('');
+  ['photo-member','showing-member','stickers-member','calling-member','deal-member'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.innerHTML=opts;
+  });
+}
 
 function toggleSection(id){
   openSecs[id]=!openSecs[id];
@@ -246,20 +267,36 @@ function updatePreview(){
   var month='#'+months[d.getMonth()];
   var lines=['📊 ОБЩИЙ ОТЧЁТ | '+dateStr+' | '+month,''];
   lines.push('🧾 Report by: '+(selectedAuthor?'#'+selectedAuthor:'—'));
-  if(openSecs.photo) lines.push('\n📸 Фото — заполнено');
-  if(openSecs.showing) lines.push('🚪 Показ — заполнено');
-  if(openSecs.stickers) lines.push('📌 Расклейка — заполнено');
+
+  if(openSecs.photo){
+    var photoLinks=document.querySelectorAll('#photo-links input');
+    var photoCount=Array.from(photoLinks).filter(function(i){return i.value.trim();}).length;
+    lines.push('\n📸 Фото: '+photoCount+' объект'+(photoCount===1?'':'ов'));
+  }
+  if(openSecs.showing){
+    var showLinks=document.querySelectorAll('#showing-links input');
+    var showCount=Array.from(showLinks).filter(function(i){return i.value.trim();}).length;
+    lines.push('🚪 Показ: '+showCount+' показ'+(showCount===1?'':'ов'));
+  }
+  if(openSecs.stickers){
+    var stickerCount=parseInt(document.querySelector('#body-stickers input[type="number"]').value)||0;
+    lines.push('📌 Расклейка: '+stickerCount+' стикер'+(stickerCount===1?'':'ов'));
+  }
   if(openSecs.calling){
     var t=parseInt(document.getElementById('calls-total').value)||0;
     var no=parseInt(document.getElementById('calls-no').value)||0;
     var yes=Math.max(0,t-no);
     lines.push('\n📞 Calling: '+t+' объявлений\n❌ Not Agreed: '+no+'\n✅ Agreed: '+yes);
   }
-  if(openSecs.deal) lines.push('\n💰 Сделка — заполнено');
+  if(openSecs.deal){
+    var dealCount=parseInt(document.querySelector('#body-deal input[type="number"]').value)||0;
+    lines.push('\n💰 Сделка: '+dealCount+' сделок');
+  }
   document.getElementById('preview-text').textContent=lines.join('\n');
 }
 
-renderAuthors('');
+snapTo(0);
+populateSelects();
 updatePreview();
 </script>
 </body>
