@@ -437,21 +437,13 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📊 Общий отчёт</div><div class="hs">Заполни нужные секции</div></div></div>
       <div class="pad pb">
 
-        <!-- PICKER -->
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
-          <div class="sl" style="padding:10px 14px 6px;margin-bottom:0;">Кто отправляет</div>
-          <div style="position:relative;height:180px;overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;"
-            id="gr-picker"
-            ontouchstart="grPtStart(event)" ontouchmove="grPtMove(event)" ontouchend="grPtEnd(event)"
-            onmousedown="grPmStart(event)">
-            <div style="position:absolute;top:0;left:0;right:0;height:65px;background:linear-gradient(to bottom,var(--bg2),transparent);pointer-events:none;z-index:2;"></div>
-            <div style="position:absolute;bottom:0;left:0;right:0;height:65px;background:linear-gradient(to top,var(--bg2),transparent);pointer-events:none;z-index:2;"></div>
-            <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px;border-top:1px solid var(--accent);border-bottom:1px solid var(--accent);opacity:.3;pointer-events:none;z-index:1;"></div>
-            <div id="gr-plist" style="position:absolute;left:0;right:0;top:0;"></div>
-          </div>
-          <div style="padding:8px 14px 12px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);">
-            <span id="gr-sel-name" style="font-size:13px;color:var(--text2);">Выбери и нажми →</span>
-            <button onclick="grConfirmPicker()" style="background:var(--accent);border:none;border-radius:var(--rsm);color:#fff;font-size:13px;font-weight:700;padding:7px 16px;cursor:pointer;font-family:'Inter',sans-serif;">Выбрать</button>
+        <!-- КТО ОТПРАВЛЯЕТ -->
+        <div class="section" style="margin-bottom:10px;">
+          <div class="pad" style="padding:12px 14px;">
+            <div class="sl" style="margin-bottom:8px;">Кто отправляет</div>
+            <select id="gr-author-sel" onchange="grSelectAuthor(this.value)" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:14px;padding:11px 14px;">
+              <option value="">Выбрать себя...</option>
+            </select>
           </div>
         </div>
 
@@ -1260,7 +1252,7 @@ function updateRentalPreview(){
     platPct=50;
   }
 
-  var excl=rnExcl?'#Эксклюзив':'#Неэксклюзив';
+  var excl=rnExcl?'#Exclusive':'#NonExclusive';
   var link=linkEl&&linkEl.value?linkEl.value:'—';
   var cad=cadEl&&cadEl.value?cadEl.value:'—';
   var client=(cnameEl&&cnameEl.value?cnameEl.value:'—')+(cphoneEl&&cphoneEl.value?' '+cphoneEl.value:'');
@@ -2013,21 +2005,16 @@ function openGeneralReport(){
   document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
   document.getElementById('form-general').classList.add('active');
 
-  // Build picker
-  var plist=document.getElementById('gr-plist');
-  plist.innerHTML='';
   var all=[];
   AGENTS.forEach(function(a){all.push({name:a.name,role:'агент'});});
   RECRUITS.forEach(function(r){all.push({name:r.name,role:'рекрут'});});
-  plist.style.height=(all.length*GR_ITEM_H)+'px';
-  all.forEach(function(a){
-    var d=document.createElement('div');
-    d.style.cssText='height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;';
-    d.innerHTML='<span style="font-size:15px;color:var(--text2);font-weight:500;">'+a.name+'</span><span style="font-size:11px;color:var(--text3);">'+a.role+'</span>';
-    d.dataset.name=a.name;
-    plist.appendChild(d);
-  });
   window._grAuthors=all;
+
+  // Populate author select
+  var sel=document.getElementById('gr-author-sel');
+  sel.innerHTML='<option value="">Выбрать себя...</option>'+all.map(function(a){
+    return '<option value="'+a.name+'">'+a.name+' ('+a.role+')</option>';
+  }).join('');
 
   // Populate member selects
   var opts='<option value="">Выбрать...</option>'+all.map(function(a){return '<option value="'+a.name+'">'+a.name+' ('+a.role+')</option>';}).join('');
@@ -2037,49 +2024,16 @@ function openGeneralReport(){
 
   grAuthor='';
   grOpen={photo:false,showing:false,stickers:false,calling:false,deal:false};
-  document.getElementById('gr-sel-name').textContent='Выбери и нажми →';
-  document.getElementById('gr-sel-name').style.color='var(--text2)';
-  grSnapTo(0);
   grUpdatePreview();
   window.scrollTo(0,0);
 }
 
-function grGetOffset(idx){return -(idx*GR_ITEM_H-(180/2-GR_ITEM_H/2));}
-
-function grSnapTo(idx){
-  var all=window._grAuthors||[];
-  idx=Math.max(0,Math.min(all.length-1,idx));
-  grPickerCurrent=idx; grPickerOffset=grGetOffset(idx);
-  var plist=document.getElementById('gr-plist');
-  plist.style.transition='transform .25s cubic-bezier(.25,.46,.45,.94)';
-  plist.style.transform='translateY('+grPickerOffset+'px)';
-  plist.querySelectorAll('div').forEach(function(el,i){
-    var nameEl=el.querySelector('span');
-    if(nameEl) nameEl.style.color=i===idx?'var(--accent2)':'var(--text2)';
-  });
-  var selEl=document.getElementById('gr-sel-name');
-  if(all[idx]) selEl.textContent=all[idx].name+' ('+all[idx].role+')';
-}
-
-function grPtStart(e){grIsDrag=true;grStartY=e.touches[0].clientY;grStartOffset=grPickerOffset;document.getElementById('gr-plist').style.transition='none';}
-function grPtMove(e){if(!grIsDrag)return;e.preventDefault();grPickerOffset=grStartOffset+(e.touches[0].clientY-grStartY);document.getElementById('gr-plist').style.transform='translateY('+grPickerOffset+'px)';}
-function grPtEnd(){grIsDrag=false;grSnapTo(Math.round(-(grPickerOffset-(180/2-GR_ITEM_H/2))/GR_ITEM_H));}
-function grPmStart(e){
-  grIsDrag=true;grStartY=e.clientY;grStartOffset=grPickerOffset;
-  document.getElementById('gr-plist').style.transition='none';
-  document.onmousemove=function(e){if(!grIsDrag)return;grPickerOffset=grStartOffset+(e.clientY-grStartY);document.getElementById('gr-plist').style.transform='translateY('+grPickerOffset+'px)';};
-  document.onmouseup=function(){grIsDrag=false;grSnapTo(Math.round(-(grPickerOffset-(180/2-GR_ITEM_H/2))/GR_ITEM_H));document.onmousemove=null;document.onmouseup=null;};
-}
-
-function grConfirmPicker(){
-  var all=window._grAuthors||[];
-  if(!all[grPickerCurrent])return;
-  grAuthor=all[grPickerCurrent].name;
-  var sel=document.getElementById('gr-sel-name');
-  sel.textContent='#'+grAuthor;
-  sel.style.color='var(--accent2)';
+function grSelectAuthor(val){
+  grAuthor=val;
   grUpdatePreview();
 }
+
+function grConfirmPicker(){}
 
 function grToggle(id){
   grOpen[id]=!grOpen[id];
