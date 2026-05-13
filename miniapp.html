@@ -313,7 +313,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <!-- 2. КАЛЬКУЛЯТОР -->
         <div class="section"><div class="sl">2. Участники и комиссия</div>
           <div class="field"><label class="fl">Агент <span class="req">*</span></label>
-            <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
+            <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Select agent...</option></select>
           </div>
           <div class="field"><label class="fl">Уровень агента</label>
             <div class="tg c3">
@@ -423,16 +423,61 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         <!-- ═══ REPORTS ═══ -->
     <div class="screen" id="tab-reports">
       <div style="padding:14px 16px 0;">
-        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">📋 Отчёты</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Выбери раздел</div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">📋 Reports</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Choose a section</div>
       </div>
       <div class="cards">
-        <div class="card" style="--cc:#a78bfa;grid-column:span 2" onclick="openGeneralReport()"><span class="card-ic">📊</span><div class="card-lb">Общий отчёт</div><div class="card-sub">Фото · Показ · Расклейка · Обзвон · Сделка</div></div>
-        <div class="card" style="--cc:#7c6fff;grid-column:span 2" onclick="openDailyReport()"><span class="card-ic">📅</span><div class="card-lb">Ежедневный отчёт</div><div class="card-sub">Звонки · Расклейка · Фото · Показы</div></div>
-        <div class="card" style="--cc:#22c55e;grid-column:span 2" onclick="openCheckProperty()"><span class="card-ic">🔍</span><div class="card-lb">Проверка квартиры</div><div class="card-sub">Поиск по базе собственников</div></div>
+        <div class="card" style="--cc:#a78bfa;grid-column:span 2" onclick="openGeneralReport()"><span class="card-ic">📊</span><div class="card-lb">General Report</div><div class="card-sub">Photo · Showing · Stickers · Calling · Deal</div></div>
+        <div class="card" style="--cc:#7c6fff;grid-column:span 2" onclick="openDailyReport()"><span class="card-ic">📅</span><div class="card-lb">Daily Report</div><div class="card-sub">Calling · Stickers · Photo · Showing</div></div>
+        <div class="card" style="--cc:#f59e0b;grid-column:span 2" onclick="openMakeFoto()"><span class="card-ic">📸</span><div class="card-lb">Make Foto From Platform</div><div class="card-sub">Заполни перед съемкой квартиры</div></div>
+        <div class="card" style="--cc:#22c55e;grid-column:span 2" onclick="openCheckProperty()"><span class="card-ic">🔍</span><div class="card-lb">Property Check</div><div class="card-sub">Поиск по базе собственников</div></div>
       </div>
     </div>
 
+
+    <!-- ═══ MAKE FOTO FROM PLATFORM ═══ -->
+    <div class="screen" id="form-makefoto">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📸 Make Foto From Platform</div><div class="hs">Myhome And SS.GE</div></div></div>
+      <div class="pad pb">
+
+        <div class="section">
+          <div class="sl">Address <span class="req">*</span></div>
+          <div class="field"><input type="text" id="mf-addr" placeholder="12 Sulkhan Tsintsadze St" oninput="mfUpdatePreview()"></div>
+        </div>
+
+        <div class="section">
+          <div class="sl">Date / Time <span class="req">*</span></div>
+          <div class="r2">
+            <div class="field"><input type="text" id="mf-date" placeholder="14.05" oninput="mfUpdatePreview()"></div>
+            <div class="field"><input type="text" id="mf-time" placeholder="11:00" oninput="mfUpdatePreview()"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sl">Agent <span class="req">*</span></div>
+          <div class="field"><select id="mf-agent" onchange="mfUpdatePreview()"><option value="">Select agent...</option></select></div>
+        </div>
+
+        <div class="section">
+          <div class="sl">Owner</div>
+          <div class="r2">
+            <div class="field"><input type="text" id="mf-owner" placeholder="Nino" oninput="mfUpdatePreview()"></div>
+            <div class="field"><input type="tel" id="mf-phone" placeholder="+995 592 288 822" oninput="mfUpdatePreview()"></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="sl">Link</div>
+          <div class="field"><input type="url" id="mf-link" placeholder="https://www.myhome.ge/..." oninput="mfUpdatePreview()"></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="sl" style="margin-bottom:8px;">Preview</div>
+        <div id="mf-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
+
+        <button class="sbtn" onclick="mfSubmit()">Send</button>
+      </div>
+    </div>
 
     <!-- ═══ CHECK PROPERTY ═══ -->
     <div class="screen" id="form-check">
@@ -482,7 +527,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     <!-- ═══ GENERAL REPORT ═══ -->
     <div class="screen" id="form-general">
-      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📊 Общий отчёт</div><div class="hs">Заполни нужные секции</div></div></div>
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📊 General Report</div><div class="hs">Fill in the sections you need</div></div></div>
       <div class="pad pb">
 
         <!-- КТО ОТПРАВЛЯЕТ -->
@@ -570,7 +615,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
         </div>
 
         <div class="divider"></div>
-        <div class="sl" style="margin-bottom:8px;">Предпросмотр</div>
+        <div class="sl" style="margin-bottom:8px;">Preview</div>
         <div id="gr-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
 
         <button class="sbtn" onclick="grSubmit()">Отправить отчёт</button>
@@ -579,7 +624,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     <!-- ═══ DAILY REPORT ═══ -->
     <div class="screen" id="form-daily">
-      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📅 Ежедневный отчёт</div><div class="hs">Заполни и отправь одной кнопкой</div></div></div>
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">📅 Daily Report</div><div class="hs">Fill in and send with one tap</div></div></div>
       <div class="pad pb">
 
         <!-- КТО ОТПРАВЛЯЕТ -->
@@ -617,7 +662,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
         <!-- ПРЕВЬЮ -->
         <div class="divider"></div>
-        <div class="sl" style="margin-bottom:8px;">Предпросмотр</div>
+        <div class="sl" style="margin-bottom:8px;">Preview</div>
         <div id="daily-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
 
         <button class="sbtn" onclick="subDaily()">Отправить ежедневный отчёт</button>
@@ -955,10 +1000,10 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
   </div><!-- /screens -->
 
   <nav class="bnav">
-    <button class="bni on" id="nav-deals" onclick="goTab('deals')"><span class="bni-ic">💼</span><span class="bni-lb">Сделка</span></button>
-    <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Отчёты</span></button>
-    <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Договор</span></button>
-    <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Агент</span></button>
+    <button class="bni on" id="nav-deals" onclick="goTab('deals')"><span class="bni-ic">💼</span><span class="bni-lb">Deal</span></button>
+    <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Reports</span></button>
+    <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Contract</span></button>
+    <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Agent</span></button>
     <button class="bni" id="nav-crm" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
   </nav>
 </div>
@@ -1055,7 +1100,7 @@ function populateRentalInDeals() {
 }
 
 function populateDeals() {
-  const aEl=document.getElementById('d-agent'); if(!aEl)return; aEl.innerHTML='<option value="">Выбрать агента...</option>'; AGENTS.forEach(a=>aEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
+  const aEl=document.getElementById('d-agent'); if(!aEl)return; aEl.innerHTML='<option value="">Select agent...</option>'; AGENTS.forEach(a=>aEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
   const rEl=document.getElementById('d-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
 }
 
@@ -1430,7 +1475,6 @@ function send(type,data) {
 }
 
 function loadData(){
-  // Use script tag to bypass CORS in Telegram WebApp
   window.__onListsLoaded = function(data) {
     try {
       if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
@@ -1451,7 +1495,6 @@ function loadData(){
   s.src = API_URL + '?action=getLists&callback=__onListsLoaded';
   s.onerror = function() { console.log('loadData script error'); useFallback(); };
   document.head.appendChild(s);
-  // Fallback if no response in 5s
   setTimeout(function(){
     if(AGENTS.length===0) useFallback();
   }, 5000);
@@ -1461,6 +1504,7 @@ function useFallback(){
   RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0'},{id:2,name:'Artem',telegram:'@levittart'},{id:3,name:'Mariam',telegram:'@sourlylight'},{id:4,name:'Liana',telegram:'@lianagadzhikhana'},{id:5,name:'Mari',telegram:'@marikhitarishvili'},{id:6,name:'Nikita',telegram:'@krezonik'},{id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail'},{id:8,name:'Irakli',telegram:'@iraklibu'},{id:9,name:'Anton',telegram:'@Antonio_ozzz'},{id:10,name:'Gio',telegram:'@giosar'},{id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva'},{id:12,name:'Tunar',telegram:'@tunaotchenash'}];
   AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:90},{id:3,name:'Sergi',telegram:'@SergiTb',level:90},{id:4,name:'Zaza',telegram:'@eforit',level:90},{id:5,name:'Omari',telegram:'@thatomss',level:90},{id:6,name:'Shorena',telegram:'@shorena_jvaridze',level:70},{id:7,name:'Giorgi',telegram:'@chuluxagio',level:70},{id:8,name:'Dmitri',telegram:'@Aion82',level:70},{id:9,name:'Alex',telegram:'@Alexunder90',level:70}];
   COUNTERS=RECRUITS.map(function(r){return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]};});
+  AGENT_C={David:{deals:500,level:'Агент 90%',next:'Snowflake'},Daniil:{deals:137,level:'Агент 90%',next:'Snowflake'},Sergi:{deals:286,level:'Агент 90%',next:'Snowflake'},Zaza:{deals:154,level:'Агент 90%',next:'Snowflake'},Omari:{deals:129,level:'Агент 90%',next:'Snowflake'},Shorena:{deals:12,level:'Агент 70%',next:''},Giorgi:{deals:15,level:'Агент 70%',next:''},Dmitri:{deals:67,level:'Агент 70%',next:''},Alex:{deals:62,level:'Агент 70%',next:''}};
   afterLoad();
 }
 
@@ -2036,7 +2080,7 @@ function subDaily(){
   };
 
   send('daily', data);
-  showToast('Ежедневный отчёт отправлен! ✓');
+  showToast('Daily Report sent! ✓');
   setTimeout(goBack,1500);
 }
 
@@ -2217,6 +2261,54 @@ function clearCheck(){
   document.getElementById('chk-result').style.display='none';
   document.getElementById('chk-clear').style.display='none';
   ['chk-ok','chk-warn','chk-danger'].forEach(function(id){document.getElementById(id).style.display='none';});
+}
+
+function openMakeFoto(){
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-makefoto').classList.add('active');
+  // Заполняем дату
+  var today=new Date();
+  var dd=String(today.getDate()).padStart(2,'0');
+  var mm=String(today.getMonth()+1).padStart(2,'0');
+  document.getElementById('mf-date').value=dd+'.'+mm;
+  // Заполняем агента
+  var aEl=document.getElementById('mf-agent');
+  aEl.innerHTML='<option value="">Select agent...</option>';
+  AGENTS.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+'</option>';});
+  RECRUITS.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});
+  mfUpdatePreview();
+  window.scrollTo(0,0);
+}
+
+function mfUpdatePreview(){
+  var addr  = document.getElementById('mf-addr').value||'';
+  var date  = document.getElementById('mf-date').value||'';
+  var time  = document.getElementById('mf-time').value||'';
+  var aEl   = document.getElementById('mf-agent');
+  var agent = aEl.value||'';
+  var owner = document.getElementById('mf-owner').value||'';
+  var phone = document.getElementById('mf-phone').value||'';
+  var link  = document.getElementById('mf-link').value||'';
+  var text =
+    'Address: '+(addr||'—')+'\n'+
+    'Date/time: '+(date||'—')+' '+(time||'')+'\n'+
+    'Agent: #'+(agent||'—')+'\n'+
+    'Owner: '+(owner||'—')+' '+(phone||'')+'\n'+
+    'Link: '+(link||'—');
+  document.getElementById('mf-preview').textContent=text;
+}
+
+function mfSubmit(){
+  var addr  = document.getElementById('mf-addr').value.trim();
+  var agent = document.getElementById('mf-agent').value;
+  if(!addr){showToast('Введи адрес');return;}
+  if(!agent){showToast('Выбери агента');return;}
+  var preview = document.getElementById('mf-preview').textContent;
+  send('makefoto', {preview: preview});
+  showToast('Отправлено! ✓');
+  setTimeout(goBack, 1500);
 }
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
