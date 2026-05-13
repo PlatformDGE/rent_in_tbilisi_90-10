@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Проверка квартиры</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#0a0a0f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;}
+.screen{max-width:420px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+
+.hdr{background:#1d3560;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.hdr-back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;cursor:pointer;}
+.hdr-title{font-size:16px;font-weight:600;color:#fff;}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+
+.body{padding:14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;}
+
+.section{background:#111118;border:0.5px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+.sl{font-size:10px;font-weight:600;color:#6060a0;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.field-input{width:100%;background:#1a1a24;border:0.5px solid rgba(255,255,255,.1);border-radius:10px;color:#eeeef5;font-size:14px;padding:11px 13px;outline:none;-webkit-appearance:none;font-family:inherit;}
+.field-input::placeholder{color:#55556a;}
+.field-input:focus{border-color:rgba(124,111,255,.5);}
+.hint{font-size:11px;color:#55556a;margin-top:5px;}
+
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,#7c6fff,#a78bfa);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.01em;}
+.btn:active{opacity:.85;}
+.btn-clear{width:100%;padding:13px;background:#1a1a24;border:0.5px solid rgba(255,255,255,.15);border-radius:14px;color:#eeeef5;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-clear:active{opacity:.75;}
+
+/* RESULTS */
+.result-box{border-radius:14px;overflow:hidden;}
+.res-header{display:flex;align-items:center;gap:12px;padding:14px;}
+.res-icon{font-size:26px;flex-shrink:0;}
+.res-title{font-size:14px;font-weight:700;}
+.res-sub{font-size:12px;margin-top:2px;}
+
+.res-ok .res-header{background:rgba(34,197,94,.1);border:0.5px solid rgba(34,197,94,.25);border-radius:14px;}
+.res-ok .res-title{color:#22c55e;}
+.res-ok .res-sub{color:rgba(34,197,94,.7);}
+
+.res-warn .res-header{background:rgba(251,191,36,.1);border:0.5px solid rgba(251,191,36,.25);border-radius:14px 14px 0 0;}
+.res-warn .res-title{color:#fbbf24;}
+.res-warn .res-sub{color:rgba(251,191,36,.8);}
+
+.res-danger .res-header{background:rgba(239,68,68,.1);border:0.5px solid rgba(239,68,68,.25);border-radius:14px 14px 0 0;}
+.res-danger .res-title{color:#ef4444;}
+.res-danger .res-sub{color:rgba(239,68,68,.8);}
+
+.match-list{background:#111118;border:0.5px solid rgba(255,255,255,.08);border-top:none;border-radius:0 0 14px 14px;}
+.match-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid rgba(255,255,255,.05);}
+.match-row:last-child{border-bottom:none;}
+.mk{font-size:12px;color:#6060a0;}
+.mv{font-size:12px;color:#eeeef5;font-weight:500;text-align:right;max-width:60%;}
+.badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;}
+.b-pub{background:rgba(34,197,94,.15);color:#22c55e;}
+.b-no{background:rgba(255,255,255,.07);color:#55556a;}
+
+.tg-link-row{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(124,111,255,.08);border:0.5px solid rgba(124,111,255,.2);border-top:none;border-radius:0 0 14px 14px;cursor:pointer;}
+.tg-link-text{font-size:12px;color:#a89fff;font-weight:500;}
+
+.demo-badge{display:inline-block;background:rgba(251,191,36,.12);color:#fbbf24;border:0.5px solid rgba(251,191,36,.3);border-radius:8px;font-size:10px;font-weight:600;padding:3px 10px;margin-bottom:10px;letter-spacing:.04em;}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="hdr">
+    <div class="hdr-back">←</div>
+    <div>
+      <div class="hdr-title">🔍 Проверка квартиры</div>
+      <div class="hdr-sub">База собственников · Tbilisi</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    
+
+    <div class="section">
+      <div class="sl">Телефон собственника</div>
+      <input class="field-input" type="tel" id="inp-phone" placeholder="+995 599 000 000">
+      <div class="hint">Попробуй: 995 559 444 444</div>
+    </div>
+
+    <div class="section">
+      <div class="sl">Адрес объекта</div>
+      <input class="field-input" type="text" id="inp-addr" placeholder="23 Rustaveli Avenue">
+      <div class="hint">Попробуй: Rustaveli или Kipshidze</div>
+    </div>
+
+    <button class="btn" id="check-btn" onclick="doCheck()">Проверить</button>
+
+    <div id="result-area" style="display:none;flex-direction:column;gap:10px;">
+
+      <div id="res-ok" class="result-box res-ok" style="display:none;">
+        <div class="res-header">
+          <span class="res-icon">✅</span>
+          <div>
+            <div class="res-title">Не найдено в базе</div>
+            <div class="res-sub">Объект или собственник не обнаружен</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="res-warn" class="result-box res-warn" style="display:none;">
+        <div class="res-header">
+          <span class="res-icon">⚠️</span>
+          <div>
+            <div class="res-title">Возможно есть в базе</div>
+            <div class="res-sub">1 совпадение — проверь детали</div>
+          </div>
+        </div>
+        <div class="match-list" id="match-warn-list"></div>
+      </div>
+
+      <div id="res-danger" class="result-box res-danger" style="display:none;">
+        <div class="res-header">
+          <span class="res-icon">🔴</span>
+          <div>
+            <div class="res-title">Точно есть в базе</div>
+            <div class="res-sub">Телефон + адрес совпали</div>
+          </div>
+        </div>
+        <div class="match-list" id="match-danger-list"></div>
+        <div class="tg-link-row">
+          <span style="font-size:14px;">💬</span>
+          <span class="tg-link-text">Смотреть в TG топике →</span>
+        </div>
+      </div>
+
+      <button class="btn-clear" onclick="doClear()">Очистить</button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+var API_URL='https://script.google.com/macros/s/AKfycbxyiOrLu3ftRcNLeuIWSGJJfz5NxzHGA-E71EX39m778QornJYZruNjUF3eEk2ckG0XpQ/exec';
+
+function buildRows(obj){
+  var rows=[
+    ['Источник', obj.source||'—'],
+    ['Собственник', obj.owner||'—'],
+    ['Телефон', obj.phone||'—'],
+    ['Адрес', obj.address||'—'],
+    ['Район', obj.district||'—'],
+  ];
+  if(obj.agent) rows.push(['Агент', obj.agent]);
+  if(obj.date)  rows.push(['Дата фото', obj.date]);
+  var html=rows.map(function(r){
+    return '<div class="match-row"><span class="mk">'+r[0]+'</span><span class="mv">'+r[1]+'</span></div>';
+  }).join('');
+  var s=obj.status||'';
+  var bCls=s==='Published'?'b-pub':'b-no';
+  html+='<div class="match-row"><span class="mk">Статус</span><span class="mv"><span class="badge '+bCls+'">'+s+'</span></span></div>';
+  return html;
+}
+
+function setLoading(on){
+  var btn=document.getElementById('check-btn');
+  btn.textContent=on?'Идёт поиск...':'Проверить';
+  btn.disabled=on;
+}
+
+function doCheck(){
+  var phone=document.getElementById('inp-phone').value.trim();
+  var addr=document.getElementById('inp-addr').value.trim();
+  if(!phone&&!addr){showToast('Введи телефон или адрес');return;}
+
+  var area=document.getElementById('result-area');
+  var ok=document.getElementById('res-ok');
+  var warn=document.getElementById('res-warn');
+  var danger=document.getElementById('res-danger');
+  ok.style.display='none';warn.style.display='none';danger.style.display='none';
+  area.style.display='flex';
+  setLoading(true);
+
+  var cbName='cb_'+Date.now();
+  var url=API_URL+'?action=checkProperty&phone='+encodeURIComponent(phone)+'&addr='+encodeURIComponent(addr)+'&callback='+cbName;
+
+  window[cbName]=function(data){
+    setLoading(false);
+    delete window[cbName];
+    var s=document.getElementById('script-'+cbName);
+    if(s)s.remove();
+
+    if(!data||data.level==='none'){
+      ok.style.display='block';return;
+    }
+    var res=data.results||[];
+    var html='';
+    res.forEach(function(r){html+=buildRows(r);});
+
+    if(data.level==='danger'){
+      document.getElementById('match-danger-list').innerHTML=html;
+      danger.style.display='block';
+    } else {
+      document.getElementById('match-warn-list').innerHTML=html;
+      warn.style.display='block';
+    }
+  };
+
+  var sc=document.createElement('script');
+  sc.id='script-'+cbName;
+  sc.src=url;
+  sc.onerror=function(){
+    setLoading(false);
+    showToast('Ошибка соединения');
+    ok.style.display='block';
+  };
+  document.body.appendChild(sc);
+}
+
+function doClear(){
+  document.getElementById('inp-phone').value='';
+  document.getElementById('inp-addr').value='';
+  document.getElementById('result-area').style.display='none';
+  ['res-ok','res-warn','res-danger'].forEach(function(id){document.getElementById(id).style.display='none';});
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:30px;left:16px;right:16px;background:#7c6fff;color:#fff;padding:12px 16px;border-radius:10px;text-align:center;font-size:13px;font-weight:600;z-index:999;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  setTimeout(function(){t.style.opacity='0';},2500);
+}
+</script>
+</body>
+</html>
