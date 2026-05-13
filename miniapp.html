@@ -424,13 +424,61 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     <div class="screen" id="tab-reports">
       <div style="padding:14px 16px 0;">
         <div style="font-size:18px;font-weight:800;margin-bottom:3px;">📋 Отчёты</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Выбери тип отчёта</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Выбери раздел</div>
       </div>
       <div class="cards">
         <div class="card" style="--cc:#a78bfa;grid-column:span 2" onclick="openGeneralReport()"><span class="card-ic">📊</span><div class="card-lb">Общий отчёт</div><div class="card-sub">Фото · Показ · Расклейка · Обзвон · Сделка</div></div>
+        <div class="card" style="--cc:#7c6fff;grid-column:span 2" onclick="openDailyReport()"><span class="card-ic">📅</span><div class="card-lb">Ежедневный отчёт</div><div class="card-sub">Звонки · Расклейка · Фото · Показы</div></div>
+        <div class="card" style="--cc:#22c55e;grid-column:span 2" onclick="openCheckProperty()"><span class="card-ic">🔍</span><div class="card-lb">Проверка квартиры</div><div class="card-sub">Поиск по базе собственников</div></div>
       </div>
     </div>
 
+
+    <!-- ═══ CHECK PROPERTY ═══ -->
+    <div class="screen" id="form-check">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">🔍 Проверка квартиры</div><div class="hs">База собственников · Tbilisi</div></div></div>
+      <div class="pad pb">
+
+        <div class="section">
+          <div class="sl">Телефон собственника</div>
+          <div class="field"><input type="tel" id="chk-phone" placeholder="+995 599 000 000"></div>
+        </div>
+
+        <div class="section">
+          <div class="sl">Адрес объекта</div>
+          <div class="field"><input type="text" id="chk-addr" placeholder="#Rustaveli 2"></div>
+        </div>
+
+        <button class="sbtn" id="chk-btn" onclick="doCheckProperty()">Проверить</button>
+
+        <div id="chk-result" style="display:none;margin-top:4px;">
+
+          <div id="chk-ok" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:24px;">✅</span>
+            <div><div style="font-size:13px;font-weight:700;color:#22c55e;">Не найдено в базе</div><div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px;">Объект или собственник не обнаружен</div></div>
+          </div>
+
+          <div id="chk-warn" style="display:none;">
+            <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:var(--r) var(--r) 0 0;padding:14px;display:flex;align-items:center;gap:12px;">
+              <span style="font-size:24px;">⚠️</span>
+              <div><div style="font-size:13px;font-weight:700;color:#fbbf24;">Возможно есть в базе</div><div style="font-size:12px;color:rgba(251,191,36,.8);margin-top:2px;">1 совпадение — проверь детали</div></div>
+            </div>
+            <div id="chk-warn-rows" style="background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);"></div>
+          </div>
+
+          <div id="chk-danger" style="display:none;">
+            <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r) var(--r) 0 0;padding:14px;display:flex;align-items:center;gap:12px;">
+              <span style="font-size:24px;">🔴</span>
+              <div><div style="font-size:13px;font-weight:700;color:#ef4444;">Точно есть в базе</div><div style="font-size:12px;color:rgba(239,68,68,.8);margin-top:2px;">Телефон + адрес совпали</div></div>
+            </div>
+            <div id="chk-danger-rows" style="background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);"></div>
+          </div>
+
+        </div>
+
+        <button id="chk-clear" onclick="clearCheck()" style="display:none;width:100%;padding:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;">Очистить</button>
+      </div>
+    </div>
 
     <!-- ═══ GENERAL REPORT ═══ -->
     <div class="screen" id="form-general">
@@ -920,7 +968,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwucuK07ZYizGIU8k5jiW1ALsaHk6tWCOzsiVZA0s0es0a9yvCow3sR550FDdVy1f-qUg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbw4VrqLzoYpcNlp0JvlotlHfOL51quirJ6O6wu1ZAocuYa8qwDt5bNT0O5sJHgQ7VmK/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -943,7 +991,6 @@ window.addEventListener('load', function() {
 
 // TABS
 function goTab(tab) {
-  if(tab==='reports') { openGeneralReport(); return; }
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('active');
@@ -2083,6 +2130,94 @@ function grSubmit(){
 }
 
 function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+
+// ══ CHECK PROPERTY ══
+function openCheckProperty(){
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-check').classList.add('active');
+  clearCheck();
+  window.scrollTo(0,0);
+}
+
+function buildChkRows(obj){
+  var fields=[
+    ['Источник', obj.source||'—'],
+    ['Собственник', obj.owner||'—'],
+    ['Телефон', obj.phone||'—'],
+    ['Адрес', obj.address||'—'],
+    ['Район', obj.district||'—'],
+  ];
+  if(obj.agent) fields.push(['Агент', obj.agent]);
+  if(obj.date)  fields.push(['Дата фото', obj.date]);
+  var html=fields.map(function(r){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);">'+
+      '<span style="font-size:12px;color:var(--text2);">'+r[0]+'</span>'+
+      '<span style="font-size:12px;color:var(--text);font-weight:500;text-align:right;max-width:60%;">'+r[1]+'</span></div>';
+  }).join('');
+  var s=obj.status||'';
+  var bStyle=s==='Published'?'background:rgba(34,197,94,.15);color:#22c55e;':'background:var(--bg3);color:var(--text3);';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;">'+
+    '<span style="font-size:12px;color:var(--text2);">Статус</span>'+
+    '<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;'+bStyle+'">'+s+'</span></div>';
+  return html;
+}
+
+function doCheckProperty(){
+  var phone=document.getElementById('chk-phone').value.trim();
+  var addr=document.getElementById('chk-addr').value.trim();
+  if(!phone&&!addr){showToast('Введи телефон или адрес');return;}
+
+  var btn=document.getElementById('chk-btn');
+  btn.textContent='Поиск...';btn.disabled=true;
+
+  document.getElementById('chk-ok').style.display='none';
+  document.getElementById('chk-warn').style.display='none';
+  document.getElementById('chk-danger').style.display='none';
+  document.getElementById('chk-result').style.display='block';
+  document.getElementById('chk-clear').style.display='none';
+
+  var cbName='chkCb'+Date.now();
+  var url=API_URL+'?action=checkProperty&phone='+encodeURIComponent(phone)+'&addr='+encodeURIComponent(addr)+'&callback='+cbName;
+
+  window[cbName]=function(data){
+    btn.textContent='Проверить';btn.disabled=false;
+    document.getElementById('chk-clear').style.display='block';
+    delete window[cbName];
+    var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
+
+    if(!data||data.level==='none'){
+      document.getElementById('chk-ok').style.display='flex';return;
+    }
+    var html='';
+    (data.results||[]).forEach(function(r){html+=buildChkRows(r);});
+    if(data.level==='danger'){
+      document.getElementById('chk-danger-rows').innerHTML=html;
+      document.getElementById('chk-danger').style.display='block';
+    } else {
+      document.getElementById('chk-warn-rows').innerHTML=html;
+      document.getElementById('chk-warn').style.display='block';
+    }
+  };
+
+  var sc=document.createElement('script');
+  sc.id='sc-'+cbName;sc.src=url;
+  sc.onerror=function(){
+    btn.textContent='Проверить';btn.disabled=false;
+    showToast('Ошибка соединения');
+    document.getElementById('chk-result').style.display='none';
+  };
+  document.body.appendChild(sc);
+}
+
+function clearCheck(){
+  document.getElementById('chk-phone').value='';
+  document.getElementById('chk-addr').value='';
+  document.getElementById('chk-result').style.display='none';
+  document.getElementById('chk-clear').style.display='none';
+  ['chk-ok','chk-warn','chk-danger'].forEach(function(id){document.getElementById(id).style.display='none';});
+}
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
 </script>
