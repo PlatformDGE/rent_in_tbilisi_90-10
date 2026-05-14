@@ -2187,11 +2187,11 @@ function subDaily(){
     calls_no:parseInt(document.getElementById('daily-calls-no').value)||0,
     calls_yes:parseInt(document.getElementById('daily-calls-yes').value)||0,
     stickers:parseInt(document.getElementById('daily-stickers').value)||0,
-    stickers_district:document.getElementById('daily-st-dist').value,
+    stickers_district:(document.getElementById('daily-st-dist')||{}).value||'',
     photos:parseInt(document.getElementById('daily-photos').value)||0,
-    photo_address:document.getElementById('daily-ph-addr').value,
+    photo_address:(document.getElementById('daily-ph-addr')||{}).value||'',
     showings:parseInt(document.getElementById('daily-showings').value)||0,
-    showing_address:document.getElementById('daily-sh-addr').value,
+    showing_address:(document.getElementById('daily-sh-addr')||{}).value||'',
     preview:document.getElementById('daily-preview').textContent
   };
 
