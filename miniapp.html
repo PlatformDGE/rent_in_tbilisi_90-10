@@ -273,27 +273,26 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     <!-- ═══ DEALS ═══ -->
     <div class="screen active" id="tab-deals">
       <div style="padding:14px 16px 0;">
-        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">💰 Сдача квартиры</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Калькулятор + отчёт + T0 оценка</div>
-        <div class="prog" style="display:none;"><div class="prog-l">Прогресс</div><div class="prog-t"><div class="prog-f" id="pg-rental" style="width:0"></div></div><div class="prog-n" id="pn-rental">0/10</div></div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">💰 Deal</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Calculator + Report + T0</div>
       </div>
       <div class="pad pb">
 
         <!-- 1. ОБЪЕКТ -->
         <div class="section"><div class="sl">1. Объект</div>
-          <div class="field"><label class="fl">Ссылка на объект из канала <span class="req">*</span></label>
-            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="updateRentalPreview()"></div>
+          <div class="field"><label class="fl">Ссылка на объект <span class="req">*</span></label>
+            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="rnUpd()"></div>
           <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
-            <input type="text" id="rn-cadastral" placeholder="01.10.10.xxx.xxx.xx.xx.xxx" oninput="updateRentalPreview();searchPDF(this.value)">
+            <input type="text" id="rn-cadastral" placeholder="01.10.10.xxx.xxx.xx.xx.xxx" oninput="rnUpd();searchPDF(this.value)">
             <div id="pdf-status" style="font-size:12px;padding:5px 0;display:none;"></div>
             <div id="pdf-wrap" style="margin-top:8px;border-radius:var(--rsm);overflow:hidden;display:none;">
               <iframe id="pdf-frame" src="" style="width:100%;height:380px;border:none;"></iframe>
             </div>
           </div>
           <div class="field"><label class="fl">Тип объекта</label>
-            <div class="tg c2">
-              <button class="tb ag" id="rn-ex-y" onclick="setRnExcl(true)">✓ Эксклюзив</button>
-              <button class="tb" id="rn-ex-n" onclick="setRnExcl(false)">Неэксклюзив</button>
+            <div style="display:flex;gap:8px;">
+              <button style="flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid var(--border-success,rgba(34,197,94,.4));background:var(--bg-success,rgba(34,197,94,.1));color:var(--c-success,#22c55e);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;" id="rn-ex-y" onclick="setRnExcl(true)"><i class="ti ti-lock" style="font-size:15px;"></i>Эксклюзив</button>
+              <button style="flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--bg2);color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;opacity:.5;display:flex;align-items:center;justify-content:center;gap:6px;" id="rn-ex-n" onclick="setRnExcl(false)"><i class="ti ti-lock-open" style="font-size:15px;"></i>Неэксклюзив</button>
             </div>
           </div>
           <div class="field"><label class="fl">Тип сделки</label>
@@ -304,119 +303,170 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
           <div id="rn-subtype-wrap" class="field"><label class="fl">Подтип аренды</label>
             <div class="tg c2">
-              <button class="tb aa" id="rn-sub-long" onclick="setRnSubtype('long')">Долгосрочная<br><span style="font-size:10px;opacity:.7">50%</span></button>
-              <button class="tb" id="rn-sub-comm" onclick="setRnSubtype('comm')">Коммерция<br><span style="font-size:10px;opacity:.7">100%</span></button>
+              <button class="tb aa" id="rn-sub-long" onclick="setRnSubtype('long')">Долгосрочная · 50%</button>
+              <button class="tb" id="rn-sub-comm" onclick="setRnSubtype('comm')">Коммерция · 100%</button>
             </div>
           </div>
         </div>
 
-        <!-- 2. КАЛЬКУЛЯТОР -->
-        <div class="section"><div class="sl">2. Участники и комиссия</div>
-          <div class="field"><label class="fl">Агент <span class="req">*</span></label>
-            <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Select agent...</option></select>
+        <!-- 2. СЦЕНАРИЙ -->
+        <div class="section"><div class="sl">2. Сценарий</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="rn-sc-btn on" id="rnsc-0" onclick="setRnSc(0)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;background:#1d3560;border:1.5px solid #4a90d9;display:flex;align-items:center;justify-content:center;font-size:9px;color:#7eb3ff;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🏠</div>
+              <div style="font-size:12px;font-weight:700;color:#7eb3ff;margin-bottom:3px;">Агент</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свой объект без рекрута</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-1" onclick="setRnSc(1)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🤝</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Агент + показ</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут показал и подписал</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-2" onclick="setRnSc(2)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🔄</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Агент передал</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут сделал всё</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-3" onclick="setRnSc(3)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">⭐</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Рекрут · 5 сд.</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут получает 20%</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-4" onclick="setRnSc(4)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🌟</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Рекрут · 10 сд.</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут получает 50%</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-5" onclick="setRnSc(5)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">💎</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Объект рекрута</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">По кол-ву сделок</div>
+            </div>
           </div>
-          <div class="field"><label class="fl">Уровень агента</label>
+          <!-- Ручное распределение -->
+          <div style="background:var(--bg3);border:0.5px solid rgba(74,144,217,.12);border-radius:12px;padding:12px 14px;margin-top:10px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение</div>
+            <div id="rn-manual-rows"></div>
+          </div>
+        </div>
+
+        <!-- 3. УЧАСТНИКИ -->
+        <div class="section"><div class="sl">3. Участники</div>
+          <div class="field"><label class="fl">Агент <span class="req">*</span></label>
+            <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
+          </div>
+          <div class="field" id="rn-level-block"><label class="fl">Уровень агента</label>
             <div class="tg c3">
               <button class="tb" id="rn-lvl-50" onclick="setRnLvl(50)">50%</button>
               <button class="tb" id="rn-lvl-70" onclick="setRnLvl(70)">70%</button>
               <button class="tb aa" id="rn-lvl-90" onclick="setRnLvl(90)">90%</button>
             </div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px;">Подставляется автоматически из профиля</div>
           </div>
-          <div class="field">
-            <label class="fl">Чей объект?</label>
-            <div class="tg">
-              <button class="tb aa" id="obj-agent" onclick="setObjOwner('agent',this)">Агента</button>
-              <button class="tb" id="obj-recruit" onclick="setObjOwner('recruit',this)">Рекрута</button>
+          <div class="field" id="rn-recruit-block"><label class="fl">Рекрут / Агент (показ)</label>
+            <select id="rn-recruit" onchange="rnUpd()"><option value="">Без рекрута</option></select>
+          </div>
+          <div class="field" id="rn-recdeals-block" style="display:none;"><label class="fl">Сделки рекрута</label>
+            <div class="tg c2">
+              <button class="tb aa" id="rn-rd-lt" onclick="setRnRecD('lt10')">До 10 сделок</button>
+              <button class="tb" id="rn-rd-gte" onclick="setRnRecD('gte10')">10 — 90 сделок</button>
             </div>
           </div>
-          <div class="field"><label class="fl">Рекрут (если есть)</label>
-            <select id="rn-recruit" onchange="onRecruitChange()"><option value="">Без рекрута</option></select>
-          </div>
-          <div class="field" id="rn-recruit-pct-row" style="display:none;">
-            <label class="fl">% рекрута от доли агента</label>
-            <div style="display:flex;gap:8px;"><button class="tb" id="rn-rp-10" onclick="setRnRecruitPct(10,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">10%</button><button class="tb" id="rn-rp-20" onclick="setRnRecruitPct(20,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">20%</button><button class="tb" id="rn-rp-30" onclick="setRnRecruitPct(30,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">30%</button><button class="tb" id="rn-rp-40" onclick="setRnRecruitPct(40,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">40%</button><button class="tb" id="rn-rp-50" onclick="setRnRecruitPct(50,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">50%</button></div>
-          </div>
-          <div class="field"><label class="fl">Наставник (если есть)</label>
-            <select id="rn-mentor" onchange="onMentorChange()"><option value="">Без наставника</option></select>
-          </div>
-          <div class="field" id="rn-mentor-pct-row" style="display:none;">
-            <label class="fl">% наставника (авто по сделкам)</label>
-            <div style="display:flex;gap:8px;">
-              <button class="tb" id="rn-mp-25" onclick="setRnMentorPct(25,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">25%<br><span style="font-size:10px;opacity:.7;">1-10 сд.</span></button>
-              <button class="tb" id="rn-mp-15" onclick="setRnMentorPct(15,this)" style="flex:1;padding:10px 4px;font-size:13px;font-weight:700;">15%<br><span style="font-size:10px;opacity:.7;">11-100 сд.</span></button>
-            </div>
-          </div>
+        </div>
+
+        <!-- 4. ЦЕНА -->
+        <div class="section"><div class="sl">4. Цена и комиссия</div>
           <div class="r2">
             <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
               <input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
             <div class="field"><label class="fl">Комиссия %</label>
               <input type="number" id="rn-comm-pct" value="50" oninput="calcRental()"></div>
           </div>
-
-          <!-- CALC RESULT -->
-          <div class="cbox" id="rn-calc" style="display:none;">
-            <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Распределение</div>
-            <div class="crow"><span class="ck">Комиссия агентства</span><span class="cv" id="rn-ct">—</span></div>
-            <div class="crow"><span class="ck" id="rn-agent-label">Агент</span><span class="cv g" id="rn-ca">—</span></div>
-            <div class="crow"><span class="ck">Платформа</span><span class="cv a" id="rn-cp">—</span></div>
-            <div class="crow" id="rn-cm-row" style="display:none;"><span class="ck" id="rn-mentor-label">Наставник</span><span class="cv p" id="rn-cm">—</span></div>
-            <div class="crow" id="rn-mentor-row" style="display:none;"><span class="ck" id="rn-mentor-calc-label">Наставник</span><span class="cv p" id="rn-cm-val">—</span></div>
-            <div class="crow" id="rn-recruit-row" style="display:none;"><span class="ck" id="rn-recruit-label">Рекрут</span><span class="cv p" id="rn-cr">—</span></div>
-            <div class="crow" id="rn-mentor-row" style="display:none;"><span class="ck" id="rn-mentor-calc-label">Наставник</span><span class="cv p" id="rn-cm-val">—</span></div>
-            <div class="crow" id="rn-agent-final-row" style="display:none;"><span class="ck" id="rn-agent-final-label">Агент итого</span><span class="cv g" id="rn-ca-final">—</span></div>
+          <div id="rn-calc" style="display:none;margin-top:10px;background:var(--bg3);border:0.5px solid rgba(74,144,217,.2);border-radius:14px;overflow:hidden;">
+            <div style="padding:12px 16px;background:linear-gradient(135deg,rgba(29,53,96,.8),rgba(17,21,48,.8));border-bottom:0.5px solid rgba(74,144,217,.12);display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:24px;font-weight:700;color:#7eb3ff;" id="rn-ct">—</div><div style="font-size:11px;color:var(--text3);margin-top:2px;" id="rn-ct-sub">комиссия агентства</div></div>
+              <div id="rn-excl-badge"></div>
+            </div>
+            <div id="rn-dist-rows"></div>
           </div>
         </div>
 
-        <!-- 3. КЛИЕНТ И СОБСТВЕННИК -->
-        <div class="section"><div class="sl">3. Клиент и собственник</div>
+        <!-- 5. КЛИЕНТ -->
+        <div class="section"><div class="sl">5. Клиент и собственник</div>
           <div class="r2">
-            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Anna" oninput="updateRentalPreview()"></div>
-            <div class="field"><label class="fl">Telegram клиента или телефон</label><input type="text" id="rn-cphone" placeholder="@username / телефон" oninput="updateRentalPreview()"></div>
+            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Anna" oninput="rnUpd()"></div>
+            <div class="field"><label class="fl">Telegram / телефон</label><input type="text" id="rn-cphone" placeholder="@username" oninput="rnUpd()"></div>
           </div>
           <div class="r2">
-            <div class="field"><label class="fl">Собственник (имя)</label><input type="text" id="rn-oname" placeholder="Giorgi" oninput="updateRentalPreview()"></div>
-            <div class="field"><label class="fl">Telegram собственника или телефон</label><input type="text" id="rn-ophone" placeholder="@username / телефон" oninput="updateRentalPreview()"></div>
+            <div class="field"><label class="fl">Собственник (имя)</label><input type="text" id="rn-oname" placeholder="Giorgi" oninput="rnUpd()"></div>
+            <div class="field"><label class="fl">Telegram / телефон</label><input type="text" id="rn-ophone" placeholder="@username" oninput="rnUpd()"></div>
           </div>
-        </div>
-
-        <!-- 4. ПЕРИОД -->
-        <div class="section"><div class="sl">4. Период аренды</div>
           <div class="r2">
-            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from" oninput="updateRentalPreview()"></div>
-            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to" oninput="updateRentalPreview()"></div>
+            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from" oninput="rnUpd()"></div>
+            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to" oninput="rnUpd()"></div>
           </div>
         </div>
 
-        <!-- 5. T0 -->
+        <!-- 6. H2O -->
+        <div class="section"><div class="sl">6. H2O — T0 Оценка</div>
+          <!-- Client Delivery -->
+          <div style="background:rgba(255,59,46,.06);border:1px solid rgba(255,59,46,.2);border-radius:16px;padding:14px 16px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div><div style="font-size:15px;font-weight:700;color:#ff6b63;">Client Delivery</div><div style="font-size:11px;color:rgba(255,107,99,.5);margin-top:2px;">Клиент получил ожидаемое?</div></div>
+              <div style="font-size:28px;font-weight:800;color:#ff6b63;opacity:.25;transition:all .2s;" id="hp-c">—</div>
+            </div>
+            <div style="display:flex;gap:8px;" id="h0-c">
+              <button style="flex:1;padding:13px;border-radius:14px;background:#2a1218;border:1px solid rgba(255,69,58,.2);color:#cc3a32;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',1,this)">1</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#2a1a10;border:1px solid rgba(255,107,0,.15);color:#cc5500;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',2,this)">2</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#1a2210;border:1px solid rgba(255,149,0,.15);color:#aa7700;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',3,this)">3</button>
+            </div>
+          </div>
+          <!-- Owner Result -->
+          <div style="background:rgba(255,214,10,.05);border:1px solid rgba(255,214,10,.18);border-radius:16px;padding:14px 16px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div><div style="font-size:15px;font-weight:700;color:#ffd60a;">Owner Result</div><div style="font-size:11px;color:rgba(255,214,10,.45);margin-top:2px;">Собственник получил результат?</div></div>
+              <div style="font-size:28px;font-weight:800;color:#ffd60a;opacity:.25;transition:all .2s;" id="hp-o">—</div>
+            </div>
+            <div style="display:flex;gap:8px;" id="h0-o">
+              <button style="flex:1;padding:13px;border-radius:14px;background:#1e1800;border:1px solid rgba(204,136,0,.2);color:#886600;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',1,this)">1</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#241e00;border:1px solid rgba(255,204,0,.15);color:#aa9900;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',2,this)">2</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#2a2400;border:1px solid rgba(255,214,10,.15);color:#ccaa00;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',3,this)">3</button>
+            </div>
+          </div>
+          <!-- Process Integrity -->
+          <div style="background:rgba(48,209,88,.05);border:1px solid rgba(48,209,88,.18);border-radius:16px;padding:14px 16px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div><div style="font-size:15px;font-weight:700;color:#30d158;">Process Integrity</div><div style="font-size:11px;color:rgba(48,209,88,.45);margin-top:2px;">Процесс прошёл чисто?</div></div>
+              <div style="font-size:28px;font-weight:800;color:#30d158;opacity:.25;transition:all .2s;" id="hp-p">—</div>
+            </div>
+            <div style="display:flex;gap:8px;" id="h0-p">
+              <button style="flex:1;padding:13px;border-radius:14px;background:#0e200e;border:1px solid rgba(26,122,42,.2);color:#1a5a1a;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',1,this)">1</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#102810;border:1px solid rgba(37,168,58,.15);color:#256a25;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',2,this)">2</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#123012;border:1px solid rgba(48,209,88,.15);color:#307a30;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',3,this)">3</button>
+            </div>
+          </div>
+          <!-- Big Score -->
+          <div id="rn-big-score"></div>
+          <!-- Result buttons -->
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <button class="tb" id="t0-cl" onclick="setT0R('clean')" style="flex:1;padding:12px;">✓ Чистая</button>
+            <button class="tb" id="t0-dr" onclick="setT0R('dirty')" style="flex:1;padding:12px;">✗ Грязная</button>
+          </div>
+          <div class="field"><label class="fl">Комментарий агента</label>
+            <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..." oninput="rnUpd()" style="width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rsm);color:var(--text);padding:10px 12px;font-family:inherit;font-size:14px;resize:none;outline:none;"></textarea>
+          </div>
+        </div>
+
         <div class="divider"></div>
-        <div class="info">🔍 <strong>T0 — оценка сразу после сдачи</strong><br>Заполни качество сделки прямо сейчас — H2O оценка по 3 критериям</div>
-        <div class="section"><div class="sl">5. H2O — T0 оценка</div>
-          <div class="h2o">
-            <div class="h2o-t">Client Delivery</div><div class="h2o-s">Клиент получил ожидаемое?</div>
-            <div class="h2o-b" id="h0-c"><button class="hb" onclick="setH2O('t0','client',1,this)">1</button><button class="hb" onclick="setH2O('t0','client',2,this)">2</button><button class="hb" onclick="setH2O('t0','client',3,this)">3</button></div>
-          </div>
-          <div class="h2o">
-            <div class="h2o-t">Owner Result</div><div class="h2o-s">Собственник получил результат?</div>
-            <div class="h2o-b" id="h0-o"><button class="hb" onclick="setH2O('t0','owner',1,this)">1</button><button class="hb" onclick="setH2O('t0','owner',2,this)">2</button><button class="hb" onclick="setH2O('t0','owner',3,this)">3</button></div>
-          </div>
-          <div class="h2o">
-            <div class="h2o-t">Process Integrity</div><div class="h2o-s">Процесс прошёл чисто?</div>
-            <div class="h2o-b" id="h0-p"><button class="hb" onclick="setH2O('t0','process',1,this)">1</button><button class="hb" onclick="setH2O('t0','process',2,this)">2</button><button class="hb" onclick="setH2O('t0','process',3,this)">3</button></div>
-          </div>
-          <div class="section" style="margin-top:12px"><div class="sl">Итог T0</div>
-            <div class="tg c2"><button class="tb" id="t0-cl" onclick="setT0R('clean')">✓ Чистая</button><button class="tb" id="t0-dr" onclick="setT0R('dirty')">✗ Грязная</button></div>
-          </div>
-          <div class="field" style="margin-top:10px"><label class="fl">Комментарий агента</label>
-            <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..."></textarea>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-        <div class="sl" style="margin-bottom:8px;">Предпросмотр сдачи</div>
+        <div class="sl" style="margin-bottom:8px;">Предпросмотр отчёта</div>
         <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
 
-        <button class="sbtn" onclick="sub('rental')">Отправить сдачу + T0</button>
+        <button class="sbtn" onclick="sub('rental')">🚀 Отправить сдачу + T0</button>
       </div>
     </div>
 
@@ -1021,7 +1071,8 @@ let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
 // State
 let showRes='', h2o={t0:{client:0,owner:0,process:0},t14:{client:0,owner:0,process:0}};
 let t0Res='', t14Res='', compSel='';
-let rnExcl=true, rnType='rent', rnSub='long', rnLvl=50;
+let rnExcl=true, rnType='rent', rnSub='long', rnLvl=90, rnSc=0, rnRecD='lt10';
+let rnH2O={c:0,o:0,p:0}, rnT0Res='', rnManualPcts={}, rnManualNotes={};
 let dExcl=true, dType='rent', dSub='long', dLvl=50;
 let prevTab='reports';
 let cStep=1, cLang='';
@@ -1094,9 +1145,14 @@ function setDealMode(mode) {
 }
 
 function populateRentalInDeals() {
-  const agEl=document.getElementById('rn-agent'); if(!agEl)return; agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}" data-level="${a.level||50}">${a.name} (${a.level||50}%)</option>`);
-  const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
-  const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
+  var agEl=document.getElementById('rn-agent'); if(!agEl)return;
+  agEl.innerHTML='<option value="">Выбрать агента...</option>';
+  AGENTS.forEach(function(a){agEl.innerHTML+='<option value="'+a.telegram+'" data-level="'+(a.level||50)+'">'+a.name+' ('+(a.level||50)+'%)</option>';});
+  var rEl=document.getElementById('rn-recruit'); if(!rEl)return;
+  rEl.innerHTML='<option value="">Без рекрута</option>';
+  RECRUITS.forEach(function(r){rEl.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});
+  buildRnManual();
+  setRnSc(0);
 }
 
 function populateDeals() {
@@ -1183,7 +1239,22 @@ function setLvl(v) {
   calcDeal();
 }
 
-function setRnExcl(v){rnExcl=v;document.getElementById('rn-ex-y').className='tb'+(v?' ag':'');document.getElementById('rn-ex-n').className='tb'+(!v?' ar':'');}
+function setRnExcl(v){
+  rnExcl=v;
+  var btnY=document.getElementById('rn-ex-y');
+  var btnN=document.getElementById('rn-ex-n');
+  var sOn='flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;';
+  var sOff=sOn+'opacity:.5;';
+  if(btnY){
+    btnY.style.cssText=v?sOn+'border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.1);color:#22c55e;':sOff+'border-color:var(--border);background:var(--bg2);color:var(--text3);';
+    btnY.innerHTML='<i class="ti ti-lock" style="font-size:15px;"></i>Эксклюзив';
+  }
+  if(btnN){
+    btnN.style.cssText=!v?sOn+'border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.1);color:#ef4444;':sOff+'border-color:var(--border);background:var(--bg2);color:var(--text3);';
+    btnN.innerHTML='<i class="ti ti-lock-open" style="font-size:15px;"></i>Неэксклюзив';
+  }
+  calcRental();
+}
 
 function setRnSubtype(v) {
   rnSub = v;
@@ -1198,6 +1269,7 @@ function setRnLvl(v) {
   [50,70,90].forEach(function(l){ var el=document.getElementById('rn-lvl-'+l); if(el) el.className='tb'+(l===v?' aa':''); });
   calcRental();
 }
+
 function setRnType(v) {
   rnType = v;
   document.getElementById('rn-tp-r').className = 'tb' + (v==='rent' ? ' aa' : '');
@@ -1208,173 +1280,214 @@ function setRnType(v) {
   document.getElementById('rn-comm-pct').value = pct;
   calcRental();
 }
+
+function setRnSc(i){
+  rnSc=i;
+  for(var j=0;j<6;j++){
+    var btn=document.getElementById('rnsc-'+j);
+    if(!btn)continue;
+    var ck=btn.querySelector('.rnsc-ck');
+    if(j===i){
+      btn.style.background='rgba(29,53,96,.4)';
+      btn.style.borderColor='#2d5aa0';
+      btn.style.boxShadow='0 0 0 1px rgba(45,90,160,.3)';
+      btn.querySelectorAll('div')[1].style.color='#7eb3ff';
+      if(ck){ck.style.background='#1d3560';ck.style.borderColor='#4a90d9';ck.style.color='#7eb3ff';}
+    } else {
+      btn.style.background='var(--bg3)';
+      btn.style.borderColor='rgba(255,255,255,.07)';
+      btn.style.boxShadow='none';
+      btn.querySelectorAll('div')[1].style.color='var(--text)';
+      if(ck){ck.style.background='transparent';ck.style.borderColor='rgba(255,255,255,.15)';ck.style.color='transparent';}
+    }
+  }
+  var showRec=(i>=1&&i<=3);
+  var showRecDeals=(i===5);
+  var showLevel=(i<=3);
+  var rb=document.getElementById('rn-recruit-block');
+  var rd=document.getElementById('rn-recdeals-block');
+  var lb=document.getElementById('rn-level-block');
+  if(rb)rb.style.display=showRec?'block':'none';
+  if(rd)rd.style.display=showRecDeals?'block':'none';
+  if(lb)lb.style.display=showLevel?'block':'none';
+  buildRnManual();
+  calcRental();
+}
+
+function setRnRecD(v){
+  rnRecD=v;
+  document.getElementById('rn-rd-lt').className='tb'+(v==='lt10'?' aa':'');
+  document.getElementById('rn-rd-gte').className='tb'+(v==='gte10'?' aa':'');
+  calcRental();
+}
+
+var rnScDefs=[
+  [{n:'Агент',c:'#22c55e'},{n:'Платформа',c:'#55556a'}],
+  [{n:'Агент (объект)',c:'#22c55e'},{n:'Рекрут / Агент (показ)',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
+  [{n:'Агент (передал)',c:'#22c55e'},{n:'Рекрут (сделал всё)',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
+  [{n:'Агент',c:'#22c55e'},{n:'Рекрут (5 сд.)',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
+  [{n:'Агент-наставник',c:'#22c55e'},{n:'Рекрут (10 сд.)',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
+  [{n:'Агент-наставник',c:'#22c55e'},{n:'Рекрут',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
+];
+
+function buildRnManual(){
+  var rows=rnScDefs[rnSc], html='';
+  rows.forEach(function(r,i){
+    var k='r'+rnSc+'_'+i;
+    html+='<div style="display:grid;grid-template-columns:1fr 56px 1fr;gap:6px;margin-bottom:7px;align-items:center;">'
+      +'<span style="font-size:11px;color:'+r.c+';">'+r.n+'</span>'
+      +'<input style="background:var(--bg3);border:0.5px solid rgba(74,144,217,.2);border-radius:8px;color:#7eb3ff;font-size:13px;font-weight:700;padding:7px 8px;outline:none;width:100%;text-align:center;font-family:inherit;" type="number" placeholder="%" value="'+(rnManualPcts[k]||'')+'" oninput="rnManualPcts[\''+k+'\']=this.value;calcRental()">'
+      +'<input style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.06);border-radius:8px;color:var(--text2);font-size:11px;padding:7px 10px;outline:none;width:100%;font-family:inherit;" placeholder="комментарий..." value="'+(rnManualNotes[k]||'')+'" oninput="rnManualNotes[\''+k+'\']=this.value;rnUpd()">'
+      +'</div>';
+  });
+  var el=document.getElementById('rn-manual-rows');
+  if(el)el.innerHTML=html;
+}
+
+function rnCalcDist(comm){
+  var rows=[];
+  if(rnSc===0){var a=rnExcl?rnLvl:50,p=100-a;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===1){var a=rnExcl?(rnLvl===50?30:rnLvl===70?50:70):30,p=100-a-20;rows=[{n:'Агент (объект)',p:a,c:'#22c55e'},{n:'Рекрут/Агент (показ)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===2){var a=rnExcl?(rnLvl===50?10:rnLvl===70?30:50):10,p=100-a-40;rows=[{n:'Агент (передал)',p:a,c:'#22c55e'},{n:'Рекрут (сделал всё)',p:40,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===3){var a=rnExcl?70:30,p=100-a-20;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Рекрут (5 сд.)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===4){rows=[{n:'Агент-наставник',p:25,c:'#22c55e'},{n:'Рекрут (10 сд.)',p:50,c:'#a89fff'},{n:'Платформа',p:25,c:'#55556a'}];}
+  else{var a=rnRecD==='lt10'?25:15,r=rnRecD==='lt10'?50:70,p2=rnRecD==='lt10'?25:15;rows=[{n:'Агент-наставник',p:a,c:'#22c55e'},{n:'Рекрут',p:r,c:'#a89fff'},{n:'Платформа',p:p2,c:'#55556a'}];}
+  // Check manual overrides
+  var hasM=rnScDefs[rnSc].some(function(r,i){return rnManualPcts['r'+rnSc+'_'+i]&&rnManualPcts['r'+rnSc+'_'+i]!=='';});
+  if(hasM){rows=rnScDefs[rnSc].map(function(r,i){var k='r'+rnSc+'_'+i;var pct=parseFloat(rnManualPcts[k])||0;return{n:r.n,p:pct,c:r.c,val:Math.round(comm*pct/100),note:rnManualNotes[k]||''};});}
+  else{rows=rows.map(function(r){r.val=Math.round(comm*r.p/100);return r;});}
+  return rows;
+}
+
+function setRnH2O(k,v,btn){
+  rnH2O[k]=v;
+  var pill=document.getElementById('hp-'+k);
+  if(pill){pill.textContent=v;pill.style.opacity='1';}
+  var container=document.getElementById('h0-'+k);
+  if(container){
+    container.querySelectorAll('button').forEach(function(b,i){
+      var colors={c:['#ff3b2e','#ff6b00','#ff9500'],o:['#cc8800','#ffcc00','#ffd60a'],p:['#1a7a2a','#25a83a','#30d158']};
+      var bgs={c:['#3a0f0f','#3a2000','#3a2800'],o:['#2a1e00','#2e2400','#322800'],p:['#0f2a0f','#123012','#153515']};
+      if(i+1===v){
+        b.style.background=bgs[k][i];
+        b.style.borderColor=colors[k][i];
+        b.style.color=colors[k][i];
+        b.style.boxShadow='0 4px 16px '+colors[k][i]+'44';
+      } else {
+        var defBg={c:'#2a1218',o:'#1e1800',p:'#0e200e'};
+        var defC={c:'rgba(255,69,58,.2)',o:'rgba(204,136,0,.2)',p:'rgba(26,122,42,.2)'};
+        var defTxt={c:'#cc3a32',o:'#886600',p:'#1a5a1a'};
+        b.style.background=defBg[k];b.style.borderColor=defC[k];b.style.color=defTxt[k];b.style.boxShadow='none';
+      }
+    });
+  }
+  rnDrawBigScore();
+  rnUpd();
+}
+
+function rnDrawBigScore(){
+  var total=rnH2O.c+rnH2O.o+rnH2O.p;
+  var box=document.getElementById('rn-big-score');
+  if(!box)return;
+  if(!total){box.innerHTML='';return;}
+  var clean=total>=7;
+  var pct=Math.round(total/9*100);
+  box.innerHTML='<div style="border-radius:16px;padding:18px 16px;text-align:center;margin-bottom:12px;'
+    +(clean?'background:linear-gradient(135deg,rgba(10,42,18,.9),rgba(13,58,21,.9));border:1px solid rgba(48,209,88,.35);':'background:linear-gradient(135deg,rgba(42,8,10,.9),rgba(61,13,16,.9));border:1px solid rgba(255,59,46,.35);')
+    +'">'
+    +'<div style="font-size:60px;font-weight:800;letter-spacing:-3px;line-height:1;'+(clean?'color:#30d158;':'color:#ff3b2e;')+'">'+total+'<span style="font-size:26px;font-weight:500;opacity:.35;">/9</span></div>'
+    +'<div style="font-size:17px;font-weight:700;margin-top:5px;'+(clean?'color:rgba(48,209,88,.85);':'color:rgba(255,59,46,.85);')+'">'+(clean?'✓ Чистая сделка':'✗ Грязная сделка')+'</div>'
+    +'<div style="font-size:12px;margin-top:4px;opacity:.4;color:#fff;">'+pct+'% · '+(clean?'всё прошло хорошо':'требует внимания')+'</div>'
+    +'<div style="display:flex;justify-content:center;gap:24px;margin-top:14px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,.06);">'
+    +'<div style="text-align:center;"><div style="font-size:22px;font-weight:700;'+(clean?'color:#30d158;':'color:#ff3b2e;')+'">'+rnH2O.c+'</div><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.3);margin-top:2px;">Client</div></div>'
+    +'<div style="text-align:center;"><div style="font-size:22px;font-weight:700;'+(clean?'color:#30d158;':'color:#ff3b2e;')+'">'+rnH2O.o+'</div><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.3);margin-top:2px;">Owner</div></div>'
+    +'<div style="text-align:center;"><div style="font-size:22px;font-weight:700;'+(clean?'color:#30d158;':'color:#ff3b2e;')+'">'+rnH2O.p+'</div><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.3);margin-top:2px;">Process</div></div>'
+    +'</div></div>';
+  if(!rnT0Res) setT0R(clean?'clean':'dirty');
+}
+
 function selRes(v){showRes=v;document.getElementById('sh-ref').className='tb'+(v==='refused'?' ar':'');document.getElementById('sh-thk').className='tb'+(v==='thinking'?' ab':'');}
-function setH2O(form,type,val,btn){h2o[form][type]=val;const pre=form==='t0'?'h0':'h14';const id=pre+'-'+(type==='client'?'c':type==='owner'?'o':'p');document.getElementById(id).querySelectorAll('.hb').forEach(b=>b.className='hb');btn.classList.add('a'+val);}
 function selComp(v){compSel=v;document.getElementById('t14-cn').className='tb'+(v==='no'?' ag':'');document.getElementById('t14-cy').className='tb'+(v==='yes'?' ar':'');document.getElementById('t14-comp-det').style.display=v==='yes'?'block':'none';}
 function selT14R(v){t14Res=v;document.getElementById('t14-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t14-dr').className='tb'+(v==='dirty'?' ar':'');}
-function setT0R(v){t0Res=v;document.getElementById('t0-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t0-dr').className='tb'+(v==='dirty'?' ar':'');}
+function setT0R(v){rnT0Res=v;document.getElementById('t0-cl').className='tb'+(v==='clean'?' ag':'');document.getElementById('t0-dr').className='tb'+(v==='dirty'?' ar':'');}
 
 // RENTAL CALC
 function calcRental() {
   var price=parseFloat(document.getElementById('rn-price').value)||0;
+  var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
   var box=document.getElementById('rn-calc');
-  if(price<=0){box.style.display='none';return;}
-
-  var comm=Math.round(price*0.5);
-
-  var agentEl=document.getElementById('rn-agent');
-  var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'Агент';
-
-  var recruitEl=document.getElementById('rn-recruit');
-  var hasRecruit=recruitEl&&recruitEl.value!=='';
-  var recruitName=hasRecruit?recruitEl.options[recruitEl.selectedIndex].text:'';
-
-  var mentorEl=document.getElementById('rn-mentor');
-  var hasMentor=mentorEl&&mentorEl.value!=='';
-
-  var plat, agentAmt, recruitAmt=0, mentorAmt=0, agentFinal;
-  var platPctShow, agentPctShow;
-
-  if(!hasRecruit){
-    // Сценарий 1: без рекрута
-    // Агент: agentLvl%, Платформа: (100-agentLvl)%
-    agentAmt=Math.round(comm*rnLvl/100);
-    plat=comm-agentAmt;
-    agentFinal=agentAmt;
-    platPctShow=100-rnLvl;
-    agentPctShow=rnLvl;
-
-  } else if(rnObjOwner==='agent'){
-    // Сценарий 2: с рекрутом, квартира агента
-    // Рекрут: 20%, Остаток 80% делится: Агент agentLvl%, Платформа (100-agentLvl)%
-    recruitAmt=Math.round(comm*0.20);
-    var rest=comm-recruitAmt;
-    agentAmt=Math.round(rest*rnLvl/100);
-    plat=rest-agentAmt;
-    agentFinal=agentAmt;
-    platPctShow=Math.round(plat/comm*100);
-    agentPctShow=Math.round(agentAmt/comm*100);
-
-  } else {
-    // Сценарий 3: с рекрутом, квартира рекрута
-    // Рекрут: 40%, Агент: 10%, Платформа: 50%
-    recruitAmt=Math.round(comm*0.40);
-    agentAmt=Math.round(comm*0.10);
-    plat=comm-recruitAmt-agentAmt;
-    agentFinal=agentAmt;
-    platPctShow=50;
-    agentPctShow=10;
-  }
-
-  // Наставник (если есть)
-  if(hasMentor){
-    var mentorPct=rnMentorPct||(rnLvl<=50?25:15);
-    mentorAmt=Math.round(comm*mentorPct/100);
-    agentFinal=agentFinal-mentorAmt;
-    var mentorName=mentorEl.options[mentorEl.selectedIndex].text;
-    document.getElementById('rn-mentor-calc-label').textContent=mentorName+' ('+mentorPct+'%)';
-    document.getElementById('rn-cm-val').textContent=mentorAmt+'$ ('+mentorPct+'%)';
-    document.getElementById('rn-mentor-row').style.display='flex';
-  } else {
-    var mrEl=document.getElementById('rn-mentor-row');if(mrEl)mrEl.style.display='none';
-  }
-
-  // Показываем рекрута
-  if(hasRecruit){
-    var rPct=rnObjOwner==='agent'?20:40;
-    document.getElementById('rn-recruit-label').textContent=recruitName+' ('+rPct+'%)';
-    document.getElementById('rn-cr').textContent=recruitAmt+'$ ('+rPct+'%)';
-    document.getElementById('rn-recruit-row').style.display='flex';
-  } else {
-    var rrEl=document.getElementById('rn-recruit-row');if(rrEl)rrEl.style.display='none';
-  }
-
-  // Агент итого
-  var agentFinalPct=Math.round(agentFinal/comm*100);
-  document.getElementById('rn-agent-label').textContent=agentName+' '+agentPctShow+'%';
-  document.getElementById('rn-agent-final-label').textContent=agentName+' итого';
-  document.getElementById('rn-ca-final').textContent=agentFinal+'$ ('+agentFinalPct+'%)';
-  document.getElementById('rn-agent-final-row').style.display='flex';
-
+  if(price<=0){box.style.display='none';rnUpd();return;}
+  var comm=Math.round(price*commPct/100);
+  var rows=rnCalcDist(comm);
+  var badge=rnExcl?'<span style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(29,53,96,.9);color:#7eb3ff;border:0.5px solid rgba(74,144,217,.4);">🔵 Эксклюзив</span>'
+    :'<span style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(42,16,64,.9);color:#d4a8ff;border:0.5px solid rgba(155,89,208,.4);">◯ Неэксклюзив</span>';
+  var agentDeals2=(AGENT_C&&document.getElementById('rn-agent')&&document.getElementById('rn-agent').value?function(){var nm=document.getElementById('rn-agent').options[document.getElementById('rn-agent').selectedIndex].text.split(' (')[0];return(AGENT_C[nm]&&AGENT_C[nm].deals)||0;}():0);
+  var dealBadge=rnExcl?' · Deal #'+(agentDeals2+1):'';
+  document.getElementById('rn-ct').textContent='$'+comm+dealBadge;
+  document.getElementById('rn-ct-sub').textContent=commPct+'% от $'+price;
+  document.getElementById('rn-excl-badge').innerHTML=badge;
+  var distHtml='';
+  rows.forEach(function(r){
+    distHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:0.5px solid rgba(255,255,255,.03);">'
+      +'<div><span style="font-size:12px;color:var(--text2);">'+r.n+(r.p?(' ('+r.p+'%)'):'')+'</span>'
+      +(r.note?'<br><span style="font-size:10px;color:var(--text3);">'+r.note+'</span>':'')+'</div>'
+      +'<span style="font-size:14px;font-weight:700;color:'+r.c+';">$'+r.val+'</span></div>';
+  });
+  document.getElementById('rn-dist-rows').innerHTML=distHtml;
   box.style.display='block';
-  document.getElementById('rn-ct').textContent=comm+'$ (50% от '+price+'$)';
-  document.getElementById('rn-ca').textContent=agentAmt+'$ ('+agentPctShow+'%)';
-  document.getElementById('rn-cp').textContent=plat+'$ ('+platPctShow+'%)';
-  updateRentalPreview();
+  rnUpd();
 }
 
-function updateRentalPreview(){
+function rnUpd(){
+  var price=parseFloat(document.getElementById('rn-price').value)||0;
+  var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
+  var comm=price?Math.round(price*commPct/100):0;
   var agentEl=document.getElementById('rn-agent');
   var agentName=agentEl&&agentEl.value?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'—';
-  var recruitEl=document.getElementById('rn-recruit');
-  var hasRecruit=recruitEl&&recruitEl.value!=='';
-  var recruitName=hasRecruit?recruitEl.options[recruitEl.selectedIndex].text:'';
-  var price=parseFloat(document.getElementById('rn-price').value)||0;
-  var comm=price?Math.round(price*0.5):0;
-  var linkEl=document.getElementById('rn-link');
-  var cadEl=document.getElementById('rn-cadastral');
-  var cnameEl=document.getElementById('rn-cname');
-  var cphoneEl=document.getElementById('rn-cphone');
-  var onameEl=document.getElementById('rn-oname');
-  var ophoneEl=document.getElementById('rn-ophone');
-  var fromEl=document.getElementById('rn-from');
-  var toEl=document.getElementById('rn-to');
-
-  // Calc distribution
-  var agentAmt=0, platAmt=0, recruitAmt=0;
-  var agentPct=rnLvl, platPct=100-rnLvl, recruitPct=0;
-  if(!hasRecruit){
-    agentAmt=Math.round(comm*rnLvl/100);
-    platAmt=comm-agentAmt;
-    platPct=100-rnLvl;
-  } else if(rnObjOwner==='agent'){
-    recruitPct=20;
-    recruitAmt=Math.round(comm*0.20);
-    var rest=comm-recruitAmt;
-    agentAmt=Math.round(rest*rnLvl/100);
-    platAmt=rest-agentAmt;
-    platPct=Math.round(platAmt/comm*100);
-    agentPct=Math.round(agentAmt/comm*100);
-  } else {
-    recruitPct=40;
-    recruitAmt=Math.round(comm*0.40);
-    agentAmt=Math.round(comm*0.10);
-    agentPct=10;
-    platAmt=comm-recruitAmt-agentAmt;
-    platPct=50;
-  }
-
-  var excl=rnExcl?'#Exclusive':'#NonExclusive';
-  var link=linkEl&&linkEl.value?linkEl.value:'—';
-  var cad=cadEl&&cadEl.value?cadEl.value:'—';
-  var client=(cnameEl&&cnameEl.value?cnameEl.value:'—')+(cphoneEl&&cphoneEl.value?' '+cphoneEl.value:'');
-  var owner=(onameEl&&onameEl.value?onameEl.value:'—')+(ophoneEl&&ophoneEl.value?' '+ophoneEl.value:'');
-  var from=fromEl&&fromEl.value?fromEl.value:'—';
-  var to=toEl&&toEl.value?toEl.value:'—';
-
+  var link=(document.getElementById('rn-link')||{}).value||'—';
+  var cad=(document.getElementById('rn-cadastral')||{}).value||'—';
+  var cname=(document.getElementById('rn-cname')||{}).value||'—';
+  var cphone=(document.getElementById('rn-cphone')||{}).value||'';
+  var oname=(document.getElementById('rn-oname')||{}).value||'—';
+  var ophone=(document.getElementById('rn-ophone')||{}).value||'';
+  var from=(document.getElementById('rn-from')||{}).value||'—';
+  var to=(document.getElementById('rn-to')||{}).value||'—';
+  var comment=(document.getElementById('t0-comment')||{}).value||'';
+  var total=rnH2O.c+rnH2O.o+rnH2O.p;
+  var rows=price?rnCalcDist(comm):[];
+  var platRow=rows.find(function(r){return r.n.indexOf('Платформа')!==-1;})||{val:0};
+  var agRow=rows.find(function(r){return r.c==='#22c55e';})||{n:'Агент',p:0,val:0};
+  var recRow=rows.find(function(r){return r.c==='#a89fff';});
+  var scNames=['Агент','Агент+показ','Агент передал','Рекрут 5сд','Рекрут 10сд','Объект рекрута'];
+  // Номер сделки агента (если эксклюзив)
+  var agentDeals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
+  var dealNum=rnExcl?(' | Deal #'+(agentDeals+1)):'';
   var lines=[
-    '#Rented | '+excl+' | '+rnLvl+'%',
+    '#Rented'+dealNum+' | '+(rnExcl?'#Exclusive':'#NonExclusive')+' | '+rnLvl+'%',
+    'Сценарий: '+scNames[rnSc],
     '',
     'Link 🔗 '+link,
-    'Price: '+(price||'—')+'$',
-    'Commission: '+comm+'$',
-    '',
-    '📊 Распределение:',
-    'Platforms Commission ('+platPct+'%): '+platAmt+'$',
-    '#'+(agentName||'—')+' Commission ('+agentPct+'%): '+agentAmt+'$',
+    'Price: $'+(price||'—'),
+    'Commission: $'+(comm||'—'),
+    'Platforms Commission'+(platRow.p?(' ('+platRow.p+'%)'):'')+ ': $'+platRow.val,
+    '#'+agentName+' Commission'+(agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+agRow.val,
   ];
-  if(hasRecruit) lines.push('#'+recruitName+' Commission ('+recruitPct+'%): '+recruitAmt+'$');
+  if(recRow) lines.push(recRow.n+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
   lines.push('');
   lines.push('Cadastral number:');
   lines.push(cad);
   lines.push('');
-  lines.push('Client: '+client);
-  lines.push('Owner: '+owner);
+  lines.push('Client: '+cname+' '+cphone);
+  lines.push('Owner: '+oname+' '+ophone);
   lines.push('Date of Rent: '+from+' – '+to);
-
+  if(total>0){lines.push('');lines.push('H2O T0: '+rnH2O.c+'/'+rnH2O.o+'/'+rnH2O.p+' → '+(total>=7?'✓ Чистая':'✗ Грязная')+' ('+total+'/9)');}
+  if(comment){lines.push('');lines.push('Комментарий: '+comment);}
   var el=document.getElementById('rental-preview');
   if(el) el.textContent=lines.join('\n');
 }
+
+function updateRentalPreview(){rnUpd();}
+
 
 function calcDeal() {
   const price=parseFloat(document.getElementById('d-price').value)||0;
@@ -1799,69 +1912,22 @@ var rnRecruitPct = 20;
 var rnMentorPct = 0; // 0 = auto
 var rnObjOwner = 'agent'; // 'agent' or 'recruit'
 
-function setObjOwner(owner, btn) {
-  rnObjOwner = owner;
-  document.querySelectorAll('#obj-agent,#obj-recruit').forEach(function(b){ b.classList.remove('aa'); });
-  if(btn) btn.classList.add('aa');
-  // Auto-set recruit pct based on object owner
-  var recruitEl = document.getElementById('rn-recruit');
-  if(recruitEl && recruitEl.value !== '') {
-    rnRecruitPct = (owner === 'recruit') ? 40 : 20;
-    // Update active button
-    document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
-    var btn2 = document.getElementById('rn-rp-' + rnRecruitPct);
-    if(btn2) btn2.classList.add('aa');
-  }
+function setObjOwner(owner,btn){} // deprecated — use setRnSc
+
+function onMentorChange() {}
+function setRnMentorPct(pct,btn){}
+function onRecruitChange() {}
+function setRnRecruitPct(pct,btn){}
+function onAgentChangeRental(){
+  var agentEl=document.getElementById('rn-agent');
+  if(!agentEl)return;
+  var txt=agentEl.options[agentEl.selectedIndex].text;
+  var m=txt.match(/\((\d+)%\)/);
+  if(m){setRnLvl(parseInt(m[1]));}
   calcRental();
 }
 
-function onMentorChange() {
-  var el=document.getElementById('rn-mentor');
-  var hasMentor=el&&el.value!=='';
-  var row=document.getElementById('rn-mentor-pct-row');
-  if(row) row.style.display=hasMentor?'block':'none';
-  if(hasMentor){
-    // Auto-select based on agent deals
-    var agentEl=document.getElementById('rn-agent');
-    var agentName=agentEl?agentEl.options[agentEl.selectedIndex].text.split(' (')[0]:'';
-    var deals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
-    var autoPct=deals<10?25:15;
-    setRnMentorPct(autoPct,document.getElementById('rn-mp-'+autoPct));
-  } else {
-    rnMentorPct=0;
-  }
-  calcRental();
-}
 
-function setRnMentorPct(pct,btn){
-  rnMentorPct=pct;
-  document.querySelectorAll('#rn-mentor-pct-row button').forEach(function(b){b.classList.remove('aa');});
-  if(btn)btn.classList.add('aa');
-  calcRental();
-}
-
-function onRecruitChange() {
-  var el = document.getElementById('rn-recruit');
-  var hasRecruit = el && el.value !== '';
-  var row = document.getElementById('rn-recruit-pct-row');
-  if (row) row.style.display = hasRecruit ? 'block' : 'none';
-  if (hasRecruit) {
-    // Auto-set based on object owner
-    var autoPct = (rnObjOwner === 'recruit') ? 40 : 20;
-    rnRecruitPct = autoPct;
-    document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
-    var btn = document.getElementById('rn-rp-' + autoPct);
-    if(btn) btn.classList.add('aa');
-  }
-  calcRental();
-}
-
-function setRnRecruitPct(pct, btn) {
-  rnRecruitPct = pct;
-  document.querySelectorAll('#rn-recruit-pct-row button').forEach(function(b){ b.classList.remove('aa'); });
-  if (btn) btn.classList.add('aa');
-  calcRental();
-}
 
 // ══ QUIZ ══
 var QUIZ_ALL = [
