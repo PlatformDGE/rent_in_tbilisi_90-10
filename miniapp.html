@@ -256,6 +256,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 .crbtns{display:flex;gap:10px;margin-top:16px;}
 .crdoc{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;background:var(--navy);color:#fff;display:block;}
 .crpdf{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;background:#fff;color:var(--navy);border:1px solid var(--border);display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -531,47 +532,66 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 
     <!-- ═══ CHECK PROPERTY ═══ -->
     <div class="screen" id="form-check">
-      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht">🔍 Проверка квартиры</div><div class="hs">База собственников · Tbilisi</div></div></div>
-      <div class="pad pb">
+      <div class="hdr"><button class="back" onclick="goBack()">←</button><div class="hi"><div class="ht" style="display:flex;align-items:center;gap:8px;"><div style="width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0;"></div>Property Check</div><div class="hs">Owner Database · Rent in Tbilisi 🇬🇪</div></div></div>
+      <div class="pad pb" style="display:flex;flex-direction:column;gap:12px;">
 
-        <div class="section">
-          <div class="sl">Телефон собственника</div>
-          <div class="field"><input type="tel" id="chk-phone" placeholder="+995 599 000 000"></div>
+        <div style="background:#111118;border:0.5px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;transition:border-color .2s;">
+          <div style="font-size:10px;font-weight:700;color:#6060a0;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>📞</span> Owner's Phone</div>
+          <input style="width:100%;background:transparent;border:none;color:#eeeef5;font-size:15px;padding:0;outline:none;-webkit-appearance:none;font-family:inherit;" type="tel" id="chk-phone" placeholder="+995 599 000 000" autocomplete="off">
+          <div style="font-size:11px;color:#3a3a50;margin-top:6px;">Any format · with or without country code</div>
         </div>
 
-        <div class="section">
-          <div class="sl">Адрес объекта</div>
-          <div class="field"><input type="text" id="chk-addr" placeholder="#Rustaveli 2"></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:0 4px;">
+          <div style="flex:1;height:0.5px;background:rgba(255,255,255,.06);"></div>
+          <div style="font-size:11px;color:#3a3a50;font-weight:500;">OR</div>
+          <div style="flex:1;height:0.5px;background:rgba(255,255,255,.06);"></div>
         </div>
 
-        <button class="sbtn" id="chk-btn" onclick="doCheckProperty()">Проверить</button>
+        <div style="background:#111118;border:0.5px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;">
+          <div style="font-size:10px;font-weight:700;color:#6060a0;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;"><span>📍</span> Property Address</div>
+          <input style="width:100%;background:transparent;border:none;color:#eeeef5;font-size:15px;padding:0;outline:none;-webkit-appearance:none;font-family:inherit;" type="text" id="chk-addr" placeholder="23 Rustaveli Avenue" autocomplete="off">
+          <div style="font-size:11px;color:#3a3a50;margin-top:6px;">Street name and number · partial match works</div>
+        </div>
 
-        <div id="chk-result" style="display:none;margin-top:4px;">
+        <button id="chk-btn" onclick="doCheckProperty()" style="width:100%;padding:15px;background:linear-gradient(135deg,#7c6fff,#a78bfa);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <div id="chk-spin" style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;"></div>
+          <span id="chk-btn-text">Search Database</span>
+        </button>
 
-          <div id="chk-ok" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;">
-            <span style="font-size:24px;">✅</span>
-            <div><div style="font-size:13px;font-weight:700;color:#22c55e;">Не найдено в базе</div><div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px;">Объект или собственник не обнаружен</div></div>
+        <div id="chk-result" style="display:none;flex-direction:column;gap:10px;">
+
+          <div id="chk-ok" style="display:none;background:rgba(34,197,94,.08);border:0.5px solid rgba(34,197,94,.2);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;">
+            <span style="font-size:28px;">✅</span>
+            <div><div style="font-size:14px;font-weight:700;color:#22c55e;">Not Found in Database</div><div style="font-size:12px;color:rgba(34,197,94,.6);margin-top:3px;">No matching owner or property detected</div></div>
           </div>
 
-          <div id="chk-warn" style="display:none;">
-            <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:var(--r) var(--r) 0 0;padding:14px;display:flex;align-items:center;gap:12px;">
-              <span style="font-size:24px;">⚠️</span>
-              <div><div style="font-size:13px;font-weight:700;color:#fbbf24;">Возможно есть в базе</div><div style="font-size:12px;color:rgba(251,191,36,.8);margin-top:2px;">1 совпадение — проверь детали</div></div>
+          <div id="chk-warn" style="display:none;border-radius:16px;overflow:hidden;">
+            <div style="background:rgba(251,191,36,.08);border:0.5px solid rgba(251,191,36,.25);border-radius:16px 16px 0 0;padding:16px;display:flex;align-items:center;gap:14px;">
+              <span style="font-size:28px;">⚠️</span>
+              <div><div style="font-size:14px;font-weight:700;color:#fbbf24;">Possible Match Found</div><div style="font-size:12px;color:rgba(251,191,36,.7);margin-top:3px;">1 match detected · verify the details below</div></div>
             </div>
-            <div id="chk-warn-rows" style="background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);"></div>
+            <div id="chk-warn-rows" style="background:#111118;border:0.5px solid rgba(255,255,255,.07);border-top:none;border-radius:0 0 16px 16px;"></div>
           </div>
 
-          <div id="chk-danger" style="display:none;">
-            <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:var(--r) var(--r) 0 0;padding:14px;display:flex;align-items:center;gap:12px;">
-              <span style="font-size:24px;">🔴</span>
-              <div><div style="font-size:13px;font-weight:700;color:#ef4444;">Точно есть в базе</div><div style="font-size:12px;color:rgba(239,68,68,.8);margin-top:2px;">Телефон + адрес совпали</div></div>
+          <div id="chk-danger" style="display:none;border-radius:16px;overflow:hidden;">
+            <div style="background:rgba(239,68,68,.08);border:0.5px solid rgba(239,68,68,.25);border-radius:16px 16px 0 0;padding:16px;display:flex;align-items:center;gap:14px;">
+              <span style="font-size:28px;">🔴</span>
+              <div><div style="font-size:14px;font-weight:700;color:#ef4444;">Already in Database</div><div style="font-size:12px;color:rgba(239,68,68,.7);margin-top:3px;">Phone & address matched · confirmed duplicate</div></div>
             </div>
-            <div id="chk-danger-rows" style="background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);"></div>
+            <div id="chk-danger-rows" style="background:#111118;border:0.5px solid rgba(255,255,255,.07);border-top:none;border-radius:0 0 16px 16px;"></div>
           </div>
 
+          <button id="chk-clear" onclick="clearCheck()" style="width:100%;padding:13px;background:#111118;border:0.5px solid rgba(255,255,255,.1);border-radius:14px;color:#9090a8;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Clear Search</button>
         </div>
 
-        <button id="chk-clear" onclick="clearCheck()" style="display:none;width:100%;padding:13px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;">Очистить</button>
+        <div style="background:#111118;border:0.5px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;">
+          <div style="font-size:10px;font-weight:700;color:#55556a;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">How it works</div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:5px 0;"><span style="font-size:14px;width:20px;text-align:center;">📞</span><div style="font-size:12px;color:#55556a;line-height:1.5;">Enter <b style="color:#9090a8;">phone</b> or <b style="color:#9090a8;">address</b> — or both for exact match</div></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:5px 0;"><span style="font-size:14px;width:20px;text-align:center;">⚠️</span><div style="font-size:12px;color:#55556a;line-height:1.5;"><b style="color:#9090a8;">Possible match</b> — 1 field matches, check carefully</div></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:5px 0;"><span style="font-size:14px;width:20px;text-align:center;">🔴</span><div style="font-size:12px;color:#55556a;line-height:1.5;"><b style="color:#9090a8;">Confirmed</b> — both phone + address in the base</div></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:5px 0;"><span style="font-size:14px;width:20px;text-align:center;">✅</span><div style="font-size:12px;color:#55556a;line-height:1.5;"><b style="color:#9090a8;">Not found</b> — safe to proceed with this property</div></div>
+        </div>
+
       </div>
     </div>
 
@@ -1063,7 +1083,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwl5XpQgj8LVL9T1guamg0sX_-TwhDTGZloSCf5mRsoSeAHxcxFZ6i1-5W-ITwB9MhVzQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwwlqz0WrngA38xWYnFlM60PlrT-b07F8RDmCCSvmvUKq4HE08KPjb10AoVtn7aVbBSTQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -2263,46 +2283,50 @@ function openCheckProperty(){
 
 function buildChkRows(obj){
   var fields=[
-    ['Источник', obj.source||'—'],
-    ['Собственник', obj.owner||'—'],
-    ['Телефон', obj.phone||'—'],
-    ['Адрес', obj.address||'—'],
-    ['Район', obj.district||'—'],
+    ['Source','<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(124,111,255,.15);color:#a89fff;">'+(obj.source||'—')+'</span>'],
+    ['Owner', obj.owner||'—'],
+    ['Phone', obj.phone||'—'],
+    ['Address', obj.address||'—'],
+    ['District', obj.district||'—'],
   ];
-  if(obj.agent) fields.push(['Агент', obj.agent]);
-  if(obj.date)  fields.push(['Дата фото', obj.date]);
+  if(obj.agent) fields.push(['Agent', obj.agent]);
+  if(obj.date)  fields.push(['Photo Date', obj.date]);
   var html=fields.map(function(r){
-    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);">'+
-      '<span style="font-size:12px;color:var(--text2);">'+r[0]+'</span>'+
-      '<span style="font-size:12px;color:var(--text);font-weight:500;text-align:right;max-width:60%;">'+r[1]+'</span></div>';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:0.5px solid rgba(255,255,255,.04);">'+
+      '<span style="font-size:12px;color:#55556a;font-weight:500;">'+r[0]+'</span>'+
+      '<span style="font-size:12px;color:#eeeef5;font-weight:600;text-align:right;max-width:62%;">'+r[1]+'</span></div>';
   }).join('');
   var s=obj.status||'';
-  var bStyle=s==='Published'?'background:rgba(34,197,94,.15);color:#22c55e;':'background:var(--bg3);color:var(--text3);';
-  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;">'+
-    '<span style="font-size:12px;color:var(--text2);">Статус</span>'+
-    '<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;'+bStyle+'">'+s+'</span></div>';
+  var badge=s==='Published'?'<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(34,197,94,.15);color:#22c55e;">Published</span>':'<span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.07);color:#55556a;">'+(s||'—')+'</span>';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;">'+
+    '<span style="font-size:12px;color:#55556a;font-weight:500;">Status</span>'+
+    '<span>'+badge+'</span></div>';
   return html;
 }
 
 function doCheckProperty(){
   var phone=document.getElementById('chk-phone').value.trim();
   var addr=document.getElementById('chk-addr').value.trim();
-  if(!phone&&!addr){showToast('Введи телефон или адрес');return;}
+  if(!phone&&!addr){showToast('Enter phone number or address');return;}
 
   var btn=document.getElementById('chk-btn');
-  btn.textContent='Поиск...';btn.disabled=true;
+  var spin=document.getElementById('chk-spin');
+  var btxt=document.getElementById('chk-btn-text');
+  if(spin)spin.style.display='block';
+  if(btxt)btxt.textContent='Searching...';
+  btn.disabled=true;
 
   document.getElementById('chk-ok').style.display='none';
   document.getElementById('chk-warn').style.display='none';
   document.getElementById('chk-danger').style.display='none';
-  document.getElementById('chk-result').style.display='block';
+  document.getElementById('chk-result').style.display='flex';
   document.getElementById('chk-clear').style.display='none';
 
   var cbName='chkCb'+Date.now();
   var url=API_URL+'?action=checkProperty&phone='+encodeURIComponent(phone)+'&addr='+encodeURIComponent(addr)+'&callback='+cbName;
 
   window[cbName]=function(data){
-    btn.textContent='Проверить';btn.disabled=false;
+    if(spin)spin.style.display='none';if(btxt)btxt.textContent='Search Database';btn.disabled=false;
     document.getElementById('chk-clear').style.display='block';
     delete window[cbName];
     var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
@@ -2381,8 +2405,21 @@ function mfSubmit(){
   var agent = document.getElementById('mf-agent').value;
   if(!addr){showToast('Введи адрес');return;}
   if(!agent){showToast('Выбери агента');return;}
+  var date  = document.getElementById('mf-date').value||'';
+  var time  = document.getElementById('mf-time').value||'';
+  var owner = document.getElementById('mf-owner').value||'';
+  var phone = document.getElementById('mf-phone').value||'';
+  var link  = document.getElementById('mf-link').value||'';
   var preview = document.getElementById('mf-preview').textContent;
-  send('makefoto', {preview: preview});
+  send('makefoto', {
+    address: addr,
+    agent:   agent,
+    date:    date+' '+time,
+    owner:   owner,
+    phone:   phone,
+    link:    link,
+    preview: preview
+  });
   showToast('Отправлено! ✓');
   setTimeout(goBack, 1500);
 }
