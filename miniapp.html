@@ -1083,7 +1083,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbycHnF_3-7Wc_H03o3obqPA70dWSieJSk3az_d7xEund8CNB7KBusejfSEUQm5oIwE7oA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzQpypI9bccIH-UzavWj-woao6RtvbkuB-ILLrYevyOG9AINgH28RI9ZVFJUYBmJA5hBQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -1185,14 +1185,6 @@ function onAgentChange() {
   const opt=aEl.options[aEl.selectedIndex];
   const lvl=parseInt(opt.getAttribute('data-level')||50);
   setLvl(lvl);
-}
-
-function onAgentChangeRental() {
-  var aEl = document.getElementById('rn-agent');
-  var opt = aEl.options[aEl.selectedIndex];
-  var lvl = parseInt(opt.getAttribute('data-level') || 50);
-  setRnLvl(lvl);
-  calcRental();
 }
 
 function onRCRental() {
@@ -1588,11 +1580,39 @@ function sub(type, directData) {
   else if(type==='showing'){const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('sh-addr').value,ad_link_advertising:document.getElementById('sh-link').value,client_telegram:document.getElementById('sh-client').value,date:document.getElementById('sh-date').value,result:showRes};}
   else if(type==='stickers'){const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district:document.getElementById('st-dist').value,stickers_count:document.getElementById('st-cnt').value,date:document.getElementById('st-date').value};}
   else if(type==='rental'){
-    const aEl=document.getElementById('rn-agent'),rEl=document.getElementById('rn-recruit'),mEl=document.getElementById('rn-mentor');
-    const lvl=document.getElementById('rn-lvl').value;
-    const price=parseFloat(document.getElementById('rn-price').value)||0;
-    const comm=Math.round(price*0.5),plat=Math.round(comm*(100-parseInt(lvl))/100),agent=comm-plat;
-    data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.options[mEl.selectedIndex].text,agent_level:lvl,ad_link_advertising:document.getElementById('rn-link').value,cadastral_number:document.getElementById('rn-cadastral').value,is_exclusive:rnExcl,deal_type:rnType,rent_price:price,commission_total:comm,commission_platform:plat,commission_agent:agent,client_name:document.getElementById('rn-cname').value,client_phone:document.getElementById('rn-cphone').value,owner_name:document.getElementById('rn-oname').value,owner_phone:document.getElementById('rn-ophone').value,rent_from:document.getElementById('rn-from').value,rent_to:document.getElementById('rn-to').value,t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,t0_h2o_process:h2o.t0.process,t0_result:t0Res,t0_comment:document.getElementById('t0-comment').value};
+    var aEl=document.getElementById('rn-agent');
+    var rEl=document.getElementById('rn-recruit');
+    var price=parseFloat(document.getElementById('rn-price').value)||0;
+    var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
+    var comm=Math.round(price*commPct/100);
+    var distRows=price?rnCalcDist(comm):[];
+    var agentName=aEl&&aEl.value?aEl.options[aEl.selectedIndex].text.replace(/\s*\(\d+%\)\s*$/,'').trim():'';
+    var recruitName=rEl&&rEl.value?rEl.options[rEl.selectedIndex].text:'';
+    var recRow=distRows.find(function(r){return r.c==='#a89fff';})||null;
+    data={
+      agent:agentName,
+      recruit:recruitName,
+      agent_level:rnLvl,
+      ad_link_advertising:(document.getElementById('rn-link')||{}).value||'',
+      cadastral_number:(document.getElementById('rn-cadastral')||{}).value||'',
+      is_exclusive:rnExcl,
+      deal_type:rnType,
+      rent_price:price,
+      comm_pct:commPct,
+      recruit_commission:recRow?recRow.val:0,
+      recruit_pct:recRow?recRow.p:0,
+      client_name:(document.getElementById('rn-cname')||{}).value||'',
+      client_phone:(document.getElementById('rn-cphone')||{}).value||'',
+      owner_name:(document.getElementById('rn-oname')||{}).value||'',
+      owner_phone:(document.getElementById('rn-ophone')||{}).value||'',
+      rent_from:(document.getElementById('rn-from')||{}).value||'',
+      rent_to:(document.getElementById('rn-to')||{}).value||'',
+      t0_h2o_client:rnH2O.c,
+      t0_h2o_owner:rnH2O.o,
+      t0_h2o_process:rnH2O.p,
+      t0_result:rnT0Res,
+      t0_comment:(document.getElementById('t0-comment')||{}).value||''
+    };
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
   send(type,data);
