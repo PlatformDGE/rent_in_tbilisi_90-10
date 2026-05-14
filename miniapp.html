@@ -1521,32 +1521,42 @@ function searchPDF(kadastr) {
   if (st) { st.style.display='block'; st.style.color='var(--text2)'; st.textContent='🔍 Ищем договор...'; }
   pdfTimer['rn'] = setTimeout(function() {
     var url = API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr);
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onload = function() {
-      try {
-        var data = JSON.parse(xhr.responseText);
-        if (data.found) {
-          st.style.color = 'var(--green)';
-          st.textContent = '✓ Договор найден: ' + data.name;
-          if (fr) { fr.src = data.view; }
+    fetch(url)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.found) {
+          if(st){st.style.display='block';st.style.color='var(--green)';st.textContent='✓ Договор найден: '+data.name;}
+          if (fr) fr.src = data.view;
           if (wr) wr.style.display = 'block';
         } else {
-          st.style.color = 'var(--red)';
-          st.textContent = '✗ Договор не найден в папке';
+          if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Договор не найден в папке';}
           if (wr) wr.style.display = 'none';
           if (fr) fr.src = '';
         }
-      } catch(e) {
-        st.style.color = 'var(--red)';
-        st.textContent = '✗ Ошибка разбора ответа';
-      }
-    };
-    xhr.onerror = function() {
-      st.style.color = 'var(--red)';
-      st.textContent = '✗ Ошибка соединения';
-    };
-    xhr.send();
+      })
+      .catch(function(){
+        // fallback to JSONP
+        var cbName = 'pdfCb'+Date.now();
+        window[cbName] = function(data) {
+          delete window[cbName];
+          var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
+          if (data && data.found) {
+            if(st){st.style.display='block';st.style.color='var(--green)';st.textContent='✓ Договор найден: '+data.name;}
+            if (fr) fr.src = data.view;
+            if (wr) wr.style.display = 'block';
+          } else {
+            if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Договор не найден';}
+            if (wr) wr.style.display = 'none';
+          }
+        };
+        var sc=document.createElement('script');
+        sc.id='sc-'+cbName;
+        sc.src=url+'&callback='+cbName;
+        sc.onerror=function(){
+          if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Ошибка соединения';}
+        };
+        document.body.appendChild(sc);
+      });
   }, 800);
 }
 
