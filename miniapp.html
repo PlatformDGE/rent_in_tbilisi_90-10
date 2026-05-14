@@ -1083,7 +1083,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxyfNncHGlSRcV5Vy3BPaXxAiLvjBa3Tl7wOqoI8QlggtUW4wDS3rI-rnC64oNYtuXt7g/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbycHnF_3-7Wc_H03o3obqPA70dWSieJSk3az_d7xEund8CNB7KBusejfSEUQm5oIwE7oA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -2287,8 +2287,8 @@ function buildChkRows(obj){
     ['Owner', obj.owner||'—'],
     ['Phone', obj.phone||'—'],
     ['Address', obj.address||'—'],
-    ['District', obj.district||'—'],
   ];
+  if(obj.link) fields.push(['Link','<a href="'+obj.link+'" style="color:#7eb3ff;font-size:11px;" target="_blank">Открыть →</a>']);
   if(obj.agent) fields.push(['Agent', obj.agent]);
   if(obj.date)  fields.push(['Photo Date', obj.date]);
   var html=fields.map(function(r){
