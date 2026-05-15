@@ -1129,7 +1129,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbx4PibcyhrOVJ6adKDCK-pszGldRgPsHnF5bewsEEqvZL5HksFxykB0E__tT7bETyhIgQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyCBz08Dqm_SwDgJ9DW2Hi7J1B1goY2gVsJD6-ltbx8hkQP_5AZXmXXpX-GTfWFGMgOTQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={};
@@ -2315,7 +2315,30 @@ function grUpdatePreview(){
 
 function grSubmit(){
   if(!grAuthor){showToast('Выбери себя из списка');return;}
-  var data={author:grAuthor,preview:document.getElementById('gr-preview').textContent};
+  var photoLinks=Array.from(document.querySelectorAll('#gr-photo-links input')).filter(function(i){return i.value.trim();});
+  var showingLinks=Array.from(document.querySelectorAll('#gr-showing-links input')).filter(function(i){return i.value.trim();});
+  var stickers=parseInt(document.getElementById('gr-stickers-cnt').value)||0;
+  var photoMember=document.getElementById('gr-photo-member').value||'';
+  var showingMember=document.getElementById('gr-showing-member').value||'';
+  var stickersMember=document.getElementById('gr-stickers-member').value||'';
+  var photoAddr=document.getElementById('gr-photo-addr').value||'';
+  var showingDist=document.getElementById('gr-showing-dist')?document.getElementById('gr-showing-dist').value||'':'';
+  var stickersDist=document.getElementById('gr-stickers-dist').value||'';
+  var data={
+    author: grAuthor,
+    preview: document.getElementById('gr-preview').textContent,
+    photo: photoLinks.length,
+    photoLinks: photoLinks.map(function(i){return i.value.trim();}),
+    photoMember: photoMember,
+    photoAddr: photoAddr,
+    showing: showingLinks.length,
+    showingLinks: showingLinks.map(function(i){return i.value.trim();}),
+    showingMember: showingMember,
+    showingDist: showingDist,
+    stickers: stickers,
+    stickersMember: stickersMember,
+    stickersDist: stickersDist,
+  };
   send('general',data);
   showToast('Отчёт отправлен! ✓');
   setTimeout(goBack,1500);
