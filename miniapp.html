@@ -1647,8 +1647,17 @@ function submitCalc() {
 }
 
 function send(type,data) {
-  var url=API_URL+'?action=submit&payload='+encodeURIComponent(JSON.stringify({type:type,data:data}));
-  fetch(url,{mode:'no-cors'}).catch(function(e){console.error('send:',e);});
+  var payload=JSON.stringify({type:type,data:data});
+  var url=API_URL+'?action=submit&payload='+encodeURIComponent(payload)+'&_='+Date.now();
+  // Image beacon — no CORS, works everywhere
+  try{(new Image()).src=url;}catch(e){}
+  // Form POST backup
+  try{
+    var f=document.createElement('form');f.method='POST';f.action=API_URL;f.target='hf';
+    var inp=document.createElement('input');inp.type='hidden';inp.name='payload';inp.value=payload;
+    f.appendChild(inp);document.body.appendChild(f);f.submit();
+    setTimeout(function(){try{document.body.removeChild(f);}catch(e){}},3000);
+  }catch(e){}
 }
 
 function loadData(){
