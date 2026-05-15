@@ -1576,9 +1576,24 @@ function searchPDF(kadastr) {
 function sub(type, directData) {
   let data={};
   if(directData){ data=directData; send(type,data); return; }
-  if(type==='photo'){const rEl=document.getElementById('ph-r'),mEl=document.getElementById('ph-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('ph-addr').value,ad_link_advertising:document.getElementById('ph-link').value,date:document.getElementById('ph-date').value};}
-  else if(type==='showing'){const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('sh-addr').value,ad_link_advertising:document.getElementById('sh-link').value,client_telegram:document.getElementById('sh-client').value,date:document.getElementById('sh-date').value,result:showRes};}
-  else if(type==='stickers'){const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district:document.getElementById('st-dist').value,stickers_count:document.getElementById('st-cnt').value,date:document.getElementById('st-date').value};}
+  if(type==='photo'){
+    try{
+      const rEl=document.getElementById('ph-r'),mEl=document.getElementById('ph-m');
+      data={recruit:rEl&&rEl.selectedIndex>=0?rEl.options[rEl.selectedIndex].text:'',mentor:mEl?mEl.value:'',district_address:(document.getElementById('ph-addr')||{}).value||'',ad_link_advertising:(document.getElementById('ph-link')||{}).value||'',date:(document.getElementById('ph-date')||{}).value||''};
+    }catch(e){showToast('Ошибка фото: '+e.message);return;}
+  }
+  else if(type==='showing'){
+    try{
+      const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');
+      data={recruit:rEl&&rEl.selectedIndex>=0?rEl.options[rEl.selectedIndex].text:'',mentor:mEl?mEl.value:'',district_address:(document.getElementById('sh-addr')||{}).value||'',ad_link_advertising:(document.getElementById('sh-link')||{}).value||'',client_telegram:(document.getElementById('sh-client')||{}).value||'',date:(document.getElementById('sh-date')||{}).value||'',result:showRes};
+    }catch(e){showToast('Ошибка показ: '+e.message);return;}
+  }
+  else if(type==='stickers'){
+    try{
+      const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');
+      data={recruit:rEl&&rEl.selectedIndex>=0?rEl.options[rEl.selectedIndex].text:'',mentor:mEl?mEl.value:'',district:(document.getElementById('st-dist')||{}).value||'',stickers_count:(document.getElementById('st-cnt')||{}).value||'',date:(document.getElementById('st-date')||{}).value||''};
+    }catch(e){showToast('Ошибка расклейка: '+e.message);return;}
+  }
   else if(type==='rental'){
     var aEl=document.getElementById('rn-agent');
     var rEl=document.getElementById('rn-recruit');
@@ -1633,7 +1648,7 @@ function submitCalc() {
 
 function send(type,data) {
   var url=API_URL+'?action=submit&payload='+encodeURIComponent(JSON.stringify({type:type,data:data}));
-  fetch(url).catch(function(e){console.error('send:',e);});
+  fetch(url,{mode:'no-cors'}).catch(function(e){console.error('send:',e);});
 }
 
 function loadData(){
