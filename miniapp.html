@@ -401,10 +401,16 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
               <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Передача клиента</div>
               <div style="font-size:10px;color:var(--text3);line-height:1.4;">10% агенту-источнику</div>
             </div>
+            <div class="rn-sc-btn" id="rnsc-7" onclick="setRnSc(7)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">✏️</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Ручное</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свои проценты</div>
+            </div>
           </div>
-          <!-- Ручное распределение -->
-          <div style="background:var(--bg3);border:0.5px solid rgba(74,144,217,.12);border-radius:12px;padding:12px 14px;margin-top:10px;">
-            <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение</div>
+          <!-- Ручное распределение — только для сценария 7 -->
+          <div id="rn-manual-block" style="background:var(--bg3);border:0.5px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 14px;margin-top:10px;display:none;">
+            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение %</div>
             <div id="rn-manual-rows"></div>
           </div>
         </div>
@@ -423,6 +429,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
           <div class="field" id="rn-recruit-block"><label class="fl">Рекрут / Агент (показ)</label>
             <select id="rn-recruit" onchange="rnUpd()"><option value="">Без рекрута</option></select>
+          </div>
+          <div class="field" id="rn-client-src-block" style="display:none;"><label class="fl">Кто передал клиента</label>
+            <select id="rn-client-src" onchange="rnUpd()"><option value="">Выбрать агента/рекрута...</option></select>
           </div>
           <div class="field" id="rn-recdeals-block" style="display:none;"><label class="fl">Сделки рекрута</label>
             <div class="tg c2">
@@ -1355,7 +1364,7 @@ function setRnType(v) {
 
 function setRnSc(i){
   rnSc=i;
-  for(var j=0;j<7;j++){
+  for(var j=0;j<8;j++){
     var btn=document.getElementById('rnsc-'+j);
     if(!btn)continue;
     var ck=btn.querySelector('.rnsc-ck');
@@ -1375,13 +1384,30 @@ function setRnSc(i){
   }
   var showRec=(i>=1&&i<=3);
   var showRecDeals=(i===5);
-  var showLevel=(i<=3);
+  var showLevel=(i<=3||i===6);
+  var showClientSrc=(i===6);
+  // Сценарий 7 — ручное: показываем блок и подсвечиваем
+  var manBlock=document.getElementById('rn-manual-block');
+  if(manBlock) manBlock.style.display=i===7?'block':'none';
   var rb=document.getElementById('rn-recruit-block');
   var rd=document.getElementById('rn-recdeals-block');
   var lb=document.getElementById('rn-level-block');
+  var cs=document.getElementById('rn-client-src-block');
   if(rb)rb.style.display=showRec?'block':'none';
   if(rd)rd.style.display=showRecDeals?'block':'none';
   if(lb)lb.style.display=showLevel?'block':'none';
+  if(cs){
+    cs.style.display=showClientSrc?'block':'none';
+    if(showClientSrc){
+      var csel=document.getElementById('rn-client-src');
+      if(csel&&csel.options.length<=1){
+        var all=(AGENTS||[]).map(function(a){return a.name;}).concat((RECRUITS||[]).map(function(r){return r.name;}));
+        if(!all.length) all=['David','Daniil','Sergi','Zaza','Omari','Shorena','Giorgi','Dmitri','Alex','Danila','Artem','Mariam','Liana','Nikita'];
+        csel.innerHTML='<option value="">Выбрать агента/рекрута...</option>';
+        all.forEach(function(n){csel.innerHTML+='<option value="'+n+'">'+n+'</option>';});
+      }
+    }
+  }
   buildRnManual();
   calcRental();
 }
@@ -1401,6 +1427,7 @@ var rnScDefs=[
   [{n:'Агент-наставник',c:'#22c55e'},{n:'Рекрут (10 сд.)',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
   [{n:'Агент-наставник',c:'#22c55e'},{n:'Рекрут',c:'#a89fff'},{n:'Платформа',c:'#55556a'}],
   [{n:'Агент (получил клиента)',c:'#22c55e'},{n:'Агент-источник (10%)',c:'#fb923c'},{n:'Платформа',c:'#55556a'}],
+  [{n:'Агент',c:'#22c55e'},{n:'Рекрут',c:'#a89fff'},{n:'Внешний агент',c:'#fb923c'},{n:'Платформа',c:'#55556a'}],
 ];
 
 function buildRnManual(){
@@ -1425,13 +1452,17 @@ function rnCalcDist(comm){
   else if(rnSc===3){var a=rnExcl?70:30,p=100-a-20;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Рекрут (5 сд.)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
   else if(rnSc===4){rows=[{n:'Агент-наставник',p:25,c:'#22c55e'},{n:'Рекрут (10 сд.)',p:50,c:'#a89fff'},{n:'Платформа',p:25,c:'#55556a'}];}
   else if(rnSc===5){var a=rnRecD==='lt10'?25:15,r=rnRecD==='lt10'?50:70,p2=rnRecD==='lt10'?25:15;rows=[{n:'Агент-наставник',p:a,c:'#22c55e'},{n:'Рекрут',p:r,c:'#a89fff'},{n:'Платформа',p:p2,c:'#55556a'}];}
-  else{
+  else if(rnSc===6){
     // Сценарий 6: Передача клиента — агент-получатель платит 10% из своей доли агенту-источнику
     var agPct=rnExcl?rnLvl:50;
     var platPct2=100-agPct;
     var srcPct=10; // фиксировано 10% от комиссии
     var receiverPct=agPct-srcPct;
     rows=[{n:'Агент (получил клиента)',p:receiverPct,c:'#22c55e'},{n:'Агент-источник (10%)',p:srcPct,c:'#fb923c'},{n:'Платформа',p:platPct2,c:'#55556a'}];
+  }
+  else{
+    // Сценарий 7: Ручное — возвращаем строки из rnScDefs с нулями (заполняется вручную)
+    rows=rnScDefs[7].map(function(r){return{n:r.n,p:0,c:r.c,val:0};});
   }
   // Check manual overrides
   var hasM=rnScDefs[rnSc].some(function(r,i){return rnManualPcts['r'+rnSc+'_'+i]&&rnManualPcts['r'+rnSc+'_'+i]!=='';});
@@ -1539,7 +1570,7 @@ function rnUpd(){
   var platRow=rows.find(function(r){return r.n.indexOf('Платформа')!==-1;})||{val:0};
   var agRow=rows.find(function(r){return r.c==='#22c55e';})||{n:'Агент',p:0,val:0};
   var recRow=rows.find(function(r){return r.c==='#a89fff';});
-  var scNames=['Агент','Агент+показ','Агент передал','Рекрут 5сд','Рекрут 10сд','Объект рекрута','Передача клиента'];
+  var scNames=['Агент','Агент+показ','Агент передал','Рекрут 5сд','Рекрут 10сд','Объект рекрута','Передача клиента','Ручное распределение'];
   // Номер сделки агента (если эксклюзив)
   var agentDeals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
   var dealNum=rnExcl?(' | Deal #'+(agentDeals+1)):'';
@@ -1554,6 +1585,7 @@ function rnUpd(){
     '#'+agentName+' Commission'+(agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+agRow.val,
   ];
   if(recRow) lines.push(recRow.n+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
+  if(rnSc===6){var csEl=document.getElementById('rn-client-src');var csName=csEl&&csEl.value?csEl.value:'—';lines.push('Передал клиента: '+csName+' (10%)');}
   lines.push('');
   lines.push('Cadastral number:');
   lines.push(cad);
@@ -1601,43 +1633,29 @@ function searchPDF(kadastr) {
   }
   if (st) { st.style.display='block'; st.style.color='var(--text2)'; st.textContent='🔍 Ищем договор...'; }
   pdfTimer['rn'] = setTimeout(function() {
-    var url = API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr);
-    fetch(url)
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if (data && data.found) {
-          if(st){st.style.display='block';st.style.color='var(--green)';st.textContent='✓ Договор найден: '+data.name;}
-          if (fr) fr.src = data.view;
-          if (wr) wr.style.display = 'block';
-        } else {
-          if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Договор не найден в папке';}
-          if (wr) wr.style.display = 'none';
-          if (fr) fr.src = '';
-        }
-      })
-      .catch(function(){
-        // fallback to JSONP
-        var cbName = 'pdfCb'+Date.now();
-        window[cbName] = function(data) {
-          delete window[cbName];
-          var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
-          if (data && data.found) {
-            if(st){st.style.display='block';st.style.color='var(--green)';st.textContent='✓ Договор найден: '+data.name;}
-            if (fr) fr.src = data.view;
-            if (wr) wr.style.display = 'block';
-          } else {
-            if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Договор не найден';}
-            if (wr) wr.style.display = 'none';
-          }
-        };
-        var sc=document.createElement('script');
-        sc.id='sc-'+cbName;
-        sc.src=url+'&callback='+cbName;
-        sc.onerror=function(){
-          if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Ошибка соединения';}
-        };
-        document.body.appendChild(sc);
-      });
+    var cbName = 'pdfCb'+Date.now();
+    var url = API_URL + '?action=findContract&kadastr=' + encodeURIComponent(kadastr) + '&callback=' + cbName;
+    window[cbName] = function(data) {
+      delete window[cbName];
+      var sc=document.getElementById('sc-'+cbName); if(sc) sc.remove();
+      if (data && data.found) {
+        if(st){st.style.display='block';st.style.color='var(--green)';st.textContent='✓ Договор найден: '+data.name;}
+        if (fr) fr.src = data.view;
+        if (wr) wr.style.display = 'block';
+      } else {
+        if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Договор не найден в папке';}
+        if (wr) wr.style.display = 'none';
+        if (fr) fr.src = '';
+      }
+    };
+    var sc = document.createElement('script');
+    sc.id = 'sc-'+cbName;
+    sc.src = url;
+    sc.onerror = function() {
+      delete window[cbName];
+      if(st){st.style.display='block';st.style.color='var(--red)';st.textContent='✗ Ошибка соединения';}
+    };
+    document.body.appendChild(sc);
   }, 800);
 }
 
