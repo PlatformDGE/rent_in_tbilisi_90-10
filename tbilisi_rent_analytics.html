@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tbilisi Rent Market — Analytics 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --bg: #0a0c10;
+  --bg2: #111318;
+  --bg3: #181b22;
+  --card: #13161d;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0f2f7;
+  --muted: #7a8299;
+  --faint: #3a3f52;
+  --accent: #5b7fff;
+  --accent2: #7c5fff;
+  --green: #2dd4a0;
+  --red: #f25c6e;
+  --amber: #f5a623;
+  --teal: #38d9d9;
+  --pink: #e879f9;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ——— COVER ——— */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 80px 60px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border2);
+  page-break-after: always;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(91,127,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: 200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(56,217,217,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-tag {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: .15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cover-tag::before {
+  content: '';
+  display: block;
+  width: 32px; height: 1px;
+  background: var(--accent);
+}
+
+.cover-title {
+  font-family: var(--font-head);
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  color: var(--text);
+  max-width: 700px;
+  margin-bottom: 8px;
+}
+
+.cover-title .hi {
+  background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cover-sub {
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 300;
+  margin-top: 16px;
+  max-width: 500px;
+  margin-bottom: 60px;
+}
+
+.cover-kpis {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.cover-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cover-kpi-num {
+  font-family: var(--font-head);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text);
+}
+.cover-kpi-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.cover-divider {
+  width: 1px; height: 40px;
+  background: var(--border2);
+  margin: auto 0;
+}
+
+.cover-date {
+  position: absolute;
+  bottom: 40px; right: 80px;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* ——— SECTION ——— */
+.section {
+  padding: 60px 80px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.section-num {
+  font-family: var(--font-head);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+  margin-top: 6px;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 380px;
+  line-height: 1.6;
+  text-align: right;
+}
+
+/* ——— GRID ——— */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+
+/* ——— CARD ——— */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.card-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.card-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+.up { background: rgba(45,212,160,.15); color: var(--green); }
+.down { background: rgba(242,92,110,.15); color: var(--red); }
+.neutral { background: rgba(245,166,35,.12); color: var(--amber); }
+
+/* ——— TABLE ——— */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table thead th {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted); font-weight: 500;
+  padding: 0 12px 10px; text-align: left; border-bottom: 1px solid var(--border);
+}
+.data-table tbody tr { border-bottom: 1px solid rgba(255,255,255,.04); }
+.data-table tbody tr:hover { background: rgba(255,255,255,.03); }
+.data-table tbody td { padding: 10px 12px; font-size: 13px; }
+
+/* ——— BADGE ——— */
+.badge {
+  display: inline-block;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+}
+.badge-accent { background: rgba(91,127,255,.18); color: #a0b8ff; }
+.badge-green { background: rgba(45,212,160,.15); color: var(--green); }
+.badge-red { background: rgba(242,92,110,.15); color: var(--red); }
+.badge-amber { background: rgba(245,166,35,.12); color: var(--amber); }
+.badge-teal { background: rgba(56,217,217,.12); color: var(--teal); }
+
+/* ——— HEAT BAR ——— */
+.heatbar {
+  height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--teal) 100%);
+}
+
+/* ——— MARKET INDEX ——— */
+.mkt-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 80px 70px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.mkt-row:last-child { border-bottom: none; }
+.mkt-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.mkt-track { height: 6px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
+.mkt-fill { height: 6px; border-radius: 3px; }
+.mkt-price { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); text-align: right; }
+
+/* ——— PILL TABLE ——— */
+.pill-table { display: flex; flex-direction: column; gap: 0; }
+.pill-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.pill-row:last-child { border-bottom: none; }
+.pill-name { font-size: 13px; color: var(--text); }
+.pill-bar-wrap { flex: 1; margin: 0 14px; height: 4px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
+.pill-bar-fill { height: 4px; border-radius: 2px; }
+.pill-val { font-size: 12px; color: var(--muted); min-width: 40px; text-align: right; }
+
+/* ——— SIGNAL BOX ——— */
+.signal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.signal-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.signal-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 18px;
+}
+.signal-box h4 { font-family: var(--font-head); font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.signal-box p { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+/* ——— CHART WRAPPER ——— */
+.chart-box { position: relative; }
+
+/* ——— SEPARATOR ——— */
+.sep { height: 1px; background: var(--border); margin: 28px 0; }
+
+/* ——— FOOTER ——— */
+.footer {
+  padding: 40px 80px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--faint);
+}
+.footer a { color: var(--faint); text-decoration: none; }
+
+/* ——— PRINT / SLIDES ——— */
+@media print {
+  .section { page-break-inside: avoid; }
+  body { background: #fff; color: #111; }
+}
+
+@media (max-width: 900px) {
+  .cover { padding: 40px; }
+  .cover-title { font-size: 44px; }
+  .section { padding: 40px; }
+  .grid-2,.grid-3,.grid-4,.grid-5 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<div class="cover">
+  <div class="cover-tag">Аналитический отчёт · Telegram канал</div>
+  <div class="cover-title">Рынок аренды<br><span class="hi">Тбилиси</span></div>
+  <div class="cover-sub">Полная аналитика по районам, ценам и рыночным сигналам на основе 6 912 объявлений</div>
+  <div class="cover-kpis">
+    <div class="cover-kpi">
+      <div class="cover-kpi-num">6 912</div>
+      <div class="cover-kpi-label">Объявлений</div>
+    </div>
+    <div class="cover-divider"></div>
+    <div class="cover-kpi">
+      <div class="cover-kpi-num">512</div>
+      <div class="cover-kpi-label">Активных лотов</div>
+    </div>
+    <div class="cover-divider"></div>
+    <div class="cover-kpi">
+      <div class="cover-kpi-num">83%</div>
+      <div class="cover-kpi-label">Конверсия в аренду</div>
+    </div>
+    <div class="cover-divider"></div>
+    <div class="cover-kpi">
+      <div class="cover-kpi-num">$787</div>
+      <div class="cover-kpi-label">Средняя цена</div>
+    </div>
+    <div class="cover-divider"></div>
+    <div class="cover-kpi">
+      <div class="cover-kpi-num">14</div>
+      <div class="cover-kpi-label">Районов</div>
+    </div>
+  </div>
+  <div class="cover-date">Данные по 15 мая 2026 · Rent in Tbilisi 🇬🇪 Flats ©</div>
+</div>
+
+<!-- ═══ 01 — РЫНОЧНЫЙ ОБЗОР ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">01 — Рыночный обзор</div>
+      <div class="section-title">Ключевые метрики рынка</div>
+    </div>
+    <div class="section-desc">Сводка по всем активным и закрытым объявлениям канала</div>
+  </div>
+
+  <div class="grid-5" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-label">Всего сообщений</div>
+      <div class="card-value">6 912</div>
+      <div class="card-sub">включая медиа-файлы</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Текстовых объявлений</div>
+      <div class="card-value">3 098</div>
+      <div class="card-sub">с хештегами</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Сдано/продано</div>
+      <div class="card-value">2 586</div>
+      <div class="card-delta up">▲ 83% конверсия</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Активных лотов</div>
+      <div class="card-value">512</div>
+      <div class="card-sub">ищут арендатора</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ср. цена (актив.)</div>
+      <div class="card-value">$787</div>
+      <div class="card-sub">медиана $800</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-label" style="margin-bottom:18px">Распределение по цене — активные объявления</div>
+      <div style="position:relative;height:220px">
+        <canvas id="priceDistChart" role="img" aria-label="Распределение цен"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:18px">Структура предложения по комнатам</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;height:220px;align-items:center">
+        <div style="position:relative;height:180px">
+          <canvas id="roomDonut" role="img" aria-label="Структура по комнатам"></canvas>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#5b7fff;display:inline-block"></span>1 bed</span>
+            <span style="color:var(--muted)">206 / <b style="color:var(--text)">54%</b></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#38d9d9;display:inline-block"></span>2 bed</span>
+            <span style="color:var(--muted)">119 / <b style="color:var(--text)">31%</b></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#e879f9;display:inline-block"></span>3 bed</span>
+            <span style="color:var(--muted)">35 / <b style="color:var(--text)">9%</b></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#f5a623;display:inline-block"></span>Studio</span>
+            <span style="color:var(--muted)">16 / <b style="color:var(--text)">4%</b></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:#f25c6e;display:inline-block"></span>4 bed</span>
+            <span style="color:var(--muted)">8 / <b style="color:var(--text)">2%</b></span>
+          </div>
+          <div class="sep" style="margin:4px 0"></div>
+          <div style="font-size:11px;color:var(--muted)">Итого: 384 квартиры с указанными комнатами</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 02 — РАЙОНЫ ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">02 — Географический анализ</div>
+      <div class="section-title">Рейтинг районов по цене</div>
+    </div>
+    <div class="section-desc">Средняя цена аренды, объём лотов и ценовой диапазон по каждому району</div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div style="overflow-x:auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Район</th>
+          <th>Лотов</th>
+          <th>Ср. цена $</th>
+          <th>Медиана $</th>
+          <th>Диапазон</th>
+          <th>$/кв.м</th>
+          <th>Позиционирование</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--muted)">1</td>
+          <td><b>Ваке</b></td>
+          <td>79</td>
+          <td><b style="color:var(--red)">$958</b></td>
+          <td>$1 050</td>
+          <td><span style="color:var(--muted)">$400–1400</span></td>
+          <td>$10.5</td>
+          <td><span class="badge badge-red">Премиум</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">2</td>
+          <td><b>Вера</b></td>
+          <td>43</td>
+          <td><b style="color:var(--red)">$801</b></td>
+          <td>$800</td>
+          <td><span style="color:var(--muted)">$150–1400</span></td>
+          <td>$10.6</td>
+          <td><span class="badge badge-red">Высокий</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">3</td>
+          <td><b>Сабуртало</b></td>
+          <td>137</td>
+          <td><b style="color:var(--amber)">$788</b></td>
+          <td>$800</td>
+          <td><span style="color:var(--muted)">$400–1400</span></td>
+          <td>$10.8</td>
+          <td><span class="badge badge-amber">Высокий</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">4</td>
+          <td><b>Авлабари</b></td>
+          <td>9</td>
+          <td><b style="color:var(--amber)">$761</b></td>
+          <td>$800</td>
+          <td><span style="color:var(--muted)">$600–1050</span></td>
+          <td>$13.0</td>
+          <td><span class="badge badge-amber">Высокий</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">5</td>
+          <td><b>Дигоми</b></td>
+          <td>5</td>
+          <td><b>$760</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$400–1400</span></td>
+          <td>$8.3</td>
+          <td><span class="badge badge-amber">Средний+</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">6</td>
+          <td><b>Дидубе</b></td>
+          <td>12</td>
+          <td><b>$742</b></td>
+          <td>$700</td>
+          <td><span style="color:var(--muted)">$400–1400</span></td>
+          <td>$8.7</td>
+          <td><span class="badge badge-teal">Рынок</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">7</td>
+          <td><b>Соло́лаки</b></td>
+          <td>26</td>
+          <td><b>$704</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$400–1400</span></td>
+          <td>$10.4</td>
+          <td><span class="badge badge-teal">Рынок</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">8</td>
+          <td><b>Мтацминда</b></td>
+          <td>17</td>
+          <td><b>$703</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$150–1400</span></td>
+          <td>$11.8</td>
+          <td><span class="badge badge-teal">Рынок</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">9</td>
+          <td><b>Абанотубани</b></td>
+          <td>3</td>
+          <td><b>$667</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$600–800</span></td>
+          <td>$12.3</td>
+          <td><span class="badge badge-accent">Средний</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">10</td>
+          <td><b>Чугурети</b></td>
+          <td>27</td>
+          <td><b>$628</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$400–1050</span></td>
+          <td>$12.2</td>
+          <td><span class="badge badge-accent">Средний</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">11</td>
+          <td><b>Ортачала</b></td>
+          <td>12</td>
+          <td><b>$600</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$400–800</span></td>
+          <td>$10.4</td>
+          <td><span class="badge badge-accent">Средний</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">12</td>
+          <td><b>Исани</b></td>
+          <td>4</td>
+          <td><b>$600</b></td>
+          <td>$600</td>
+          <td><span style="color:var(--muted)">$600–600</span></td>
+          <td>—</td>
+          <td><span class="badge badge-accent">Средний</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">13</td>
+          <td><b>Глдани</b></td>
+          <td>5</td>
+          <td><b style="color:var(--green)">$400</b></td>
+          <td>$400</td>
+          <td><span style="color:var(--muted)">$400–400</span></td>
+          <td>$6.7</td>
+          <td><span class="badge badge-green">Бюджет</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted)">14</td>
+          <td><b>Самгори</b></td>
+          <td>3</td>
+          <td><b style="color:var(--green)">$400</b></td>
+          <td>$400</td>
+          <td><span style="color:var(--muted)">$400–400</span></td>
+          <td>$7.7</td>
+          <td><span class="badge badge-green">Бюджет</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label" style="margin-bottom:18px">Средняя цена по районам ($)</div>
+    <div style="position:relative;height:260px">
+      <canvas id="neighBarChart" role="img" aria-label="Средняя цена по районам"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 03 — ЦЕНА × КОМНАТЫ ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">03 — Цена и площадь</div>
+      <div class="section-title">Цена по типу квартиры</div>
+    </div>
+    <div class="section-desc">Средние цены, площади и стоимость кв.м по числу комнат</div>
+  </div>
+
+  <div class="grid-5" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-label">Studio</div>
+      <div class="card-value">$457</div>
+      <div class="card-sub">~34 кв.м · $13.8/кв.м</div>
+      <div class="card-delta neutral">14 объявлений</div>
+    </div>
+    <div class="card">
+      <div class="card-label">1 bedroom</div>
+      <div class="card-value">$661</div>
+      <div class="card-sub">~58 кв.м · $11.6/кв.м</div>
+      <div class="card-delta up">203 объявления</div>
+    </div>
+    <div class="card">
+      <div class="card-label">2 bedrooms</div>
+      <div class="card-value">$880</div>
+      <div class="card-sub">~90 кв.м · $10.0/кв.м</div>
+      <div class="card-delta up">116 объявлений</div>
+    </div>
+    <div class="card">
+      <div class="card-label">3 bedrooms</div>
+      <div class="card-value">$1 087</div>
+      <div class="card-sub">~139 кв.м · $8.1/кв.м</div>
+      <div class="card-delta neutral">34 объявления</div>
+    </div>
+    <div class="card">
+      <div class="card-label">4 bedrooms</div>
+      <div class="card-value">$1 236</div>
+      <div class="card-sub">~221 кв.м · $6.5/кв.м</div>
+      <div class="card-delta down">7 объявлений</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-label" style="margin-bottom:18px">Матрица: район × комнаты (средняя цена $)</div>
+      <div style="position:relative;height:280px">
+        <canvas id="crossChart" role="img" aria-label="Матрица цен по районам и комнатам"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:18px">Цена/кв.м по числу комнат</div>
+      <div style="padding-top:10px">
+        <div class="pill-table">
+          <div class="pill-row">
+            <span class="pill-name">Studio</span>
+            <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:100%;background:#5b7fff"></div></div>
+            <span class="pill-val" style="color:var(--text);font-weight:500">$13.8</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill-name">1 bed</span>
+            <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:84%;background:#5b7fff"></div></div>
+            <span class="pill-val" style="color:var(--text);font-weight:500">$11.6</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill-name">2 bed</span>
+            <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:72%;background:#38d9d9"></div></div>
+            <span class="pill-val" style="color:var(--text);font-weight:500">$10.0</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill-name">3 bed</span>
+            <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:59%;background:#38d9d9"></div></div>
+            <span class="pill-val" style="color:var(--text);font-weight:500">$8.1</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill-name">4 bed</span>
+            <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:47%;background:#f25c6e"></div></div>
+            <span class="pill-val" style="color:var(--text);font-weight:500">$6.5</span>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          Наибольшая стоимость кв.м — у студий ($13.8) и однушек ($11.6). Это типичная закономерность: малые площади дороже в пересчёте на метр из-за постоянных затрат арендодателя (коммуналка, меблировка).<br><br>
+          Самая выгодная покупка площади — 4-комнатные квартиры ($6.5/кв.м).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 04 — ЗАВЫШЕНО/ЗАНИЖЕНО ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">04 — Рыночное позиционирование</div>
+      <div class="section-title">Что завышено, что в рынке</div>
+    </div>
+    <div class="section-desc">Отклонение от рыночной нормы по типу квартиры в каждом районе</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card" style="border-color:rgba(242,92,110,.3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:20px">🔴</span>
+        <div>
+          <div style="font-family:var(--font-head);font-size:15px;font-weight:600">Завышено vs рынок</div>
+          <div style="font-size:12px;color:var(--muted)">Цена выше нормы для данного типа квартиры</div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Район</th><th>Тип</th><th>Ср. цена</th><th>Премиум</th></tr></thead>
+        <tbody>
+          <tr><td>Ваке</td><td>2 bed</td><td>$1 158</td><td><span class="badge badge-red">+31.6%</span></td></tr>
+          <tr><td>Делиси</td><td>3 bed</td><td>$1 400</td><td><span class="badge badge-red">+28.8%</span></td></tr>
+          <tr><td>Вера</td><td>1 bed</td><td>$800</td><td><span class="badge badge-red">+21.1%</span></td></tr>
+          <tr><td>Вера</td><td>3 bed</td><td>$1 283</td><td><span class="badge badge-red">+18.1%</span></td></tr>
+          <tr><td>Ваке</td><td>1 bed</td><td>$765</td><td><span class="badge badge-amber">+15.8%</span></td></tr>
+          <tr><td>Ваке</td><td>4 bed</td><td>$1 400</td><td><span class="badge badge-amber">+13.3%</span></td></tr>
+          <tr><td>Вера</td><td>2 bed</td><td>$981</td><td><span class="badge badge-amber">+11.5%</span></td></tr>
+          <tr><td>Авлабари</td><td>1 bed</td><td>$733</td><td><span class="badge badge-amber">+11.0%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-color:rgba(45,212,160,.3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:20px">🟢</span>
+        <div>
+          <div style="font-family:var(--font-head);font-size:15px;font-weight:600">В рынке / ниже нормы</div>
+          <div style="font-size:12px;color:var(--muted)">Хорошая цена для данного типа и района</div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Район</th><th>Тип</th><th>Ср. цена</th><th>Скидка</th></tr></thead>
+        <tbody>
+          <tr><td>Самгори</td><td>2 bed</td><td>$400</td><td><span class="badge badge-green">−54.5%</span></td></tr>
+          <tr><td>Глдани</td><td>2 bed</td><td>$400</td><td><span class="badge badge-green">−54.5%</span></td></tr>
+          <tr><td>Глдани</td><td>3 bed</td><td>$400</td><td><span class="badge badge-green">−63.2%</span></td></tr>
+          <tr><td>Чугурети</td><td>3 bed</td><td>$600</td><td><span class="badge badge-green">−44.8%</span></td></tr>
+          <tr><td>Дидубе</td><td>1 bed</td><td>$467</td><td><span class="badge badge-green">−29.4%</span></td></tr>
+          <tr><td>Дигоми</td><td>2 bed</td><td>$600</td><td><span class="badge badge-teal">−31.8%</span></td></tr>
+          <tr><td>Ортачала</td><td>1 bed</td><td>$514</td><td><span class="badge badge-teal">−22.1%</span></td></tr>
+          <tr><td>Чугурети</td><td>1 bed</td><td>$582</td><td><span class="badge badge-teal">−12.0%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label" style="margin-bottom:18px">Отклонение цены от рыночной нормы по сегментам (% премиум/дисконт)</div>
+    <div style="position:relative;height:280px">
+      <canvas id="premiumChart" role="img" aria-label="Отклонение от рыночной нормы"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 05 — ХАРАКТЕРИСТИКИ ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">05 — Характеристики объектов</div>
+      <div class="section-title">Тип здания, удобства, условия</div>
+    </div>
+    <div class="section-desc">Анализ инфраструктуры и условий аренды</div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-label" style="margin-bottom:16px">Тип здания и цена</div>
+      <div class="pill-table">
+        <div class="pill-row">
+          <span class="pill-name">🏗️ Новостройка</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:100%;background:#5b7fff"></div></div>
+          <span class="pill-val" style="color:var(--text)">$861</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">🏛️ Исторический</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:86%;background:#e879f9"></div></div>
+          <span class="pill-val" style="color:var(--text)">$742</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">🏢 Вторичка</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:80%;background:#38d9d9"></div></div>
+          <span class="pill-val" style="color:var(--text)">$688</span>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div style="font-size:12px;color:var(--muted)">Новостройка дороже вторички на <b style="color:var(--amber)">+25.2%</b></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:16px">Срок аренды (актив. объявления)</div>
+      <div class="pill-table">
+        <div class="pill-row">
+          <span class="pill-name">#12month</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:100%;background:#5b7fff"></div></div>
+          <span class="pill-val">396</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">#6month</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:84%;background:#5b7fff"></div></div>
+          <span class="pill-val">332</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">#24month</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:5%;background:#38d9d9"></div></div>
+          <span class="pill-val">19</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">#36month</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:3%;background:#38d9d9"></div></div>
+          <span class="pill-val">13</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:16px">Домашние животные</div>
+      <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+        <div style="text-align:center;flex:1">
+          <div style="font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--red)">81%</div>
+          <div style="font-size:12px;color:var(--muted)">#notallowed (142)</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div style="font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--green)">19%</div>
+          <div style="font-size:12px;color:var(--muted)">#allowed (33)</div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="card-label" style="margin-bottom:10px">Отопление</div>
+      <div class="pill-table">
+        <div class="pill-row">
+          <span class="pill-name">#centralheating</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:100%;background:#f5a623"></div></div>
+          <span class="pill-val">369</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">#gasheating</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:5%;background:#f25c6e"></div></div>
+          <span class="pill-val">20</span>
+        </div>
+        <div class="pill-row">
+          <span class="pill-name">#electric</span>
+          <div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:4%;background:#7c5fff"></div></div>
+          <span class="pill-val">15</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label" style="margin-bottom:18px">Топ-13 удобств — частота упоминания в объявлениях</div>
+    <div style="position:relative;height:200px">
+      <canvas id="amenChart" role="img" aria-label="Удобства в объявлениях"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 06 — АГЕНТЫ ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">06 — Агенты</div>
+      <div class="section-title">Активность менеджеров канала</div>
+    </div>
+    <div class="section-desc">Распределение объявлений по агентам</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div style="position:relative;height:280px">
+        <canvas id="agentChart" role="img" aria-label="Агенты по количеству объявлений"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:16px">Доля рынка по агентам</div>
+      <div class="pill-table">
+        <div class="pill-row"><span class="pill-name">#david</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:100%;background:#5b7fff"></div></div><span class="pill-val">67 <span style="color:var(--muted)">18%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#sergi</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:54%;background:#38d9d9"></div></div><span class="pill-val">36 <span style="color:var(--muted)">10%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#mari</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:45%;background:#38d9d9"></div></div><span class="pill-val">30 <span style="color:var(--muted)">8%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#mikhail</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:43%;background:#38d9d9"></div></div><span class="pill-val">29 <span style="color:var(--muted)">8%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#tony</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:42%;background:#e879f9"></div></div><span class="pill-val">28 <span style="color:var(--muted)">7%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#viktoriia</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:36%;background:#e879f9"></div></div><span class="pill-val">24 <span style="color:var(--muted)">6%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#gioch</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:27%;background:#f5a623"></div></div><span class="pill-val">18 <span style="color:var(--muted)">5%</span></span></div>
+        <div class="pill-row"><span class="pill-name">#giorgi</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:22%;background:#f5a623"></div></div><span class="pill-val">15 <span style="color:var(--muted)">4%</span></span></div>
+        <div class="pill-row"><span class="pill-name">Остальные</span><div class="pill-bar-wrap"><div class="pill-bar-fill" style="width:100%;background:#3a3f52"></div></div><span class="pill-val">100 <span style="color:var(--muted)">27%</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 07 — ВЫВОДЫ ═══ -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-num">07 — Аналитические выводы</div>
+      <div class="section-title">Рыночные сигналы</div>
+    </div>
+    <div class="section-desc">Ключевые инсайты и рекомендации</div>
+  </div>
+
+  <div class="signal-grid">
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(242,92,110,.15)">🔴</div>
+      <div>
+        <h4 style="color:var(--red)">Завышены: Ваке 2bed</h4>
+        <p>Средняя цена $1 158 — на 31.6% выше рыночной нормы для двушек. 19 объявлений в этом сегменте. Высокий спрос оправдывает ценник, но предложение ограничено. Риск переплаты для арендаторов.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(242,92,110,.15)">🔴</div>
+      <div>
+        <h4 style="color:var(--red)">Завышены: Вера (все типы)</h4>
+        <p>Район системно выше рынка: +21% для 1bed, +18% для 3bed, +11% для 2bed. Вера позиционируется как "тихий центр" — это поддерживает ценовую премию.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(45,212,160,.15)">🟢</div>
+      <div>
+        <h4 style="color:var(--green)">Недооценены: Чугурети, Ортачала</h4>
+        <p>Чугурети 1bed — на 12% ниже нормы ($582). Ортачала 1bed — на 22% ниже ($514). Оба района — хорошие локации у метро с бюджетным ценником. Перспективны для арендаторов.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(45,212,160,.15)">🟢</div>
+      <div>
+        <h4 style="color:var(--green)">Бюджет: Глдани, Самгори</h4>
+        <p>Самые дешёвые районы — $400 по всем типам. Глдани 3bed = $400 при рыночной норме $1 087 — скидка 63%. Периферийные локации далеко от центра, но транспортно доступны.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(245,166,35,.12)">🟡</div>
+      <div>
+        <h4 style="color:var(--amber)">Авлабари дороже Соло́лаки по кв.м</h4>
+        <p>$13.0/кв.м в Авлабари vs $10.4 в Соло́лаки — при сопоставимой ценовой категории. Авлабари становится всё более модным районом, что давит на цену. Сигнал роста.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(245,166,35,.12)">🟡</div>
+      <div>
+        <h4 style="color:var(--amber)">Новостройки vs вторичка: +25%</h4>
+        <p>Новостройка в среднем $861 против $688 у вторичного жилья. Разница 25% — стандартная премия за новое. При этом 40% объявлений — старый фонд, выбор широкий.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(91,127,255,.18)">🔵</div>
+      <div>
+        <h4 style="color:var(--accent)">Самый ликвидный сегмент: 1bed $500–700</h4>
+        <p>140 объявлений и наибольшая конверсия. Именно однушки в ценовом диапазоне $500–700 — самый быстро сдаваемый продукт на рынке Тбилиси 2025–2026.</p>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <div class="signal-icon" style="background:rgba(91,127,255,.18)">🔵</div>
+      <div>
+        <h4 style="color:var(--accent)">Домашние животные — острый дефицит</h4>
+        <p>Лишь 19% объявлений разрешают питомцев (33 лота vs 142 запрета). При растущем числе экспатов с животными это незакрытая рыночная ниша с потенциалом ценовой премии.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <div>Данные: Telegram канал «Rent in Tbilisi 🇬🇪 Flats ©» · 6 912 сообщений · По 15 мая 2026</div>
+  <div>Аналитика на основе хештегов · Цены — медиана диапазонных тегов</div>
+</div>
+
+<script>
+const C = Chart;
+const g = (id) => document.getElementById(id);
+
+const GRID = 'rgba(255,255,255,0.05)';
+const TICK = '#7a8299';
+const base = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { ticks: { color: TICK, font: { size: 11, family: 'Inter' } }, grid: { color: GRID }, border: { color: 'transparent' } },
+    y: { ticks: { color: TICK, font: { size: 11, family: 'Inter' } }, grid: { color: GRID }, border: { color: 'transparent' } }
+  }
+};
+
+/* Price dist */
+new C(g('priceDistChart'), {
+  type: 'bar',
+  data: {
+    labels: ['до $300','$300–500','$500–700','$700–900','$900–1200','$1200+'],
+    datasets: [{
+      data: [4, 78, 110, 100, 66, 55],
+      backgroundColor: ['#3a3f52','#4a5680','#5b7fff','#7c5fff','#a855f7','#e879f9'],
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: { ...base, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.raw} объявлений` } } } }
+});
+
+/* Room donut */
+new C(g('roomDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['1 bed','2 bed','3 bed','Studio','4 bed'],
+    datasets: [{ data: [206,119,35,16,8], backgroundColor: ['#5b7fff','#38d9d9','#e879f9','#f5a623','#f25c6e'], borderWidth: 0 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { display: false } } }
+});
+
+/* Neighborhood bar */
+new C(g('neighBarChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Самгори','Глдани','Чугурети','Ортачала','Абанотубани','Соло́лаки','Мтацминда','Дидубе','Дигоми','Авлабари','Сабуртало','Вера','Ваке'],
+    datasets: [{
+      data: [400,400,628,600,667,704,703,742,760,761,788,801,958],
+      backgroundColor: (ctx) => {
+        const v = ctx.parsed.x;
+        if (v >= 900) return '#f25c6e';
+        if (v >= 750) return '#f5a623';
+        if (v >= 650) return '#5b7fff';
+        return '#38d9d9';
+      },
+      borderRadius: 4, borderSkipped: false
+    }]
+  },
+  options: {
+    ...base,
+    indexAxis: 'y',
+    scales: {
+      x: { ticks: { color: TICK, font: { size: 11 }, callback: v => '$'+v }, grid: { color: GRID }, border: { color: 'transparent' } },
+      y: { ticks: { color: TICK, font: { size: 11 } }, grid: { display: false }, border: { color: 'transparent' } }
+    },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `$${c.raw} ср. цена` } } }
+  }
+});
+
+/* Cross matrix */
+new C(g('crossChart'), {
+  type: 'bar',
+  data: {
+    labels: ['до $300','$300–500','$500–700','$700–900','$900–1200','$1200+'],
+    datasets: [
+      { label: 'Studio', data: [0,10,6,1,0,0], backgroundColor: '#f5a623' },
+      { label: '1 bed', data: [6,66,97,54,32,10], backgroundColor: '#5b7fff' },
+      { label: '2 bed', data: [2,12,31,56,34,21], backgroundColor: '#38d9d9' },
+      { label: '3 bed', data: [2,2,3,11,14,15], backgroundColor: '#e879f9' },
+      { label: '4 bed', data: [1,1,2,1,2,6], backgroundColor: '#f25c6e' },
+    ]
+  },
+  options: {
+    ...base,
+    plugins: { legend: { display: true, position: 'top', labels: { color: TICK, font: { size: 11 }, boxWidth: 10, padding: 12 } }, tooltip: {} },
+    scales: {
+      x: { stacked: true, ticks: { color: TICK, font: { size: 11 } }, grid: { color: GRID }, border: { color: 'transparent' } },
+      y: { stacked: true, ticks: { color: TICK, font: { size: 11 } }, grid: { color: GRID }, border: { color: 'transparent' } }
+    }
+  }
+});
+
+/* Premium / discount */
+const premLabels = ['Ваке 2bed','Делиси 3bed','Вера 1bed','Вера 3bed','Ваке 1bed','Ваке 4bed','Вера 2bed','Авлабари 1b','Сабуртало 1b','Соло́лаки 3b','Чугурети 1b','Ортачала 1b','Дидубе 1b','Дигоми 2b','Самгори 1b','Глдани 2b','Глдани 3b'];
+const premVals = [31.6,28.8,21.1,18.1,15.8,13.3,11.5,11.0,6.7,-3.4,-12.0,-22.1,-29.4,-31.8,-39.4,-54.5,-63.2];
+new C(g('premiumChart'), {
+  type: 'bar',
+  data: {
+    labels: premLabels,
+    datasets: [{
+      data: premVals,
+      backgroundColor: premVals.map(v => v > 15 ? '#f25c6e' : v > 0 ? '#f5a623' : v > -20 ? '#38d9d9' : '#2dd4a0'),
+      borderRadius: 4, borderSkipped: false
+    }]
+  },
+  options: {
+    ...base,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => (c.raw > 0 ? '+' : '') + c.raw + '% vs норма' } } },
+    scales: {
+      x: { ticks: { color: TICK, font: { size: 10 }, maxRotation: 40 }, grid: { color: GRID }, border: { color: 'transparent' } },
+      y: { ticks: { color: TICK, font: { size: 11 }, callback: v => (v > 0 ? '+' : '') + v + '%' }, grid: { color: GRID }, border: { color: 'transparent' } }
+    }
+  }
+});
+
+/* Amenities */
+new C(g('amenChart'), {
+  type: 'bar',
+  data: {
+    labels: ['#wifi','#stove','#conditioner','#shower','#tv','#balcony','#oven','#microwave','#elevator','#dishwasher','#parking','#vacuumcleaner','#fireplace'],
+    datasets: [{
+      data: [377,366,338,322,293,232,231,175,102,97,90,26,8],
+      backgroundColor: '#5b7fff', borderRadius: 4, borderSkipped: false
+    }]
+  },
+  options: { ...base, plugins: { legend: { display: false } } }
+});
+
+/* Agents */
+new C(g('agentChart'), {
+  type: 'bar', indexAxis: 'y',
+  data: {
+    labels: ['#tata','#irakli2','#michel','#lianad','#daniil','#alex','#dimitri','#danila','#artyom','#giorgi','#gioch','#shorena','#zaza','#viktoriia','#tony','#mikhail','#mari','#sergi','#david'],
+    datasets: [{
+      data: [8,8,9,9,11,12,10,13,13,15,18,13,22,24,28,29,30,36,67],
+      backgroundColor: (ctx) => {
+        const i = ctx.dataIndex;
+        if (i >= 16) return '#5b7fff';
+        if (i >= 12) return '#38d9d9';
+        return '#3a4060';
+      },
+      borderRadius: 4, borderSkipped: false
+    }]
+  },
+  options: {
+    ...base,
+    scales: {
+      x: { ticks: { color: TICK, font: { size: 11 } }, grid: { color: GRID }, border: { color: 'transparent' } },
+      y: { ticks: { color: TICK, font: { size: 11 } }, grid: { display: false }, border: { color: 'transparent' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
