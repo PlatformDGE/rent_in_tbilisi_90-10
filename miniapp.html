@@ -252,6 +252,13 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 .crdoc{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;background:var(--navy);color:#fff;display:block;}
 .crpdf{flex:1;text-align:center;text-decoration:none;padding:12px;border-radius:10px;font-size:14px;font-weight:700;background:#fff;color:var(--navy);border:1px solid var(--border);display:block;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* Admin toggles */
+.adm-sw-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;}
+.adm-sw-sl:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+input:checked + .adm-sw-sl{background:var(--green);}
+input:checked + .adm-sw-sl:before{transform:translateX(20px);}
+
 </style>
 </head>
 <body>
@@ -346,7 +353,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(124,111,255,.12),transparent 70%);"></div>
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Ср. цена</div>
+            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Ср. цена аренды</div>
             <div style="font-size:28px;font-weight:800;color:var(--accent2);letter-spacing:-1px;" id="ds-avgprice">$839</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;">по всем районам</div>
           </div>
@@ -354,13 +361,41 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(245,158,11,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Эксклюзивов</div>
             <div style="font-size:28px;font-weight:800;color:var(--amber);letter-spacing:-1px;" id="ds-excl">88</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;">22% от всех</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-excl-sub">22% от всех</div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(59,130,246,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Сделок платф.</div>
             <div style="font-size:28px;font-weight:800;color:#7eb3ff;letter-spacing:-1px;" id="ds-platform-deals">—</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-platform-sub">из miniapp</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-platform-sub">из топиков</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;grid-column:span 2;">
+            <div style="position:absolute;top:0;right:0;width:100px;height:100%;background:radial-gradient(circle at right,rgba(34,197,94,.07),transparent 70%);"></div>
+            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Общая комиссия платформы за месяц</div>
+            <div style="font-size:32px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-total-comm">—</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-total-comm-sub">из всех сделок</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(34,197,94,.08),transparent 70%);"></div>
+            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Ср. комиссия</div>
+            <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-avg-comm">—</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;">за сделку</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(124,111,255,.08),transparent 70%);"></div>
+            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Общий оборот</div>
+            <div style="font-size:28px;font-weight:800;color:var(--accent2);letter-spacing:-1px;" id="ds-turnover">—</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;">сумма аренд</div>
+          </div>
+        </div>
+
+        <!-- СДЕЛКИ ПО МЕСЯЦАМ -->
+        <div class="section">
+          <div class="sl">Сделки по месяцам — платформа</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;" id="ds-monthly-wrap">
+            <div id="ds-monthly-bars" style="display:flex;flex-direction:column;gap:8px;">
+              <div style="text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+            </div>
           </div>
         </div>
 
@@ -1263,6 +1298,57 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
       </div>
     </div>
 
+    <!-- ═══ ADMIN ═══ -->
+    <div class="screen" id="tab-admin">
+      <div style="padding:14px 16px 0;">
+        <div style="font-size:18px;font-weight:800;margin-bottom:3px;">⚙️ Admin</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Управление платформой</div>
+      </div>
+      <div class="pad pb">
+        <div class="section">
+          <div class="sl">Агенты</div>
+          <div id="admin-agents-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+            <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
+            <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;">Добавить агента</div>
+            <div class="field"><label class="fl">Имя</label><input type="text" id="admin-new-name" placeholder="David"></div>
+            <div class="field"><label class="fl">Telegram</label><input type="text" id="admin-new-tg" placeholder="@username"></div>
+            <div class="field"><label class="fl">Уровень</label>
+              <div class="tg c3">
+                <button class="tb" id="admin-lvl-50" onclick="setAdminLvl(50)">50%</button>
+                <button class="tb aa" id="admin-lvl-70" onclick="setAdminLvl(70)">70%</button>
+                <button class="tb" id="admin-lvl-90" onclick="setAdminLvl(90)">90%</button>
+              </div>
+            </div>
+            <button class="sbtn" onclick="adminAddAgent()" style="margin-top:8px;">+ Добавить агента</button>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sl">Рекруты</div>
+          <div id="admin-recruits-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
+            <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
+            <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;">Добавить рекрута</div>
+            <div class="field"><label class="fl">Имя</label><input type="text" id="admin-new-rec-name" placeholder="Alex"></div>
+            <div class="field"><label class="fl">Telegram</label><input type="text" id="admin-new-rec-tg" placeholder="@username"></div>
+            <button class="sbtn" onclick="adminAddRecruit()" style="margin-top:8px;">+ Добавить рекрута</button>
+          </div>
+        </div>
+        <div class="section">
+          <div class="sl">Секции дашборда</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Районы и цены</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-districts" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-districts"></span></label></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Динамика объявлений</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-dyn" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-dyn"></span></label></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Типы квартир</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-rooms" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-rooms"></span></label></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">График цен</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-prices" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-prices"></span></label></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;"><span style="font-size:13px;color:var(--text);">Сделки по месяцам</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-monthly" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-monthly"></span></label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /screens -->
 
   <nav class="bnav">
@@ -1271,6 +1357,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
     <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Contract</span></button>
     <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Agent</span></button>
     <button class="bni" id="nav-crm" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
+    <button class="bni" id="nav-admin" onclick="goTab('admin')" style="display:none;"><span class="bni-ic">⚙️</span><span class="bni-lb">Admin</span></button>
   </nav>
 </div>
 
@@ -1279,7 +1366,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwwdaiuxYz0f5KZWRE4cR8QRoLN4KLb1uqp-0Cqdm3OpGInXptjLFuOppA9bEsxIjFUbw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyyoBQ_1MxlEeij9TvXUw8NUd8gr4VwgE2MhbJXhn7UEXHC-X-_n9AEHS4WDF7gTw3b3Q/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1943,9 +2030,54 @@ function renderDash(){
   var platEl=document.getElementById('ds-platform-deals');
   var platSub=document.getElementById('ds-platform-sub');
   var totalDeals=(rs.total||0)+(rs.tgTotal||0);
-  var totalPlat=(rs.platform||0)+(rs.tgPlatform||0);
+  var totalPlat=Math.round((rs.platform||0)+(rs.tgPlatform||0));
+  var totalComm=Math.round(rs.commission||0);
   if(platEl){platEl.textContent=totalDeals||'—';}
   if(platSub){platSub.textContent=totalDeals?'$'+totalPlat+' платф.':'из топиков';}
+
+  // Общая комиссия платформы
+  var tcEl=document.getElementById('ds-total-comm');
+  var tcSub=document.getElementById('ds-total-comm-sub');
+  if(tcEl){tcEl.textContent=totalPlat?'$'+totalPlat:'—';}
+  if(tcSub&&totalDeals){tcSub.textContent='из '+totalDeals+' сделок · ср. $'+Math.round(totalPlat/(totalDeals||1))+'/сд.';}
+
+  // Средняя комиссия агентства
+  var acEl=document.getElementById('ds-avg-comm');
+  if(acEl){acEl.textContent=totalComm&&totalDeals?'$'+Math.round(totalComm/totalDeals):'—';}
+
+  // Общий оборот
+  var tvEl=document.getElementById('ds-turnover');
+  if(tvEl){tvEl.textContent=rs.totalPrice?'$'+Math.round(rs.totalPrice):'—';}
+
+  // Сделки по месяцам
+  var mbEl=document.getElementById('ds-monthly-bars');
+  if(mbEl){
+    var bm=rs.byMonth||{};
+    var months=Object.keys(bm).sort(function(a,b){
+      var pa=a.split('/'), pb=b.split('/');
+      return (parseInt(pa[1])*12+parseInt(pa[0]))-(parseInt(pb[1])*12+parseInt(pb[0]));
+    });
+    if(months.length){
+      var maxM=Math.max.apply(null,months.map(function(m){return bm[m];}));
+      var mNames=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+      mbEl.innerHTML=months.map(function(m){
+        var parts=m.split('/');
+        var label=mNames[parseInt(parts[0])]+' '+parts[1].slice(2);
+        var cnt=bm[m];
+        var pct=Math.round(cnt/maxM*100);
+        var color=pct===100?'var(--green)':'var(--accent2)';
+        return '<div style="display:flex;align-items:center;gap:10px;">'
+          +'<div style="width:52px;font-size:11px;color:var(--text2);flex-shrink:0;">'+label+'</div>'
+          +'<div style="flex:1;height:22px;background:var(--bg3);border-radius:4px;overflow:hidden;">'
+          +'<div style="height:100%;background:'+color+';border-radius:4px;width:'+pct+'%;display:flex;align-items:center;padding:0 8px;transition:width .4s;">'
+          +'<span style="font-size:11px;font-weight:700;color:#fff;white-space:nowrap;">'+cnt+'</span></div></div>'
+          +'<div style="width:28px;text-align:right;font-size:12px;font-weight:700;color:'+color+';">'+cnt+'</div>'
+          +'</div>';
+      }).join('');
+    } else {
+      mbEl.innerHTML='<div style="text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
+    }
+  }
 
   // Districts
   var dEl=document.getElementById('ds-districts');
@@ -2053,6 +2185,142 @@ function renderDash(){
 function loadDash(data){
   dashData=data;
   renderDash();
+}
+
+
+// ═══════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════
+var ADMIN_ID = '6577307207';
+var adminLvl = 70;
+var dashSettings = {districts:true,dyn:true,rooms:true,prices:true,monthly:true};
+
+function isAdmin(){
+  try{
+    var tg=window.Telegram&&window.Telegram.WebApp;
+    if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user){
+      return String(tg.initDataUnsafe.user.id)===ADMIN_ID;
+    }
+  }catch(e){}
+  return false;
+}
+
+function initAdmin(){
+  if(!isAdmin()) return;
+  var btn=document.getElementById('nav-admin');
+  if(btn) btn.style.display='';
+}
+
+function setAdminLvl(v){
+  adminLvl=v;
+  [50,70,90].forEach(function(l){
+    var el=document.getElementById('admin-lvl-'+l);
+    if(el) el.className='tb'+(l===v?' aa':'');
+  });
+}
+
+function renderAdminLists(){
+  // Agents
+  var aEl=document.getElementById('admin-agents-list');
+  if(aEl&&AGENTS.length){
+    aEl.innerHTML=AGENTS.map(function(a){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:0.5px solid var(--border);">'
+        +'<div><div style="font-size:13px;font-weight:600;color:var(--text);">'+a.name+'</div>'
+        +'<div style="font-size:11px;color:var(--text3);">'+a.telegram+' · '+(a.level||50)+'%</div></div>'
+        +'<button data-tg="'+a.telegram+'" onclick="adminToggleAgent(this.getAttribute(\'data-tg\'))" style="font-size:11px;padding:5px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit;">'
+        +(a.active===false?'Вкл':'Выкл')+'</button>'
+        +'</div>';
+    }).join('');
+  }
+  // Recruits
+  var rEl=document.getElementById('admin-recruits-list');
+  if(rEl&&RECRUITS.length){
+    rEl.innerHTML=RECRUITS.map(function(r){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:0.5px solid var(--border);">'
+        +'<div><div style="font-size:13px;font-weight:600;color:var(--text);">'+r.name+'</div>'
+        +'<div style="font-size:11px;color:var(--text3);">'+r.telegram+'</div></div>'
+        +'<button data-tg="'+r.telegram+'" onclick="adminToggleRecruit(this.getAttribute(\'data-tg\'))" style="font-size:11px;padding:5px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit;">'
+        +(r.active===false?'Вкл':'Выкл')+'</button>'
+        +'</div>';
+    }).join('');
+  }
+  // Toggles
+  updateSwitches();
+}
+
+function updateSwitches(){
+  var keys=['districts','dyn','rooms','prices','monthly'];
+  keys.forEach(function(k){
+    var cb=document.getElementById('dash-show-'+k);
+    if(cb) cb.checked=dashSettings[k]!==false;
+    var sw=document.getElementById('sw-'+k);
+    if(sw) sw.style.background=(dashSettings[k]!==false)?'var(--green)':'#2a3a5a';
+  });
+}
+
+function saveDashSettings(){
+  var keys=['districts','dyn','rooms','prices','monthly'];
+  keys.forEach(function(k){
+    var cb=document.getElementById('dash-show-'+k);
+    if(cb) dashSettings[k]=cb.checked;
+  });
+  updateSwitches();
+  // Apply to dashboard sections
+  var map={districts:'ds-districts',dyn:'ds-dyn-chart',rooms:'.section:nth-of-type(4)',monthly:'ds-monthly-wrap'};
+  var distSec=document.querySelector('#tab-deals .section:nth-child(2)');
+  applyDashSection('ds-districts',dashSettings.districts);
+  applyDashSection('ds-dyn-chart',dashSettings.dyn);
+  applyDashSection('ds-price-chart',dashSettings.prices);
+  applyDashSection('ds-monthly-bars',dashSettings.monthly);
+  showToast('Настройки сохранены ✓');
+}
+
+function applyDashSection(id, show){
+  var el=document.getElementById(id);
+  if(el&&el.closest){
+    var sec=el.closest('.section')||el.parentElement;
+    if(sec) sec.style.display=show?'':'none';
+  }
+}
+
+function adminAddAgent(){
+  var name=document.getElementById('admin-new-name').value.trim();
+  var tg=document.getElementById('admin-new-tg').value.trim();
+  if(!name||!tg){showToast('Заполни имя и Telegram');return;}
+  send('admin_add_agent',{name:name,telegram:tg,level:adminLvl,is_active:true});
+  AGENTS.push({name:name,telegram:tg,level:adminLvl,active:true});
+  document.getElementById('admin-new-name').value='';
+  document.getElementById('admin-new-tg').value='';
+  renderAdminLists();
+  showToast('Агент добавлен ✓');
+}
+
+function adminAddRecruit(){
+  var name=document.getElementById('admin-new-rec-name').value.trim();
+  var tg=document.getElementById('admin-new-rec-tg').value.trim();
+  if(!name||!tg){showToast('Заполни имя и Telegram');return;}
+  send('admin_add_recruit',{name:name,telegram:tg,is_active:true});
+  RECRUITS.push({name:name,telegram:tg,active:true});
+  document.getElementById('admin-new-rec-name').value='';
+  document.getElementById('admin-new-rec-tg').value='';
+  renderAdminLists();
+  showToast('Рекрут добавлен ✓');
+}
+
+function adminToggleAgent(tg){
+  send('admin_toggle_agent',{telegram:tg});
+  var a=AGENTS.find(function(x){return x.telegram===tg;});
+  if(a) a.active=!a.active;
+  renderAdminLists();
+  showToast('Обновлено ✓');
+}
+
+function adminToggleRecruit(tg){
+  send('admin_toggle_recruit',{telegram:tg});
+  var r=RECRUITS.find(function(x){return x.telegram===tg;});
+  if(r) r.active=!r.active;
+  renderAdminLists();
+  showToast('Обновлено ✓');
 }
 
 function loadData(){
@@ -2164,6 +2432,7 @@ function renderStats(){
 
 function afterLoad(){
   try{populateRentalInDeals();}catch(e){}
+  try{initAdmin();renderAdminLists();}catch(e){}
   try{populateDeals();}catch(e){}
   try{loadDash({rentalStats:RENTAL_STATS||{},agentCounters:AGENT_C||{},counters:COUNTERS||{}});}catch(e){}
   var today=new Date().toISOString().split('T')[0];
