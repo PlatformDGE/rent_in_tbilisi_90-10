@@ -390,7 +390,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- СДЕЛКИ ПО МЕСЯЦАМ -->
-        <div class="section">
+        <div class="section" id="dash-sec-monthly">
           <div class="sl">Сделки по месяцам — платформа</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;" id="ds-monthly-wrap">
             <div id="ds-monthly-bars" style="display:flex;flex-direction:column;gap:8px;">
@@ -400,7 +400,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- РАЙОНЫ -->
-        <div class="section">
+        <div class="section" id="dash-sec-districts">
           <div class="sl">Районы — объекты и цены</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
             <div style="display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);">
@@ -417,7 +417,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- ГРАФИК ДИНАМИКИ -->
-        <div class="section">
+        <div class="section" id="dash-sec-dyn">
           <div class="sl">Динамика объявлений</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
             <div style="position:relative;height:130px;">
@@ -427,7 +427,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- ТИПЫ КВАРТИР -->
-        <div class="section">
+        <div class="section" id="dash-sec-rooms">
           <div class="sl">Тип квартир</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
             <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
@@ -464,7 +464,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- ЦЕНЫ ПО МЕСЯЦАМ -->
-        <div class="section">
+        <div class="section" id="dash-sec-prices">
           <div class="sl">Средняя цена по месяцам</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
             <div style="position:relative;height:120px;">
@@ -474,7 +474,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- ПОСЛЕДНИЕ СДЕЛКИ -->
-        <div class="section">
+        <div class="section" id="dash-sec-lastdeals">
           <div class="sl">Последние сделки платформы</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-last-deals">
             <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
@@ -1339,11 +1339,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section">
           <div class="sl">Секции дашборда</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Районы и цены</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-districts" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-districts"></span></label></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Динамика объявлений</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-dyn" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-dyn"></span></label></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Типы квартир</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-rooms" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-rooms"></span></label></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">График цен</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-prices" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-prices"></span></label></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;"><span style="font-size:13px;color:var(--text);">Сделки по месяцам</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-monthly" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-monthly"></span></label></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Сделки по месяцам</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-monthly" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-monthly"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Районы — объекты и цены</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-districts" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-districts"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Динамика объявлений</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-dyn" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-dyn"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Тип квартир</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-rooms" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-rooms"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Средняя цена по месяцам</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-prices" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-prices"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;"><span style="font-size:13px;color:var(--text);">Последние сделки</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-lastdeals" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-lastdeals"></span></label></div>
           </div>
         </div>
       </div>
@@ -2193,7 +2189,7 @@ function loadDash(data){
 // ═══════════════════════════════════════════════════
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
-var dashSettings = {districts:true,dyn:true,rooms:true,prices:true,monthly:true};
+var dashSettings = {monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true};
 
 function isAdmin(){
   try{
@@ -2249,7 +2245,7 @@ function renderAdminLists(){
 }
 
 function updateSwitches(){
-  var keys=['districts','dyn','rooms','prices','monthly'];
+  var keys=['monthly','districts','dyn','rooms','prices','lastdeals'];
   keys.forEach(function(k){
     var cb=document.getElementById('dash-show-'+k);
     if(cb) cb.checked=dashSettings[k]!==false;
@@ -2259,28 +2255,24 @@ function updateSwitches(){
 }
 
 function saveDashSettings(){
-  var keys=['districts','dyn','rooms','prices','monthly'];
+  var keys=['monthly','districts','dyn','rooms','prices','lastdeals'];
   keys.forEach(function(k){
     var cb=document.getElementById('dash-show-'+k);
     if(cb) dashSettings[k]=cb.checked;
   });
   updateSwitches();
-  // Apply to dashboard sections
-  var map={districts:'ds-districts',dyn:'ds-dyn-chart',rooms:'.section:nth-of-type(4)',monthly:'ds-monthly-wrap'};
-  var distSec=document.querySelector('#tab-deals .section:nth-child(2)');
-  applyDashSection('ds-districts',dashSettings.districts);
-  applyDashSection('ds-dyn-chart',dashSettings.dyn);
-  applyDashSection('ds-price-chart',dashSettings.prices);
-  applyDashSection('ds-monthly-bars',dashSettings.monthly);
+  applyDashSection('dash-sec-monthly',   dashSettings.monthly);
+  applyDashSection('dash-sec-districts', dashSettings.districts);
+  applyDashSection('dash-sec-dyn',       dashSettings.dyn);
+  applyDashSection('dash-sec-rooms',     dashSettings.rooms);
+  applyDashSection('dash-sec-prices',    dashSettings.prices);
+  applyDashSection('dash-sec-lastdeals', dashSettings.lastdeals);
   showToast('Настройки сохранены ✓');
 }
 
 function applyDashSection(id, show){
   var el=document.getElementById(id);
-  if(el&&el.closest){
-    var sec=el.closest('.section')||el.parentElement;
-    if(sec) sec.style.display=show?'':'none';
-  }
+  if(el) el.style.display=show?'':'none';
 }
 
 function adminAddAgent(){
