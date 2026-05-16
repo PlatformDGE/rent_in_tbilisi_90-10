@@ -333,11 +333,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             <div style="font-size:18px;font-weight:800;letter-spacing:-.3px;">📈 Dashboard</div>
             <div style="font-size:11px;color:var(--text3);margin-top:1px;">@rent_tbilisi_ge · аналитика канала</div>
           </div>
-          <div style="display:flex;gap:4px;" id="dp-tabs">
-            <button onclick="setDashPeriod('month')" id="dp-month" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">30д</button>
-            <button onclick="setDashPeriod('quarter')" id="dp-quarter" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">3м</button>
-            <button onclick="setDashPeriod('year')" id="dp-year" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">Всё</button>
-          </div>
+          <div style="font-size:11px;color:var(--accent2);font-weight:600;" id="dp-months-label">Мар · Апр · Май 2026</div>
         </div>
       </div>
 
@@ -349,7 +345,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(34,197,94,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Объектов</div>
             <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-total">406</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-total-sub">за 30 дней</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-total-sub">за 3 месяца</div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(124,111,255,.12),transparent 70%);"></div>
@@ -1362,7 +1358,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbyyoBQ_1MxlEeij9TvXUw8NUd8gr4VwgE2MhbJXhn7UEXHC-X-_n9AEHS4WDF7gTw3b3Q/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzLMCo6VIywf_mdwPmvxghDs8lvgRgLlWUseZKx6QQak7i5f9OLNfRH5R8h3h3Exp-7IQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2019,13 +2015,20 @@ function renderDash(){
   var ac=dashData.agentCounters||{};
   var ct=dashData.counters||{};
 
+  // Month label
+  var nowD=new Date();
+  var mNms=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  var mlEl=document.getElementById('dp-months-label');
+  if(mlEl){var mls=[];for(var mii=2;mii>=0;mii--){var md=new Date(nowD.getFullYear(),nowD.getMonth()-mii,1);mls.push(mNms[md.getMonth()]);}mlEl.textContent=mls.join(' · ')+' '+nowD.getFullYear();}
+
   // Metrics
-  var totEl=document.getElementById('ds-total'); if(totEl)totEl.textContent=cs.total;
+  var totalDeals=(rs.total||0)+(rs.tgTotal||0);
+  var totEl=document.getElementById('ds-total'); if(totEl)totEl.textContent=totalDeals||cs.total;
+  var totSub=document.getElementById('ds-total-sub'); if(totSub)totSub.textContent='за 3 месяца';
   var avgEl=document.getElementById('ds-avgprice'); if(avgEl)avgEl.textContent='$'+cs.avgPrice;
   var exEl=document.getElementById('ds-excl'); if(exEl)exEl.textContent=cs.exclusive;
   var platEl=document.getElementById('ds-platform-deals');
   var platSub=document.getElementById('ds-platform-sub');
-  var totalDeals=(rs.total||0)+(rs.tgTotal||0);
   var totalPlat=Math.round((rs.platform||0)+(rs.tgPlatform||0));
   var totalComm=Math.round(rs.commission||0);
   if(platEl){platEl.textContent=totalDeals||'—';}
