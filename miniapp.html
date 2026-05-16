@@ -340,44 +340,44 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       <div class="pad pb">
 
         <!-- МЕТРИКИ -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+        <div id="dash-metrics-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+          <div id="dash-m-total" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(34,197,94,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Объектов</div>
             <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-total">406</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-total-sub">за 3 месяца</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+          <div id="dash-m-avgprice" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(124,111,255,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Ср. цена аренды</div>
             <div style="font-size:28px;font-weight:800;color:var(--accent2);letter-spacing:-1px;" id="ds-avgprice">$839</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;">по всем районам</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+          <div id="dash-m-excl" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(245,158,11,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Эксклюзивов</div>
             <div style="font-size:28px;font-weight:800;color:var(--amber);letter-spacing:-1px;" id="ds-excl">88</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-excl-sub">22% от всех</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+          <div id="dash-m-platform" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(59,130,246,.12),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Сделок платф.</div>
             <div style="font-size:28px;font-weight:800;color:#7eb3ff;letter-spacing:-1px;" id="ds-platform-deals">—</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-platform-sub">из топиков</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;grid-column:span 2;">
+          <div id="dash-m-totalcomm" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;grid-column:span 2;">
             <div style="position:absolute;top:0;right:0;width:100px;height:100%;background:radial-gradient(circle at right,rgba(34,197,94,.07),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Общая комиссия платформы за месяц</div>
             <div style="font-size:32px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-total-comm">—</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-total-comm-sub">из всех сделок</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+          <div id="dash-m-avgcomm" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(34,197,94,.08),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Ср. комиссия</div>
             <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-avg-comm">—</div>
             <div style="font-size:10px;color:var(--text3);margin-top:3px;">за сделку</div>
           </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
+          <div id="dash-m-turnover" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(124,111,255,.08),transparent 70%);"></div>
             <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Общий оборот</div>
             <div style="font-size:28px;font-weight:800;color:var(--accent2);letter-spacing:-1px;" id="ds-turnover">—</div>
@@ -1333,10 +1333,52 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
         </div>
         <div class="section">
+          <div class="sl">Метрики дашборда</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Объектов</span><div id="sw-m-total" onclick="toggleMetric('total')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Ср. цена аренды</span><div id="sw-m-avgprice" onclick="toggleMetric('avgprice')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Эксклюзивов</span><div id="sw-m-excl" onclick="toggleMetric('excl')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Сделок платформы</span><div id="sw-m-platform" onclick="toggleMetric('platform')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Общая комиссия</span><div id="sw-m-totalcomm" onclick="toggleMetric('totalcomm')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Ср. комиссия</span><div id="sw-m-avgcomm" onclick="toggleMetric('avgcomm')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;"><span style="font-size:13px;color:var(--text);">Общий оборот</span><div id="sw-m-turnover" onclick="toggleMetric('turnover')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
+          </div>
+        </div>
+
+        <div class="section">
           <div class="sl">Секции дашборда</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Сделки по месяцам</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-monthly" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-monthly"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Районы — объекты и цены</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-districts" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-districts"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Динамика объявлений</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-dyn" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-dyn"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Тип квартир</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-rooms" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-rooms"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Средняя цена по месяцам</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-prices" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-prices"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;"><span style="font-size:13px;color:var(--text);">Последние сделки</span><label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" id="dash-show-lastdeals" checked onchange="saveDashSettings()" style="opacity:0;width:0;height:0;"><span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#2a3a5a;border-radius:24px;transition:.3s;" id="sw-lastdeals"></span></label></div>
-          </div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Сделки по месяцам</span>
+              <div id="sw-monthly" onclick="toggleDashSec('monthly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
+              </div>
+            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Районы — объекты и цены</span>
+              <div id="sw-districts" onclick="toggleDashSec('districts')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
+              </div>
+            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Динамика объявлений</span>
+              <div id="sw-dyn" onclick="toggleDashSec('dyn')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
+              </div>
+            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Тип квартир</span>
+              <div id="sw-rooms" onclick="toggleDashSec('rooms')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
+              </div>
+            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Средняя цена по месяцам</span>
+              <div id="sw-prices" onclick="toggleDashSec('prices')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
+              </div>
+            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;">
+              <span style="font-size:13px;color:var(--text);">Последние сделки</span>
+              <div id="sw-lastdeals" onclick="toggleDashSec('lastdeals')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
+              </div>
+            </div>          </div>
         </div>
       </div>
     </div>
@@ -2197,17 +2239,31 @@ var dashSettings = {monthly:true,districts:true,dyn:true,rooms:true,prices:true,
 function isAdmin(){
   try{
     var tg=window.Telegram&&window.Telegram.WebApp;
-    if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user){
-      return String(tg.initDataUnsafe.user.id)===ADMIN_ID;
+    if(tg){
+      // Try initDataUnsafe first
+      if(tg.initDataUnsafe&&tg.initDataUnsafe.user){
+        return String(tg.initDataUnsafe.user.id)===ADMIN_ID;
+      }
+      // Try parsing initData string
+      if(tg.initData){
+        var params=new URLSearchParams(tg.initData);
+        var userStr=params.get('user');
+        if(userStr){
+          var user=JSON.parse(decodeURIComponent(userStr));
+          return String(user.id)===ADMIN_ID;
+        }
+      }
     }
   }catch(e){}
+  // Dev fallback — check URL param for testing
+  if(window.location.search.indexOf('admin=1')!==-1) return true;
   return false;
 }
 
 function initAdmin(){
   if(!isAdmin()) return;
   var btn=document.getElementById('nav-admin');
-  if(btn) btn.style.display='';
+  if(btn) btn.style.display='flex';
 }
 
 function setAdminLvl(v){
@@ -2250,11 +2306,30 @@ function renderAdminLists(){
 function updateSwitches(){
   var keys=['monthly','districts','dyn','rooms','prices','lastdeals'];
   keys.forEach(function(k){
-    var cb=document.getElementById('dash-show-'+k);
-    if(cb) cb.checked=dashSettings[k]!==false;
     var sw=document.getElementById('sw-'+k);
-    if(sw) sw.style.background=(dashSettings[k]!==false)?'var(--green)':'#2a3a5a';
+    if(!sw) return;
+    var on=dashSettings[k]!==false;
+    sw.style.background=on?'var(--green)':'#3a3a5a';
+    var dot=sw.querySelector('div');
+    if(dot) dot.style.left=on?'21px':'3px';
   });
+}
+
+function toggleMetric(k){
+  if(!dashSettings.metrics) dashSettings.metrics={};
+  dashSettings.metrics[k]=dashSettings.metrics[k]===false?true:false;
+  var on=dashSettings.metrics[k]!==false;
+  var sw=document.getElementById('sw-m-'+k);
+  if(sw){sw.style.background=on?'var(--green)':'#3a3a5a';var dot=sw.querySelector('div');if(dot)dot.style.left=on?'21px':'3px';}
+  var el=document.getElementById('dash-m-'+k);
+  if(el) el.style.display=on?'':'none';
+}
+
+function toggleDashSec(k){
+  dashSettings[k]=dashSettings[k]===false?true:false;
+  updateSwitches();
+  applyDashSection('dash-sec-'+k, dashSettings[k]!==false);
+  showToast((dashSettings[k]!==false?'Показано: ':'Скрыто: ')+k);
 }
 
 function saveDashSettings(){
