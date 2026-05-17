@@ -2068,7 +2068,7 @@ function renderDash() {
     + dist.map(function(d,i){
       var pct=Math.round((d.count||0)/maxC*100);
       var c=colors[i%colors.length];
-      var ap=d.avg_price?Math.round(d.avg_price):0;
+      var ap=d.avgPrice?Math.round(d.avgPrice):(d.avg_price?Math.round(d.avg_price):0);
       return '<div style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:0.5px solid var(--border);">'
         +'<div style="width:7px;height:7px;border-radius:50%;background:'+c+';flex-shrink:0;"></div>'
         +'<div style="flex:1;min-width:0;">'
