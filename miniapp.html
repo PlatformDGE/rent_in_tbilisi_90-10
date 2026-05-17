@@ -332,86 +332,101 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <div class="app">
   <div class="screens" id="screens">
 
-    <!-- ═══ DEALS ═══ -->
+    <!-- ═══ DASHBOARD ═══ -->
     <div class="screen active" id="tab-deals">
-      <!-- HEADER -->
-      <div style="padding:14px 16px 12px;background:var(--bg);position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border);">
+      <div style="padding:12px 16px 10px;background:var(--bg);position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border);">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <div style="font-size:18px;font-weight:800;letter-spacing:-.3px;">📈 Dashboard</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:1px;" id="dash-updated">обновление...</div>
+            <div style="font-size:17px;font-weight:800;letter-spacing:-.3px;">📈 Dashboard</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px;" id="dash-updated">загрузка...</div>
           </div>
-          <div style="display:flex;gap:4px;">
-            <button onclick="setDashPeriod('month')" id="dp-month" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Месяц</button>
-            <button onclick="setDashPeriod('quarter')" id="dp-quarter" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">3 мес.</button>
-            <button onclick="setDashPeriod('all')" id="dp-all" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">Всё</button>
+          <div style="display:flex;gap:3px;">
+            <button onclick="setDashPeriod('month')" id="dp-month" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Месяц</button>
+            <button onclick="setDashPeriod('quarter')" id="dp-quarter" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">3 мес.</button>
+            <button onclick="setDashPeriod('all')" id="dp-all" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">Всё</button>
           </div>
         </div>
       </div>
-
       <div class="pad pb">
 
-        <!-- МЕТРИКИ -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;" id="dash-metrics-grid">
-          <div id="dash-m-deals" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(34,197,94,.12),transparent 70%);"></div>
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Сделок</div>
-            <div style="font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-deals">—</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-deals-sub">за период</div>
+        <!-- МЕТРИКИ ПЛАТФОРМЫ -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;right:0;width:50px;height:50px;background:radial-gradient(circle at top right,rgba(34,197,94,.15),transparent 70%);"></div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Сделок</div>
+            <div style="font-size:26px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-deals">—</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;" id="ds-deals-sub">за период</div>
           </div>
-          <div id="dash-m-platform" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(124,111,255,.12),transparent 70%);"></div>
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Комиссия платф.</div>
-            <div style="font-size:28px;font-weight:800;color:var(--accent2);letter-spacing:-1px;" id="ds-platform">—</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-platform-sub">за период</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;right:0;width:50px;height:50px;background:radial-gradient(circle at top right,rgba(124,111,255,.15),transparent 70%);"></div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Платформа</div>
+            <div style="font-size:26px;font-weight:800;color:var(--accent2);letter-spacing:-1px;" id="ds-platform">—</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">комиссия</div>
           </div>
-          <div id="dash-m-totalcomm" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;grid-column:span 2;">
-            <div style="position:absolute;top:0;right:0;width:120px;height:100%;background:radial-gradient(circle at right,rgba(34,197,94,.07),transparent 70%);"></div>
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Общая комиссия агентства</div>
-            <div style="font-size:32px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-total-comm">—</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="ds-total-comm-sub">за период</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;position:relative;overflow:hidden;grid-column:span 2;">
+            <div style="position:absolute;top:0;right:0;width:100px;height:100%;background:radial-gradient(circle at right,rgba(34,197,94,.06),transparent 70%);"></div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Общая комиссия агентства</div>
+            <div style="font-size:30px;font-weight:800;color:var(--green);letter-spacing:-1px;" id="ds-total-comm">—</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;" id="ds-total-comm-sub"></div>
           </div>
-          <div id="dash-m-avgcomm" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(245,158,11,.08),transparent 70%);"></div>
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Ср. комиссия</div>
-            <div style="font-size:28px;font-weight:800;color:var(--amber);letter-spacing:-1px;" id="ds-avg-comm">—</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;">за сделку</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;">
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Ср. комиссия</div>
+            <div style="font-size:26px;font-weight:800;color:var(--amber);letter-spacing:-1px;" id="ds-avg-comm">—</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">за сделку</div>
           </div>
-          <div id="dash-m-turnover" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;position:relative;overflow:hidden;">
-            <div style="position:absolute;top:0;right:0;width:60px;height:60px;background:radial-gradient(circle at top right,rgba(59,130,246,.08),transparent 70%);"></div>
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;">Оборот</div>
-            <div style="font-size:28px;font-weight:800;color:#7eb3ff;letter-spacing:-1px;" id="ds-turnover">—</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px;">сумма аренд</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;">
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Оборот</div>
+            <div style="font-size:26px;font-weight:800;color:#7eb3ff;letter-spacing:-1px;" id="ds-turnover">—</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">сумма аренд</div>
           </div>
         </div>
 
-        <!-- КОМИССИЯ ПО МЕСЯЦАМ -->
+        <!-- МЕТРИКИ КАНАЛА -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
+          <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
+            <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Объектов</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent2);">3098</div>
+            <div style="font-size:8px;color:var(--text3);">в канале</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
+            <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Ср. цена</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent2);">$840</div>
+            <div style="font-size:8px;color:var(--text3);">аренда</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
+            <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Эксклюзив</div>
+            <div style="font-size:20px;font-weight:800;color:var(--amber);">22%</div>
+            <div style="font-size:8px;color:var(--text3);">от всех</div>
+          </div>
+        </div>
+
+        <!-- ГРАФИК КОМИССИИ + СДЕЛОК -->
         <div class="section" id="dash-sec-monthly">
           <div class="sl">Комиссия платформы по месяцам</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
-            <canvas id="ds-comm-chart" height="140" role="img" aria-label="Комиссия по месяцам"></canvas>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;">
+            <div style="position:relative;height:140px;"><canvas id="ds-comm-chart"></canvas></div>
           </div>
         </div>
 
-        <!-- СДЕЛКИ ПО МЕСЯЦАМ -->
-        <div class="section" id="dash-sec-deals-month">
-          <div class="sl">Сделки по месяцам</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;" id="ds-monthly-wrap">
-            <div id="ds-monthly-bars" style="display:flex;flex-direction:column;gap:6px;">
-              <div style="text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
-            </div>
-          </div>
+        <!-- РАЙОНЫ -->
+        <div class="section" id="dash-sec-districts">
+          <div class="sl">Районы — объекты и цены</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-districts"></div>
+        </div>
+
+        <!-- ТИП КВАРТИР -->
+        <div class="section" id="dash-sec-rooms">
+          <div class="sl">Тип квартир</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;" id="ds-rooms"></div>
         </div>
 
         <!-- АГЕНТЫ -->
         <div class="section" id="dash-sec-agents">
-          <div class="sl">Агенты — сделки за период</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-list">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
-          </div>
+          <div class="sl">Агенты — сделки</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-list"></div>
         </div>
 
-        <!-- ПОСЛЕДНИЕ 5 СДЕЛОК -->
+        <!-- ПОСЛЕДНИЕ СДЕЛКИ -->
         <div class="section" id="dash-sec-lastdeals">
           <div class="sl">Последние сделки</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-last-deals">
@@ -540,7 +555,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="field" id="rn-client-src-block" style="display:none;"><label class="fl">Кто передал клиента</label>
             <select id="rn-client-src" onchange="rnUpd()"><option value="">Выбрать агента/рекрута...</option></select>
           </div>
-          <div class="field" id="rn-recdeals-block" style="display:none;"><label class="fl">Сделки рекрута</label>
+          <div class="field" id="rn-recdeals-block" style="display:none;"><label class="fl">Reports_Deals рекрута</label>
             <div class="tg c2">
               <button class="tb aa" id="rn-rd-lt" onclick="setRnRecD('lt10')">До 10 сделок</button>
               <button class="tb" id="rn-rd-gte" onclick="setRnRecD('gte10')">10 — 90 сделок</button>
@@ -1291,7 +1306,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="sl">Секции дашборда</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
 <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
-              <span style="font-size:13px;color:var(--text);">Сделки по месяцам</span>
+              <span style="font-size:13px;color:var(--text);">Reports_Deals по месяцам</span>
               <div id="sw-monthly" onclick="toggleDashSec('monthly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
                 <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
               </div>
@@ -1342,7 +1357,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbydqbuYpwlbMTLgvFzxqdiQsjG1pOzNfbAWCQktzvxbLCsDzNTXRKQK58O-fXkGd2_43w/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxCwPFPdhSJPW6CoPvIVXXoPSKxo11agefYz0eHNwWU_UVjEHP7TMfTNP1emrJ24snJUA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1908,222 +1923,227 @@ function send(type,data) {
 var dashPeriod = 'month';
 var dashData = {};
 var dashChartComm = null;
+var dashChartRooms = null;
 var dashAutoTimer = null;
 
-var CHANNEL_STATS = {
-  total: 406, avgPrice: 839, exclusive: 88,
-  districts: [
-    {name:'Saburtalo',count:136,avgPrice:858},
-    {name:'Vake',count:76,avgPrice:1021},
-    {name:'Vera',count:42,avgPrice:762},
-    {name:'Chugureti',count:27,avgPrice:644},
-    {name:'Sololaki',count:27,avgPrice:692},
-    {name:'Mtatsminda',count:17,avgPrice:716},
-    {name:'Didube',count:15,avgPrice:666},
-    {name:'Avlabari',count:13,avgPrice:725},
-    {name:'Ortachala',count:12,avgPrice:608},
-    {name:'Gldani',count:5,avgPrice:425},
-  ],
+// ── Статика из канала (6912 постов) ─────────────────
+var STATIC = {
+  channel: {
+    total: 3098,
+    avgPrice: 840,
+    exclPct: 3,
+    districts: [{"district": "Saburtalo", "count": 103, "avg_price": 853.8834951456311, "min_price": 350.0, "max_price": 4500.0, "excl": 33}, {"district": "Vake", "count": 73, "avg_price": 1026.027397260274, "min_price": 0.0, "max_price": 2500.0, "excl": 16}, {"district": "Vera", "count": 39, "avg_price": 781.7948717948718, "min_price": 100.0, "max_price": 1900.0, "excl": 8}, {"district": "Sololaki", "count": 21, "avg_price": 692.8571428571429, "min_price": 300.0, "max_price": 1800.0, "excl": 4}, {"district": "Chugureti", "count": 17, "avg_price": 644.1176470588235, "min_price": 300.0, "max_price": 1100.0, "excl": 7}, {"district": "Mtatsminda", "count": 16, "avg_price": 716.875, "min_price": 300.0, "max_price": 1300.0, "excl": 2}, {"district": "Didube", "count": 15, "avg_price": 666.6666666666666, "min_price": 100.0, "max_price": 1400.0, "excl": 6}, {"district": "Avlabari", "count": 13, "avg_price": 725.3846153846154, "min_price": 500.0, "max_price": 1000.0, "excl": 0}, {"district": "Ortachala", "count": 12, "avg_price": 608.3333333333334, "min_price": 300.0, "max_price": 900.0, "excl": 3}, {"district": "Rustaveli", "count": 6, "avg_price": 850.0, "min_price": 550.0, "max_price": 1600.0, "excl": 3}, {"district": "Didi Dighomi", "count": 5, "avg_price": 500.0, "min_price": 400.0, "max_price": 600.0, "excl": 1}, {"district": "Gldani", "count": 4, "avg_price": 425.0, "min_price": 300.0, "max_price": 500.0, "excl": 2}],
+    rooms: {"Other": 2718, "1 Bed": 205, "2 Bed": 117, "3 Bed": 35, "Studio": 16, "4+ Bed": 7},
+    monthly: {"2025-06": 76, "2025-07": 99, "2025-08": 127, "2025-09": 129, "2025-10": 137, "2025-11": 117, "2025-12": 95, "2026-01": 88, "2026-02": 54, "2026-03": 69, "2026-04": 80, "2026-05": 433},
+  },
+  platform: {
+    total: 1942,
+    commission: 496207,
+    platformComm: 128579,
+    turnover: 1153201,
+    avgComm: 256,
+    monthly: [{"month": "2023-08", "deals": 2, "commission": 0.0, "platform": 0.0, "price": 61.0}, {"month": "2023-09", "deals": 4, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2023-10", "deals": 21, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2023-11", "deals": 15, "commission": 0.0, "platform": 0.0, "price": 500.0}, {"month": "2023-12", "deals": 12, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-01", "deals": 20, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-02", "deals": 25, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-03", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-04", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-05", "deals": 27, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-06", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-07", "deals": 36, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-08", "deals": 51, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-09", "deals": 42, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-10", "deals": 45, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2024-11", "deals": 50, "commission": 8305.0, "platform": 212.5, "price": 11650.0}, {"month": "2024-12", "deals": 45, "commission": 14625.0, "platform": 3101.5, "price": 23020.0}, {"month": "2025-01", "deals": 77, "commission": 22575.0, "platform": 3925.37, "price": 44975.0}, {"month": "2025-02", "deals": 69, "commission": 14680.0, "platform": 4364.25, "price": 31940.0}, {"month": "2025-03", "deals": 68, "commission": 15032.0, "platform": 2822.77, "price": 29915.0}, {"month": "2025-04", "deals": 78, "commission": 21375.0, "platform": 5947.5, "price": 43190.0}, {"month": "2025-05", "deals": 99, "commission": 33172.5, "platform": 9547.75, "price": 102304.0}, {"month": "2025-06", "deals": 83, "commission": 27275.5, "platform": 7409.5, "price": 53650.0}, {"month": "2025-07", "deals": 105, "commission": 35140.0, "platform": 8660.22, "price": 57245.0}, {"month": "2025-08", "deals": 117, "commission": 34425.0, "platform": 8728.87, "price": 62110.0}, {"month": "2025-09", "deals": 127, "commission": 38567.5, "platform": 9533.11, "price": 142700.0}, {"month": "2025-10", "deals": 127, "commission": 52698.5, "platform": 13619.0, "price": 64436.8}, {"month": "2025-11", "deals": 120, "commission": 45880.0, "platform": 11946.73, "price": 64106.5}, {"month": "2025-12", "deals": 92, "commission": 36000.0, "platform": 7089.87, "price": 132315.0}, {"month": "2026-01", "deals": 80, "commission": 25847.5, "platform": 9912.4, "price": 43175.0}, {"month": "2026-02", "deals": 46, "commission": 16170.0, "platform": 5126.25, "price": 25950.0}, {"month": "2026-03", "deals": 65, "commission": 23770.0, "platform": 7590.12, "price": 164540.0}, {"month": "2026-04", "deals": 66, "commission": 20251.0, "platform": 6236.0, "price": 34883.0}, {"month": "2026-05", "deals": 38, "commission": 10417.5, "platform": 2805.0, "price": 20535.0}],
+    agents: [{"agent": "Sergi", "deals": 299, "commission": 71264.5, "platform": 16631.0}, {"agent": "Omari", "deals": 155, "commission": 18298.5, "platform": 1374.96}, {"agent": "Irakli", "deals": 143, "commission": 32435.0, "platform": 6282.0}, {"agent": "Viktoriia", "deals": 142, "commission": 35080.0, "platform": 7790.25}, {"agent": "Daniil", "deals": 126, "commission": 28650.0, "platform": 7240.0}, {"agent": "Ilya", "deals": 118, "commission": 3530.0, "platform": 25.0}, {"agent": "Zaza", "deals": 106, "commission": 43980.0, "platform": 11228.5}, {"agent": "Artyom", "deals": 93, "commission": 36570.0, "platform": 13163.65}, {"agent": "Semyon", "deals": 92, "commission": 27575.0, "platform": 7704.35}, {"agent": "Dmitri", "deals": 79, "commission": 11740.0, "platform": 3497.0}, {"agent": "Vladislav", "deals": 79, "commission": 23155.0, "platform": 7119.87}, {"agent": "Shafi", "deals": 74, "commission": 25170.0, "platform": 7181.15}, {"agent": "David", "deals": 74, "commission": 40545.0, "platform": 10261.369999999999}, {"agent": "Vitaly", "deals": 66, "commission": 21240.0, "platform": 5732.5}, {"agent": "Gio", "deals": 56, "commission": 15661.0, "platform": 7945.0}],
+    lastDeals: [{"timestamp": "17.05.26", "agent": "Daniil", "price": 350.0, "commission": 175.0, "platform": 17.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "16.05.26", "agent": "Viktoriia", "price": 400.0, "commission": 200.0, "platform": 50.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "16.05.26", "agent": "Sergi", "price": 750.0, "commission": 375.0, "platform": 37.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "16.05.26", "agent": "Danila", "price": 750.0, "commission": 375.0, "platform": 187.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "15.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "14.05.26", "agent": "Dmitri", "price": 350.0, "commission": 175.0, "platform": 52.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "13.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 335.0, "commission": 167.5, "platform": 0.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 0.0, "commission": 0.0, "platform": 0.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "12.05.26", "agent": "Danila", "price": 550.0, "commission": 275.0, "platform": 137.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}],
+  },
 };
+
 
 function setDashPeriod(p) {
   dashPeriod = p;
   ['month','quarter','all'].forEach(function(x) {
     var el = document.getElementById('dp-' + x);
     if (!el) return;
-    var isOn = x === p;
-    el.style.background = isOn ? 'var(--glow)' : 'transparent';
-    el.style.borderColor = isOn ? 'var(--accent)' : 'var(--border)';
-    el.style.color = isOn ? 'var(--accent2)' : 'var(--text2)';
+    var on = x === p;
+    el.style.background = on ? 'var(--glow)' : 'transparent';
+    el.style.borderColor = on ? 'var(--accent)' : 'var(--border)';
+    el.style.color = on ? 'var(--accent2)' : 'var(--text2)';
   });
   renderDash();
 }
 
-function getSelectedKeys() {
-  var bm = (dashData.rentalStats || {}).byMonth || {};
-  var keys = Object.keys(bm).sort(function(a, b) {
-    var pa = a.split('/'), pb = b.split('/');
-    return (parseInt(pa[1])*12+parseInt(pa[0])) - (parseInt(pb[1])*12+parseInt(pb[0]));
-  });
-  if (dashPeriod === 'all') return keys;
+function getFilteredPlatform() {
+  var bmd = ((dashData.rentalStats||{}).byMonthData) || {};
   var now = new Date();
-  var months = dashPeriod === 'month' ? 1 : 3;
-  var result = [];
-  for (var i = months - 1; i >= 0; i--) {
-    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    result.push((d.getMonth()+1) + '/' + d.getFullYear());
+  var keys = Object.keys(bmd);
+  var selected = [];
+  if (dashPeriod === 'all') {
+    selected = keys;
+  } else {
+    var months = dashPeriod === 'month' ? 1 : 3;
+    for (var i = months-1; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      selected.push((d.getMonth()+1)+'/'+d.getFullYear());
+    }
   }
-  return result;
+  var deals=0,platform=0,comm=0,price=0;
+  selected.forEach(function(mk){
+    var m=bmd[mk]||{};
+    deals+=m.deals||0; platform+=m.platform||0; comm+=m.commission||0; price+=m.price||0;
+  });
+
+  // Fallback to static if no live data
+  if (!deals && STATIC.platform.monthly) {
+    STATIC.platform.monthly.forEach(function(m){
+      if (dashPeriod==='all' || selected.indexOf(m.month)!==-1) {
+        deals+=m.deals||0;
+        platform+=parseFloat(m.platform)||0;
+        comm+=parseFloat(m.commission)||0;
+        price+=parseFloat(m.price)||0;
+      }
+    });
+  }
+  return {deals:deals, platform:Math.round(platform), comm:Math.round(comm), price:Math.round(price)};
 }
 
 function renderDash() {
   var rs = (dashData.rentalStats) || {};
-  var bmd = rs.byMonthData || {};
-  var bm  = rs.byMonth || {};
-  var ac  = dashData.agentCounters || {};
-
-  var selectedKeys = getSelectedKeys();
-
-  // Считаем метрики за выбранный период
-  var deals=0, platform=0, comm=0, price=0, excl=0;
-  selectedKeys.forEach(function(mk) {
-    var d = bmd[mk] || {};
-    deals    += d.deals      || 0;
-    platform += d.platform   || 0;
-    comm     += d.commission || 0;
-    price    += d.price      || 0;
-    excl     += d.exclusive  || 0;
-  });
-  platform = Math.round(platform);
-  comm     = Math.round(comm);
-  price    = Math.round(price);
+  var ac = dashData.agentCounters || {};
+  var fil = getFilteredPlatform();
 
   // Метрики
-  var el;
-  el=document.getElementById('ds-deals'); if(el) el.textContent=deals||'—';
-  el=document.getElementById('ds-deals-sub'); if(el) el.textContent=deals?'за период':'нет данных';
-  el=document.getElementById('ds-platform'); if(el) el.textContent=platform?'$'+platform:'—';
-  el=document.getElementById('ds-platform-sub'); if(el) el.textContent=deals?'из '+deals+' сделок':'за период';
-  el=document.getElementById('ds-total-comm'); if(el) el.textContent=comm?'$'+comm:'—';
-  el=document.getElementById('ds-total-comm-sub'); if(el) el.textContent=deals?'ср. $'+Math.round(comm/deals)+'/сд. · '+deals+' сделок':'за период';
-  el=document.getElementById('ds-avg-comm'); if(el) el.textContent=(comm&&deals)?'$'+Math.round(comm/deals):'—';
-  el=document.getElementById('ds-turnover'); if(el) el.textContent=price?'$'+price:'—';
+  function set(id, val) { var e=document.getElementById(id); if(e) e.textContent=val; }
+  set('ds-deals', fil.deals||'—');
+  set('ds-deals-sub', fil.deals ? 'за период' : 'нет данных');
+  set('ds-platform', fil.platform ? '$'+fil.platform : '—');
+  set('ds-total-comm', fil.comm ? '$'+fil.comm : '—');
+  set('ds-total-comm-sub', fil.deals ? 'ср. $'+Math.round(fil.comm/fil.deals)+'/сд. · '+fil.deals+' сделок' : '');
+  set('ds-avg-comm', (fil.comm&&fil.deals) ? '$'+Math.round(fil.comm/fil.deals) : '—');
+  set('ds-turnover', fil.price ? '$'+fil.price : '—');
 
-  // Все ключи для графика
-  var allKeys = Object.keys(bm).sort(function(a,b){
-    var pa=a.split('/'),pb=b.split('/');
-    return (parseInt(pa[1])*12+parseInt(pa[0]))-(parseInt(pb[1])*12+parseInt(pb[0]));
-  });
-  var mNms=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  // Время обновления
+  var now = new Date();
+  set('dash-updated', 'обновлено '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0'));
 
   // График комиссии по месяцам
   var chartEl = document.getElementById('ds-comm-chart');
-  if (chartEl && allKeys.length && typeof Chart !== 'undefined') {
-    var labels = allKeys.map(function(mk) {
-      var p = mk.split('/');
-      return mNms[parseInt(p[0])] + "'" + p[1].slice(2);
+  if (chartEl && typeof Chart !== 'undefined') {
+    var src = STATIC.platform.monthly;
+    if (rs.byMonthData && Object.keys(rs.byMonthData).length > 0) {
+      var bmd = rs.byMonthData;
+      src = Object.keys(bmd).sort(function(a,b){
+        var pa=a.split('/'),pb=b.split('/');
+        return (parseInt(pa[1])*12+parseInt(pa[0]))-(parseInt(pb[1])*12+parseInt(pb[0]));
+      }).map(function(mk){return{month:mk,deals:bmd[mk].deals||0,platform:bmd[mk].platform||0};});
+    }
+    var mNms=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+    var labels = src.slice(-18).map(function(m){
+      var p=m.month.split('/'); return mNms[parseInt(p[0])]+"'"+p[1].slice(2);
     });
-    var commData = allKeys.map(function(mk) { return Math.round((bmd[mk]||{}).platform||0); });
-    var dealData = allKeys.map(function(mk) { return (bmd[mk]||{}).deals||0; });
-
-    if (dashChartComm) { dashChartComm.destroy(); dashChartComm = null; }
+    var platData = src.slice(-18).map(function(m){return Math.round(parseFloat(m.platform)||0);});
+    var dealData = src.slice(-18).map(function(m){return parseInt(m.deals)||0;});
+    if (dashChartComm) { dashChartComm.destroy(); dashChartComm=null; }
     dashChartComm = new Chart(chartEl, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Комиссия платф.',
-            data: commData,
-            backgroundColor: 'rgba(124,111,255,.7)',
-            borderRadius: 4, borderSkipped: false, yAxisID: 'y',
-          },
-          {
-            label: 'Сделки',
-            data: dealData,
-            type: 'line',
-            borderColor: 'rgba(34,197,94,.8)',
-            backgroundColor: 'rgba(34,197,94,.08)',
-            fill: true, tension: .4,
-            pointRadius: 3, pointBackgroundColor: 'rgba(34,197,94,.9)',
-            yAxisID: 'y2',
-          }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid:{display:false}, ticks:{color:'rgba(255,255,255,.3)',font:{size:9}}, border:{display:false} },
-          y: { grid:{color:'rgba(255,255,255,.05)'}, ticks:{color:'rgba(255,255,255,.3)',font:{size:9},callback:function(v){return '$'+v;}}, border:{display:false} },
-          y2: { position:'right', grid:{display:false}, ticks:{color:'rgba(34,197,94,.5)',font:{size:9}}, border:{display:false} }
+      type:'bar',
+      data:{labels:labels,datasets:[
+        {label:'Платформа $',data:platData,backgroundColor:'rgba(124,111,255,.7)',borderRadius:3,borderSkipped:false,yAxisID:'y'},
+        {label:'Сделки',data:dealData,type:'line',borderColor:'rgba(34,197,94,.8)',backgroundColor:'rgba(34,197,94,.06)',fill:true,tension:.4,pointRadius:2,pointBackgroundColor:'rgba(34,197,94,.9)',yAxisID:'y2'}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'rgba(255,255,255,.3)',font:{size:8}},border:{display:false}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:8},callback:function(v){return '$'+v;}},border:{display:false}},
+          y2:{position:'right',grid:{display:false},ticks:{color:'rgba(34,197,94,.4)',font:{size:8}},border:{display:false}}
         }
       }
     });
   }
 
-  // Сделки по месяцам — бары
-  var mbEl = document.getElementById('ds-monthly-bars');
-  if (mbEl && allKeys.length) {
-    var maxD = Math.max.apply(null, allKeys.map(function(mk){return (bmd[mk]||{}).deals||0;})) || 1;
-    mbEl.innerHTML = allKeys.slice(-12).map(function(mk) {
-      var d = bmd[mk] || {};
-      var cnt = d.deals || 0;
-      var pct = Math.round(cnt / maxD * 100);
-      var parts = mk.split('/');
-      var label = mNms[parseInt(parts[0])] + ' ' + parts[1].slice(2);
-      var isSelected = selectedKeys.indexOf(mk) !== -1;
-      var color = isSelected ? 'var(--accent2)' : 'rgba(124,111,255,.35)';
-      return '<div style="display:flex;align-items:center;gap:8px;">'
-        + '<div style="width:44px;font-size:11px;color:var(--text2);flex-shrink:0;">' + label + '</div>'
-        + '<div style="flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden;">'
-        + '<div style="height:100%;background:' + color + ';border-radius:4px;width:' + pct + '%;display:flex;align-items:center;padding:0 6px;">'
-        + '<span style="font-size:10px;font-weight:700;color:#fff;white-space:nowrap;">' + cnt + '</span></div></div>'
-        + '<div style="width:28px;text-align:right;font-size:11px;font-weight:700;color:' + color + ';">' + cnt + '</div>'
-        + '</div>';
+  // Районы
+  var dEl = document.getElementById('ds-districts');
+  if (dEl) {
+    var dist = STATIC.channel.districts;
+    var maxC = dist[0].count||1;
+    var colors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc','#fb7185','#facc15'];
+    dEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);"><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Район</span><div style="display:flex;gap:20px;"><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Ср. цена</span><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;width:28px;text-align:right;">Кол</span></div></div>'
+    + dist.map(function(d,i){
+      var pct=Math.round((d.count||0)/maxC*100);
+      var c=colors[i%colors.length];
+      var ap=d.avg_price?Math.round(d.avg_price):0;
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:0.5px solid var(--border);">'
+        +'<div style="width:7px;height:7px;border-radius:50%;background:'+c+';flex-shrink:0;"></div>'
+        +'<div style="flex:1;min-width:0;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
+        +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+d.district+'</span>'
+        +'<div style="display:flex;align-items:center;gap:16px;">'
+        +'<span style="font-size:12px;font-weight:700;color:'+c+';">$'+(ap||'—')+'</span>'
+        +'<span style="font-size:11px;color:var(--text3);width:28px;text-align:right;">'+(d.count||0)+'</span>'
+        +'</div></div>'
+        +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
+        +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.6;"></div>'
+        +'</div></div></div>';
     }).join('');
   }
 
-  // Агенты из топиков
+  // Типы квартир
+  var rEl = document.getElementById('ds-rooms');
+  if (rEl) {
+    var rooms = STATIC.channel.rooms;
+    var total = Object.values(rooms).reduce(function(a,b){return a+b;},0);
+    var order = ['1 Bed','2 Bed','Studio','3 Bed','4+ Bed','Other'];
+    var rColors = {'1 Bed':'var(--green)','2 Bed':'var(--accent2)','Studio':'var(--amber)','3 Bed':'#7eb3ff','4+ Bed':'#a89fff','Other':'var(--text3)'};
+    rEl.innerHTML = order.filter(function(k){return rooms[k];}).map(function(k){
+      var cnt=rooms[k]||0;
+      var pct=Math.round(cnt/total*100);
+      var c=rColors[k]||'var(--text3)';
+      return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:9px;text-align:center;">'
+        +'<div style="font-size:9px;color:var(--text3);margin-bottom:3px;">'+k+'</div>'
+        +'<div style="font-size:18px;font-weight:800;color:'+c+';">'+cnt+'</div>'
+        +'<div style="font-size:9px;color:var(--text3);margin-top:2px;">'+pct+'%</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  // Агенты
   var aEl = document.getElementById('ds-agents-list');
   if (aEl) {
-    var topA = rs.topAgents || [];
-    if (!topA.length) {
-      topA = Object.keys(ac).sort(function(a,b){return (ac[b].deals||0)-(ac[a].deals||0);})
-        .slice(0,10).map(function(n){return{name:n,deals:(ac[n]||{}).deals||0};});
-    }
-    if (topA.length) {
-      var maxD2 = topA[0].deals || 1;
-      var colors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc'];
-      aEl.innerHTML = topA.map(function(a, i) {
-        var pct = Math.round((a.deals||0)/maxD2*100);
-        var c = colors[i%colors.length];
-        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:0.5px solid var(--border);">'
-          + '<div style="width:28px;height:28px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:'+c+';flex-shrink:0;">'+(a.name||'?')[0].toUpperCase()+'</div>'
-          + '<div style="flex:1;">'
-          + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
-          + '<span style="font-size:13px;font-weight:600;color:var(--text);">' + a.name + '</span>'
-          + '<span style="font-size:13px;font-weight:700;color:'+c+';">' + a.deals + '</span>'
-          + '</div>'
-          + '<div style="height:3px;background:var(--bg3);border-radius:2px;">'
-          + '<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;"></div>'
-          + '</div></div></div>';
-      }).join('');
-    } else {
-      aEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
-    }
+    var agents = (rs.topAgents && rs.topAgents.length) ? rs.topAgents : STATIC.platform.agents;
+    var maxD = agents.length ? (agents[0].deals||1) : 1;
+    var aColors=['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc','#fb7185','#facc15','#a3e635','#38bdf8','#e879f9'];
+    aEl.innerHTML = agents.map(function(a,i){
+      var pct=Math.round((a.deals||0)/maxD*100);
+      var c=aColors[i%aColors.length];
+      var comm=a.commission?'$'+Math.round(a.commission):'';
+      var plat=a.platform?'$'+Math.round(a.platform):'';
+      return '<div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:0.5px solid var(--border);">'
+        +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';flex-shrink:0;">'+(a.agent||a.name||'?')[0].toUpperCase()+'</div>'
+        +'<div style="flex:1;min-width:0;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
+        +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+(a.agent||a.name||'—')+'</span>'
+        +'<div style="display:flex;gap:8px;align-items:center;">'
+        +(plat?'<span style="font-size:10px;color:var(--accent2);">'+plat+'</span>':'')
+        +'<span style="font-size:12px;font-weight:700;color:'+c+';">'+(a.deals||0)+' сд.</span>'
+        +'</div></div>'
+        +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
+        +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.7;"></div>'
+        +'</div></div></div>';
+    }).join('');
   }
 
-  // Последние 5 сделок
+  // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
-    var lastDeals = rs.lastDeals || [];
-    if (lastDeals.length) {
-      ldEl.innerHTML = lastDeals.map(function(d, i) {
-        var isLast = i === lastDeals.length - 1;
-        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;'+(isLast?'':'border-bottom:0.5px solid var(--border);')+'">'
-          + '<div style="display:flex;align-items:center;gap:10px;">'
-          + '<div style="width:30px;height:30px;border-radius:50%;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);flex-shrink:0;">'
-          + (d.agent?d.agent[0].toUpperCase():'?')+'</div>'
-          + '<div>'
-          + '<div style="font-size:13px;font-weight:600;color:var(--text);">'+(d.agent||'—')+'</div>'
-          + '<div style="font-size:11px;color:var(--text3);margin-top:1px;">'+(d.date||'')+'</div>'
-          + '</div></div>'
-          + '<div style="text-align:right;">'
-          + '<div style="font-size:14px;font-weight:700;color:var(--green);">$'+(d.commission||0)+'</div>'
-          + '<div style="font-size:11px;color:var(--text3);">$'+(d.price||0)+'</div>'
-          + '</div></div>';
+    var lastDeals = (rs.lastDeals && rs.lastDeals.length) ? rs.lastDeals : STATIC.platform.lastDeals;
+    if (lastDeals && lastDeals.length) {
+      ldEl.innerHTML = lastDeals.map(function(d,i){
+        var isLast=i===lastDeals.length-1;
+        var agent=d.agent||'—';
+        var date=d.timestamp?d.timestamp.slice(0,10):d.date||'';
+        var comm=d.commission?'$'+Math.round(d.commission):'—';
+        var price=d.price?'$'+Math.round(d.price):'—';
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 13px;'+(isLast?'':'border-bottom:0.5px solid var(--border);')+'">'
+          +'<div style="display:flex;align-items:center;gap:8px;">'
+          +'<div style="width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--green);flex-shrink:0;">'+agent[0].toUpperCase()+'</div>'
+          +'<div><div style="font-size:12px;font-weight:600;color:var(--text);">'+agent+'</div>'
+          +'<div style="font-size:10px;color:var(--text3);">'+date+'</div></div></div>'
+          +'<div style="text-align:right;">'
+          +'<div style="font-size:13px;font-weight:700;color:var(--green);">'+comm+'</div>'
+          +'<div style="font-size:10px;color:var(--text3);">'+price+'</div>'
+          +'</div></div>';
       }).join('');
     } else {
-      ldEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
+      ldEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
     }
-  }
-
-  // Обновляем время
-  var upd = document.getElementById('dash-updated');
-  if (upd) {
-    var now = new Date();
-    upd.textContent = 'обновлено ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
   }
 }
 
