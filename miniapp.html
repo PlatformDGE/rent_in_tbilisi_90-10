@@ -321,6 +321,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 </script>
 </div>
 
+<!-- ACCESS DENIED SCREEN -->
+<div id="screen-no-access" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
+  <div style="font-size:48px;margin-bottom:20px;">🔒</div>
+  <div style="font-family:var(--font-head,sans-serif);font-size:20px;font-weight:800;color:var(--text);margin-bottom:10px;">Нет доступа</div>
+  <div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px;" id="access-reason">Обратитесь к администратору платформы</div>
+  <div style="font-size:12px;color:var(--text3);">@davidtibelashvili</div>
+</div>
+
 <div class="app">
   <div class="screens" id="screens">
 
@@ -1400,7 +1408,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzLMCo6VIywf_mdwPmvxghDs8lvgRgLlWUseZKx6QQak7i5f9OLNfRH5R8h3h3Exp-7IQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzNRBdRHMEIpyl0VFllNf1EB8RfsUm6sUz5Q5sozqEHGEY6z99jWfDSPU8BqQJxBjosnA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1419,7 +1427,8 @@ let pdfTimer={};
 // SPLASH
 window.addEventListener('load', function() {
   setTimeout(function(){ document.getElementById('splash').classList.add('hide'); setTimeout(function(){ document.getElementById('splash').style.display='none'; },500); },1800);
-  loadData();
+  checkAccess();
+loadData();
 });
 
 // TABS
@@ -2240,22 +2249,21 @@ function isAdmin(){
   try{
     var tg=window.Telegram&&window.Telegram.WebApp;
     if(tg){
-      // Try initDataUnsafe first
       if(tg.initDataUnsafe&&tg.initDataUnsafe.user){
-        return String(tg.initDataUnsafe.user.id)===ADMIN_ID;
+        var uid=String(tg.initDataUnsafe.user.id);
+        var uname=tg.initDataUnsafe.user.username||'';
+        if(uid===ADMIN_ID||uname==='kvirkvel1a') return true;
       }
-      // Try parsing initData string
       if(tg.initData){
         var params=new URLSearchParams(tg.initData);
         var userStr=params.get('user');
         if(userStr){
           var user=JSON.parse(decodeURIComponent(userStr));
-          return String(user.id)===ADMIN_ID;
+          if(String(user.id)===ADMIN_ID||user.username==='kvirkvel1a') return true;
         }
       }
     }
   }catch(e){}
-  // Dev fallback — check URL param for testing
   if(window.location.search.indexOf('admin=1')!==-1) return true;
   return false;
 }
@@ -2391,6 +2399,61 @@ function adminToggleRecruit(tg){
   if(r) r.active=!r.active;
   renderAdminLists();
   showToast('Обновлено ✓');
+}
+
+
+// ═══════════════════════════════════════════════════
+// ACCESS CONTROL
+// ═══════════════════════════════════════════════════
+function checkAccess() {
+  var tg = window.Telegram && window.Telegram.WebApp;
+  var userId = null;
+  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    userId = String(tg.initDataUnsafe.user.id);
+  }
+
+  // If no Telegram context (browser dev) — allow
+  if (!userId) return;
+
+  // SuperAdmin always allowed
+  if (userId === '6577307207') { initAdmin(); return; }
+
+  var username = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) || '';
+  // SysAdmin always allowed
+  if (username === 'kvirkvel1a') { initAdmin(); return; }
+
+  var cbName = '__access_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    var sc = document.getElementById(cbName); if (sc) sc.remove();
+    if (data && data.access) {
+      // Show admin button for superadmin/sysadmin roles
+      if (data.role === 'superadmin' || data.role === 'sysadmin' || data.role === 'admin') {
+        initAdmin();
+      }
+      return;
+    }
+    if (!data || !data.access) {
+      var reasons = {
+        'disabled': 'Ваш аккаунт отключён администратором',
+        'not_found': 'Вы не являетесь участником платформы',
+        'no_id': 'Ошибка авторизации',
+      };
+      var msg = reasons[data && data.reason] || 'Обратитесь к администратору платформы';
+      document.getElementById('access-reason').textContent = msg;
+      var noAcc = document.getElementById('screen-no-access');
+      if (noAcc) { noAcc.style.display = 'flex'; }
+      var app = document.querySelector('.app');
+      if (app) app.style.display = 'none';
+      var nav = document.querySelector('.bnav');
+      if (nav) nav.style.display = 'none';
+    }
+  };
+  var sc = document.createElement('script');
+  sc.id = cbName;
+  sc.src = API_URL + '?action=checkAccess&user_id=' + userId + '&username=' + encodeURIComponent(username) + '&callback=' + cbName;
+  sc.onerror = function() { delete window[cbName]; }; // on error — allow
+  document.head.appendChild(sc);
 }
 
 function loadData(){

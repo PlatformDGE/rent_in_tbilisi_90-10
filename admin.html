@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Rent in Tbilisi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Unbounded:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #08090f;
+  --bg2: #0f1118;
+  --bg3: #171a24;
+  --border: rgba(255,255,255,.07);
+  --accent: #7c6fff;
+  --accent2: #a89fff;
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --text: #eeeef5;
+  --text2: #8888aa;
+  --text3: #44445a;
+  --r: 12px;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-head: 'Unbounded', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; }
+
+/* LAYOUT */
+.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; }
+.main { padding: 28px; overflow-y: auto; }
+
+/* SIDEBAR */
+.logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.logo-title { font-family: var(--font-head); font-size: 13px; font-weight: 900; color: var(--text); letter-spacing: .05em; }
+.logo-sub { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: var(--font-mono); }
+
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 12px; color: var(--text2); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; text-decoration: none; }
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.nav-item.on { color: var(--accent2); border-left-color: var(--accent); background: rgba(124,111,255,.08); }
+.nav-item i { font-size: 16px; width: 18px; }
+
+.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text3); }
+
+/* HEADER */
+.page-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.page-title { font-family: var(--font-head); font-size: 20px; font-weight: 900; color: var(--text); }
+.page-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* CARDS */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 16px; }
+.card-hdr { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-title { font-size: 12px; font-weight: 700; color: var(--text2); letter-spacing: .06em; text-transform: uppercase; }
+.card-body { padding: 18px; }
+
+/* TABLE */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th { padding: 10px 14px; text-align: left; font-size: 10px; color: var(--text3); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.tbl td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.03); color: var(--text2); }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: rgba(255,255,255,.02); }
+.tbl td:first-child { color: var(--text); font-weight: 600; }
+
+/* BADGE */
+.badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+.badge-green { background: rgba(34,197,94,.15); color: var(--green); }
+.badge-red { background: rgba(239,68,68,.15); color: var(--red); }
+.badge-amber { background: rgba(245,158,11,.15); color: var(--amber); }
+.badge-purple { background: rgba(124,111,255,.15); color: var(--accent2); }
+
+/* TOGGLE */
+.toggle { width: 40px; height: 22px; border-radius: 11px; cursor: pointer; position: relative; transition: background .2s; flex-shrink: 0; }
+.toggle.on { background: var(--green); }
+.toggle.off { background: var(--bg3); border: 1px solid var(--border); }
+.toggle-dot { position: absolute; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .2s; box-shadow: 0 1px 4px rgba(0,0,0,.4); }
+.toggle.on .toggle-dot { left: 21px; }
+.toggle.off .toggle-dot { left: 3px; }
+
+/* INPUTS */
+.field { margin-bottom: 14px; }
+.fl { font-size: 10px; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+input, select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px; padding: 10px 13px; outline: none; font-family: var(--font-mono); transition: border-color .15s; }
+input:focus, select:focus { border-color: rgba(124,111,255,.4); }
+input::placeholder { color: var(--text3); }
+
+/* BUTTONS */
+.btn { padding: 10px 18px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font-mono); transition: all .15s; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #9b8fff; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent2); }
+.btn-danger { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: var(--red); }
+.btn-danger:hover { background: rgba(239,68,68,.25); }
+.btn-success { background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3); color: var(--green); }
+.btn-success:hover { background: rgba(34,197,94,.25); }
+
+/* GRID */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* STAT CARD */
+.stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px; }
+.stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+.stat-val { font-size: 28px; font-weight: 700; font-family: var(--font-head); letter-spacing: -1px; }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* SECTION */
+.section { display: none; }
+.section.active { display: block; }
+
+/* TOAST */
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 20px; font-size: 12px; color: var(--text); opacity: 0; transition: opacity .3s; z-index: 999; white-space: nowrap; }
+#toast.show { opacity: 1; }
+
+/* DEALS TABLE */
+.deal-comm { color: var(--green); font-weight: 700; }
+.deal-plat { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-title">RENT IN TBILISI</div>
+      <div class="logo-sub">Platform 90/10 · Admin</div>
+    </div>
+    <a class="nav-item on" onclick="showSection('dashboard')"><i class="ti ti-chart-bar"></i>Dashboard</a>
+    <a class="nav-item" onclick="showSection('agents')"><i class="ti ti-users"></i>Агенты</a>
+    <a class="nav-item" onclick="showSection('recruits')"><i class="ti ti-user-plus"></i>Рекруты</a>
+    <a class="nav-item" onclick="showSection('deals')"><i class="ti ti-home-dollar"></i>Сделки</a>
+    <a class="nav-item" onclick="showSection('owners')"><i class="ti ti-database"></i>База собственников</a>
+    <a class="nav-item" onclick="showSection('settings')"><i class="ti ti-settings"></i>Настройки</a>
+    <div class="sidebar-footer">
+      <div id="status-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--text3);margin-right:6px;"></div>
+      <span id="status-text">Загрузка...</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="page-hdr">
+        <div><div class="page-title">Dashboard</div><div class="page-sub">Статистика платформы за последние 3 месяца</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="loadAll()"><i class="ti ti-refresh"></i> Обновить</button>
+      </div>
+      <div class="grid3" style="margin-bottom:16px;">
+        <div class="stat"><div class="stat-label">Сделок за период</div><div class="stat-val" id="stat-deals" style="color:var(--green);">—</div><div class="stat-sub">из топиков + miniapp</div></div>
+        <div class="stat"><div class="stat-label">Комиссия платформы</div><div class="stat-val" id="stat-plat" style="color:var(--accent2);">—</div><div class="stat-sub" id="stat-plat-sub">за 3 месяца</div></div>
+        <div class="stat"><div class="stat-label">Общая комиссия</div><div class="stat-val" id="stat-comm" style="color:var(--amber);">—</div><div class="stat-sub">агентства</div></div>
+      </div>
+      <div class="grid2" style="margin-bottom:16px;">
+        <div class="stat"><div class="stat-label">Агентов активных</div><div class="stat-val" id="stat-agents" style="color:var(--text);">—</div></div>
+        <div class="stat"><div class="stat-label">Рекрутов активных</div><div class="stat-val" id="stat-recruits" style="color:var(--text);">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Последние сделки</span></div>
+        <table class="tbl">
+          <thead><tr><th>Агент</th><th>Дата</th><th>Цена</th><th>Комиссия</th><th>Платформа</th><th>Источник</th></tr></thead>
+          <tbody id="last-deals-tbl"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3);">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AGENTS -->
+    <div class="section" id="sec-agents">
+      <div class="page-hdr">
+        <div><div class="page-title">Агенты</div><div class="page-sub">Управление списком агентов</div></div>
+        <button class="btn btn-primary btn-sm" onclick="showAddAgent()"><i class="ti ti-plus"></i> Добавить</button>
+      </div>
+      <div class="card" id="add-agent-form" style="display:none;margin-bottom:16px;">
+        <div class="card-hdr"><span class="card-title">Новый агент</span><button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-agent-form').style.display='none'">✕</button></div>
+        <div class="card-body">
+          <div class="grid2">
+            <div class="field"><label class="fl">Имя</label><input id="a-name" placeholder="David"></div>
+            <div class="field"><label class="fl">Telegram</label><input id="a-tg" placeholder="@username"></div>
+          </div>
+          <div class="field"><label class="fl">Уровень %</label>
+            <select id="a-lvl"><option value="50">50%</option><option value="70">70%</option><option value="90" selected>90%</option></select>
+          </div>
+          <button class="btn btn-primary" onclick="addAgent()">Добавить агента</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Все агенты</span></div>
+        <table class="tbl">
+          <thead><tr><th>Имя</th><th>Telegram</th><th>Уровень</th><th>Сделок</th><th>Статус</th><th>Действия</th></tr></thead>
+          <tbody id="agents-tbl"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3);">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RECRUITS -->
+    <div class="section" id="sec-recruits">
+      <div class="page-hdr">
+        <div><div class="page-title">Рекруты</div><div class="page-sub">Управление списком рекрутов</div></div>
+        <button class="btn btn-primary btn-sm" onclick="showAddRecruit()"><i class="ti ti-plus"></i> Добавить</button>
+      </div>
+      <div class="card" id="add-recruit-form" style="display:none;margin-bottom:16px;">
+        <div class="card-hdr"><span class="card-title">Новый рекрут</span><button class="btn btn-ghost btn-sm" onclick="document.getElementById('add-recruit-form').style.display='none'">✕</button></div>
+        <div class="card-body">
+          <div class="grid2">
+            <div class="field"><label class="fl">Имя</label><input id="r-name" placeholder="Alex"></div>
+            <div class="field"><label class="fl">Telegram</label><input id="r-tg" placeholder="@username"></div>
+          </div>
+          <button class="btn btn-primary" onclick="addRecruit()">Добавить рекрута</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Все рекруты</span></div>
+        <table class="tbl">
+          <thead><tr><th>Имя</th><th>Telegram</th><th>Сдач</th><th>Показов</th><th>Фото</th><th>Статус</th><th>Действия</th></tr></thead>
+          <tbody id="recruits-tbl"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DEALS -->
+    <div class="section" id="sec-deals">
+      <div class="page-hdr">
+        <div><div class="page-title">Сделки</div><div class="page-sub">Все сделки из топиков</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Сделки из топиков</span><span id="deals-count" class="badge badge-purple">—</span></div>
+        <table class="tbl">
+          <thead><tr><th>Дата</th><th>Агент</th><th>Цена</th><th>Комиссия</th><th>Платформа</th><th>Тип</th><th>Ссылка</th></tr></thead>
+          <tbody id="deals-tbl"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- OWNERS -->
+    <div class="section" id="sec-owners">
+      <div class="page-hdr">
+        <div><div class="page-title">База собственников</div><div class="page-sub">Owner_Base</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">Собственники</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="owner-search" placeholder="Поиск по телефону или адресу..." style="width:240px;padding:6px 10px;font-size:11px;" oninput="filterOwners()">
+            <span id="owners-count" class="badge badge-purple">—</span>
+          </div>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>Имя</th><th>Телефон</th><th>Адрес</th><th>Ссылка</th></tr></thead>
+          <tbody id="owners-tbl"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Загрузка...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="section" id="sec-settings">
+      <div class="page-hdr">
+        <div><div class="page-title">Настройки</div><div class="page-sub">Топики и конфигурация</div></div>
+        <button class="btn btn-primary btn-sm" onclick="saveTopics()">Сохранить</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">Топики Telegram</span></div>
+        <div class="card-body">
+          <div class="grid2">
+            <div class="field"><label class="fl">📸 Фото (730)</label><input id="t-photo" placeholder="-1003701485976|730"></div>
+            <div class="field"><label class="fl">🏠 Показ (734)</label><input id="t-showing" placeholder="-1003701485976|734"></div>
+            <div class="field"><label class="fl">📌 Расклейка (727)</label><input id="t-stickers" placeholder="-1003701485976|727"></div>
+            <div class="field"><label class="fl">💰 Сдача рекруты (738)</label><input id="t-rental" placeholder="-1003701485976|738"></div>
+            <div class="field"><label class="fl">💼 Deal агенты (9)</label><input id="t-deal" placeholder="-1002252468572|9"></div>
+            <div class="field"><label class="fl">📅 Daily (1404)</label><input id="t-daily" placeholder="-1003701485976|1404"></div>
+            <div class="field"><label class="fl">🔍 T14</label><input id="t-t14" placeholder="-1002252468572|174673"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">GAS URL</span></div>
+        <div class="card-body">
+          <div class="field"><label class="fl">API URL</label><input id="s-api-url" value=""></div>
+          <button class="btn btn-primary" onclick="testConnection()">Проверить соединение</button>
+          <span id="conn-result" style="font-size:12px;margin-left:12px;color:var(--text3);"></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var API_URL = 'https://script.google.com/macros/s/AKfycbzNRBdRHMEIpyl0VFllNf1EB8RfsUm6sUz5Q5sozqEHGEY6z99jWfDSPU8BqQJxBjosnA/exec';
+var DATA = { agents:[], recruits:[], counters:{}, agentCounters:{}, rentalStats:{}, deals:[], owners:[] };
+
+// ── Navigation ──────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.currentTarget.classList.add('on');
+}
+
+// ── Toast ───────────────────────────────────────────────
+function toast(msg, color) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = color || 'var(--border)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── API ─────────────────────────────────────────────────
+function apiFetch(params, cb) {
+  var url = API_URL + '?' + params + '&callback=__cb_' + Date.now();
+  var cbName = url.split('callback=')[1];
+  window[cbName] = function(data) { delete window[cbName]; var sc=document.getElementById(cbName); if(sc) sc.remove(); cb(null, data); };
+  var sc = document.createElement('script');
+  sc.id = cbName;
+  sc.src = url;
+  sc.onerror = function() { delete window[cbName]; cb('error'); };
+  document.head.appendChild(sc);
+}
+
+function apiSend(type, data) {
+  var payload = JSON.stringify({ type: type, data: data });
+  var cbName = '__send_' + Date.now();
+  var url = API_URL + '?action=submit&payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
+  window[cbName] = function() { delete window[cbName]; var sc=document.getElementById(cbName); if(sc) sc.remove(); };
+  var sc = document.createElement('script');
+  sc.id = cbName;
+  sc.src = url;
+  document.head.appendChild(sc);
+}
+
+// ── Load Data ───────────────────────────────────────────
+function loadAll() {
+  setStatus('loading');
+  apiFetch('action=getLists', function(err, data) {
+    if (err || !data) { setStatus('error'); return; }
+    DATA.agents = data.agents || [];
+    DATA.recruits = data.recruits || [];
+    DATA.counters = data.counters || {};
+    DATA.agentCounters = data.agentCounters || {};
+    DATA.rentalStats = data.rentalStats || {};
+    setStatus('ok');
+    renderDashboard();
+    renderAgents();
+    renderRecruits();
+    renderDeals();
+  });
+  apiFetch('action=getOwners', function(err, data) {
+    if (!err && data && data.owners) { DATA.owners = data.owners; renderOwners(); }
+  });
+}
+
+function setStatus(s) {
+  var dot = document.getElementById('status-dot');
+  var txt = document.getElementById('status-text');
+  if (s === 'ok') { dot.style.background = 'var(--green)'; txt.textContent = 'Соединение OK'; }
+  else if (s === 'loading') { dot.style.background = 'var(--amber)'; txt.textContent = 'Загрузка...'; }
+  else { dot.style.background = 'var(--red)'; txt.textContent = 'Ошибка'; }
+}
+
+// ── Dashboard ───────────────────────────────────────────
+function renderDashboard() {
+  var rs = DATA.rentalStats;
+  var total = (rs.total||0) + (rs.tgTotal||0);
+  var plat = Math.round((rs.platform||0) + (rs.tgPlatform||0));
+  var comm = Math.round(rs.commission||0);
+
+  document.getElementById('stat-deals').textContent = total || '—';
+  document.getElementById('stat-plat').textContent = plat ? '$' + plat : '—';
+  document.getElementById('stat-comm').textContent = comm ? '$' + comm : '—';
+  document.getElementById('stat-agents').textContent = DATA.agents.length;
+  document.getElementById('stat-recruits').textContent = DATA.recruits.length;
+
+  var lastDeals = rs.lastDeals || [];
+  var tbody = document.getElementById('last-deals-tbl');
+  if (!lastDeals.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3);">Нет данных</td></tr>';
+    return;
+  }
+  tbody.innerHTML = lastDeals.map(function(d) {
+    return '<tr>'
+      + '<td>' + (d.agent || '—') + '</td>'
+      + '<td style="color:var(--text3);">' + (d.date || '—') + '</td>'
+      + '<td>' + (d.price ? '$' + d.price : '—') + '</td>'
+      + '<td class="deal-comm">' + (d.commission ? '$' + d.commission : '—') + '</td>'
+      + '<td class="deal-plat">' + (d.platform ? '$' + d.platform : '—') + '</td>'
+      + '<td><span class="badge ' + (d.excl ? 'badge-amber' : 'badge-purple') + '">' + (d.excl ? 'Эксклюзив' : 'Неэксклюзив') + '</span></td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ── Agents ──────────────────────────────────────────────
+function renderAgents() {
+  var tbody = document.getElementById('agents-tbl');
+  if (!DATA.agents.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3);">Нет агентов</td></tr>'; return; }
+  tbody.innerHTML = DATA.agents.map(function(a) {
+    var deals = DATA.agentCounters[a.name] ? DATA.agentCounters[a.name].deals : 0;
+    var active = a.active !== false;
+    return '<tr>'
+      + '<td>' + a.name + '</td>'
+      + '<td style="color:var(--text3);">' + a.telegram + '</td>'
+      + '<td><span class="badge badge-purple">' + (a.level || 50) + '%</span></td>'
+      + '<td style="color:var(--accent2);font-weight:700;">' + deals + '</td>'
+      + '<td><span class="badge ' + (active ? 'badge-green' : 'badge-red') + '">' + (active ? 'Активен' : 'Выкл') + '</span></td>'
+      + '<td><button class="btn btn-sm ' + (active ? 'btn-danger' : 'btn-success') + '" onclick="toggleAgent(\'' + a.telegram + '\')">' + (active ? 'Выключить' : 'Включить') + '</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function showAddAgent() { document.getElementById('add-agent-form').style.display = 'block'; }
+function addAgent() {
+  var name = document.getElementById('a-name').value.trim();
+  var tg = document.getElementById('a-tg').value.trim();
+  var lvl = parseInt(document.getElementById('a-lvl').value);
+  if (!name || !tg) { toast('Заполни имя и Telegram', 'var(--red)'); return; }
+  apiSend('admin_add_agent', { name: name, telegram: tg, level: lvl, is_active: true });
+  DATA.agents.push({ name: name, telegram: tg, level: lvl, active: true });
+  renderAgents();
+  document.getElementById('add-agent-form').style.display = 'none';
+  document.getElementById('a-name').value = '';
+  document.getElementById('a-tg').value = '';
+  toast('✅ Агент добавлен: ' + name, 'var(--green)');
+}
+
+function toggleAgent(tg) {
+  apiSend('admin_toggle_agent', { telegram: tg });
+  var a = DATA.agents.find(x => x.telegram === tg);
+  if (a) a.active = !a.active;
+  renderAgents();
+  toast('Обновлено ✓');
+}
+
+// ── Recruits ────────────────────────────────────────────
+function renderRecruits() {
+  var tbody = document.getElementById('recruits-tbl');
+  if (!DATA.recruits.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Нет рекрутов</td></tr>'; return; }
+  tbody.innerHTML = DATA.recruits.map(function(r) {
+    var c = DATA.counters[r.name] || {};
+    var rental = c.rental ? (c.rental.done || 0) + '/' + c.rental.plan : '0/10';
+    var showing = c.showing ? (c.showing.done || 0) + '/' + c.showing.plan : '0/15';
+    var photo = c.photo ? (c.photo.done || 0) + '/' + c.photo.plan : '0/15';
+    var active = r.active !== false;
+    return '<tr>'
+      + '<td>' + r.name + '</td>'
+      + '<td style="color:var(--text3);">' + r.telegram + '</td>'
+      + '<td style="color:var(--green);">' + rental + '</td>'
+      + '<td style="color:var(--accent2);">' + showing + '</td>'
+      + '<td style="color:var(--amber);">' + photo + '</td>'
+      + '<td><span class="badge ' + (active ? 'badge-green' : 'badge-red') + '">' + (active ? 'Активен' : 'Выкл') + '</span></td>'
+      + '<td><button class="btn btn-sm ' + (active ? 'btn-danger' : 'btn-success') + '" onclick="toggleRecruit(\'' + r.telegram + '\')">' + (active ? 'Выключить' : 'Включить') + '</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function showAddRecruit() { document.getElementById('add-recruit-form').style.display = 'block'; }
+function addRecruit() {
+  var name = document.getElementById('r-name').value.trim();
+  var tg = document.getElementById('r-tg').value.trim();
+  if (!name || !tg) { toast('Заполни имя и Telegram', 'var(--red)'); return; }
+  apiSend('admin_add_recruit', { name: name, telegram: tg, is_active: true });
+  DATA.recruits.push({ name: name, telegram: tg, active: true });
+  renderRecruits();
+  document.getElementById('add-recruit-form').style.display = 'none';
+  document.getElementById('r-name').value = '';
+  document.getElementById('r-tg').value = '';
+  toast('✅ Рекрут добавлен: ' + name, 'var(--green)');
+}
+
+function toggleRecruit(tg) {
+  apiSend('admin_toggle_recruit', { telegram: tg });
+  var r = DATA.recruits.find(x => x.telegram === tg);
+  if (r) r.active = !r.active;
+  renderRecruits();
+  toast('Обновлено ✓');
+}
+
+// ── Deals ───────────────────────────────────────────────
+function renderDeals() {
+  var deals = DATA.rentalStats.lastDeals || [];
+  document.getElementById('deals-count').textContent = (DATA.rentalStats.total||0) + (DATA.rentalStats.tgTotal||0) + ' сделок';
+  var tbody = document.getElementById('deals-tbl');
+  if (!deals.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);">Нет сделок</td></tr>'; return; }
+  tbody.innerHTML = deals.map(function(d) {
+    return '<tr>'
+      + '<td style="color:var(--text3);">' + (d.date || '—') + '</td>'
+      + '<td>' + (d.agent || '—') + '</td>'
+      + '<td>' + (d.price ? '$' + d.price : '—') + '</td>'
+      + '<td class="deal-comm">' + (d.commission ? '$' + d.commission : '—') + '</td>'
+      + '<td class="deal-plat">' + (d.platform ? '$' + d.platform : '—') + '</td>'
+      + '<td><span class="badge ' + (d.excl ? 'badge-amber' : 'badge-purple') + '">' + (d.excl ? 'Эксклюзив' : 'Неэксклюзив') + '</span></td>'
+      + '<td>' + (d.link ? '<a href="' + d.link + '" target="_blank" style="color:var(--accent2);text-decoration:none;font-size:11px;">→ t.me</a>' : '—') + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ── Owners ──────────────────────────────────────────────
+function renderOwners(filter) {
+  var owners = DATA.owners;
+  if (filter) {
+    var q = filter.toLowerCase();
+    owners = owners.filter(o => (o.phone||'').toLowerCase().includes(q) || (o.address||'').toLowerCase().includes(q) || (o.name||'').toLowerCase().includes(q));
+  }
+  document.getElementById('owners-count').textContent = owners.length + ' записей';
+  var tbody = document.getElementById('owners-tbl');
+  if (!owners.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Нет данных</td></tr>'; return; }
+  tbody.innerHTML = owners.slice(0, 100).map(function(o) {
+    return '<tr>'
+      + '<td>' + (o.name || '—') + '</td>'
+      + '<td style="color:var(--accent2);">' + (o.phone || '—') + '</td>'
+      + '<td style="color:var(--text3);font-size:11px;">' + (o.address || '—') + '</td>'
+      + '<td>' + (o.link ? '<a href="' + o.link + '" target="_blank" style="color:var(--accent2);text-decoration:none;font-size:11px;">→ ссылка</a>' : '—') + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function filterOwners() {
+  renderOwners(document.getElementById('owner-search').value);
+}
+
+// ── Settings ────────────────────────────────────────────
+function saveTopics() {
+  var topics = {
+    photo:    document.getElementById('t-photo').value,
+    showing:  document.getElementById('t-showing').value,
+    stickers: document.getElementById('t-stickers').value,
+    rental:   document.getElementById('t-rental').value,
+    deal:     document.getElementById('t-deal').value,
+    daily:    document.getElementById('t-daily').value,
+    t14:      document.getElementById('t-t14').value,
+  };
+  apiSend('admin_save_topics', topics);
+  toast('✅ Настройки сохранены', 'var(--green)');
+}
+
+function testConnection() {
+  var res = document.getElementById('conn-result');
+  res.style.color = 'var(--amber)';
+  res.textContent = 'Проверяем...';
+  apiFetch('action=getLists', function(err, data) {
+    if (err || !data) { res.style.color = 'var(--red)'; res.textContent = '✗ Ошибка соединения'; }
+    else { res.style.color = 'var(--green)'; res.textContent = '✓ OK · ' + (data.agents||[]).length + ' агентов'; }
+  });
+}
+
+// ── Init ────────────────────────────────────────────────
+document.getElementById('s-api-url').value = API_URL;
+document.getElementById('t-photo').value    = '-1003701485976|730';
+document.getElementById('t-showing').value  = '-1003701485976|734';
+document.getElementById('t-stickers').value = '-1003701485976|727';
+document.getElementById('t-rental').value   = '-1003701485976|738';
+document.getElementById('t-deal').value     = '-1002252468572|9';
+document.getElementById('t-daily').value    = '-1003701485976|1404';
+document.getElementById('t-t14').value      = '-1002252468572|174673';
+
+loadAll();
+</script>
+</body>
+</html>
