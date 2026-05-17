@@ -322,7 +322,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 </div>
 
 <!-- ACCESS DENIED SCREEN -->
-<div id="screen-no-access" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
+<div id="screen-no-access" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;">
   <div style="font-size:48px;margin-bottom:20px;">🔒</div>
   <div style="font-family:var(--font-head,sans-serif);font-size:20px;font-weight:800;color:var(--text);margin-bottom:10px;">Нет доступа</div>
   <div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px;" id="access-reason">Обратитесь к администратору платформы</div>
@@ -2419,11 +2419,15 @@ function checkAccess() {
     username = tg.initDataUnsafe.user.username || '';
   }
 
+  console.log('checkAccess: userId=' + userId + ' username=' + username);
+  console.log('initData:', tg && tg.initData ? tg.initData.substring(0,100) : 'none');
+
   // No Telegram context — allow (browser/dev)
-  if (!userId) { initAdmin(); return; }
+  if (!userId) { console.log('No userId — allowing'); initAdmin(); return; }
 
   // SuperAdmin/SysAdmin — allow immediately
   if (SUPER_IDS.indexOf(userId) !== -1 || SUPER_NAMES.indexOf(username) !== -1) {
+    console.log('SuperAdmin — allowed');
     initAdmin(); return;
   }
 
@@ -2451,7 +2455,7 @@ function checkAccess() {
     var msg = reasons[data && data.reason] || 'Обратитесь к администратору платформы';
     document.getElementById('access-reason').textContent = msg;
     var noAcc = document.getElementById('screen-no-access');
-    if (noAcc) { noAcc.style.display = 'flex'; }
+    if (noAcc) { noAcc.style.display = 'flex'; noAcc.style.flexDirection='column'; noAcc.style.alignItems='center'; noAcc.style.justifyContent='center'; }
     var app = document.querySelector('.app');
     if (app) app.style.display = 'none';
     var nav = document.querySelector('.bnav');
