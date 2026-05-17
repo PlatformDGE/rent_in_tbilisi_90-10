@@ -2246,20 +2246,22 @@ var adminLvl = 70;
 var dashSettings = {monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true};
 
 function isAdmin(){
+  var SUPER_IDS=['6577307207','6014886676','114756692'];
+  var SUPER_NAMES=['kvirkvel1a'];
   try{
     var tg=window.Telegram&&window.Telegram.WebApp;
     if(tg){
       if(tg.initDataUnsafe&&tg.initDataUnsafe.user){
         var uid=String(tg.initDataUnsafe.user.id);
         var uname=tg.initDataUnsafe.user.username||'';
-        if(uid===ADMIN_ID||uid==='6014886676'||uname==='kvirkvel1a') return true;
+        if(SUPER_IDS.indexOf(uid)!==-1||SUPER_NAMES.indexOf(uname)!==-1) return true;
       }
       if(tg.initData){
         var params=new URLSearchParams(tg.initData);
         var userStr=params.get('user');
         if(userStr){
           var user=JSON.parse(decodeURIComponent(userStr));
-          if(String(user.id)===ADMIN_ID||user.username==='kvirkvel1a') return true;
+          if(SUPER_IDS.indexOf(String(user.id))!==-1||SUPER_NAMES.indexOf(user.username||'')!==-1) return true;
         }
       }
     }
@@ -2419,8 +2421,13 @@ function checkAccess() {
   if (userId === '6577307207') { initAdmin(); return; }
 
   var username = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) || '';
-  // SysAdmin always allowed
-  if (username === 'kvirkvel1a') { initAdmin(); return; }
+
+  // SysAdmin — by ID and username
+  var SYSADMIN_IDS = ['6014886676','114756692'];
+  var SYSADMIN_NAMES = ['kvirkvel1a'];
+  if (SYSADMIN_IDS.indexOf(userId) !== -1 || SYSADMIN_NAMES.indexOf(username) !== -1) {
+    initAdmin(); return;
+  }
 
   var cbName = '__access_' + Date.now();
   window[cbName] = function(data) {
