@@ -447,7 +447,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div style="font-size:11px;color:var(--text2);">Calculator + Report + T0</div>
         </div>
       </div>
-      <div class="pad pb">
+      <div class="pad pb" id="calc-scroll" style="padding-bottom:140px !important;">
 
         <!-- 1. ОБЪЕКТ -->
         <div class="section"><div class="sl">1. Объект</div>
@@ -652,7 +652,9 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="sl" style="margin-bottom:8px;">Предпросмотр отчёта</div>
         <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
 
-        <button class="sbtn" onclick="sub('rental')">🚀 Отправить сдачу + T0</button>
+        <div style="position:sticky;bottom:0;left:0;right:0;background:var(--bg);padding:12px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px;border-top:1px solid var(--border);z-index:50;">
+          <button class="sbtn" onclick="sub('rental')">🚀 Отправить сдачу + T0</button>
+        </div>
       </div>
     </div>
 
@@ -1380,6 +1382,14 @@ window.addEventListener('load', function() {
   setTimeout(function(){ document.getElementById('splash').classList.add('hide'); setTimeout(function(){ document.getElementById('splash').style.display='none'; },500); },1800);
   checkAccess();
 loadData();
+
+// Скролл при открытии клавиатуры
+document.addEventListener('focusin', function(e) {
+  if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') return;
+  setTimeout(function() {
+    e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 350);
+});
 });
 
 // TABS
@@ -1883,11 +1893,35 @@ function sub(type, directData) {
   else if(type==='showing'){const rEl=document.getElementById('sh-r'),mEl=document.getElementById('sh-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district_address:document.getElementById('sh-addr').value,ad_link_advertising:document.getElementById('sh-link').value,client_telegram:document.getElementById('sh-client').value,date:document.getElementById('sh-date').value,result:showRes};}
   else if(type==='stickers'){const rEl=document.getElementById('st-r'),mEl=document.getElementById('st-m');data={recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.value,district:document.getElementById('st-dist').value,stickers_count:document.getElementById('st-cnt').value,date:document.getElementById('st-date').value};}
   else if(type==='rental'){
-    const aEl=document.getElementById('rn-agent'),rEl=document.getElementById('rn-recruit'),mEl=document.getElementById('rn-mentor');
-    const lvl=document.getElementById('rn-lvl').value;
+    const aEl=document.getElementById('rn-agent');
+    const rEl=document.getElementById('rn-recruit');
+    const mEl=document.getElementById('rn-mentor');
     const price=parseFloat(document.getElementById('rn-price').value)||0;
-    const comm=Math.round(price*0.5),plat=Math.round(comm*(100-parseInt(lvl))/100),agent=comm-plat;
-    data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,mentor:mEl.options[mEl.selectedIndex].text,agent_level:lvl,ad_link_advertising:document.getElementById('rn-link').value,cadastral_number:document.getElementById('rn-cadastral').value,is_exclusive:rnExcl,deal_type:rnType,rent_price:price,commission_total:comm,commission_platform:plat,commission_agent:agent,client_name:document.getElementById('rn-cname').value,client_phone:document.getElementById('rn-cphone').value,owner_name:document.getElementById('rn-oname').value,owner_phone:document.getElementById('rn-ophone').value,rent_from:document.getElementById('rn-from').value,rent_to:document.getElementById('rn-to').value,t0_h2o_client:h2o.t0.client,t0_h2o_owner:h2o.t0.owner,t0_h2o_process:h2o.t0.process,t0_result:t0Res,t0_comment:document.getElementById('t0-comment').value};
+    const commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
+    const comm=Math.round(price*commPct/100);
+    const plat=Math.round(comm*(100-rnLvl)/100);
+    const agentComm=comm-plat;
+    const agentName=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
+    const recruitName=rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'';
+    const mentorName=mEl&&mEl.selectedIndex>0?mEl.options[mEl.selectedIndex].text:'';
+    data={
+      agent:agentName, recruit:recruitName, mentor:mentorName,
+      agent_level:rnLvl, scenario:rnSc,
+      ad_link_advertising:document.getElementById('rn-link').value,
+      cadastral_number:document.getElementById('rn-cadastral').value,
+      is_exclusive:rnExcl, deal_type:rnType, deal_subtype:rnSub,
+      rent_price:price, commission_pct:commPct,
+      commission_total:comm, commission_platform:plat, commission_agent:agentComm,
+      client_name:document.getElementById('rn-cname').value,
+      client_phone:document.getElementById('rn-cphone').value,
+      owner_name:document.getElementById('rn-oname').value,
+      owner_phone:document.getElementById('rn-ophone').value,
+      rent_from:document.getElementById('rn-from').value,
+      rent_to:document.getElementById('rn-to').value,
+      t0_h2o_client:rnH2O.c, t0_h2o_owner:rnH2O.o, t0_h2o_process:rnH2O.p,
+      t0_result:rnT0Res,
+      t0_comment:(document.getElementById('t0-comment')||{}).value||'',
+    };
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
   send(type,data);
