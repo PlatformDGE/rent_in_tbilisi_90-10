@@ -478,6 +478,13 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- ПОСЛЕДНИЕ СДЕЛКИ -->
+        <div class="section" id="dash-sec-agents">
+          <div class="sl">Агенты — сделки за период</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-list">
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+          </div>
+        </div>
+
         <div class="section" id="dash-sec-lastdeals">
           <div class="sl">Последние сделки платформы</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-last-deals">
@@ -1408,7 +1415,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxjFTDUaK-x7M1uiqT0fncbv17CfAYu6idEoz6g0X7-FH6srrcS7q83z8MnK-YXbCgsoQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxAa8pl1oHyoRyhNalAOpc2HwzmRSPtJe7vNLEnm28uAV73QEw_hfZAxfGwvSbxA6LnAQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2144,6 +2151,34 @@ function renderDash(){
     }
   }
 
+  // Агенты из реальных данных
+  var agListEl=document.getElementById('ds-agents-list');
+  if(agListEl){
+    var topA=(rs.topAgents&&rs.topAgents.length)?rs.topAgents:
+      Object.keys(AGENT_C||{}).sort(function(a,b){return (AGENT_C[b].deals||0)-(AGENT_C[a].deals||0);})
+        .slice(0,10).map(function(n){return{name:n,deals:(AGENT_C[n]||{}).deals||0};});
+    if(topA&&topA.length){
+      var maxD=topA[0].deals||1;
+      var colors=['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc'];
+      agListEl.innerHTML=topA.map(function(a,i){
+        var pct=Math.round((a.deals||0)/maxD*100);
+        var c=colors[i%colors.length];
+        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:0.5px solid var(--border);">'
+          +'<div style="width:28px;height:28px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:'+c+';flex-shrink:0;">'+(a.name||'?')[0].toUpperCase()+'</div>'
+          +'<div style="flex:1;min-width:0;">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
+          +'<span style="font-size:13px;font-weight:600;color:var(--text);">'+a.name+'</span>'
+          +'<span style="font-size:13px;font-weight:700;color:'+c+';">'+a.deals+'</span>'
+          +'</div>'
+          +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
+          +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;"></div>'
+          +'</div></div></div>';
+      }).join('');
+    } else {
+      agListEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
+    }
+  }
+
   // Districts
   var dEl=document.getElementById('ds-districts');
   if(dEl&&cs.districts){
@@ -2258,7 +2293,7 @@ function loadDash(data){
 // ═══════════════════════════════════════════════════
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
-var dashSettings = {monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true};
+var dashSettings = {agents:true,monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true};
 
 function isAdmin(){
   var SUPER_IDS=['6577307207','6014886676','114756692'];
@@ -2329,7 +2364,7 @@ function renderAdminLists(){
 }
 
 function updateSwitches(){
-  var keys=['monthly','districts','dyn','rooms','prices','lastdeals'];
+  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals'];
   keys.forEach(function(k){
     var sw=document.getElementById('sw-'+k);
     if(!sw) return;
@@ -2358,12 +2393,13 @@ function toggleDashSec(k){
 }
 
 function saveDashSettings(){
-  var keys=['monthly','districts','dyn','rooms','prices','lastdeals'];
+  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals'];
   keys.forEach(function(k){
     var cb=document.getElementById('dash-show-'+k);
     if(cb) dashSettings[k]=cb.checked;
   });
   updateSwitches();
+  applyDashSection('dash-sec-agents',    dashSettings.agents);
   applyDashSection('dash-sec-monthly',   dashSettings.monthly);
   applyDashSection('dash-sec-districts', dashSettings.districts);
   applyDashSection('dash-sec-dyn',       dashSettings.dyn);
