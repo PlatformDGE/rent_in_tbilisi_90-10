@@ -420,11 +420,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;" id="ds-rooms"></div>
         </div>
 
-        <!-- АГЕНТЫ -->
-        <div class="section" id="dash-sec-agents">
-          <div class="sl">Агенты — сделки</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-list"></div>
-        </div>
+
 
         <!-- ФИЛЬТРЫ -->
         <div class="section" id="dash-sec-filters">
@@ -439,6 +435,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="sl">2025 vs 2026 — по месяцам</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;">
             <div style="position:relative;height:150px;"><canvas id="ds-year-chart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- АГЕНТЫ — ОБЪЕКТЫ -->
+        <div class="section" id="dash-sec-agent-listings">
+          <div class="sl">Агенты — активные объекты в канале</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agent-listings">
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
         </div>
 
@@ -2117,30 +2121,32 @@ function renderDash() {
     }).join('');
   }
 
-  // Агенты
-  var aEl = document.getElementById('ds-agents-list');
-  if (aEl) {
-    var agents = (rs.topAgents && rs.topAgents.length) ? rs.topAgents : STATIC.platform.agents;
-    var maxD = agents.length ? (agents[0].deals||1) : 1;
-    var aColors=['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc','#fb7185','#facc15','#a3e635','#38bdf8','#e879f9'];
-    aEl.innerHTML = agents.map(function(a,i){
-      var pct=Math.round((a.deals||0)/maxD*100);
-      var c=aColors[i%aColors.length];
-      var comm=a.commission?'$'+Math.round(a.commission):'';
-      var plat=a.platform?'$'+Math.round(a.platform):'';
-      return '<div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:0.5px solid var(--border);">'
-        +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';flex-shrink:0;">'+(a.agent||a.name||'?')[0].toUpperCase()+'</div>'
-        +'<div style="flex:1;min-width:0;">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">'
-        +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+(a.agent||a.name||'—')+'</span>'
-        +'<div style="display:flex;gap:8px;align-items:center;">'
-        +(plat?'<span style="font-size:10px;color:var(--accent2);">'+plat+'</span>':'')
-        +'<span style="font-size:12px;font-weight:700;color:'+c+';">'+(a.deals||0)+' сд.</span>'
-        +'</div></div>'
-        +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
-        +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.7;"></div>'
-        +'</div></div></div>';
-    }).join('');
+  // Агенты — объекты в канале (из Listings)
+  var alEl = document.getElementById('ds-agent-listings');
+  if (alEl) {
+    var byAgent = (STATIC.listings && STATIC.listings.byAgent) ? STATIC.listings.byAgent : {};
+    var agentNames = Object.keys(byAgent).sort(function(a,b){return byAgent[b]-byAgent[a];});
+    if (agentNames.length) {
+      var maxA = byAgent[agentNames[0]]||1;
+      var aColors2=['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc'];
+      alEl.innerHTML = agentNames.slice(0,12).map(function(name,i){
+        var cnt = byAgent[name]||0;
+        var pct = Math.round(cnt/maxA*100);
+        var c = aColors2[i%aColors2.length];
+        return '<div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:0.5px solid var(--border);">'
+          +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';flex-shrink:0;">'+name[0].toUpperCase()+'</div>'
+          +'<div style="flex:1;">'
+          +'<div style="display:flex;justify-content:space-between;margin-bottom:3px;">'
+          +'<span style="font-size:12px;font-weight:600;color:var(--text);">@'+name+'</span>'
+          +'<span style="font-size:12px;font-weight:700;color:'+c+';">'+cnt+' объектов</span>'
+          +'</div>'
+          +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
+          +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.7;"></div>'
+          +'</div></div></div>';
+      }).join('');
+    } else {
+      alEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных — запустите updateAnalyticsCache() в GAS</div>';
+    }
   }
 
   // Фильтр по агентам
@@ -2157,33 +2163,6 @@ function renderDash() {
       btns += '<button data-agent="'+name+'" onclick="filterByAgent(this.dataset.agent)" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid '+bc+';background:'+bg+';color:'+co+';cursor:pointer;font-family:inherit;">'+ name +'</button>';
     });
     fltEl.innerHTML = btns;
-  }
-
-  // 2025 vs 2026 сравнение
-  var yearEl = document.getElementById('ds-year-chart');
-  var analytics = STATIC.analytics;
-  if (yearEl && analytics && analytics.byYear && typeof Chart !== 'undefined') {
-    var mNms3=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-    var months12 = [1,2,3,4,5,6,7,8,9,10,11,12];
-    var labels12 = months12.map(function(m){return mNms3[m];});
-    var by = analytics.byYear;
-    var data25 = months12.map(function(m){var k=m+'/2025'; return by['2025']&&by['2025'][k]?Math.round(by['2025'][k].platform||0):0;});
-    var data26 = months12.map(function(m){var k=m+'/2026'; return by['2026']&&by['2026'][k]?Math.round(by['2026'][k].platform||0):0;});
-    if (dashYearChart) { dashYearChart.destroy(); dashYearChart=null; }
-    dashYearChart = new Chart(yearEl, {
-      type:'line',
-      data:{labels:labels12,datasets:[
-        {label:'2025',data:data25,borderColor:'rgba(74,144,217,.7)',backgroundColor:'rgba(74,144,217,.08)',fill:true,tension:.4,pointRadius:3},
-        {label:'2026',data:data26,borderColor:'rgba(34,197,94,.8)',backgroundColor:'rgba(34,197,94,.08)',fill:true,tension:.4,pointRadius:3}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:true,labels:{color:'rgba(255,255,255,.5)',font:{size:9},boxWidth:12}}},
-        scales:{
-          x:{grid:{display:false},ticks:{color:'rgba(255,255,255,.3)',font:{size:8}},border:{display:false}},
-          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:8},callback:function(v){return '$'+v;}},border:{display:false}}
-        }
-      }
-    });
   }
 
   // Последние 10 сделок
