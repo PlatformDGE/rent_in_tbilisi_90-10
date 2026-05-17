@@ -2416,12 +2416,10 @@ function checkAccess() {
   var username = '';
 
   if (tg) {
-    // Method 1: initDataUnsafe
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
       userId = String(tg.initDataUnsafe.user.id);
-      username = tg.initDataUnsafe.user.username || '';
+      username = (tg.initDataUnsafe.user.username || '').toLowerCase();
     }
-    // Method 2: parse initData string
     if (!userId && tg.initData && tg.initData.length > 0) {
       try {
         var params = new URLSearchParams(tg.initData);
@@ -2429,80 +2427,61 @@ function checkAccess() {
         if (userStr) {
           var user = JSON.parse(decodeURIComponent(userStr));
           userId = String(user.id);
-          username = user.username || '';
+          username = (user.username || '').toLowerCase();
         }
       } catch(e) {}
     }
   }
 
-  console.log('checkAccess: userId=' + userId + ' username=' + username);
-
   // No Telegram context (browser) — block
-  if (!userId) {
-    var noAcc = document.getElementById('screen-no-access');
-    if (noAcc) { noAcc.style.display='flex'; noAcc.style.flexDirection='column'; noAcc.style.alignItems='center'; noAcc.style.justifyContent='center'; }
-    var app = document.querySelector('.app');
-    if (app) app.style.display = 'none';
-    var nav = document.querySelector('.bnav');
-    if (nav) nav.style.display = 'none';
-    document.getElementById('access-reason').textContent = 'Откройте приложение через Telegram бота';
+  if (!userId && !username) {
+    showNoAccess('Откройте приложение через Telegram бота');
     return;
   }
 
-  // SuperAdmin/SysAdmin — allow immediately
-  if (SUPER_IDS.indexOf(userId) !== -1 || SUPER_NAMES.indexOf(username) !== -1) {
-    console.log('SuperAdmin — allowed');
-    initAdmin(); return;
+  // SuperAdmin/SysAdmin by ID — allow immediately
+  if (SUPER_IDS.indexOf(userId) !== -1) { initAdmin(); return; }
+  // SuperAdmin by username
+  var superNames = ['davidtibelashvili', 'kvirkvel1a'];
+  if (username && superNames.indexOf(username) !== -1) { initAdmin(); return; }
+
+  // Wait for agents/recruits to load then check username
+  function verifyUsername() {
+    var allUsernames = [];
+    (AGENTS || []).forEach(function(a) {
+      if (a.telegram) allUsernames.push(a.telegram.replace('@','').toLowerCase());
+    });
+    (RECRUITS || []).forEach(function(r) {
+      if (r.telegram) allUsernames.push(r.telegram.replace('@','').toLowerCase());
+    });
+    if (username && allUsernames.indexOf(username) !== -1) return; // allowed
+    if (userId && SUPER_IDS.indexOf(userId) !== -1) return; // allowed by ID
+    // Not found
+    showNoAccess('Вы не являетесь участником платформы');
   }
 
-  // For others — check via GAS, but allow by default until response
-  // If GAS says no access — then block
-  var accessGranted = false;
-  var checked = false;
-
-  var cbName = '__access_' + Date.now();
-  window[cbName] = function(data) {
-    checked = true;
-    delete window[cbName];
-    var sc = document.getElementById(cbName); if (sc) sc.remove();
-    if (data && data.access) {
-      accessGranted = true;
-      if (data.role === 'superadmin' || data.role === 'sysadmin') initAdmin();
-      return;
+  // Check after data loads (max 8 seconds)
+  var tries = 0;
+  var timer = setInterval(function() {
+    tries++;
+    if (AGENTS.length > 0 || RECRUITS.length > 0) {
+      clearInterval(timer);
+      verifyUsername();
+    } else if (tries > 16) { // 8 seconds
+      clearInterval(timer);
+      verifyUsername();
     }
-    // No access — show blocker
-    var reasons = {
-      'disabled': 'Ваш аккаунт отключён администратором',
-      'not_found': 'Вы не являетесь участником платформы',
-      'no_id': 'Ошибка авторизации',
-    };
-    var msg = reasons[data && data.reason] || 'Обратитесь к администратору платформы';
-    document.getElementById('access-reason').textContent = msg;
-    var noAcc = document.getElementById('screen-no-access');
-    if (noAcc) { noAcc.style.display = 'flex'; noAcc.style.flexDirection='column'; noAcc.style.alignItems='center'; noAcc.style.justifyContent='center'; }
-    var app = document.querySelector('.app');
-    if (app) app.style.display = 'none';
-    var nav = document.querySelector('.bnav');
-    if (nav) nav.style.display = 'none';
-  };
+  }, 500);
+}
 
-  var sc = document.createElement('script');
-  sc.id = cbName;
-  sc.src = API_URL + '?action=checkAccess&user_id=' + userId + '&username=' + encodeURIComponent(username) + '&callback=' + cbName;
-  sc.onerror = function() {
-    // On network error — allow (don't block)
-    checked = true; accessGranted = true;
-    delete window[cbName];
-  };
-  document.head.appendChild(sc);
-
-  // Timeout — if GAS doesn't respond in 5s, allow
-  setTimeout(function() {
-    if (!checked) {
-      checked = true; accessGranted = true;
-      delete window[cbName];
-    }
-  }, 5000);
+function showNoAccess(msg) {
+  document.getElementById('access-reason').textContent = msg || 'Нет доступа';
+  var noAcc = document.getElementById('screen-no-access');
+  if (noAcc) { noAcc.style.cssText += ';display:flex!important;flex-direction:column;align-items:center;justify-content:center;'; }
+  var app = document.querySelector('.app');
+  if (app) app.style.display = 'none';
+  var nav = document.querySelector('.bnav');
+  if (nav) nav.style.display = 'none';
 }
 
 
