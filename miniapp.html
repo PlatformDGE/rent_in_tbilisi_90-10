@@ -2407,61 +2407,76 @@ function adminToggleRecruit(tg){
 // ═══════════════════════════════════════════════════
 // ACCESS CONTROL
 // ═══════════════════════════════════════════════════
+var SUPER_IDS = ['6577307207','6014886676','114756692'];
+var SUPER_NAMES = ['kvirkvel1a'];
+
 function checkAccess() {
   var tg = window.Telegram && window.Telegram.WebApp;
   var userId = null;
+  var username = '';
   if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
     userId = String(tg.initDataUnsafe.user.id);
+    username = tg.initDataUnsafe.user.username || '';
   }
 
-  // If no Telegram context (browser dev) — allow
-  if (!userId) return;
+  // No Telegram context — allow (browser/dev)
+  if (!userId) { initAdmin(); return; }
 
-  // SuperAdmin always allowed
-  if (userId === '6577307207') { initAdmin(); return; }
-
-  var username = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) || '';
-
-  // SysAdmin — by ID and username
-  var SYSADMIN_IDS = ['6014886676','114756692'];
-  var SYSADMIN_NAMES = ['kvirkvel1a'];
-  if (SYSADMIN_IDS.indexOf(userId) !== -1 || SYSADMIN_NAMES.indexOf(username) !== -1) {
+  // SuperAdmin/SysAdmin — allow immediately
+  if (SUPER_IDS.indexOf(userId) !== -1 || SUPER_NAMES.indexOf(username) !== -1) {
     initAdmin(); return;
   }
 
+  // For others — check via GAS, but allow by default until response
+  // If GAS says no access — then block
+  var accessGranted = false;
+  var checked = false;
+
   var cbName = '__access_' + Date.now();
   window[cbName] = function(data) {
+    checked = true;
     delete window[cbName];
     var sc = document.getElementById(cbName); if (sc) sc.remove();
     if (data && data.access) {
-      // Show admin button for superadmin/sysadmin roles
-      if (data.role === 'superadmin' || data.role === 'sysadmin' || data.role === 'admin') {
-        initAdmin();
-      }
+      accessGranted = true;
+      if (data.role === 'superadmin' || data.role === 'sysadmin') initAdmin();
       return;
     }
-    if (!data || !data.access) {
-      var reasons = {
-        'disabled': 'Ваш аккаунт отключён администратором',
-        'not_found': 'Вы не являетесь участником платформы',
-        'no_id': 'Ошибка авторизации',
-      };
-      var msg = reasons[data && data.reason] || 'Обратитесь к администратору платформы';
-      document.getElementById('access-reason').textContent = msg;
-      var noAcc = document.getElementById('screen-no-access');
-      if (noAcc) { noAcc.style.display = 'flex'; }
-      var app = document.querySelector('.app');
-      if (app) app.style.display = 'none';
-      var nav = document.querySelector('.bnav');
-      if (nav) nav.style.display = 'none';
-    }
+    // No access — show blocker
+    var reasons = {
+      'disabled': 'Ваш аккаунт отключён администратором',
+      'not_found': 'Вы не являетесь участником платформы',
+      'no_id': 'Ошибка авторизации',
+    };
+    var msg = reasons[data && data.reason] || 'Обратитесь к администратору платформы';
+    document.getElementById('access-reason').textContent = msg;
+    var noAcc = document.getElementById('screen-no-access');
+    if (noAcc) { noAcc.style.display = 'flex'; }
+    var app = document.querySelector('.app');
+    if (app) app.style.display = 'none';
+    var nav = document.querySelector('.bnav');
+    if (nav) nav.style.display = 'none';
   };
+
   var sc = document.createElement('script');
   sc.id = cbName;
   sc.src = API_URL + '?action=checkAccess&user_id=' + userId + '&username=' + encodeURIComponent(username) + '&callback=' + cbName;
-  sc.onerror = function() { delete window[cbName]; }; // on error — allow
+  sc.onerror = function() {
+    // On network error — allow (don't block)
+    checked = true; accessGranted = true;
+    delete window[cbName];
+  };
   document.head.appendChild(sc);
+
+  // Timeout — if GAS doesn't respond in 5s, allow
+  setTimeout(function() {
+    if (!checked) {
+      checked = true; accessGranted = true;
+      delete window[cbName];
+    }
+  }, 5000);
 }
+
 
 function loadData(){
   var cbName = '__listsLoaded_' + Date.now();
