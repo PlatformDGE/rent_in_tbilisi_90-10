@@ -385,8 +385,8 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
           <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
             <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Объектов</div>
-            <div style="font-size:20px;font-weight:800;color:var(--accent2);">406</div>
-            <div style="font-size:8px;color:var(--text3);">за 30 дней</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent2);">401</div>
+            <div style="font-size:8px;color:var(--text3);">с районом</div>
           </div>
           <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
             <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Ср. цена</div>
@@ -418,24 +418,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section" id="dash-sec-rooms">
           <div class="sl">Тип квартир</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;" id="ds-rooms"></div>
-        </div>
-
-
-
-        <!-- ФИЛЬТРЫ -->
-        <div class="section" id="dash-sec-filters">
-          <div class="sl">Фильтр по агентам</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ds-agent-filter">
-            <button onclick="filterByAgent('')" id="flt-all" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Все</button>
-          </div>
-        </div>
-
-        <!-- 2025 vs 2026 -->
-        <div class="section" id="dash-sec-years">
-          <div class="sl">2025 vs 2026 — по месяцам</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;">
-            <div style="position:relative;height:150px;"><canvas id="ds-year-chart"></canvas></div>
-          </div>
         </div>
 
         <!-- АГЕНТЫ — ОБЪЕКТЫ -->
@@ -1377,7 +1359,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwx037UB7mE4VtpLbcQ6Ju6i_xgB_ekSTsWs-oS-XrbiiWYs1JW_bgmzciEwJCg9gfkVw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyy_-erxajQrUA7fcppxKfayFsmYUUXdJ6PitHTe0yMqz3nttV2w4QoGBLFF0gv-B5gdQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1944,19 +1926,24 @@ var dashPeriod = 'month';
 var dashData = {};
 var dashChartComm = null;
 var dashChartRooms = null;
-var dashYearChart = null;
 var dashAutoTimer = null;
-var dashFilter = '';
 
-// ── Статика из канала (6912 постов) ─────────────────
+// ── Статика из канала (3081 постов) ─────────────────
 var STATIC = {
   channel: {
-    total: 3098,
-    avgPrice: 840,
+    total: 3081,
+    avgPrice: 844,
     exclPct: 3,
-    districts: [{"district": "Saburtalo", "count": 103, "avg_price": 853.8834951456311, "min_price": 350.0, "max_price": 4500.0, "excl": 33}, {"district": "Vake", "count": 73, "avg_price": 1026.027397260274, "min_price": 0.0, "max_price": 2500.0, "excl": 16}, {"district": "Vera", "count": 39, "avg_price": 781.7948717948718, "min_price": 100.0, "max_price": 1900.0, "excl": 8}, {"district": "Sololaki", "count": 21, "avg_price": 692.8571428571429, "min_price": 300.0, "max_price": 1800.0, "excl": 4}, {"district": "Chugureti", "count": 17, "avg_price": 644.1176470588235, "min_price": 300.0, "max_price": 1100.0, "excl": 7}, {"district": "Mtatsminda", "count": 16, "avg_price": 716.875, "min_price": 300.0, "max_price": 1300.0, "excl": 2}, {"district": "Didube", "count": 15, "avg_price": 666.6666666666666, "min_price": 100.0, "max_price": 1400.0, "excl": 6}, {"district": "Avlabari", "count": 13, "avg_price": 725.3846153846154, "min_price": 500.0, "max_price": 1000.0, "excl": 0}, {"district": "Ortachala", "count": 12, "avg_price": 608.3333333333334, "min_price": 300.0, "max_price": 900.0, "excl": 3}, {"district": "Rustaveli", "count": 6, "avg_price": 850.0, "min_price": 550.0, "max_price": 1600.0, "excl": 3}, {"district": "Didi Dighomi", "count": 5, "avg_price": 500.0, "min_price": 400.0, "max_price": 600.0, "excl": 1}, {"district": "Gldani", "count": 4, "avg_price": 425.0, "min_price": 300.0, "max_price": 500.0, "excl": 2}],
-    rooms: {"Other": 2718, "1 Bed": 205, "2 Bed": 117, "3 Bed": 35, "Studio": 16, "4+ Bed": 7},
-    monthly: {"2025-06": 76, "2025-07": 99, "2025-08": 127, "2025-09": 129, "2025-10": 137, "2025-11": 117, "2025-12": 95, "2026-01": 88, "2026-02": 54, "2026-03": 69, "2026-04": 80, "2026-05": 433},
+    districts: [{"district": "Saburtalo", "count": 139, "avgPrice": 853, "minPrice": 350, "maxPrice": 4500}, {"district": "Vake", "count": 80, "avgPrice": 1040, "minPrice": 400, "maxPrice": 2500}, {"district": "Vera", "count": 44, "avgPrice": 781, "minPrice": 100, "maxPrice": 1900}, {"district": "Sololaki", "count": 28, "avgPrice": 692, "minPrice": 300, "maxPrice": 1800}, {"district": "Chugureti", "count": 27, "avgPrice": 644, "minPrice": 300, "maxPrice": 1100}, {"district": "Mtatsminda", "count": 17, "avgPrice": 716, "minPrice": 300, "maxPrice": 1300}, {"district": "Didube", "count": 15, "avgPrice": 666, "minPrice": 100, "maxPrice": 1400}, {"district": "Avlabari", "count": 13, "avgPrice": 725, "minPrice": 500, "maxPrice": 1000}, {"district": "Ortachala", "count": 12, "avgPrice": 608, "minPrice": 300, "maxPrice": 900}, {"district": "Rustaveli", "count": 6, "avgPrice": 850, "minPrice": 550, "maxPrice": 1600}, {"district": "Gldani", "count": 5, "avgPrice": 425, "minPrice": 300, "maxPrice": 500}, {"district": "Isani", "count": 4, "avgPrice": 612, "minPrice": 550, "maxPrice": 700}, {"district": "Marjanishvili", "count": 3, "avgPrice": 800, "minPrice": 300, "maxPrice": 1300}, {"district": "Digomi", "count": 2, "avgPrice": 750, "minPrice": 650, "maxPrice": 850}, {"district": "Krtsanisi", "count": 2, "avgPrice": 1550, "minPrice": 1400, "maxPrice": 1700}, {"district": "LibertySquare", "count": 2, "avgPrice": 725, "minPrice": 700, "maxPrice": 750}, {"district": "Varketili", "count": 2, "avgPrice": 425, "minPrice": 400, "maxPrice": 450}],
+    rooms: {"1Bed": 205, "2Bed": 117, "3Bed": 35, "Studio": 14, "4Bed": 7},
+    byAgent: {"David": 70, "Sergi": 36, "Gio": 34, "Mari": 33, "Mikhail": 29, "Viktoriia": 24, "Zaza": 22, "Shorena": 13, "Danila": 13, "Alex": 12, "Daniil": 11, "Dmitri": 10, "Michel": 9, "LianaD": 9, "Irakli": 6, "Liana": 4, "Andria": 3},
+  },
+  listings: {
+    total: 3081,
+    avgPrice: 844,
+    byDistrict: [{"district": "Saburtalo", "count": 139, "avgPrice": 853, "minPrice": 350, "maxPrice": 4500}, {"district": "Vake", "count": 80, "avgPrice": 1040, "minPrice": 400, "maxPrice": 2500}, {"district": "Vera", "count": 44, "avgPrice": 781, "minPrice": 100, "maxPrice": 1900}, {"district": "Sololaki", "count": 28, "avgPrice": 692, "minPrice": 300, "maxPrice": 1800}, {"district": "Chugureti", "count": 27, "avgPrice": 644, "minPrice": 300, "maxPrice": 1100}, {"district": "Mtatsminda", "count": 17, "avgPrice": 716, "minPrice": 300, "maxPrice": 1300}, {"district": "Didube", "count": 15, "avgPrice": 666, "minPrice": 100, "maxPrice": 1400}, {"district": "Avlabari", "count": 13, "avgPrice": 725, "minPrice": 500, "maxPrice": 1000}, {"district": "Ortachala", "count": 12, "avgPrice": 608, "minPrice": 300, "maxPrice": 900}, {"district": "Rustaveli", "count": 6, "avgPrice": 850, "minPrice": 550, "maxPrice": 1600}, {"district": "Gldani", "count": 5, "avgPrice": 425, "minPrice": 300, "maxPrice": 500}, {"district": "Isani", "count": 4, "avgPrice": 612, "minPrice": 550, "maxPrice": 700}, {"district": "Marjanishvili", "count": 3, "avgPrice": 800, "minPrice": 300, "maxPrice": 1300}, {"district": "Digomi", "count": 2, "avgPrice": 750, "minPrice": 650, "maxPrice": 850}, {"district": "Krtsanisi", "count": 2, "avgPrice": 1550, "minPrice": 1400, "maxPrice": 1700}, {"district": "LibertySquare", "count": 2, "avgPrice": 725, "minPrice": 700, "maxPrice": 750}, {"district": "Varketili", "count": 2, "avgPrice": 425, "minPrice": 400, "maxPrice": 450}],
+    byAgent: {"David": 70, "Sergi": 36, "Gio": 34, "Mari": 33, "Mikhail": 29, "Viktoriia": 24, "Zaza": 22, "Shorena": 13, "Danila": 13, "Alex": 12, "Daniil": 11, "Dmitri": 10, "Michel": 9, "LianaD": 9, "Irakli": 6, "Liana": 4, "Andria": 3},
+    byRooms: {"1Bed": 205, "2Bed": 117, "3Bed": 35, "Studio": 14, "4Bed": 7},
   },
   platform: {
     total: 1942,
@@ -1970,11 +1957,6 @@ var STATIC = {
   },
 };
 
-
-function filterByAgent(name) {
-  dashFilter = name || '';
-  renderDash();
-}
 
 function setDashPeriod(p) {
   dashPeriod = p;
@@ -2145,24 +2127,8 @@ function renderDash() {
           +'</div></div></div>';
       }).join('');
     } else {
-      alEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных — запустите updateAnalyticsCache() в GAS</div>';
+      alEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Данные появятся по мере парсинга новых постов канала</div>';
     }
-  }
-
-  // Фильтр по агентам
-  var fltEl = document.getElementById('ds-agent-filter');
-  if (fltEl) {
-    var agents2 = STATIC.platform.agents || [];
-    var btns = '<button onclick="filterByAgent()" id="flt-all" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid '+(dashFilter?'var(--border)':'var(--accent)')+';background:'+(dashFilter?'transparent':'var(--glow)')+';color:'+(dashFilter?'var(--text2)':'var(--accent2)')+';cursor:pointer;font-family:inherit;font-weight:600;">Все</button>';
-    agents2.slice(0,10).forEach(function(a) {
-      var name = a.agent||a.name||'';
-      var on = dashFilter === name;
-      var bc = on?'var(--accent)':'var(--border)';
-      var bg = on?'var(--glow)':'transparent';
-      var co = on?'var(--accent2)':'var(--text2)';
-      btns += '<button data-agent="'+name+'" onclick="filterByAgent(this.dataset.agent)" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid '+bc+';background:'+bg+';color:'+co+';cursor:pointer;font-family:inherit;">'+ name +'</button>';
-    });
-    fltEl.innerHTML = btns;
   }
 
   // Последние 10 сделок
@@ -2352,8 +2318,6 @@ function saveDashSettings(){
   applyDashSection('dash-sec-rooms',     dashSettings.rooms);
   applyDashSection('dash-sec-prices',    dashSettings.prices);
   applyDashSection('dash-sec-lastdeals', dashSettings.lastdeals);
-  applyDashSection('dash-sec-filters',  dashSettings.filters);
-  applyDashSection('dash-sec-years',    dashSettings.years);
   showToast('Настройки сохранены ✓');
 }
 
