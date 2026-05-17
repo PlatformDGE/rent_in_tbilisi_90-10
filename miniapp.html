@@ -341,7 +341,11 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             <div style="font-size:18px;font-weight:800;letter-spacing:-.3px;">📈 Dashboard</div>
             <div style="font-size:11px;color:var(--text3);margin-top:1px;">@rent_tbilisi_ge · аналитика канала</div>
           </div>
-          <div style="font-size:11px;color:var(--accent2);font-weight:600;" id="dp-months-label">Мар · Апр · Май 2026</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;" id="dp-months-label">
+            <button onclick="setDashPeriod('month')" id="dp-month" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Месяц</button>
+            <button onclick="setDashPeriod('quarter')" id="dp-quarter" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">3 мес.</button>
+            <button onclick="setDashPeriod('year')" id="dp-year" style="font-size:10px;padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">Всё</button>
+          </div>
         </div>
       </div>
 
@@ -1415,7 +1419,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxAa8pl1oHyoRyhNalAOpc2HwzmRSPtJe7vNLEnm28uAV73QEw_hfZAxfGwvSbxA6LnAQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxCwPFPdhSJPW6CoPvIVXXoPSKxo11agefYz0eHNwWU_UVjEHP7TMfTNP1emrJ24snJUA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2079,11 +2083,39 @@ function renderDash(){
   var mlEl=document.getElementById('dp-months-label');
   if(mlEl){var mls=[];for(var mii=2;mii>=0;mii--){var md=new Date(nowD.getFullYear(),nowD.getMonth()-mii,1);mls.push(mNms[md.getMonth()]);}mlEl.textContent=mls.join(' · ')+' '+nowD.getFullYear();}
 
-  // Metrics
-  var tgDeals = (rs.tgTotal||0);          // сделки из топиков
-  var allDeals = (rs.total||0) + tgDeals; // все сделки платформы
-  var totalPlat = Math.round((rs.platform||0)+(rs.tgPlatform||0)); // комиссия платформы
-  var totalComm = Math.round((rs.commission||0)); // общая комиссия агентства
+  // Фильтруем данные по выбранному периоду из byMonth
+  var bm = rs.byMonth || {};
+  var nowD2 = new Date();
+  var mNms2 = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+
+  // Собираем ключи нужных месяцев
+  var selectedMonths = [];
+  if(dashPeriod==='month'){
+    // Текущий месяц
+    selectedMonths.push((nowD2.getMonth()+1)+'/'+nowD2.getFullYear());
+  } else if(dashPeriod==='quarter'){
+    for(var qi=2;qi>=0;qi--){
+      var qd=new Date(nowD2.getFullYear(),nowD2.getMonth()-qi,1);
+      selectedMonths.push((qd.getMonth()+1)+'/'+qd.getFullYear());
+    }
+  } else {
+    // Всё — все ключи
+    selectedMonths = Object.keys(bm);
+  }
+
+  // Считаем метрики по выбранным месяцам из byMonthData
+  var bmd = rs.byMonthData || {};
+  var allDeals=0, totalPlat=0, totalComm=0, totalPriceF=0, exclCount=0;
+  selectedMonths.forEach(function(mk){
+    var md = bmd[mk] || {};
+    allDeals   += md.deals      || 0;
+    totalPlat  += md.platform   || 0;
+    totalComm  += md.commission || 0;
+    totalPriceF+= md.price      || 0;
+    exclCount  += md.exclusive  || 0;
+  });
+  totalPlat = Math.round(totalPlat);
+  totalComm = Math.round(totalComm);
 
   // Объектов — из канала (статика)
   var totEl=document.getElementById('ds-total');
@@ -2095,13 +2127,13 @@ function renderDash(){
   var avgEl=document.getElementById('ds-avgprice');
   if(avgEl) avgEl.textContent='$'+cs.avgPrice;
 
-  // Эксклюзивов — из канала
+  // Эксклюзивов — из реальных данных
   var exEl=document.getElementById('ds-excl');
-  if(exEl) exEl.textContent=cs.exclusive;
+  if(exEl) exEl.textContent=exclCount||cs.exclusive;
   var exSub=document.getElementById('ds-excl-sub');
-  if(exSub) exSub.textContent=Math.round(cs.exclusive/cs.total*100)+'% от всех';
+  if(exSub&&allDeals) exSub.textContent=Math.round((exclCount||cs.exclusive)/Math.max(allDeals,cs.total)*100)+'% от всех';
 
-  // Сделок платформы — только из топиков
+  // Сделок платформы
   var platEl=document.getElementById('ds-platform-deals');
   var platSub=document.getElementById('ds-platform-sub');
   if(platEl) platEl.textContent=allDeals||'—';
@@ -2111,15 +2143,15 @@ function renderDash(){
   var tcEl=document.getElementById('ds-total-comm');
   var tcSub=document.getElementById('ds-total-comm-sub');
   if(tcEl) tcEl.textContent=totalPlat?'$'+totalPlat:'—';
-  if(tcSub&&allDeals) tcSub.textContent='из '+allDeals+' сделок · ср. $'+Math.round(totalPlat/allDeals)+'/сд.';
+  if(tcSub&&allDeals) tcSub.textContent='из '+allDeals+' сделок · ср. $'+Math.round(totalPlat/Math.max(allDeals,1))+'/сд.';
 
   // Ср. комиссия агентства за сделку
   var acEl=document.getElementById('ds-avg-comm');
   if(acEl) acEl.textContent=(totalComm&&allDeals)?'$'+Math.round(totalComm/allDeals):'—';
 
-  // Общий оборот — сумма цен аренд
+  // Общий оборот
   var tvEl=document.getElementById('ds-turnover');
-  if(tvEl) tvEl.textContent=rs.totalPrice?'$'+Math.round(rs.totalPrice):'—';
+  if(tvEl) tvEl.textContent=totalPriceF?'$'+Math.round(totalPriceF):'—';
 
   // Сделки по месяцам
   var mbEl=document.getElementById('ds-monthly-bars');
