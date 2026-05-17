@@ -426,6 +426,22 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-list"></div>
         </div>
 
+        <!-- ФИЛЬТРЫ -->
+        <div class="section" id="dash-sec-filters">
+          <div class="sl">Фильтр по агентам</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ds-agent-filter">
+            <button onclick="filterByAgent('')" id="flt-all" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Все</button>
+          </div>
+        </div>
+
+        <!-- 2025 vs 2026 -->
+        <div class="section" id="dash-sec-years">
+          <div class="sl">2025 vs 2026 — по месяцам</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;">
+            <div style="position:relative;height:150px;"><canvas id="ds-year-chart"></canvas></div>
+          </div>
+        </div>
+
         <!-- ПОСЛЕДНИЕ СДЕЛКИ -->
         <div class="section" id="dash-sec-lastdeals">
           <div class="sl">Последние сделки</div>
@@ -1357,7 +1373,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxCwPFPdhSJPW6CoPvIVXXoPSKxo11agefYz0eHNwWU_UVjEHP7TMfTNP1emrJ24snJUA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwx037UB7mE4VtpLbcQ6Ju6i_xgB_ekSTsWs-oS-XrbiiWYs1JW_bgmzciEwJCg9gfkVw/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1924,7 +1940,9 @@ var dashPeriod = 'month';
 var dashData = {};
 var dashChartComm = null;
 var dashChartRooms = null;
+var dashYearChart = null;
 var dashAutoTimer = null;
+var dashFilter = '';
 
 // ── Статика из канала (6912 постов) ─────────────────
 var STATIC = {
@@ -1948,6 +1966,11 @@ var STATIC = {
   },
 };
 
+
+function filterByAgent(name) {
+  dashFilter = name || '';
+  renderDash();
+}
 
 function setDashPeriod(p) {
   dashPeriod = p;
@@ -2120,6 +2143,49 @@ function renderDash() {
     }).join('');
   }
 
+  // Фильтр по агентам
+  var fltEl = document.getElementById('ds-agent-filter');
+  if (fltEl) {
+    var agents2 = STATIC.platform.agents || [];
+    var btns = '<button onclick="filterByAgent()" id="flt-all" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid '+(dashFilter?'var(--border)':'var(--accent)')+';background:'+(dashFilter?'transparent':'var(--glow)')+';color:'+(dashFilter?'var(--text2)':'var(--accent2)')+';cursor:pointer;font-family:inherit;font-weight:600;">Все</button>';
+    agents2.slice(0,10).forEach(function(a) {
+      var name = a.agent||a.name||'';
+      var on = dashFilter === name;
+      var bc = on?'var(--accent)':'var(--border)';
+      var bg = on?'var(--glow)':'transparent';
+      var co = on?'var(--accent2)':'var(--text2)';
+      btns += '<button data-agent="'+name+'" onclick="filterByAgent(this.dataset.agent)" style="font-size:10px;padding:5px 10px;border-radius:20px;border:1px solid '+bc+';background:'+bg+';color:'+co+';cursor:pointer;font-family:inherit;">'+ name +'</button>';
+    });
+    fltEl.innerHTML = btns;
+  }
+
+  // 2025 vs 2026 сравнение
+  var yearEl = document.getElementById('ds-year-chart');
+  var analytics = STATIC.analytics;
+  if (yearEl && analytics && analytics.byYear && typeof Chart !== 'undefined') {
+    var mNms3=['','Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+    var months12 = [1,2,3,4,5,6,7,8,9,10,11,12];
+    var labels12 = months12.map(function(m){return mNms3[m];});
+    var by = analytics.byYear;
+    var data25 = months12.map(function(m){var k=m+'/2025'; return by['2025']&&by['2025'][k]?Math.round(by['2025'][k].platform||0):0;});
+    var data26 = months12.map(function(m){var k=m+'/2026'; return by['2026']&&by['2026'][k]?Math.round(by['2026'][k].platform||0):0;});
+    if (dashYearChart) { dashYearChart.destroy(); dashYearChart=null; }
+    dashYearChart = new Chart(yearEl, {
+      type:'line',
+      data:{labels:labels12,datasets:[
+        {label:'2025',data:data25,borderColor:'rgba(74,144,217,.7)',backgroundColor:'rgba(74,144,217,.08)',fill:true,tension:.4,pointRadius:3},
+        {label:'2026',data:data26,borderColor:'rgba(34,197,94,.8)',backgroundColor:'rgba(34,197,94,.08)',fill:true,tension:.4,pointRadius:3}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,labels:{color:'rgba(255,255,255,.5)',font:{size:9},boxWidth:12}}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'rgba(255,255,255,.3)',font:{size:8}},border:{display:false}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:8},callback:function(v){return '$'+v;}},border:{display:false}}
+        }
+      }
+    });
+  }
+
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
@@ -2151,26 +2217,40 @@ function renderDash() {
 function loadDash(data) {
   dashData = data;
   renderDash();
+  // Загружаем аналитику из кэша GAS
+  loadAnalytics();
   // Автообновление каждые 60 секунд
   if (dashAutoTimer) clearInterval(dashAutoTimer);
   dashAutoTimer = setInterval(function() {
-    // Перезагружаем данные из GAS
-    var cbName = '__dashRefresh_' + Date.now();
-    window[cbName] = function(d) {
-      delete window[cbName];
-      var sc = document.getElementById(cbName); if(sc) sc.remove();
-      if (d && d.rentalStats) {
-        RENTAL_STATS = d.rentalStats;
-        dashData.rentalStats = d.rentalStats;
-        renderDash();
-      }
-    };
-    var sc = document.createElement('script');
-    sc.id = cbName;
-    sc.src = API_URL + '?action=getLists&callback=' + cbName;
-    sc.onerror = function() { delete window[cbName]; };
-    document.head.appendChild(sc);
+    loadAnalytics();
   }, 60000);
+}
+
+function loadAnalytics() {
+  var cbName = '__analytics_' + Date.now();
+  window[cbName] = function(d) {
+    delete window[cbName];
+    var sc = document.getElementById(cbName); if(sc) sc.remove();
+    if (!d) return;
+    dashData.analytics = d;
+    // Обновляем STATIC из реальных данных
+    if (d.listings) {
+      STATIC.channel.districts = d.listings.byDistrict || STATIC.channel.districts;
+      STATIC.channel.rooms = d.listings.byRooms || STATIC.channel.rooms;
+      STATIC.listings = d.listings;
+    }
+    if (d.deals) {
+      STATIC.platform.monthly = d.deals.monthly || STATIC.platform.monthly;
+      STATIC.platform.agents = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
+      STATIC.analytics = d.deals;
+    }
+    renderDash();
+  };
+  var sc = document.createElement('script');
+  sc.id = cbName;
+  sc.src = API_URL + '?action=getAnalytics&callback=' + cbName;
+  sc.onerror = function() { delete window[cbName]; };
+  document.head.appendChild(sc);
 }
 
 
@@ -2179,7 +2259,7 @@ function loadDash(data) {
 // ═══════════════════════════════════════════════════
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
-var dashSettings = {agents:true,monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true};
+var dashSettings = {agents:true,monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true,filters:true,years:true};
 
 function isAdmin(){
   var SUPER_IDS=['6577307207','6014886676','114756692'];
@@ -2250,7 +2330,7 @@ function renderAdminLists(){
 }
 
 function updateSwitches(){
-  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals'];
+  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals','filters','years'];
   keys.forEach(function(k){
     var sw=document.getElementById('sw-'+k);
     if(!sw) return;
@@ -2279,7 +2359,7 @@ function toggleDashSec(k){
 }
 
 function saveDashSettings(){
-  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals'];
+  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals','filters','years'];
   keys.forEach(function(k){
     var cb=document.getElementById('dash-show-'+k);
     if(cb) dashSettings[k]=cb.checked;
@@ -2293,6 +2373,8 @@ function saveDashSettings(){
   applyDashSection('dash-sec-rooms',     dashSettings.rooms);
   applyDashSection('dash-sec-prices',    dashSettings.prices);
   applyDashSection('dash-sec-lastdeals', dashSettings.lastdeals);
+  applyDashSection('dash-sec-filters',  dashSettings.filters);
+  applyDashSection('dash-sec-years',    dashSettings.years);
   showToast('Настройки сохранены ✓');
 }
 
