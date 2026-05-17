@@ -653,7 +653,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
 
         <div style="position:sticky;bottom:0;left:0;right:0;background:var(--bg);padding:12px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px;border-top:1px solid var(--border);z-index:50;">
-          <button class="sbtn" onclick="sub('rental')">🚀 Отправить сдачу + T0</button>
+          <button class="sbtn" onclick="try{sub('rental')}catch(e){showToast('Ошибка: '+e.message);console.error(e);}">🚀 Отправить сдачу + T0</button>
         </div>
       </div>
     </div>
@@ -1925,8 +1925,13 @@ function sub(type, directData) {
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
   send(type,data);
-  showToast('Отправлено! ✓');
-  setTimeout(goBack,1500);
+  if(type==='rental'||type==='general'||type==='daily'||type==='makefoto'){
+    showToast('Отправляю... ✈️');
+    setTimeout(function(){ showToast('Отправлено! ✓'); goBack(); }, 2000);
+  } else {
+    showToast('Отправлено! ✓');
+    setTimeout(goBack,1500);
+  }
 }
 
 function submitCalc() {
@@ -1944,11 +1949,19 @@ function send(type,data) {
   var payload = JSON.stringify({type:type, data:data});
   var cbName = 'sendCb'+Date.now();
   var url = API_URL + '?action=submit&payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
-  window[cbName] = function(){ delete window[cbName]; var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove(); };
+  window[cbName] = function(resp){
+    delete window[cbName];
+    var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
+    if(resp && resp.ok===false) showToast('Ошибка GAS: '+(resp.error||'unknown'));
+  };
   var sc = document.createElement('script');
   sc.id = 'sc-'+cbName;
   sc.src = url;
-  sc.onerror = function(){ console.log('send error type='+type); delete window[cbName]; };
+  sc.onerror = function(){
+    showToast('❌ Ошибка сети — проверь деплой');
+    console.log('send error type='+type+' url='+url);
+    delete window[cbName];
+  };
   document.body.appendChild(sc);
 }
 
