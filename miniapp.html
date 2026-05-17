@@ -1408,7 +1408,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxwatJprC6s-c-2IfuU3kF_EZn4dCzJMZyC6QpHJJ1EuU6IRk5G_X5h0eOB5wIkJK-4HQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxjFTDUaK-x7M1uiqT0fncbv17CfAYu6idEoz6g0X7-FH6srrcS7q83z8MnK-YXbCgsoQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2073,31 +2073,46 @@ function renderDash(){
   if(mlEl){var mls=[];for(var mii=2;mii>=0;mii--){var md=new Date(nowD.getFullYear(),nowD.getMonth()-mii,1);mls.push(mNms[md.getMonth()]);}mlEl.textContent=mls.join(' · ')+' '+nowD.getFullYear();}
 
   // Metrics
-  var totalDeals=(rs.total||0)+(rs.tgTotal||0);
-  var totEl=document.getElementById('ds-total'); if(totEl)totEl.textContent=totalDeals||cs.total;
-  var totSub=document.getElementById('ds-total-sub'); if(totSub)totSub.textContent='за 3 месяца';
-  var avgEl=document.getElementById('ds-avgprice'); if(avgEl)avgEl.textContent='$'+cs.avgPrice;
-  var exEl=document.getElementById('ds-excl'); if(exEl)exEl.textContent=cs.exclusive;
+  var tgDeals = (rs.tgTotal||0);          // сделки из топиков
+  var allDeals = (rs.total||0) + tgDeals; // все сделки платформы
+  var totalPlat = Math.round((rs.platform||0)+(rs.tgPlatform||0)); // комиссия платформы
+  var totalComm = Math.round((rs.commission||0)); // общая комиссия агентства
+
+  // Объектов — из канала (статика)
+  var totEl=document.getElementById('ds-total');
+  if(totEl) totEl.textContent=cs.total;
+  var totSub=document.getElementById('ds-total-sub');
+  if(totSub) totSub.textContent='за 3 месяца · канал';
+
+  // Ср. цена аренды — из канала
+  var avgEl=document.getElementById('ds-avgprice');
+  if(avgEl) avgEl.textContent='$'+cs.avgPrice;
+
+  // Эксклюзивов — из канала
+  var exEl=document.getElementById('ds-excl');
+  if(exEl) exEl.textContent=cs.exclusive;
+  var exSub=document.getElementById('ds-excl-sub');
+  if(exSub) exSub.textContent=Math.round(cs.exclusive/cs.total*100)+'% от всех';
+
+  // Сделок платформы — только из топиков
   var platEl=document.getElementById('ds-platform-deals');
   var platSub=document.getElementById('ds-platform-sub');
-  var totalPlat=Math.round((rs.platform||0)+(rs.tgPlatform||0));
-  var totalComm=Math.round(rs.commission||0);
-  if(platEl){platEl.textContent=totalDeals||'—';}
-  if(platSub){platSub.textContent=totalDeals?'$'+totalPlat+' платф.':'из топиков';}
+  if(platEl) platEl.textContent=allDeals||'—';
+  if(platSub) platSub.textContent=allDeals?('из '+allDeals+' сделок'):'из топиков';
 
   // Общая комиссия платформы
   var tcEl=document.getElementById('ds-total-comm');
   var tcSub=document.getElementById('ds-total-comm-sub');
-  if(tcEl){tcEl.textContent=totalPlat?'$'+totalPlat:'—';}
-  if(tcSub&&totalDeals){tcSub.textContent='из '+totalDeals+' сделок · ср. $'+Math.round(totalPlat/(totalDeals||1))+'/сд.';}
+  if(tcEl) tcEl.textContent=totalPlat?'$'+totalPlat:'—';
+  if(tcSub&&allDeals) tcSub.textContent='из '+allDeals+' сделок · ср. $'+Math.round(totalPlat/allDeals)+'/сд.';
 
-  // Средняя комиссия агентства
+  // Ср. комиссия агентства за сделку
   var acEl=document.getElementById('ds-avg-comm');
-  if(acEl){acEl.textContent=totalComm&&totalDeals?'$'+Math.round(totalComm/totalDeals):'—';}
+  if(acEl) acEl.textContent=(totalComm&&allDeals)?'$'+Math.round(totalComm/allDeals):'—';
 
-  // Общий оборот
+  // Общий оборот — сумма цен аренд
   var tvEl=document.getElementById('ds-turnover');
-  if(tvEl){tvEl.textContent=rs.totalPrice?'$'+Math.round(rs.totalPrice):'—';}
+  if(tvEl) tvEl.textContent=rs.totalPrice?'$'+Math.round(rs.totalPrice):'—';
 
   // Сделки по месяцам
   var mbEl=document.getElementById('ds-monthly-bars');
