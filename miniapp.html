@@ -2414,16 +2414,40 @@ function checkAccess() {
   var tg = window.Telegram && window.Telegram.WebApp;
   var userId = null;
   var username = '';
-  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-    userId = String(tg.initDataUnsafe.user.id);
-    username = tg.initDataUnsafe.user.username || '';
+
+  if (tg) {
+    // Method 1: initDataUnsafe
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      userId = String(tg.initDataUnsafe.user.id);
+      username = tg.initDataUnsafe.user.username || '';
+    }
+    // Method 2: parse initData string
+    if (!userId && tg.initData && tg.initData.length > 0) {
+      try {
+        var params = new URLSearchParams(tg.initData);
+        var userStr = params.get('user');
+        if (userStr) {
+          var user = JSON.parse(decodeURIComponent(userStr));
+          userId = String(user.id);
+          username = user.username || '';
+        }
+      } catch(e) {}
+    }
   }
 
   console.log('checkAccess: userId=' + userId + ' username=' + username);
-  console.log('initData:', tg && tg.initData ? tg.initData.substring(0,100) : 'none');
 
-  // No Telegram context — allow (browser/dev)
-  if (!userId) { console.log('No userId — allowing'); initAdmin(); return; }
+  // No Telegram context (browser) — block
+  if (!userId) {
+    var noAcc = document.getElementById('screen-no-access');
+    if (noAcc) { noAcc.style.display='flex'; noAcc.style.flexDirection='column'; noAcc.style.alignItems='center'; noAcc.style.justifyContent='center'; }
+    var app = document.querySelector('.app');
+    if (app) app.style.display = 'none';
+    var nav = document.querySelector('.bnav');
+    if (nav) nav.style.display = 'none';
+    document.getElementById('access-reason').textContent = 'Откройте приложение через Telegram бота';
+    return;
+  }
 
   // SuperAdmin/SysAdmin — allow immediately
   if (SUPER_IDS.indexOf(userId) !== -1 || SUPER_NAMES.indexOf(username) !== -1) {
