@@ -1119,37 +1119,42 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section">
           <div class="sl">Секции дашборда</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-<div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
-              <span style="font-size:13px;color:var(--text);">Reports_Deals по месяцам</span>
-              <div id="sw-monthly" onclick="toggleDashSec('monthly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
-                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
-              </div>
-            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+
+            <div style="padding:8px 14px;background:var(--bg3);border-bottom:0.5px solid var(--border);">
+              <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">📡 Канал — объекты</span>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
               <span style="font-size:13px;color:var(--text);">Районы — объекты и цены</span>
-              <div id="sw-districts" onclick="toggleDashSec('districts')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
-                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
-              </div>
-            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
-              <span style="font-size:13px;color:var(--text);">Динамика объявлений</span>
-              <div id="sw-dyn" onclick="toggleDashSec('dyn')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
-                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
-              </div>
-            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
+              <div id="sw-districts" onclick="toggleDashSec('districts')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
               <span style="font-size:13px;color:var(--text);">Тип квартир</span>
-              <div id="sw-rooms" onclick="toggleDashSec('rooms')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
-                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
-              </div>
-            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);">
-              <span style="font-size:13px;color:var(--text);">Средняя цена по месяцам</span>
-              <div id="sw-prices" onclick="toggleDashSec('prices')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
-                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
-              </div>
-            </div><div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;">
+              <div id="sw-rooms" onclick="toggleDashSec('rooms')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Агенты — объекты в канале</span>
+              <div id="sw-agent-listings" onclick="toggleDashSec('agent-listings')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
+
+            <div style="padding:8px 14px;background:var(--bg3);border-bottom:0.5px solid var(--border);border-top:0.5px solid var(--border);">
+              <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">📊 Платформа — сделки</span>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">График комиссии по месяцам</span>
+              <div id="sw-monthly" onclick="toggleDashSec('monthly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Агенты — заработок за период</span>
+              <div id="sw-agents" onclick="toggleDashSec('agents')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;">
               <span style="font-size:13px;color:var(--text);">Последние сделки</span>
-              <div id="sw-lastdeals" onclick="toggleDashSec('lastdeals')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
-                <div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div>
-              </div>
-            </div>          </div>
+              <div id="sw-lastdeals" onclick="toggleDashSec('lastdeals')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
@@ -2112,7 +2117,7 @@ function loadAnalytics() {
 // ═══════════════════════════════════════════════════
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
-var dashSettings = {agents:true,monthly:true,districts:true,dyn:true,rooms:true,prices:true,lastdeals:true,filters:true,years:true};
+var dashSettings = {'agent-listings':true,districts:true,rooms:true,monthly:true,agents:true,lastdeals:true};
 
 function isAdmin(){
   var SUPER_IDS=['6577307207','6014886676','114756692'];
@@ -2218,7 +2223,12 @@ function saveDashSettings(){
     if(cb) dashSettings[k]=cb.checked;
   });
   updateSwitches();
-  applyDashSection('dash-sec-agents',    dashSettings.agents);
+  applyDashSection('dash-sec-agent-listings', dashSettings['agent-listings']);
+  applyDashSection('dash-sec-districts',      dashSettings.districts);
+  applyDashSection('dash-sec-rooms',          dashSettings.rooms);
+  applyDashSection('dash-sec-monthly',        dashSettings.monthly);
+  applyDashSection('dash-sec-agents',         dashSettings.agents);
+  applyDashSection('dash-sec-lastdeals',      dashSettings.lastdeals);
   applyDashSection('dash-sec-monthly',   dashSettings.monthly);
   applyDashSection('dash-sec-deals-month', dashSettings.monthly);
   applyDashSection('dash-sec-districts', dashSettings.districts);
