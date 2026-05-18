@@ -24,7 +24,7 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 
 /* SPLASH */
-#splash{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#1e3a6e,#152d58);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity .5s;overflow:hidden;}
+#splash{position:fixed;inset:0;z-index:999;background:#1d3560;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity .5s;overflow:hidden;}
 #splash.hide{opacity:0;pointer-events:none;}
 @keyframes ld{from{width:0}to{width:100%}}
 
@@ -265,58 +265,83 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 
 <div id="splash">
 <style>
-.rit-wrap{display:flex;align-items:center;justify-content:center;gap:20px;padding:16px 28px;width:100%;}
-.rit-icon{flex-shrink:0;width:90px;height:90px;background:linear-gradient(145deg,#f5f5f5,#dcdcdc);border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px #00000055,inset 0 1px 0 #ffffff80;animation:iconPop .7s cubic-bezier(.34,1.56,.64,1) both;position:relative;overflow:hidden;}
-@keyframes iconPop{0%{transform:scale(0) rotate(-20deg);opacity:0;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
-.rit-icon::after{content:'';position:absolute;top:-60%;left:-60%;width:50%;height:220%;background:linear-gradient(105deg,transparent 40%,#ffffff55 50%,transparent 60%);animation:shine 3s 1.2s infinite;}
-@keyframes shine{0%{transform:translateX(-100%) rotate(15deg);}30%{transform:translateX(400%) rotate(15deg);}100%{transform:translateX(400%) rotate(15deg);}}
-.rit-text{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Arial Black',sans-serif;font-size:clamp(24px,8vw,52px);font-weight:900;color:white;letter-spacing:-0.5px;line-height:1;white-space:nowrap;}
-.rit-text span{display:inline-block;opacity:0;transform:translateY(30px);animation:letterUp .5s cubic-bezier(.34,1.56,.64,1) forwards;}
-@keyframes letterUp{to{opacity:1;transform:translateY(0);}}
-.rit-bg-pulse{position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,#2a4f9a33,transparent 70%);animation:bgPulse 3s ease-in-out infinite alternate;}
-@keyframes bgPulse{0%{opacity:.4;}100%{opacity:1;}}
-.splash-dot{position:absolute;border-radius:50%;background:#ffffff18;animation:floatDot linear infinite;}
-@keyframes floatDot{0%{transform:translateY(0) scale(1);opacity:.6;}50%{opacity:1;}100%{transform:translateY(-180px) scale(.4);opacity:0;}}
-.plat-label{position:absolute;bottom:28px;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;}
+#splash canvas#mol{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+#splash .sp-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;}
+#splash .sp-logo-outer{position:relative;width:196px;height:196px;display:flex;align-items:center;justify-content:center;animation:spLogoIn 1.1s cubic-bezier(0.16,1,0.3,1) both;}
+#splash .sp-ring{position:absolute;inset:0;border-radius:50%;}
+#splash .sp-ring svg{width:100%;height:100%;}
+#splash .sp-ring-track{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:1.5;}
+#splash .sp-ring-arc{fill:none;stroke:rgba(255,255,255,0.7);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:80 220;stroke-dashoffset:0;animation:spSpin 2.4s cubic-bezier(0.4,0,0.2,1) infinite;}
+#splash .sp-ring-arc-red{fill:none;stroke:rgba(232,0,26,0.6);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:30 270;stroke-dashoffset:-120;animation:spSpinRev 3.6s cubic-bezier(0.4,0,0.2,1) infinite;}
+#splash .sp-logo-wrap{position:relative;width:170px;height:170px;display:flex;align-items:center;justify-content:center;border-radius:36px;background:rgba(255,255,255,0.07);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:0.5px solid rgba(255,255,255,0.22);box-shadow:0 1px 0 rgba(255,255,255,0.18) inset,0 -1px 0 rgba(0,0,0,0.15) inset,0 24px 48px rgba(0,0,0,0.25);}
+#splash .sp-tagline{margin-top:32px;display:flex;flex-direction:column;align-items:center;animation:spTextIn 1.1s cubic-bezier(0.16,1,0.3,1) 0.2s both;}
+#splash .sp-title{font-family:'Bebas Neue',Impact,sans-serif;font-size:38px;color:#fff;letter-spacing:3px;line-height:1;}
+#splash .sp-sep{width:32px;height:0.5px;background:rgba(255,255,255,0.25);margin:10px 0;}
+#splash .sp-sub{font-family:'Bebas Neue',Impact,sans-serif;font-size:13px;color:rgba(255,255,255,0.38);letter-spacing:6px;}
+@keyframes spLogoIn{from{opacity:0;transform:scale(0.82) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes spTextIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spSpinRev{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
 </style>
-<div class="rit-bg-pulse"></div>
-<div class="splash-dot" style="width:8px;height:8px;left:15%;bottom:10%;animation-duration:6s;animation-delay:0s;"></div>
-<div class="splash-dot" style="width:5px;height:5px;left:75%;bottom:5%;animation-duration:8s;animation-delay:1s;"></div>
-<div class="splash-dot" style="width:10px;height:10px;left:50%;bottom:8%;animation-duration:7s;animation-delay:2s;"></div>
-<div class="splash-dot" style="width:4px;height:4px;left:30%;bottom:3%;animation-duration:9s;animation-delay:.5s;"></div>
-<div class="splash-dot" style="width:6px;height:6px;left:85%;bottom:15%;animation-duration:5s;animation-delay:1.5s;"></div>
-<div class="rit-wrap">
-  <div class="rit-icon">
-    <svg width="70" height="70" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="rv2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff2020"/><stop offset="100%" stop-color="#bb0000"/></linearGradient></defs>
-      <rect x="38.5" y="5" width="13" height="40" rx="6.5" fill="white" transform="rotate(-45 45 45)"/>
-      <rect x="38.5" y="5" width="13" height="40" rx="6.5" fill="white" transform="rotate(45 45 45)"/>
-      <rect x="38.5" y="5" width="13" height="40" rx="6.5" fill="white" transform="rotate(135 45 45)"/>
-      <rect x="38.5" y="5" width="13" height="40" rx="6.5" fill="white" transform="rotate(-135 45 45)"/>
-      <rect x="38.5" y="5" width="13" height="80" rx="6.5" fill="url(#rv2)"/>
-      <rect x="5" y="38.5" width="80" height="13" rx="6.5" fill="url(#rv2)"/>
-      <rect x="20" y="17" width="3.5" height="11" rx="1.5" fill="#aa0000"/><rect x="16.25" y="20.75" width="11" height="3.5" rx="1.5" fill="#aa0000"/>
-      <rect x="66.5" y="17" width="3.5" height="11" rx="1.5" fill="#aa0000"/><rect x="62.75" y="20.75" width="11" height="3.5" rx="1.5" fill="#aa0000"/>
-      <rect x="20" y="62" width="3.5" height="11" rx="1.5" fill="#aa0000"/><rect x="16.25" y="65.75" width="11" height="3.5" rx="1.5" fill="#aa0000"/>
-      <rect x="66.5" y="62" width="3.5" height="11" rx="1.5" fill="#aa0000"/><rect x="62.75" y="65.75" width="11" height="3.5" rx="1.5" fill="#aa0000"/>
-    </svg>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<canvas id="mol"></canvas>
+<div class="sp-content">
+  <div class="sp-logo-outer">
+    <div class="sp-ring">
+      <svg viewBox="0 0 196 196" xmlns="http://www.w3.org/2000/svg">
+        <circle class="sp-ring-track" cx="98" cy="98" r="95"/>
+        <circle class="sp-ring-arc" cx="98" cy="98" r="95"/>
+      </svg>
+    </div>
+    <div class="sp-ring" style="animation:none;">
+      <svg viewBox="0 0 196 196" xmlns="http://www.w3.org/2000/svg">
+        <circle class="sp-ring-arc-red" cx="98" cy="98" r="95"/>
+      </svg>
+    </div>
+    <div class="sp-logo-wrap">
+      <svg width="140" height="140" viewBox="-220 -100 1040 1040" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 616.582,928.033 L -20.971,928.033 C -125.247,928.033 -209.782,843.499 -209.782,739.221 L -209.782,101.669 C -209.782,-2.608 -125.247,-87.141 -20.971,-87.141 L 616.582,-87.141 C 720.859,-87.141 805.393,-2.608 805.393,101.669 L 805.393,739.221 C 805.393,843.499 720.859,928.033 616.582,928.033 Z" fill="#F5F5F7"/>
+        <path d="M 398.108,420.445 L 609.302,631.638 C 634.846,657.182 634.846,698.596 609.302,724.140 L 601.500,731.941 C 575.957,757.485 534.543,757.485 509.000,731.941 L 297.805,520.748 L 86.613,731.941 C 61.068,757.485 19.654,757.485 -5.889,731.941 L -13.690,724.140 C -39.235,698.596 -39.235,657.182 -13.690,631.638 L 197.502,420.445 L -13.690,209.252 C -39.235,183.708 -39.235,142.294 -13.690,116.750 L -5.889,108.949 C 19.654,83.405 61.068,83.405 86.613,108.949 L 297.805,320.142 L 509.000,108.949 C 534.543,83.405 575.957,83.405 601.500,108.949 L 609.302,116.750 C 634.846,142.294 634.846,183.708 609.302,209.252 Z" fill="#E8E8EA"/>
+        <path d="M 667.403,491.370 L 368.730,491.370 L 368.730,790.042 C 368.730,826.167 339.446,855.451 303.322,855.451 L 292.289,855.451 C 256.165,855.451 226.881,826.167 226.881,790.042 L 226.881,491.370 L -71.792,491.370 C -107.916,491.370 -137.200,462.086 -137.200,425.962 L -137.200,414.929 C -137.200,378.805 -107.916,349.520 -71.792,349.520 L 226.881,349.520 L 226.881,50.848 C 226.881,14.724 256.165,-14.561 292.289,-14.561 L 303.322,-14.561 C 339.446,-14.561 368.730,14.724 368.730,50.848 L 368.730,349.520 L 667.403,349.520 C 703.527,349.520 732.811,378.805 732.811,414.929 L 732.811,425.962 C 732.811,462.086 703.527,491.370 667.403,491.370 Z" fill="#E8001A"/>
+        <path d="M 60.628,617.174 C 60.628,615.063 59.896,602.766 59.896,602.766 C 62.952,604.034 75.661,605.678 88.113,606.332 C 87.235,592.027 84.761,577.304 84.761,577.304 C 87.198,578.049 97.924,578.175 97.924,578.175 C 99.996,578.175 112.062,577.428 112.062,577.428 C 110.820,580.546 109.203,593.520 108.562,606.224 C 122.114,605.338 137.049,603.264 137.049,603.264 C 136.195,612.579 136.195,617.174 136.195,617.174 C 136.195,621.770 136.805,630.339 136.805,630.339 C 122.590,628.250 108.687,627.309 108.687,627.309 C 109.567,641.043 111.576,656.051 111.576,656.051 C 102.434,655.180 97.924,655.180 97.924,655.180 C 93.414,655.180 85.005,655.801 85.005,655.801 C 87.052,641.346 87.976,627.190 87.976,627.190 C 74.028,628.102 59.774,630.589 59.774,630.589 C 60.505,628.106 60.628,617.174 60.628,617.174 Z" fill="#E8001A"/>
+        <path d="M 469.714,617.174 C 469.714,615.063 468.981,602.766 468.981,602.766 C 472.038,604.034 484.747,605.678 497.199,606.332 C 496.321,592.027 493.846,577.304 493.846,577.304 C 496.284,578.049 507.010,578.175 507.010,578.175 C 509.082,578.175 521.148,577.428 521.148,577.428 C 519.905,580.546 518.288,593.520 517.648,606.224 C 531.200,605.338 546.135,603.264 546.135,603.264 C 545.280,612.579 545.280,617.174 545.280,617.174 C 545.280,621.770 545.890,630.339 545.890,630.339 C 531.676,628.250 517.773,627.309 517.773,627.309 C 518.653,641.043 520.662,656.051 520.662,656.051 C 511.519,655.180 507.010,655.180 507.010,655.180 C 502.500,655.180 494.091,655.801 494.091,655.801 C 496.137,641.346 497.062,627.190 497.062,627.190 C 483.113,628.102 468.860,630.589 468.860,630.589 C 469.591,628.106 469.714,617.174 469.714,617.174 Z" fill="#E8001A"/>
+        <path d="M 60.628,222.641 C 60.628,220.530 59.896,208.233 59.896,208.233 C 62.952,209.500 75.661,211.145 88.113,211.798 C 87.235,197.494 84.761,182.771 84.761,182.771 C 87.198,183.516 97.924,183.642 97.924,183.642 C 99.996,183.642 112.062,182.895 112.062,182.895 C 110.820,186.013 109.203,198.987 108.562,211.691 C 122.114,210.805 137.049,208.731 137.049,208.731 C 136.195,218.046 136.195,222.641 136.195,222.641 C 136.195,227.236 136.805,235.806 136.805,235.806 C 122.590,233.717 108.687,232.776 108.687,232.776 C 109.567,246.509 111.576,261.518 111.576,261.518 C 102.434,260.647 97.924,260.647 97.924,260.647 C 93.414,260.647 85.005,261.268 85.005,261.268 C 87.052,246.812 87.976,232.657 87.976,232.657 C 74.028,233.569 59.774,236.056 59.774,236.056 C 60.505,233.572 60.628,222.641 60.628,222.641 Z" fill="#E8001A"/>
+        <path d="M 469.714,222.641 C 469.714,220.530 468.981,208.233 468.981,208.233 C 472.038,209.500 484.747,211.145 497.199,211.798 C 496.321,197.494 493.846,182.771 493.846,182.771 C 496.284,183.516 507.010,183.642 507.010,183.642 C 509.082,183.642 521.148,182.895 521.148,182.895 C 519.905,186.013 518.288,198.987 517.648,211.691 C 531.200,210.805 546.135,208.731 546.135,208.731 C 545.280,218.046 545.280,222.641 545.280,222.641 C 545.280,227.236 545.890,235.806 545.890,235.806 C 531.676,233.717 517.773,232.776 517.773,232.776 C 518.653,246.509 520.662,261.518 520.662,261.518 C 511.519,260.647 507.010,260.647 507.010,260.647 C 502.500,260.647 494.091,261.268 494.091,261.268 C 496.137,246.812 497.062,232.657 497.062,232.657 C 483.113,233.569 468.860,236.056 468.860,236.056 C 469.591,233.572 469.714,222.641 469.714,222.641 Z" fill="#E8001A"/>
+      </svg>
+    </div>
   </div>
-  <div class="rit-text" id="ritText"></div>
+  <div class="sp-tagline">
+    <div class="sp-title">RENT IN TBILISI</div>
+    <div class="sp-sep"></div>
+    <div class="sp-sub">PLATFORM 90/10</div>
+  </div>
 </div>
-<div class="plat-label">Platform 90/10</div>
 <script>
 (function(){
-  var text='RENT IN TBILISI';
-  var container=document.getElementById('ritText');
-  var delay=0.45;
-  for(var i=0;i<text.length;i++){
-    var span=document.createElement('span');
-    span.textContent=text[i]===' '?'\u00a0':text[i];
-    if(text[i]===' ')span.style.width='0.2em';
-    span.style.animationDelay=delay+'s';
-    delay+=0.05;
-    container.appendChild(span);
+  var canvas=document.getElementById('mol'),root=document.getElementById('splash');
+  var W,H,ctx,nodes;
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function resize(){W=root.offsetWidth;H=root.offsetHeight;canvas.width=W;canvas.height=H;}
+  function init(){nodes=Array.from({length:55},function(){return{x:rnd(0,W),y:rnd(0,H),vx:rnd(-.13,.13),vy:rnd(-.13,.13),r:rnd(2,5),alpha:rnd(.18,.52)};});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var D=90;
+    for(var i=0;i<nodes.length;i++)for(var j=i+1;j<nodes.length;j++){
+      var a=nodes[i],b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<D){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='rgba(90,140,215,'+(1-d/D)*.25+')';ctx.lineWidth=.75;ctx.stroke();}
+    }
+    for(var k=0;k<nodes.length;k++){
+      var n=nodes[k];
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(110,165,245,'+n.alpha+')';ctx.fill();
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<-10)n.x=W+10;if(n.x>W+10)n.x=-10;
+      if(n.y<-10)n.y=H+10;if(n.y>H+10)n.y=-10;
+    }
+    requestAnimationFrame(draw);
   }
+  window.addEventListener('resize',resize);
+  resize();ctx=canvas.getContext('2d');init();draw();
 })();
 </script>
 </div>
@@ -423,6 +448,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section" id="dash-sec-agent-listings">
           <div class="sl">Агенты — активные объекты в канале</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agent-listings">
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+          </div>
+        </div>
+
+        <!-- ОБЪЕКТЫ ЗА НЕДЕЛЮ -->
+        <div class="section" id="dash-sec-weekly">
+          <div class="sl" id="ds-weekly-title">Объектов добавлено на этой неделе</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-weekly-listings">
             <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
         </div>
@@ -1136,6 +1169,10 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <span style="font-size:13px;color:var(--text);">Агенты — объекты в канале</span>
               <div id="sw-agent-listings" onclick="toggleDashSec('agent-listings')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
             </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Объектов за неделю (топик 3)</span>
+              <div id="sw-weekly" onclick="toggleDashSec('weekly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
 
             <div style="padding:8px 14px;background:var(--bg3);border-bottom:0.5px solid var(--border);border-top:0.5px solid var(--border);">
               <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">📊 Платформа — сделки</span>
@@ -1176,7 +1213,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwPfbuRBPxhMvrE7EHdLCC26G39HT8uiOkDf_wDECtpCK6QeskbBnfbRZCxzJa5NqosrQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbystexoPhFIDm0vGf63xq36_MnLQtVq9ZFJAma0rv5PopNCd7xjP3F1exvxGRtx-8Bq5Q/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2042,6 +2079,36 @@ function renderDash() {
     }
   }
 
+  // Объекты за неделю (из топика 3)
+  var wkEl = document.getElementById('ds-weekly-listings');
+  var wkTitle = document.getElementById('ds-weekly-title');
+  var wk = (dashData.analytics && dashData.analytics.weeklyListings) ? dashData.analytics.weeklyListings : null;
+  if (wkEl) {
+    if (wk && wk.topAgents && wk.topAgents.length) {
+      if (wkTitle) wkTitle.textContent = 'Объектов добавлено с ' + (wk.weekStart||'пн') + ' · итого ' + wk.total;
+      var wColors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316'];
+      var maxW = wk.topAgents[0].count || 1;
+      wkEl.innerHTML = wk.topAgents.map(function(a, i) {
+        var pct = Math.round(a.count / maxW * 100);
+        var c = wColors[i % wColors.length];
+        var rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#'+(i+1);
+        return '<div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:0.5px solid var(--border);">'
+          +'<div style="width:26px;text-align:center;font-size:14px;flex-shrink:0;">'+rank+'</div>'
+          +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';flex-shrink:0;">'+a.name[0].toUpperCase()+'</div>'
+          +'<div style="flex:1;">'
+          +'<div style="display:flex;justify-content:space-between;margin-bottom:3px;">'
+          +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+a.name+'</span>'
+          +'<span style="font-size:12px;font-weight:700;color:'+c+';">'+a.count+' объектов</span>'
+          +'</div>'
+          +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
+          +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;"></div>'
+          +'</div></div></div>';
+      }).join('');
+    } else {
+      wkEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Данные появятся после первых постов в топике 3</div>';
+    }
+  }
+
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
@@ -2117,7 +2184,7 @@ function loadAnalytics() {
 // ═══════════════════════════════════════════════════
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
-var dashSettings = {'agent-listings':true,districts:true,rooms:true,monthly:true,agents:true,lastdeals:true};
+var dashSettings = {'agent-listings':true,districts:true,rooms:true,weekly:true,monthly:true,agents:false,lastdeals:true};
 
 function isAdmin(){
   var SUPER_IDS=['6577307207','6014886676','114756692'];
@@ -2178,13 +2245,45 @@ function renderAdminLists(){
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:0.5px solid var(--border);">'
         +'<div><div style="font-size:13px;font-weight:600;color:var(--text);">'+r.name+'</div>'
         +'<div style="font-size:11px;color:var(--text3);">'+r.telegram+'</div></div>'
-        +'<button data-tg="'+r.telegram+'" onclick="adminToggleRecruit(this.getAttribute(\'data-tg\'))" style="font-size:11px;padding:5px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit;">'
+        +'<div style="display:flex;gap:6px;">'
+        +'<button data-tg="'+r.telegram+'" onclick="adminToggleRecruit(this.getAttribute(\'data-tg\'))" style="font-size:11px;padding:5px 10px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit;">'
         +(r.active===false?'Вкл':'Выкл')+'</button>'
-        +'</div>';
+        +'<button data-tg="'+r.telegram+'" data-name="'+r.name+'" onclick="promoteRecruitBtn(this)" style="font-size:11px;padding:5px 10px;border-radius:var(--rsm);border:1px solid rgba(34,197,94,.4);background:rgba(34,197,94,.1);color:var(--green);cursor:pointer;font-family:inherit;">⬆️ Агент</button>'
+        +'</div></div>';
     }).join('');
   }
   // Toggles
   updateSwitches();
+}
+
+function promoteRecruitBtn(btn) {
+  var tg   = btn.getAttribute('data-tg');
+  var name = btn.getAttribute('data-name');
+  if (!confirm('Повысить ' + name + ' до агента?\n\nОн будет перенесён из Рекрутов в Агенты.')) return;
+
+  // Ask level
+  var lvlStr = prompt('Уровень агента (50, 70 или 90):', '50');
+  var lvl = parseInt(lvlStr) || 50;
+  if ([50,70,90].indexOf(lvl) === -1) { showToast('Уровень должен быть 50, 70 или 90'); return; }
+
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+
+  send('promote_recruit', {telegram: tg, level: lvl});
+
+  // Update local state
+  var rec = RECRUITS.find(function(r){ return r.telegram === tg; });
+  if (rec) {
+    rec.active = false;
+    AGENTS.push({name: name, telegram: tg, level: lvl, active: true});
+  }
+
+  setTimeout(function() {
+    renderAdminLists();
+    showToast('✅ ' + name + ' теперь агент ' + lvl + '%!');
+    // Reload data to sync
+    loadData();
+  }, 1500);
 }
 
 function updateSwitches(){
@@ -2224,6 +2323,7 @@ function saveDashSettings(){
   });
   updateSwitches();
   applyDashSection('dash-sec-agent-listings', dashSettings['agent-listings']);
+  applyDashSection('dash-sec-weekly',         dashSettings.weekly);
   applyDashSection('dash-sec-districts',      dashSettings.districts);
   applyDashSection('dash-sec-rooms',          dashSettings.rooms);
   applyDashSection('dash-sec-monthly',        dashSettings.monthly);
@@ -2473,6 +2573,37 @@ function renderStats(){
   }catch(e){console.log('renderStats error:',e);}
 }
 
+// ── Сохранение/загрузка настроек дашборда ───────────
+function loadDashSettings() {
+  try {
+    var saved = localStorage.getItem('dashSettings');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      Object.keys(parsed).forEach(function(k){ dashSettings[k] = parsed[k]; });
+    }
+  } catch(e) {}
+  applyAllDashSettings();
+}
+
+function saveDashSettings2() {
+  try { localStorage.setItem('dashSettings', JSON.stringify(dashSettings)); } catch(e) {}
+}
+
+function applyAllDashSettings() {
+  Object.keys(dashSettings).forEach(function(k) {
+    applyDashSection('dash-sec-'+k, dashSettings[k]!==false);
+  });
+  // Update switch visuals
+  Object.keys(dashSettings).forEach(function(k) {
+    var sw = document.getElementById('sw-'+k);
+    if (!sw) return;
+    var on = dashSettings[k] !== false;
+    sw.style.background = on ? 'var(--green)' : '#3a3a5a';
+    var dot = sw.querySelector('div');
+    if (dot) dot.style.left = on ? '21px' : '3px';
+  });
+}
+
 function buildAgentLevels() {
   var levels = {};
   (AGENTS||[]).forEach(function(a) {
@@ -2492,6 +2623,7 @@ function getAgentLevelJS(name) {
 function afterLoad(){
   try{populateRentalInDeals();}catch(e){}
   try{initAdmin();renderAdminLists();}catch(e){}
+  try{loadDashSettings();}catch(e){}
   try{populateDeals();}catch(e){}
   try{loadDash({rentalStats:RENTAL_STATS||{},agentCounters:AGENT_C||{},counters:COUNTERS||{}});}catch(e){}
   var today=new Date().toISOString().split('T')[0];
