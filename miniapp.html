@@ -1213,7 +1213,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbystexoPhFIDm0vGf63xq36_MnLQtVq9ZFJAma0rv5PopNCd7xjP3F1exvxGRtx-8Bq5Q/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxIzny4Wmr7FVKo7J2FzNPgEzaJi6szzivy6Um6YmwXVQjyYBjRSKzMDpfKDg8uBsPGtw/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2261,7 +2261,6 @@ function promoteRecruitBtn(btn) {
   var name = btn.getAttribute('data-name');
   if (!confirm('Повысить ' + name + ' до агента?\n\nОн будет перенесён из Рекрутов в Агенты.')) return;
 
-  // Ask level
   var lvlStr = prompt('Уровень агента (50, 70 или 90):', '50');
   var lvl = parseInt(lvlStr) || 50;
   if ([50,70,90].indexOf(lvl) === -1) { showToast('Уровень должен быть 50, 70 или 90'); return; }
@@ -2271,19 +2270,11 @@ function promoteRecruitBtn(btn) {
 
   send('promote_recruit', {telegram: tg, level: lvl});
 
-  // Update local state
-  var rec = RECRUITS.find(function(r){ return r.telegram === tg; });
-  if (rec) {
-    rec.active = false;
-    AGENTS.push({name: name, telegram: tg, level: lvl, active: true});
-  }
-
+  // Reload from GAS after delay to get fresh data
   setTimeout(function() {
-    renderAdminLists();
-    showToast('✅ ' + name + ' теперь агент ' + lvl + '%!');
-    // Reload data to sync
-    loadData();
-  }, 1500);
+    showToast('✅ ' + name + ' теперь агент ' + lvl + '%! Обновляю...');
+    loadData(); // Перезагружает AGENTS и RECRUITS из GAS
+  }, 3500);
 }
 
 function updateSwitches(){
