@@ -1171,7 +1171,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwgyT5DSoD7N4Gy9z23JTkzA6MYVWuX7lf-Tlb0vLzA4jdUlhwiVz09clH6uJk_BkAZ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwPfbuRBPxhMvrE7EHdLCC26G39HT8uiOkDf_wDECtpCK6QeskbBnfbRZCxzJa5NqosrQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2002,7 +2002,7 @@ function renderDash() {
       var deals = a.deals || 0;
       var comm = Math.round(a.commission || 0);
       var plat = Math.round(a.platform || 0);
-      var agComm = comm - plat;
+      var agComm = a.agent_comm ? Math.round(a.agent_comm) : (comm - plat);
       agStats.push({name:name, deals:deals, agComm:agComm, platComm:plat, totalComm:comm});
     });
     // Filter by period
