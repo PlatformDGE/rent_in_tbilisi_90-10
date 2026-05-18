@@ -381,30 +381,29 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
         </div>
 
-        <!-- МЕТРИКИ КАНАЛА -->
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
-          <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
-            <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Объектов</div>
-            <div style="font-size:20px;font-weight:800;color:var(--accent2);">401</div>
-            <div style="font-size:8px;color:var(--text3);">с районом</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
-            <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Ср. цена</div>
-            <div style="font-size:20px;font-weight:800;color:var(--accent2);">$840</div>
-            <div style="font-size:8px;color:var(--text3);">аренда</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
-            <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Эксклюзив</div>
-            <div style="font-size:20px;font-weight:800;color:var(--amber);">22%</div>
-            <div style="font-size:8px;color:var(--text3);">от всех</div>
-          </div>
-        </div>
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- БЛОК 1: КАНАЛ — ОБЪЕКТЫ                       -->
+        <!-- ══════════════════════════════════════════════ -->
 
-        <!-- ГРАФИК КОМИССИИ + СДЕЛОК -->
-        <div class="section" id="dash-sec-monthly">
-          <div class="sl">Комиссия платформы по месяцам</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;">
-            <div style="position:relative;height:140px;"><canvas id="ds-comm-chart"></canvas></div>
+        <!-- МЕТРИКИ КАНАЛА -->
+        <div style="margin-bottom:10px;">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:600;">📡 Канал @rent_tbilisi_ge</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+            <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Объектов</div>
+              <div style="font-size:20px;font-weight:800;color:var(--accent2);">401</div>
+              <div style="font-size:8px;color:var(--text3);">с районом</div>
+            </div>
+            <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Ср. цена</div>
+              <div style="font-size:20px;font-weight:800;color:var(--accent2);">$840</div>
+              <div style="font-size:8px;color:var(--text3);">аренда</div>
+            </div>
+            <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
+              <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Эксклюзив</div>
+              <div style="font-size:20px;font-weight:800;color:var(--amber);">22%</div>
+              <div style="font-size:8px;color:var(--text3);">от всех</div>
+            </div>
           </div>
         </div>
 
@@ -420,11 +419,41 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;" id="ds-rooms"></div>
         </div>
 
-        <!-- АГЕНТЫ — ОБЪЕКТЫ -->
+        <!-- АГЕНТЫ — ОБЪЕКТЫ В КАНАЛЕ -->
         <div class="section" id="dash-sec-agent-listings">
           <div class="sl">Агенты — активные объекты в канале</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agent-listings">
             <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- БЛОК 2: ПЛАТФОРМА — СДЕЛКИ И КОМИССИИ         -->
+        <!-- ══════════════════════════════════════════════ -->
+
+        <!-- КОМИССИЯ ПО МЕСЯЦАМ -->
+        <div class="section" id="dash-sec-monthly">
+          <div class="sl">Комиссия платформы по месяцам</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;">
+            <div style="position:relative;height:140px;"><canvas id="ds-comm-chart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- АГЕНТЫ — СДЕЛКИ + КОМИССИЯ -->
+        <div class="section" id="dash-sec-agents">
+          <div class="sl">Агенты — заработок за период</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-deals">
+            <div style="display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);background:var(--bg3);">
+              <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Агент</span>
+              <div style="display:flex;gap:16px;">
+                <span style="font-size:9px;color:var(--accent2);font-weight:600;text-transform:uppercase;">Агент $</span>
+                <span style="font-size:9px;color:var(--green);font-weight:600;text-transform:uppercase;">Платф. $</span>
+                <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;width:30px;text-align:right;">Сд.</span>
+              </div>
+            </div>
+            <div id="ds-agents-rows">
+              <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+            </div>
           </div>
         </div>
 
@@ -436,225 +465,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <div class="screen" id="tab-calc">
-      <div style="padding:14px 16px 0;display:flex;align-items:center;gap:10px;">
-        <button onclick="goBack()" style="background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;color:var(--text);padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit;">← Назад</button>
-        <div>
-          <div style="font-size:18px;font-weight:800;margin-bottom:1px;">💰 Калькулятор сделки</div>
-          <div style="font-size:11px;color:var(--text2);">Calculator + Report + T0</div>
-        </div>
-      </div>
-      <div class="pad pb" id="calc-scroll" style="padding-bottom:140px !important;">
-
-        <!-- 1. ОБЪЕКТ -->
-        <div class="section"><div class="sl">1. Объект</div>
-          <div class="field"><label class="fl">Ссылка на объект <span class="req">*</span></label>
-            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="rnUpd()"></div>
-          <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
-            <input type="text" id="rn-cadastral" placeholder="01.10.10.xxx.xxx.xx.xx.xxx" oninput="rnUpd();searchPDF(this.value)">
-            <div id="pdf-status" style="font-size:12px;padding:5px 0;display:none;"></div>
-            <div id="pdf-wrap" style="margin-top:8px;border-radius:var(--rsm);overflow:hidden;display:none;">
-              <iframe id="pdf-frame" src="" style="width:100%;height:380px;border:none;"></iframe>
-            </div>
-          </div>
-          <div class="field"><label class="fl">Тип объекта</label>
-            <div style="display:flex;gap:8px;">
-              <button style="flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid var(--border-success,rgba(34,197,94,.4));background:var(--bg-success,rgba(34,197,94,.1));color:var(--c-success,#22c55e);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;" id="rn-ex-y" onclick="setRnExcl(true)"><i class="ti ti-lock" style="font-size:15px;"></i>Эксклюзив</button>
-              <button style="flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--bg2);color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;opacity:.5;display:flex;align-items:center;justify-content:center;gap:6px;" id="rn-ex-n" onclick="setRnExcl(false)"><i class="ti ti-lock-open" style="font-size:15px;"></i>Неэксклюзив</button>
-            </div>
-          </div>
-          <div class="field"><label class="fl">Тип сделки</label>
-            <div class="tg c2">
-              <button class="tb aa" id="rn-tp-r" onclick="setRnType('rent')">Аренда</button>
-              <button class="tb" id="rn-tp-s" onclick="setRnType('sale')">Продажа</button>
-            </div>
-          </div>
-          <div id="rn-subtype-wrap" class="field"><label class="fl">Подтип аренды</label>
-            <div class="tg c2">
-              <button class="tb aa" id="rn-sub-long" onclick="setRnSubtype('long')">Долгосрочная · 50%</button>
-              <button class="tb" id="rn-sub-comm" onclick="setRnSubtype('comm')">Коммерция · 100%</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. СЦЕНАРИЙ -->
-        <div class="section"><div class="sl">2. Сценарий</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div class="rn-sc-btn on" id="rnsc-0" onclick="setRnSc(0)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;background:#1d3560;border:1.5px solid #4a90d9;display:flex;align-items:center;justify-content:center;font-size:9px;color:#7eb3ff;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">🏠</div>
-              <div style="font-size:12px;font-weight:700;color:#7eb3ff;margin-bottom:3px;">Агент</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свой объект без рекрута</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-1" onclick="setRnSc(1)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">🤝</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Агент + показ</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут показал и подписал</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-2" onclick="setRnSc(2)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">🔄</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Агент передал</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут сделал всё</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-3" onclick="setRnSc(3)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">⭐</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Рекрут · 5 сд.</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут получает 20%</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-4" onclick="setRnSc(4)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">🌟</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Рекрут · 10 сд.</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут получает 50%</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-5" onclick="setRnSc(5)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">💎</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Объект рекрута</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">По кол-ву сделок</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-6" onclick="setRnSc(6)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">🤲</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Передача клиента</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">10% агенту-источнику</div>
-            </div>
-            <div class="rn-sc-btn" id="rnsc-7" onclick="setRnSc(7)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">✏️</div>
-              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Ручное</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свои проценты</div>
-            </div>
-          </div>
-          <!-- Ручное распределение — только для сценария 7 -->
-          <div id="rn-manual-block" style="background:var(--bg3);border:0.5px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 14px;margin-top:10px;display:none;">
-            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение %</div>
-            <div id="rn-manual-rows"></div>
-          </div>
-        </div>
-
-        <!-- 3. УЧАСТНИКИ -->
-        <div class="section"><div class="sl">3. Участники</div>
-          <div class="field"><label class="fl">Агент <span class="req">*</span></label>
-            <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
-          </div>
-          <div class="field" id="rn-level-block"><label class="fl">Уровень агента</label>
-            <div class="tg c3">
-              <button class="tb" id="rn-lvl-50" onclick="setRnLvl(50)">50%</button>
-              <button class="tb" id="rn-lvl-70" onclick="setRnLvl(70)">70%</button>
-              <button class="tb aa" id="rn-lvl-90" onclick="setRnLvl(90)">90%</button>
-            </div>
-          </div>
-          <div class="field" id="rn-recruit-block"><label class="fl">Рекрут / Агент (показ)</label>
-            <select id="rn-recruit" onchange="rnUpd()"><option value="">Без рекрута</option></select>
-          </div>
-          <div class="field" id="rn-client-src-block" style="display:none;"><label class="fl">Кто передал клиента</label>
-            <select id="rn-client-src" onchange="rnUpd()"><option value="">Выбрать агента/рекрута...</option></select>
-          </div>
-          <div class="field" id="rn-recdeals-block" style="display:none;"><label class="fl">Reports_Deals рекрута</label>
-            <div class="tg c2">
-              <button class="tb aa" id="rn-rd-lt" onclick="setRnRecD('lt10')">До 10 сделок</button>
-              <button class="tb" id="rn-rd-gte" onclick="setRnRecD('gte10')">10 — 90 сделок</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. ЦЕНА -->
-        <div class="section"><div class="sl">4. Цена и комиссия</div>
-          <div class="r2">
-            <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
-              <input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
-            <div class="field"><label class="fl">Комиссия %</label>
-              <input type="number" id="rn-comm-pct" value="50" oninput="calcRental()"></div>
-          </div>
-          <div id="rn-calc" style="display:none;margin-top:10px;background:var(--bg3);border:0.5px solid rgba(74,144,217,.2);border-radius:14px;overflow:hidden;">
-            <div style="padding:12px 16px;background:linear-gradient(135deg,rgba(29,53,96,.8),rgba(17,21,48,.8));border-bottom:0.5px solid rgba(74,144,217,.12);display:flex;justify-content:space-between;align-items:center;">
-              <div><div style="font-size:24px;font-weight:700;color:#7eb3ff;" id="rn-ct">—</div><div style="font-size:11px;color:var(--text3);margin-top:2px;" id="rn-ct-sub">комиссия агентства</div></div>
-              <div id="rn-excl-badge"></div>
-            </div>
-            <div id="rn-dist-rows"></div>
-          </div>
-        </div>
-
-        <!-- 5. КЛИЕНТ -->
-        <div class="section"><div class="sl">5. Клиент и собственник</div>
-          <div class="r2">
-            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Anna" oninput="rnUpd()"></div>
-            <div class="field"><label class="fl">Telegram / телефон</label><input type="text" id="rn-cphone" placeholder="@username" oninput="rnUpd()"></div>
-          </div>
-          <div class="r2">
-            <div class="field"><label class="fl">Собственник (имя)</label><input type="text" id="rn-oname" placeholder="Giorgi" oninput="rnUpd()"></div>
-            <div class="field"><label class="fl">Telegram / телефон</label><input type="text" id="rn-ophone" placeholder="@username" oninput="rnUpd()"></div>
-          </div>
-          <div class="r2">
-            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from" oninput="rnUpd()"></div>
-            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to" oninput="rnUpd()"></div>
-          </div>
-        </div>
-
-        <!-- 6. H2O -->
-        <div class="section"><div class="sl">6. H2O — T0 Оценка</div>
-          <!-- Client Delivery -->
-          <div style="background:rgba(255,59,46,.06);border:1px solid rgba(255,59,46,.2);border-radius:16px;padding:14px 16px;margin-bottom:8px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-              <div><div style="font-size:15px;font-weight:700;color:#ff6b63;">Client Delivery</div><div style="font-size:11px;color:rgba(255,107,99,.5);margin-top:2px;">Клиент получил ожидаемое?</div></div>
-              <div style="font-size:28px;font-weight:800;color:#ff6b63;opacity:.25;transition:all .2s;" id="hp-c">—</div>
-            </div>
-            <div style="display:flex;gap:8px;" id="h0-c">
-              <button style="flex:1;padding:13px;border-radius:14px;background:#2a1218;border:1px solid rgba(255,69,58,.2);color:#cc3a32;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',1,this)">1</button>
-              <button style="flex:1;padding:13px;border-radius:14px;background:#2a1a10;border:1px solid rgba(255,107,0,.15);color:#cc5500;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',2,this)">2</button>
-              <button style="flex:1;padding:13px;border-radius:14px;background:#1a2210;border:1px solid rgba(255,149,0,.15);color:#aa7700;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',3,this)">3</button>
-            </div>
-          </div>
-          <!-- Owner Result -->
-          <div style="background:rgba(255,214,10,.05);border:1px solid rgba(255,214,10,.18);border-radius:16px;padding:14px 16px;margin-bottom:8px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-              <div><div style="font-size:15px;font-weight:700;color:#ffd60a;">Owner Result</div><div style="font-size:11px;color:rgba(255,214,10,.45);margin-top:2px;">Собственник получил результат?</div></div>
-              <div style="font-size:28px;font-weight:800;color:#ffd60a;opacity:.25;transition:all .2s;" id="hp-o">—</div>
-            </div>
-            <div style="display:flex;gap:8px;" id="h0-o">
-              <button style="flex:1;padding:13px;border-radius:14px;background:#1e1800;border:1px solid rgba(204,136,0,.2);color:#886600;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',1,this)">1</button>
-              <button style="flex:1;padding:13px;border-radius:14px;background:#241e00;border:1px solid rgba(255,204,0,.15);color:#aa9900;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',2,this)">2</button>
-              <button style="flex:1;padding:13px;border-radius:14px;background:#2a2400;border:1px solid rgba(255,214,10,.15);color:#ccaa00;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',3,this)">3</button>
-            </div>
-          </div>
-          <!-- Process Integrity -->
-          <div style="background:rgba(48,209,88,.05);border:1px solid rgba(48,209,88,.18);border-radius:16px;padding:14px 16px;margin-bottom:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-              <div><div style="font-size:15px;font-weight:700;color:#30d158;">Process Integrity</div><div style="font-size:11px;color:rgba(48,209,88,.45);margin-top:2px;">Процесс прошёл чисто?</div></div>
-              <div style="font-size:28px;font-weight:800;color:#30d158;opacity:.25;transition:all .2s;" id="hp-p">—</div>
-            </div>
-            <div style="display:flex;gap:8px;" id="h0-p">
-              <button style="flex:1;padding:13px;border-radius:14px;background:#0e200e;border:1px solid rgba(26,122,42,.2);color:#1a5a1a;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',1,this)">1</button>
-              <button style="flex:1;padding:13px;border-radius:14px;background:#102810;border:1px solid rgba(37,168,58,.15);color:#256a25;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',2,this)">2</button>
-              <button style="flex:1;padding:13px;border-radius:14px;background:#123012;border:1px solid rgba(48,209,88,.15);color:#307a30;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',3,this)">3</button>
-            </div>
-          </div>
-          <!-- Big Score -->
-          <div id="rn-big-score"></div>
-          <!-- Result buttons -->
-          <div style="display:flex;gap:8px;margin-bottom:10px;">
-            <button class="tb" id="t0-cl" onclick="setT0R('clean')" style="flex:1;padding:12px;">✓ Чистая</button>
-            <button class="tb" id="t0-dr" onclick="setT0R('dirty')" style="flex:1;padding:12px;">✗ Грязная</button>
-          </div>
-          <div class="field"><label class="fl">Комментарий агента</label>
-            <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..." oninput="rnUpd()" style="width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rsm);color:var(--text);padding:10px 12px;font-family:inherit;font-size:14px;resize:none;outline:none;"></textarea>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-        <div class="sl" style="margin-bottom:8px;">Предпросмотр отчёта</div>
-        <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
-
-        <div style="position:sticky;bottom:0;left:0;right:0;background:var(--bg);padding:12px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px;border-top:1px solid var(--border);z-index:50;">
-          <button class="sbtn" onclick="try{sub('rental')}catch(e){showToast('Ошибка: '+e.message);console.error(e);}">🚀 Отправить сдачу + T0</button>
-        </div>
       </div>
     </div>
 
@@ -1361,7 +1171,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbyy_-erxajQrUA7fcppxKfayFsmYUUXdJ6PitHTe0yMqz3nttV2w4QoGBLFF0gv-B5gdQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwgyT5DSoD7N4Gy9z23JTkzA6MYVWuX7lf-Tlb0vLzA4jdUlhwiVz09clH6uJk_BkAZ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1899,7 +1709,9 @@ function sub(type, directData) {
     const price=parseFloat(document.getElementById('rn-price').value)||0;
     const commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
     const comm=Math.round(price*commPct/100);
-    const plat=Math.round(comm*(100-rnLvl)/100);
+    const agentName2=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
+    const effectiveLvl=rnLvl||getAgentLevelJS(agentName2)||50;
+    const plat=Math.round(comm*(100-effectiveLvl)/100);
     const agentComm=comm-plat;
     const agentName=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
     const recruitName=rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'';
@@ -1994,13 +1806,13 @@ var STATIC = {
   },
   platform: {
     total: 1942,
-    commission: 496207,
-    platformComm: 128579,
-    turnover: 1153201,
-    avgComm: 256,
-    monthly: [{"month": "8/2023", "deals": 2, "commission": 0.0, "platform": 0.0, "price": 61.0}, {"month": "9/2023", "deals": 4, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "10/2023", "deals": 21, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "11/2023", "deals": 15, "commission": 0.0, "platform": 0.0, "price": 500.0}, {"month": "12/2023", "deals": 12, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "1/2024", "deals": 20, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2/2024", "deals": 25, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "3/2024", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "4/2024", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "5/2024", "deals": 27, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "6/2024", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "7/2024", "deals": 36, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "8/2024", "deals": 51, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "9/2024", "deals": 42, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "10/2024", "deals": 45, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "11/2024", "deals": 50, "commission": 8305.0, "platform": 212.5, "price": 11650.0}, {"month": "12/2024", "deals": 45, "commission": 14625.0, "platform": 3101.5, "price": 23020.0}, {"month": "1/2025", "deals": 77, "commission": 22575.0, "platform": 3925.37, "price": 44975.0}, {"month": "2/2025", "deals": 69, "commission": 14680.0, "platform": 4364.25, "price": 31940.0}, {"month": "3/2025", "deals": 68, "commission": 15032.0, "platform": 2822.77, "price": 29915.0}, {"month": "4/2025", "deals": 78, "commission": 21375.0, "platform": 5947.5, "price": 43190.0}, {"month": "5/2025", "deals": 99, "commission": 33172.5, "platform": 9547.75, "price": 102304.0}, {"month": "6/2025", "deals": 83, "commission": 27275.5, "platform": 7409.5, "price": 53650.0}, {"month": "7/2025", "deals": 105, "commission": 35140.0, "platform": 8660.22, "price": 57245.0}, {"month": "8/2025", "deals": 117, "commission": 34425.0, "platform": 8728.87, "price": 62110.0}, {"month": "9/2025", "deals": 127, "commission": 38567.5, "platform": 9533.11, "price": 142700.0}, {"month": "10/2025", "deals": 127, "commission": 52698.5, "platform": 13619.0, "price": 64436.8}, {"month": "11/2025", "deals": 120, "commission": 45880.0, "platform": 11946.73, "price": 64106.5}, {"month": "12/2025", "deals": 92, "commission": 36000.0, "platform": 7089.87, "price": 132315.0}, {"month": "1/2026", "deals": 80, "commission": 25847.5, "platform": 9912.4, "price": 43175.0}, {"month": "2/2026", "deals": 46, "commission": 16170.0, "platform": 5126.25, "price": 25950.0}, {"month": "3/2026", "deals": 65, "commission": 23770.0, "platform": 7590.12, "price": 164540.0}, {"month": "4/2026", "deals": 66, "commission": 20251.0, "platform": 6236.0, "price": 34883.0}, {"month": "5/2026", "deals": 38, "commission": 10417.5, "platform": 2805.0, "price": 20535.0}],
-    agents: [{"agent": "Sergi", "deals": 299, "commission": 71264.5, "platform": 16631.0}, {"agent": "Omari", "deals": 155, "commission": 18298.5, "platform": 1374.96}, {"agent": "Irakli", "deals": 143, "commission": 32435.0, "platform": 6282.0}, {"agent": "Viktoriia", "deals": 142, "commission": 35080.0, "platform": 7790.25}, {"agent": "Daniil", "deals": 126, "commission": 28650.0, "platform": 7240.0}, {"agent": "Ilya", "deals": 118, "commission": 3530.0, "platform": 25.0}, {"agent": "Zaza", "deals": 106, "commission": 43980.0, "platform": 11228.5}, {"agent": "Artyom", "deals": 93, "commission": 36570.0, "platform": 13163.65}, {"agent": "Semyon", "deals": 92, "commission": 27575.0, "platform": 7704.35}, {"agent": "Dmitri", "deals": 79, "commission": 11740.0, "platform": 3497.0}, {"agent": "Vladislav", "deals": 79, "commission": 23155.0, "platform": 7119.87}, {"agent": "Shafi", "deals": 74, "commission": 25170.0, "platform": 7181.15}, {"agent": "David", "deals": 74, "commission": 40545.0, "platform": 10261.369999999999}, {"agent": "Vitaly", "deals": 66, "commission": 21240.0, "platform": 5732.5}, {"agent": "Gio", "deals": 56, "commission": 15661.0, "platform": 7945.0}],
-    lastDeals: [{"timestamp": "17.05.26", "agent": "Daniil", "price": 350.0, "commission": 175.0, "platform": 17.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "16.05.26", "agent": "Viktoriia", "price": 400.0, "commission": 200.0, "platform": 50.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "16.05.26", "agent": "Sergi", "price": 750.0, "commission": 375.0, "platform": 37.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "16.05.26", "agent": "Danila", "price": 750.0, "commission": 375.0, "platform": 187.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "15.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "14.05.26", "agent": "Dmitri", "price": 350.0, "commission": 175.0, "platform": 52.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "13.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 335.0, "commission": 167.5, "platform": 0.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 0.0, "commission": 0.0, "platform": 0.0, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}, {"timestamp": "12.05.26", "agent": "Danila", "price": 550.0, "commission": 275.0, "platform": 137.5, "is_excl": "Неэксклюзив", "source": "-1002252468572_9_Rented"}],
+    commission: 473672,
+    platformComm: 155906,
+    turnover: 1613783,
+    avgComm: 244,
+    monthly: [{"month": "8/2023", "deals": 2, "commission": 1.83, "platform": 0.55, "price": 61.0}, {"month": "9/2023", "deals": 4, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "10/2023", "deals": 21, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "11/2023", "deals": 15, "commission": 15.0, "platform": 4.5, "price": 500.0}, {"month": "12/2023", "deals": 12, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "1/2024", "deals": 20, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "2/2024", "deals": 25, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "3/2024", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "4/2024", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "5/2024", "deals": 27, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "6/2024", "deals": 30, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "7/2024", "deals": 36, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "8/2024", "deals": 51, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "9/2024", "deals": 42, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "10/2024", "deals": 45, "commission": 0.0, "platform": 0.0, "price": 0.0}, {"month": "11/2024", "deals": 50, "commission": 8800.0, "platform": 2550.0, "price": 16800.0}, {"month": "12/2024", "deals": 45, "commission": 12947.25, "platform": 4550.12, "price": 26274.5}, {"month": "1/2025", "deals": 77, "commission": 25728.0, "platform": 7677.4, "price": 133771.0}, {"month": "2/2025", "deals": 69, "commission": 21770.0, "platform": 8528.0, "price": 42540.0}, {"month": "3/2025", "deals": 68, "commission": 18826.0, "platform": 6167.2, "price": 37103.0}, {"month": "4/2025", "deals": 78, "commission": 23299.0, "platform": 7404.9, "price": 46678.0}, {"month": "5/2025", "deals": 99, "commission": 28387.42, "platform": 10440.75, "price": 104355.5}, {"month": "6/2025", "deals": 83, "commission": 24535.0, "platform": 9580.5, "price": 55090.0}, {"month": "7/2025", "deals": 105, "commission": 31032.31, "platform": 10052.74, "price": 62034.02}, {"month": "8/2025", "deals": 117, "commission": 34358.75, "platform": 11179.2, "price": 68777.5}, {"month": "9/2025", "deals": 127, "commission": 42239.75, "platform": 14810.87, "price": 151414.5}, {"month": "10/2025", "deals": 127, "commission": 44893.6, "platform": 14193.08, "price": 355812.3}, {"month": "11/2025", "deals": 120, "commission": 35549.51, "platform": 13426.21, "price": 71083.84}, {"month": "12/2025", "deals": 92, "commission": 29077.95, "platform": 10678.09, "price": 137593.0}, {"month": "1/2026", "deals": 80, "commission": 24819.03, "platform": 7486.52, "price": 47852.04}, {"month": "2/2026", "deals": 46, "commission": 13402.1, "platform": 2908.05, "price": 26846.0}, {"month": "3/2026", "deals": 65, "commission": 23248.25, "platform": 5247.13, "price": 167596.5}, {"month": "4/2026", "deals": 66, "commission": 19963.83, "platform": 5640.3, "price": 40095.6}, {"month": "5/2026", "deals": 38, "commission": 10777.5, "platform": 3379.75, "price": 21505.0}],
+    agents: [{"agent": "Sergi", "deals": 299, "commission": 73948.5, "platform": 7394.85}, {"agent": "Omari", "deals": 155, "commission": 33464.05, "platform": 3376.53}, {"agent": "Irakli", "deals": 143, "commission": 30260.05, "platform": 15130.02}, {"agent": "Viktoriia", "deals": 142, "commission": 34015.59, "platform": 17007.79}, {"agent": "Daniil", "deals": 126, "commission": 27549.0, "platform": 2754.9}, {"agent": "Ilya", "deals": 118, "commission": 10299.0, "platform": 5149.5}, {"agent": "Zaza", "deals": 106, "commission": 33709.54, "platform": 3370.95}, {"agent": "Artyom", "deals": 93, "commission": 29655.68, "platform": 14827.85}, {"agent": "Semyon", "deals": 92, "commission": 26335.5, "platform": 13167.75}, {"agent": "Dmitri", "deals": 79, "commission": 10039.08, "platform": 3011.72}, {"agent": "Vladislav", "deals": 79, "commission": 23519.2, "platform": 11759.6}, {"agent": "Shafi", "deals": 74, "commission": 19863.3, "platform": 9931.65}, {"agent": "David", "deals": 74, "commission": 20870.42, "platform": 2087.04}, {"agent": "Vitaly", "deals": 66, "commission": 19561.0, "platform": 9780.5}, {"agent": "Gio", "deals": 56, "commission": 14121.05, "platform": 7060.53}],
+    lastDeals: [{"timestamp": "17.05.26", "agent": "Daniil", "price": 350.0, "commission": 175.0, "platform": 17.5, "is_excl": "Неэксклюзив"}, {"timestamp": "16.05.26", "agent": "Viktoriia", "price": 400.0, "commission": 200.0, "platform": 100.0, "is_excl": "Неэксклюзив"}, {"timestamp": "16.05.26", "agent": "Sergi", "price": 750.0, "commission": 375.0, "platform": 37.5, "is_excl": "Неэксклюзив"}, {"timestamp": "16.05.26", "agent": "Danila", "price": 750.0, "commission": 375.0, "platform": 187.5, "is_excl": "Неэксклюзив"}, {"timestamp": "15.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив"}, {"timestamp": "14.05.26", "agent": "Dmitri", "price": 350.0, "commission": 175.0, "platform": 52.5, "is_excl": "Неэксклюзив"}, {"timestamp": "13.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 335.0, "commission": 167.5, "platform": 16.75, "is_excl": "Неэксклюзив"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 600.0, "commission": 300.0, "platform": 30.0, "is_excl": "Неэксклюзив"}, {"timestamp": "12.05.26", "agent": "Danila", "price": 550.0, "commission": 275.0, "platform": 137.5, "is_excl": "Неэксклюзив"}],
   },
 };
 
@@ -2179,10 +1991,58 @@ function renderDash() {
     }
   }
 
+  // Агенты — сделки + комиссия агент vs платформа
+  var adEl = document.getElementById('ds-agents-rows');
+  if (adEl) {
+    var agSrc = (rs.topAgents && rs.topAgents.length) ? rs.topAgents : STATIC.platform.agents;
+    // Build full agent stats with agent_comm
+    var agStats = [];
+    agSrc.forEach(function(a) {
+      var name = a.agent || a.name || '';
+      var deals = a.deals || 0;
+      var comm = Math.round(a.commission || 0);
+      var plat = Math.round(a.platform || 0);
+      var agComm = comm - plat;
+      agStats.push({name:name, deals:deals, agComm:agComm, platComm:plat, totalComm:comm});
+    });
+    // Filter by period
+    agStats = agStats.filter(function(a){return a.deals > 0;});
+    if (agStats.length) {
+      var maxComm = agStats[0].totalComm || 1;
+      var aColors3 = ['var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','var(--green)','#94a3b8','#c084fc'];
+      adEl.innerHTML = agStats.map(function(a,i){
+        var pct = Math.round(a.totalComm/maxComm*100);
+        var platPct = a.totalComm > 0 ? Math.round(a.platComm/a.totalComm*100) : 0;
+        var c = aColors3[i%aColors3.length];
+        return '<div style="padding:10px 13px;border-bottom:0.5px solid var(--border);">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">'
+          +'<div style="display:flex;align-items:center;gap:7px;">'
+          +'<div style="width:24px;height:24px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';">'+a.name[0].toUpperCase()+'</div>'
+          +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+a.name+'</span>'
+          +'</div>'
+          +'<div style="display:flex;gap:12px;align-items:center;">'
+          +'<span style="font-size:11px;font-weight:700;color:var(--accent2);">$'+(a.agComm>0?a.agComm:'—')+'</span>'
+          +'<span style="font-size:11px;font-weight:700;color:var(--green);">$'+(a.platComm>0?a.platComm:'—')+'</span>'
+          +'<span style="font-size:11px;color:var(--text3);width:28px;text-align:right;">'+a.deals+'</span>'
+          +'</div></div>'
+          +'<div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;">'
+          +'<div style="height:100%;display:flex;">'
+          +'<div style="width:'+Math.round(pct*(100-platPct)/100)+'%;background:'+c+';opacity:.7;"></div>'
+          +'<div style="width:'+Math.round(pct*platPct/100)+'%;background:var(--green);opacity:.8;"></div>'
+          +'</div></div>'
+          +'</div>';
+      }).join('');
+    } else {
+      adEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);">Нет данных</div>';
+    }
+  }
+
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
     var lastDeals = (rs.lastDeals && rs.lastDeals.length) ? rs.lastDeals : STATIC.platform.lastDeals;
+    // Filter out zero price deals
+    lastDeals = (lastDeals||[]).filter(function(d){ return (d.price||0) > 0 || (d.commission||0) > 0; }).slice(0,10);
     if (lastDeals && lastDeals.length) {
       ldEl.innerHTML = lastDeals.map(function(d,i){
         var isLast=i===lastDeals.length-1;
@@ -2601,6 +2461,22 @@ function renderStats(){
       });
     }
   }catch(e){console.log('renderStats error:',e);}
+}
+
+function buildAgentLevels() {
+  var levels = {};
+  (AGENTS||[]).forEach(function(a) {
+    if (a.name) levels[a.name] = parseInt(a.level) || 50;
+  });
+  (RECRUITS||[]).forEach(function(r) {
+    if (r.name && !levels[r.name]) levels[r.name] = 50;
+  });
+  return levels;
+}
+
+function getAgentLevelJS(name) {
+  var levels = buildAgentLevels();
+  return levels[name] || 50;
 }
 
 function afterLoad(){
