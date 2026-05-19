@@ -454,7 +454,13 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 
         <!-- ОБЪЕКТЫ ЗА НЕДЕЛЮ -->
         <div class="section" id="dash-sec-weekly">
-          <div class="sl" id="ds-weekly-title">Объектов добавлено на этой неделе</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div class="sl" style="margin:0;" id="ds-weekly-title">Объектов добавлено на этой неделе</div>
+            <div style="display:flex;gap:4px;">
+              <button id="wk-btn-this" onclick="switchWeek('this')" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Эта</button>
+              <button id="wk-btn-last" onclick="switchWeek('last')" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:600;">Прошлая</button>
+            </div>
+          </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-weekly-listings">
             <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
@@ -864,162 +870,217 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div style="font-size:11px;color:var(--text2);">Calculator + Report + T0</div>
         </div>
       </div>
-      <div class="pad pb" id="calc-scroll" style="padding-bottom:140px !important;">
+      <div class="pad pb">
 
         <!-- 1. ОБЪЕКТ -->
-        <div class="section">
-          <div class="sl">1. ОБЪЕКТ</div>
-          <div class="field"><label class="fl">Ссылка на объект <span style="color:var(--red)">*</span></label>
-            <input id="rn-link" type="url" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="calcRental()">
+        <div class="section"><div class="sl">1. Объект</div>
+          <div class="field"><label class="fl">Ссылка на объект <span class="req">*</span></label>
+            <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="rnUpd()"></div>
+          <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
+            <input type="text" id="rn-cadastral" placeholder="01.10.10.xxx.xxx.xx.xx.xxx" oninput="rnUpd();searchPDF(this.value)">
+            <div id="pdf-status" style="font-size:12px;padding:5px 0;display:none;"></div>
+            <div id="pdf-wrap" style="margin-top:8px;border-radius:var(--rsm);overflow:hidden;display:none;">
+              <iframe id="pdf-frame" src="" style="width:100%;height:380px;border:none;"></iframe>
+            </div>
           </div>
-          <div class="field"><label class="fl">Кадастровый номер <span style="color:var(--red)">*</span></label>
-            <input id="rn-cadastral" type="text" placeholder="01.10.10" oninput="onCadastralInput(this.value)">
-            <div id="rn-contract-status" style="font-size:12px;margin-top:4px;"></div>
-            <div id="rn-contract-preview" style="margin-top:8px;"></div>
+          <div class="field"><label class="fl">Тип объекта</label>
+            <div style="display:flex;gap:8px;">
+              <button style="flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid var(--border-success,rgba(34,197,94,.4));background:var(--bg-success,rgba(34,197,94,.1));color:var(--c-success,#22c55e);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;" id="rn-ex-y" onclick="setRnExcl(true)"><i class="ti ti-lock" style="font-size:15px;"></i>Эксклюзив</button>
+              <button style="flex:1;padding:12px 8px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--bg2);color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;opacity:.5;display:flex;align-items:center;justify-content:center;gap:6px;" id="rn-ex-n" onclick="setRnExcl(false)"><i class="ti ti-lock-open" style="font-size:15px;"></i>Неэксклюзив</button>
+            </div>
+          </div>
+          <div class="field"><label class="fl">Тип сделки</label>
+            <div class="tg c2">
+              <button class="tb aa" id="rn-tp-r" onclick="setRnType('rent')">Аренда</button>
+              <button class="tb" id="rn-tp-s" onclick="setRnType('sale')">Продажа</button>
+            </div>
+          </div>
+          <div id="rn-subtype-wrap" class="field"><label class="fl">Подтип аренды</label>
+            <div class="tg c2">
+              <button class="tb aa" id="rn-sub-long" onclick="setRnSubtype('long')">Долгосрочная · 50%</button>
+              <button class="tb" id="rn-sub-comm" onclick="setRnSubtype('comm')">Коммерция · 100%</button>
+            </div>
           </div>
         </div>
 
-        <!-- 2. АГЕНТ -->
-        <div class="section">
-          <div class="sl">2. АГЕНТ</div>
-          <div class="field"><label class="fl">Агент</label>
+        <!-- 2. СЦЕНАРИЙ -->
+        <div class="section"><div class="sl">2. Сценарий</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="rn-sc-btn on" id="rnsc-0" onclick="setRnSc(0)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;background:#1d3560;border:1.5px solid #4a90d9;display:flex;align-items:center;justify-content:center;font-size:9px;color:#7eb3ff;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🏠</div>
+              <div style="font-size:12px;font-weight:700;color:#7eb3ff;margin-bottom:3px;">Агент</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свой объект без рекрута</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-1" onclick="setRnSc(1)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🤝</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Агент + показ</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут показал и подписал</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-2" onclick="setRnSc(2)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🔄</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Агент передал</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут сделал всё</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-3" onclick="setRnSc(3)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">⭐</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Рекрут · 5 сд.</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут получает 20%</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-4" onclick="setRnSc(4)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🌟</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Рекрут · 10 сд.</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Рекрут получает 50%</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-5" onclick="setRnSc(5)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">💎</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Объект рекрута</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">По кол-ву сделок</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-6" onclick="setRnSc(6)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🤲</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Передача клиента</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">10% агенту-источнику</div>
+            </div>
+            <div class="rn-sc-btn" id="rnsc-7" onclick="setRnSc(7)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">✏️</div>
+              <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;">Ручное</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свои проценты</div>
+            </div>
+          </div>
+          <!-- Ручное распределение — только для сценария 7 -->
+          <div id="rn-manual-block" style="background:var(--bg3);border:0.5px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 14px;margin-top:10px;display:none;">
+            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение %</div>
+            <div id="rn-manual-rows"></div>
+          </div>
+        </div>
+
+        <!-- 3. УЧАСТНИКИ -->
+        <div class="section"><div class="sl">3. Участники</div>
+          <div class="field"><label class="fl">Агент <span class="req">*</span></label>
             <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
           </div>
-          <div class="field" id="rn-recblock" style="display:none;"><label class="fl">Рекрут</label>
+          <div class="field" id="rn-level-block"><label class="fl">Уровень агента</label>
+            <div class="tg c3">
+              <button class="tb" id="rn-lvl-50" onclick="setRnLvl(50)">50%</button>
+              <button class="tb" id="rn-lvl-70" onclick="setRnLvl(70)">70%</button>
+              <button class="tb aa" id="rn-lvl-90" onclick="setRnLvl(90)">90%</button>
+            </div>
+          </div>
+          <div class="field" id="rn-recruit-block"><label class="fl">Рекрут / Агент (показ)</label>
             <select id="rn-recruit" onchange="rnUpd()"><option value="">Без рекрута</option></select>
           </div>
-          <div class="field" id="rn-mentblock" style="display:none;"><label class="fl">Ментор</label>
-            <select id="rn-mentor"><option value="">Ментор...</option></select>
+          <div class="field" id="rn-client-src-block" style="display:none;"><label class="fl">Кто передал клиента</label>
+            <select id="rn-client-src" onchange="rnUpd()"><option value="">Выбрать агента/рекрута...</option></select>
           </div>
-
-          <!-- Уровень -->
-          <div class="field">
-            <label class="fl">Уровень агента</label>
-            <div style="display:flex;gap:6px;">
-              <button id="rn-lvl-50" onclick="setRnLvl(50)" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;">50%</button>
-              <button id="rn-lvl-70" onclick="setRnLvl(70)" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;">70%</button>
-              <button id="rn-lvl-90" onclick="setRnLvl(90)" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;">90%</button>
+          <div class="field" id="rn-recdeals-block" style="display:none;"><label class="fl">Reports_Deals рекрута</label>
+            <div class="tg c2">
+              <button class="tb aa" id="rn-rd-lt" onclick="setRnRecD('lt10')">До 10 сделок</button>
+              <button class="tb" id="rn-rd-gte" onclick="setRnRecD('gte10')">10 — 90 сделок</button>
             </div>
-          </div>
-
-          <!-- Эксклюзив -->
-          <div class="field">
-            <label class="fl">Тип</label>
-            <div style="display:flex;gap:6px;">
-              <button id="rn-excl-yes" onclick="setExcl(true)" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-size:13px;">✨ Эксклюзив</button>
-              <button id="rn-excl-no" onclick="setExcl(false)" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;">Неэксклюзив</button>
-            </div>
-          </div>
-
-          <!-- Тип сделки -->
-          <div class="field">
-            <label class="fl">Тип сделки</label>
-            <div style="display:flex;gap:6px;">
-              <button id="rn-type-rent" onclick="setRnType('rent')" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-size:13px;">Аренда</button>
-              <button id="rn-type-sale" onclick="setRnType('sale')" style="flex:1;padding:8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:13px;">Продажа</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. СЦЕНАРИЙ -->
-        <div class="section">
-          <div class="sl">3. СЦЕНАРИЙ</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="rn-scenarios">
-            <button id="rnsc-0" onclick="setRnSc(0)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-size:12px;">Агент</button>
-            <button id="rnsc-1" onclick="setRnSc(1)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">Агент+Показ</button>
-            <button id="rnsc-2" onclick="setRnSc(2)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">Передал рекруту</button>
-            <button id="rnsc-3" onclick="setRnSc(3)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">Совместно</button>
-            <button id="rnsc-4" onclick="setRnSc(4)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">Рекрут сам</button>
-            <button id="rnsc-5" onclick="setRnSc(5)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">Куратор</button>
-            <button id="rnsc-6" onclick="setRnSc(6)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">50/50</button>
-            <button id="rnsc-7" onclick="setRnSc(7)" style="padding:7px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">Вручную</button>
           </div>
           <div id="rn-sc-rows" style="margin-top:10px;"></div>
         </div>
 
         <!-- 4. ЦЕНА -->
-        <div class="section">
-          <div class="sl">4. ЦЕНА</div>
-          <div class="field"><label class="fl">Цена аренды $</label>
-            <input id="rn-price" type="number" placeholder="1200" oninput="calcRental()">
+        <div class="section"><div class="sl">4. Цена и комиссия</div>
+          <div class="r2">
+            <div class="field"><label class="fl">Цена объекта $ <span class="req">*</span></label>
+              <input type="number" id="rn-price" placeholder="1200" oninput="calcRental()"></div>
+            <div class="field"><label class="fl">Комиссия %</label>
+              <input type="number" id="rn-comm-pct" value="50" oninput="calcRental()"></div>
           </div>
-          <div class="field"><label class="fl">% комиссии</label>
-            <input id="rn-comm-pct" type="number" value="50" min="1" max="100" oninput="calcRental()">
-          </div>
-          <div id="rn-result" style="background:var(--bg3);border-radius:var(--rsm);padding:12px 14px;font-family:monospace;font-size:12px;color:var(--text2);line-height:1.8;"></div>
-        </div>
-
-        <!-- 5. КЛИЕНТ И СОБСТВЕННИК -->
-        <div class="section">
-          <div class="sl">5. КЛИЕНТ И СОБСТВЕННИК</div>
-          <div class="field"><label class="fl">Имя клиента</label><input id="rn-cname" type="text" placeholder="Имя"></div>
-          <div class="field"><label class="fl">Телефон клиента</label><input id="rn-cphone" type="tel" placeholder="+995..."></div>
-          <div class="field"><label class="fl">Имя собственника</label><input id="rn-oname" type="text" placeholder="Имя"></div>
-          <div class="field"><label class="fl">Телефон собственника</label><input id="rn-ophone" type="tel" placeholder="+995..."></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div class="field"><label class="fl">Дата заезда</label><input id="rn-from" type="date"></div>
-            <div class="field"><label class="fl">Дата выезда</label><input id="rn-to" type="date"></div>
+          <div id="rn-calc" style="display:none;margin-top:10px;background:var(--bg3);border:0.5px solid rgba(74,144,217,.2);border-radius:14px;overflow:hidden;">
+            <div style="padding:12px 16px;background:linear-gradient(135deg,rgba(29,53,96,.8),rgba(17,21,48,.8));border-bottom:0.5px solid rgba(74,144,217,.12);display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:24px;font-weight:700;color:#7eb3ff;" id="rn-ct">—</div><div style="font-size:11px;color:var(--text3);margin-top:2px;" id="rn-ct-sub">комиссия агентства</div></div>
+              <div id="rn-excl-badge"></div>
+            </div>
+            <div id="rn-dist-rows"></div>
           </div>
         </div>
 
-        <!-- 6. H2O T0 -->
-        <div class="section">
-          <div class="sl">6. H2O — T0</div>
-          <div id="rn-h2o-wrap">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-              <div style="text-align:center;">
-                <div style="font-size:10px;color:var(--text3);margin-bottom:6px;">CLIENT</div>
-                <div style="display:flex;gap:4px;justify-content:center;">
-                  <button onclick="setH2O('c',-1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;">−</button>
-                  <div id="rn-h2o-c" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--green);">0</div>
-                  <button onclick="setH2O('c',1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;">+</button>
-                </div>
-              </div>
-              <div style="text-align:center;">
-                <div style="font-size:10px;color:var(--text3);margin-bottom:6px;">OWNER</div>
-                <div style="display:flex;gap:4px;justify-content:center;">
-                  <button onclick="setH2O('o',-1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;">−</button>
-                  <div id="rn-h2o-o" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--green);">0</div>
-                  <button onclick="setH2O('o',1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;">+</button>
-                </div>
-              </div>
-              <div style="text-align:center;">
-                <div style="font-size:10px;color:var(--text3);margin-bottom:6px;">PROCESS</div>
-                <div style="display:flex;gap:4px;justify-content:center;">
-                  <button onclick="setH2O('p',-1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;">−</button>
-                  <div id="rn-h2o-p" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--green);">0</div>
-                  <button onclick="setH2O('p',1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-size:14px;">+</button>
-                </div>
-              </div>
-            </div>
-            <div id="rn-h2o-status" style="text-align:center;font-size:13px;color:var(--text2);margin-bottom:8px;"></div>
+        <!-- 5. КЛИЕНТ -->
+        <div class="section"><div class="sl">5. Клиент и собственник</div>
+          <div class="r2">
+            <div class="field"><label class="fl">Клиент (имя)</label><input type="text" id="rn-cname" placeholder="Anna" oninput="rnUpd()"></div>
+            <div class="field"><label class="fl">Telegram / телефон</label><input type="text" id="rn-cphone" placeholder="@username" oninput="rnUpd()"></div>
           </div>
+          <div class="r2">
+            <div class="field"><label class="fl">Собственник (имя)</label><input type="text" id="rn-oname" placeholder="Giorgi" oninput="rnUpd()"></div>
+            <div class="field"><label class="fl">Telegram / телефон</label><input type="text" id="rn-ophone" placeholder="@username" oninput="rnUpd()"></div>
+          </div>
+          <div class="r2">
+            <div class="field"><label class="fl">От <span class="req">*</span></label><input type="date" id="rn-from" oninput="rnUpd()"></div>
+            <div class="field"><label class="fl">До <span class="req">*</span></label><input type="date" id="rn-to" oninput="rnUpd()"></div>
+          </div>
+        </div>
 
-          <!-- T0 результат -->
-          <div class="field">
-            <label class="fl">T0 результат</label>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button id="t0-clean" onclick="setT0Res('clean')" style="padding:6px 12px;border-radius:var(--rsm);border:1px solid var(--green);background:rgba(34,197,94,.1);color:var(--green);cursor:pointer;font-family:inherit;font-size:12px;">✅ Чистая</button>
-              <button id="t0-dirty" onclick="setT0Res('dirty')" style="padding:6px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">🔴 Грязная</button>
-              <button id="t0-medium" onclick="setT0Res('medium')" style="padding:6px 12px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:12px;">🟡 Средняя</button>
+        <!-- 6. H2O -->
+        <div class="section"><div class="sl">6. H2O — T0 Оценка</div>
+          <!-- Client Delivery -->
+          <div style="background:rgba(255,59,46,.06);border:1px solid rgba(255,59,46,.2);border-radius:16px;padding:14px 16px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div><div style="font-size:15px;font-weight:700;color:#ff6b63;">Client Delivery</div><div style="font-size:11px;color:rgba(255,107,99,.5);margin-top:2px;">Клиент получил ожидаемое?</div></div>
+              <div style="font-size:28px;font-weight:800;color:#ff6b63;opacity:.25;transition:all .2s;" id="hp-c">—</div>
             </div>
+            <div style="display:flex;gap:8px;" id="h0-c">
+              <button style="flex:1;padding:13px;border-radius:14px;background:#2a1218;border:1px solid rgba(255,69,58,.2);color:#cc3a32;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',1,this)">1</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#2a1a10;border:1px solid rgba(255,107,0,.15);color:#cc5500;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',2,this)">2</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#1a2210;border:1px solid rgba(255,149,0,.15);color:#aa7700;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('c',3,this)">3</button>
+            </div>
+          </div>
+          <!-- Owner Result -->
+          <div style="background:rgba(255,214,10,.05);border:1px solid rgba(255,214,10,.18);border-radius:16px;padding:14px 16px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div><div style="font-size:15px;font-weight:700;color:#ffd60a;">Owner Result</div><div style="font-size:11px;color:rgba(255,214,10,.45);margin-top:2px;">Собственник получил результат?</div></div>
+              <div style="font-size:28px;font-weight:800;color:#ffd60a;opacity:.25;transition:all .2s;" id="hp-o">—</div>
+            </div>
+            <div style="display:flex;gap:8px;" id="h0-o">
+              <button style="flex:1;padding:13px;border-radius:14px;background:#1e1800;border:1px solid rgba(204,136,0,.2);color:#886600;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',1,this)">1</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#241e00;border:1px solid rgba(255,204,0,.15);color:#aa9900;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',2,this)">2</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#2a2400;border:1px solid rgba(255,214,10,.15);color:#ccaa00;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('o',3,this)">3</button>
+            </div>
+          </div>
+          <!-- Process Integrity -->
+          <div style="background:rgba(48,209,88,.05);border:1px solid rgba(48,209,88,.18);border-radius:16px;padding:14px 16px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div><div style="font-size:15px;font-weight:700;color:#30d158;">Process Integrity</div><div style="font-size:11px;color:rgba(48,209,88,.45);margin-top:2px;">Процесс прошёл чисто?</div></div>
+              <div style="font-size:28px;font-weight:800;color:#30d158;opacity:.25;transition:all .2s;" id="hp-p">—</div>
+            </div>
+            <div style="display:flex;gap:8px;" id="h0-p">
+              <button style="flex:1;padding:13px;border-radius:14px;background:#0e200e;border:1px solid rgba(26,122,42,.2);color:#1a5a1a;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',1,this)">1</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#102810;border:1px solid rgba(37,168,58,.15);color:#256a25;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',2,this)">2</button>
+              <button style="flex:1;padding:13px;border-radius:14px;background:#123012;border:1px solid rgba(48,209,88,.15);color:#307a30;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s;" onclick="setRnH2O('p',3,this)">3</button>
+            </div>
+          </div>
+          <!-- Big Score -->
+          <div id="rn-big-score"></div>
+          <!-- Result buttons -->
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <button class="tb" id="t0-cl" onclick="setT0R('clean')" style="flex:1;padding:12px;">✓ Чистая</button>
+            <button class="tb" id="t0-dr" onclick="setT0R('dirty')" style="flex:1;padding:12px;">✗ Грязная</button>
           </div>
           <div class="field"><label class="fl">Комментарий агента</label>
-            <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..." style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;"></textarea>
+            <textarea id="t0-comment" rows="3" placeholder="Что прошло хорошо, что улучшить..." oninput="rnUpd()" style="width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rsm);color:var(--text);padding:10px 12px;font-family:inherit;font-size:14px;resize:none;outline:none;"></textarea>
           </div>
         </div>
 
-        <!-- ПРЕДПРОСМОТР -->
-        <div class="section">
-          <div class="sl">ПРЕДПРОСМОТР ОТЧЁТА</div>
-          <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
-          <div style="position:sticky;bottom:0;left:0;right:0;background:var(--bg);padding:12px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px;border-top:1px solid var(--border);z-index:50;">
-            <button class="sbtn" onclick="try{sub('rental')}catch(e){showToast('Ошибка: '+e.message);console.error(e);}">🚀 Отправить сдачу + T0</button>
-          </div>
-        </div>
+        <div class="divider"></div>
+        <div class="sl" style="margin-bottom:8px;">Предпросмотр отчёта</div>
+        <div id="rental-preview" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.8;font-family:monospace;white-space:pre-wrap;margin-bottom:14px;"></div>
 
+        <button class="sbtn" onclick="sub('rental')">🚀 Отправить сдачу + T0</button>
       </div>
     </div>
+
+        <!-- ═══ REPORTS ═══ -->
 
     <!-- ═══ CONTRACT ═══ -->
     <div class="screen" id="tab-contract">
@@ -1379,7 +1440,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxIzny4Wmr7FVKo7J2FzNPgEzaJi6szzivy6Um6YmwXVQjyYBjRSKzMDpfKDg8uBsPGtw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxLTtOGveq59uRstamDYO6qUiq5_D3rdEaEdNIF6vQpKqWyJdig3U-ecsywPnmfEe32bg/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2246,41 +2307,8 @@ function renderDash() {
     }
   }
 
-  // Объекты за неделю (из топика 3)
-  var wkEl = document.getElementById('ds-weekly-listings');
-  var wkTitle = document.getElementById('ds-weekly-title');
-  var wk = (dashData.analytics && dashData.analytics.weeklyListings)
-    ? dashData.analytics.weeklyListings
-    : STATIC.weeklyListings;
-  if (wkEl && wk) {
-    var showWk = (wk.topAgents && wk.topAgents.length) ? wk : wk.lastWeek;
-    var isLast = showWk === wk.lastWeek;
-    if (wkTitle) wkTitle.textContent = (isLast ? '📅 Прошлая неделя' : '📅 Эта неделя')
-      + ' · с ' + (showWk.weekStart||'') + ' · итого ' + (showWk.total||0) + ' объектов';
-    var wColors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316'];
-    var topA = showWk.topAgents || [];
-    var maxW = topA.length ? topA[0].count : 1;
-    if (topA.length) {
-      wkEl.innerHTML = topA.map(function(a,i){
-        var pct = Math.round(a.count/maxW*100);
-        var c = wColors[i%wColors.length];
-        var rank = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
-        return '<div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:0.5px solid var(--border);">'
-          +'<div style="width:26px;text-align:center;font-size:14px;flex-shrink:0;">'+rank+'</div>'
-          +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';flex-shrink:0;">'+a.name[0].toUpperCase()+'</div>'
-          +'<div style="flex:1;">'
-          +'<div style="display:flex;justify-content:space-between;margin-bottom:3px;">'
-          +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+a.name+'</span>'
-          +'<span style="font-size:12px;font-weight:700;color:'+c+';">'+a.count+' объектов</span>'
-          +'</div>'
-          +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
-          +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;"></div>'
-          +'</div></div></div>';
-      }).join('');
-    } else {
-      wkEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных за эту неделю</div>';
-    }
-  }
+  // Объекты за неделю
+  renderWeekly();
 
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
@@ -2450,8 +2478,67 @@ function promoteRecruitBtn(btn) {
   }, 3500);
 }
 
+var weeklyMode = 'this';
+
+function switchWeek(mode) {
+  weeklyMode = mode;
+  var btnThis = document.getElementById('wk-btn-this');
+  var btnLast = document.getElementById('wk-btn-last');
+  if (btnThis) {
+    btnThis.style.background    = mode==='this' ? 'var(--glow)' : 'transparent';
+    btnThis.style.borderColor   = mode==='this' ? 'var(--accent)' : 'var(--border)';
+    btnThis.style.color         = mode==='this' ? 'var(--accent2)' : 'var(--text2)';
+  }
+  if (btnLast) {
+    btnLast.style.background    = mode==='last' ? 'var(--glow)' : 'transparent';
+    btnLast.style.borderColor   = mode==='last' ? 'var(--accent)' : 'var(--border)';
+    btnLast.style.color         = mode==='last' ? 'var(--accent2)' : 'var(--text2)';
+  }
+  renderWeekly();
+}
+
+function renderWeekly() {
+  var wkEl = document.getElementById('ds-weekly-listings');
+  var wkTitle = document.getElementById('ds-weekly-title');
+  var wkData = (dashData.analytics && dashData.analytics.weeklyListings)
+    ? dashData.analytics.weeklyListings
+    : STATIC.weeklyListings;
+  if (!wkEl || !wkData) return;
+
+  var showWk = weeklyMode === 'last' ? wkData.lastWeek : wkData;
+  if (!showWk) return;
+
+  var label = weeklyMode === 'last' ? 'Прошлая неделя' : 'Эта неделя';
+  if (wkTitle) wkTitle.textContent = label + ' · с ' + (showWk.weekStart||'') + ' · итого ' + (showWk.total||0) + ' объектов';
+
+  var wColors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316'];
+  var topA = showWk.topAgents || [];
+  var maxW = topA.length ? topA[0].count : 1;
+
+  if (topA.length) {
+    wkEl.innerHTML = topA.map(function(a,i){
+      var pct = Math.round(a.count/maxW*100);
+      var c = wColors[i%wColors.length];
+      var rank = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+      return '<div style="display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:0.5px solid var(--border);">'
+        +'<div style="width:26px;text-align:center;font-size:14px;flex-shrink:0;">'+rank+'</div>'
+        +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';flex-shrink:0;">'+a.name[0].toUpperCase()+'</div>'
+        +'<div style="flex:1;">'
+        +'<div style="display:flex;justify-content:space-between;margin-bottom:3px;">'
+        +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+a.name+'</span>'
+        +'<span style="font-size:12px;font-weight:700;color:'+c+';">'+a.count+' объектов</span>'
+        +'</div>'
+        +'<div style="height:3px;background:var(--bg3);border-radius:2px;">'
+        +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;"></div>'
+        +'</div></div></div>';
+    }).join('');
+  } else {
+    wkEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных за этот период</div>';
+  }
+}
+
 function updateSwitches(){
-  var keys=['agents','monthly','districts','dyn','rooms','prices','lastdeals','filters','years'];
+  var keys=['agent-listings','districts','rooms','weekly','monthly','agents','lastdeals'];
   keys.forEach(function(k){
     var sw=document.getElementById('sw-'+k);
     if(!sw) return;
