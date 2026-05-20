@@ -2,6 +2,9 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Rent in Tbilisi</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -2374,7 +2377,7 @@ function loadAnalytics() {
   };
   var sc = document.createElement('script');
   sc.id = cbName;
-  sc.src = API_URL + '?action=getAnalytics&callback=' + cbName;
+  sc.src = API_URL + '?action=getAnalytics&callback=' + cbName + '&_=' + Date.now();
   sc.onerror = function() { delete window[cbName]; };
   document.head.appendChild(sc);
 }
@@ -2692,16 +2695,26 @@ function checkAccess() {
     showNoAccess('Вы не являетесь участником платформы');
   }
 
-  // Check after data loads (max 8 seconds)
+  // Check after data loads (max 15 seconds)
   var tries = 0;
   var timer = setInterval(function() {
     tries++;
     if (AGENTS.length > 0 || RECRUITS.length > 0) {
       clearInterval(timer);
       verifyUsername();
-    } else if (tries > 16) { // 8 seconds
+    } else if (tries > 30) { // 15 seconds
       clearInterval(timer);
-      verifyUsername();
+      // Last resort — check via GAS
+      var cb = '__access_'+Date.now();
+      window[cb] = function(d) {
+        delete window[cb];
+        if (d && d.agents) { AGENTS = d.agents; RECRUITS = d.recruits || []; }
+        verifyUsername();
+      };
+      var sc = document.createElement('script');
+      sc.src = API_URL + '?action=getLists&callback=' + cb;
+      sc.onerror = function() { delete window[cb]; verifyUsername(); };
+      document.head.appendChild(sc);
     }
   }, 500);
 }
@@ -2756,7 +2769,7 @@ function loadData(){
 
   var sc = document.createElement('script');
   sc.id = 'sc-' + cbName;
-  sc.src = API_URL + '?action=getLists&callback=' + cbName;
+  sc.src = API_URL + '?action=getLists&callback=' + cbName + '&_=' + Date.now();
   sc.onerror = function() {
     if(done) return;
     done = true;
