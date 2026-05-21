@@ -2899,11 +2899,13 @@ function loadData(){
   var retried = false;
 
   window[cbName] = function(data) {
+    var wasLate = done; // true если таймаут уже сработал
     done = true;
     delete window[cbName];
     var sc = document.getElementById('sc-' + cbName);
     if (sc) sc.remove();
     // DEBUG — видно в DevTools Console (убрать после диагностики)
+    console.log('[loadData] ответ получен за', Date.now()-_loadStart, 'мс', wasLate ? '(ПОЗДНО — после таймаута)' : '(вовремя)');
     console.log('[loadData] GAS response keys:', Object.keys(data));
     console.log('[loadData] agents:', data.agents ? data.agents.length + ' шт' : 'отсутствует');
     console.log('[loadData] recruits:', data.recruits ? data.recruits.length + ' шт' : 'отсутствует');
@@ -2930,9 +2932,12 @@ function loadData(){
       }
       try{loadDash({rentalStats:RENTAL_STATS,agentCounters:AGENT_C,counters:COUNTERS});}catch(e){console.log('loadDash error:',e);}
       afterLoad();
-    } catch(e) { console.log('loadData parse error:',e); useFallback(); }
+      if(wasLate) showToast('Данные обновлены ✓');
+    } catch(e) { console.log('loadData parse error:',e); if(!wasLate) useFallback(); }
   };
 
+  var _loadStart = Date.now();
+  console.log('[loadData] запрос отправлен', new Date().toLocaleTimeString());
   var sc = document.createElement('script');
   sc.id = 'sc-' + cbName;
   sc.src = API_URL + '?action=getLists&callback=' + cbName + '&_=' + Date.now();
@@ -2946,18 +2951,12 @@ function loadData(){
 
   setTimeout(function(){
     if(!done){
-      if(!retried){
-        // Первый таймаут — пробуем ещё раз (GAS cold start)
-        retried=true;
-        var sc2=document.createElement('script');
-        sc2.id='sc-'+cbName+'-r2';
-        sc2.src=API_URL+'?action=getLists&callback='+cbName+'&_='+Date.now();
-        sc2.onerror=function(){if(!done){done=true;delete window[cbName];useFallback();}};
-        document.head.appendChild(sc2);
-        setTimeout(function(){if(!done){done=true;delete window[cbName];useFallback();}},12000);
-      }
+      console.warn('[loadData] таймаут 25с — GAS не ответил вовремя, показываем fallback');
+      done=true;
+      useFallback();
+      // НЕ удаляем window[cbName] — если GAS ответит позже, данные обновятся автоматически
     }
-  }, 15000); // GAS cold start может занимать 10-12с
+  }, 25000); // GAS cold start
 }
 
 // ─── FALLBACK VERSION ────────────────────────────────────
