@@ -1443,7 +1443,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbw7fvA8fBFxItq8RUTp0kX5yb6W1E4ljqZejFm4Pc99dWe4KbE0jX4gWaqff6lSr4wxBg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzhyd3a9FAVrmX44R7ecUxcom9SIjS-zN10k6Ig5K__1lUrrbHNxkKR3uVhsS7uZEH54Q/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2702,13 +2702,21 @@ function renderWeekly() {
   var wkData = (dashData.analytics && dashData.analytics.weeklyListings)
     ? dashData.analytics.weeklyListings
     : STATIC.weeklyListings;
+  console.log('[weekly] wkData keys:', wkData ? Object.keys(wkData) : 'null', '| mode:', weeklyMode);
   if (!wkEl || !wkData) return;
 
-  var showWk = weeklyMode === 'last' ? wkData.lastWeek : wkData;
+  // Поддержка новой структуры {current, lastWeek} и старой {topAgents, lastWeek}
+  var showWk;
+  if (weeklyMode === 'last') {
+    showWk = wkData.lastWeek || null;
+  } else {
+    showWk = wkData.current || wkData; // новая или старая структура
+  }
   if (!showWk) return;
 
   var label = weeklyMode === 'last' ? 'Прошлая неделя' : 'Эта неделя';
-  if (wkTitle) wkTitle.textContent = label + ' · с ' + (showWk.weekStart||'') + ' · итого ' + (showWk.total||0) + ' объектов';
+  var weekStart = showWk.weekStart || wkData.weekStart || '';
+  if (wkTitle) wkTitle.textContent = label + ' · с ' + weekStart + ' · итого ' + (showWk.total||0) + ' объектов';
 
   var wColors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316'];
   var topA = showWk.topAgents || [];
