@@ -2526,6 +2526,9 @@ function loadAnalytics() {
       STATIC.platform.agents   = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
       STATIC.platform.lastDeals= d.deals.lastDeals  || STATIC.platform.lastDeals;
       STATIC.analytics = d.deals;
+      // DEBUG lastDeals
+      console.log('[lastDeals] count:', d.deals.lastDeals ? d.deals.lastDeals.length : 'MISSING');
+      if(d.deals.lastDeals && d.deals.lastDeals[0]) console.log('[lastDeals] first item:', JSON.stringify(d.deals.lastDeals[0]));
     }
     renderDash();
   };
