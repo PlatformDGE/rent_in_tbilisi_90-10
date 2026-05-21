@@ -2470,7 +2470,23 @@ function renderDash() {
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
-    var lastDeals = (STATIC.platform.lastDeals && STATIC.platform.lastDeals.length) ? STATIC.platform.lastDeals : [];
+    // Show skeleton until analytics loads
+    if (!STATIC.platform.lastDeals || !STATIC.platform.lastDeals.length) {
+      ldEl.innerHTML = '<div style="padding:14px 13px;">'
+        + [1,2,3,4,5].map(function(){
+            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);">'
+              +'<div style="display:flex;align-items:center;gap:8px;">'
+              +'<div style="width:28px;height:28px;border-radius:50%;background:var(--bg3);flex-shrink:0;"></div>'
+              +'<div><div style="width:70px;height:10px;background:var(--bg3);border-radius:4px;margin-bottom:5px;"></div>'
+              +'<div style="width:45px;height:8px;background:var(--bg3);border-radius:4px;opacity:.6;"></div></div></div>'
+              +'<div style="text-align:right;">'
+              +'<div style="width:40px;height:10px;background:var(--bg3);border-radius:4px;margin-bottom:5px;margin-left:auto;"></div>'
+              +'<div style="width:30px;height:8px;background:var(--bg3);border-radius:4px;opacity:.6;margin-left:auto;"></div>'
+              +'</div></div>';
+          }).join('')
+        + '</div>';
+    } else {
+    var lastDeals = STATIC.platform.lastDeals;
     // Filter out zero price deals
     lastDeals = (lastDeals||[]).filter(function(d){ return (d.price||0) > 0 || (d.commission||0) > 0; }).slice(0,10);
     if (lastDeals && lastDeals.length) {
@@ -2505,6 +2521,7 @@ function renderDash() {
     } else {
       ldEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
     }
+    } // end else (analytics loaded)
   }
 }
 
