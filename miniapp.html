@@ -1443,7 +1443,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbyv8iCZpeVh8-0eINgZjMk0dtMCK6A5V0SY5-6dKjegxdUxz7_YvHAU4uTtcrbdYgmWUA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzQ9GMbtceinPVoEwjfd6ifXWL2CTRWQLMcv9jqey-1VDDzwXxlr06xkHR_lVWYGZjxSg/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2472,7 +2472,19 @@ function renderDash() {
     if (lastDeals && lastDeals.length) {
       ldEl.innerHTML = lastDeals.map(function(d,i){
         var isLast=i===lastDeals.length-1;
-        var agent=d.agent||'—';
+        // Resolve agent name — GAS may use different field names
+        var agent = d.agent || d.name || d.agentName || d.author || '';
+        // Try matching against known agents by telegram handle
+        if (!agent && d.telegram) {
+          var fa = AGENTS.find(function(a){ return a.telegram===d.telegram||a.telegram==='@'+d.telegram; });
+          if (fa) agent = fa.name;
+        }
+        // Try matching by partial name in raw field
+        if (!agent && d.raw) {
+          var fa2 = AGENTS.find(function(a){ return d.raw.indexOf(a.name)!==-1; });
+          if (fa2) agent = fa2.name;
+        }
+        if (!agent) agent = '?';
         var date=d.timestamp?d.timestamp.slice(0,10):d.date||'';
         var comm=d.commission?'$'+Math.round(d.commission):'—';
         var price=d.price?'$'+Math.round(d.price):'—';
@@ -2526,9 +2538,7 @@ function loadAnalytics() {
       STATIC.platform.agents   = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
       STATIC.platform.lastDeals= d.deals.lastDeals  || STATIC.platform.lastDeals;
       STATIC.analytics = d.deals;
-      // DEBUG lastDeals
-      console.log('[lastDeals] count:', d.deals.lastDeals ? d.deals.lastDeals.length : 'MISSING');
-      if(d.deals.lastDeals && d.deals.lastDeals[0]) console.log('[lastDeals] first item:', JSON.stringify(d.deals.lastDeals[0]));
+
     }
     renderDash();
   };
