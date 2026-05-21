@@ -1443,7 +1443,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzzLyXfONGsGBfU5jRZdN4LY9iXjbvFl4tQeIo8RKUzQ5Fx1Ws0A2tuWgZCc1f4QcuzDQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx3Vgwcz5YEBsBwU-Pqn4FawC89ZVK-f97BPP4MCxP82-54b2jY09GJTnH8XZ57EAxKig/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2118,13 +2118,17 @@ function sub(type, directData) {
     const price=parseFloat(document.getElementById('rn-price').value)||0;
     const commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
     const comm=Math.round(price*commPct/100);
-    const agentName2=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
+    // Clean agent name — remove "(90%)" suffix added by dropdown
+    function cleanName(txt){ return (txt||'').replace(/\s*\(\d+%\)\s*$/, '').trim(); }
+    const agentName2=cleanName(aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'');
     const effectiveLvl=rnLvl||getAgentLevelJS(agentName2)||50;
     const plat=Math.round(comm*(100-effectiveLvl)/100);
     const agentComm=comm-plat;
-    const agentName=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
-    const recruitName=rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'';
-    const mentorName=mEl&&mEl.selectedIndex>0?mEl.options[mEl.selectedIndex].text:'';
+    var agentName=cleanName(aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'');
+    // Fallback: use current user's name from AGENTS list
+    if(!agentName && CURRENT_USER && CURRENT_USER.name) agentName=CURRENT_USER.name;
+    const recruitName=cleanName(rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'');
+    const mentorName=cleanName(mEl&&mEl.selectedIndex>0?mEl.options[mEl.selectedIndex].text:'');
     data={
       agent:agentName, recruit:recruitName, mentor:mentorName,
       agent_level:rnLvl, scenario:rnSc,
