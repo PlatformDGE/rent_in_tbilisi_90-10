@@ -1449,15 +1449,99 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzH3MRad_3qT8_uWjf5_dhU
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
 
 // State
-let showRes='', h2o={t0:{client:0,owner:0,process:0},t14:{client:0,owner:0,process:0}};
-let t0Res='', t14Res='', compSel='';
+// showRes, h2o, t0Res, t14Res, compSel — defined in AppState aliases below
 let rnExcl=true, rnType='rent', rnSub='long', rnLvl=90, rnSc=0, rnRecD='lt10';
-let rnH2O={c:0,o:0,p:0}, rnT0Res='', rnManualPcts={}, rnManualNotes={};
-let dExcl=true, dType='rent', dSub='long', dLvl=50;
-let prevTab='reports';
-let cStep=1, cLang='';
-let quizAnswers=[], quizCurrent=0, quizScore=0;
-let pdfTimer={};
+// ─── APP STATE (UI state grouped by domain) ─────────────
+// Access: AppState.rental.excl  etc.
+// Backward-compat aliases kept below for existing code.
+var AppState = {
+  nav: {
+    prevTab: 'reports'           // tab to return to on goBack()
+  },
+  rental: {
+    excl: true, type: 'rent', sub: 'long', lvl: 90, sc: 0, recD: 'lt10',
+    h2o: {c:0, o:0, p:0}, t0Res: '', manualPcts: {}, manualNotes: {}
+  },
+  deal: {
+    excl: true, type: 'rent', sub: 'long', lvl: 50
+  },
+  contract: {
+    step: 1, lang: ''
+  },
+  quiz: {
+    answers: [], current: 0, score: 0
+  },
+  misc: {
+    showRes: '', t0Res: '', t14Res: '', compSel: '',
+    h2o: {t0:{client:0,owner:0,process:0}, t14:{client:0,owner:0,process:0}},
+    pdfTimer: {}
+  }
+};
+
+// ── Backward-compat aliases (existing code uses these var names) ──
+// These are live references so reads/writes stay in sync with AppState.
+// Rental form
+Object.defineProperty(window,'rnExcl',{get:function(){return AppState.rental.excl;},set:function(v){AppState.rental.excl=v;}});
+Object.defineProperty(window,'rnType', {get:function(){return AppState.rental.type;}, set:function(v){AppState.rental.type=v;}});
+Object.defineProperty(window,'rnSub',  {get:function(){return AppState.rental.sub;},  set:function(v){AppState.rental.sub=v;}});
+Object.defineProperty(window,'rnLvl',  {get:function(){return AppState.rental.lvl;},  set:function(v){AppState.rental.lvl=v;}});
+Object.defineProperty(window,'rnSc',   {get:function(){return AppState.rental.sc;},   set:function(v){AppState.rental.sc=v;}});
+Object.defineProperty(window,'rnRecD', {get:function(){return AppState.rental.recD;}, set:function(v){AppState.rental.recD=v;}});
+Object.defineProperty(window,'rnH2O',  {get:function(){return AppState.rental.h2o;},  set:function(v){AppState.rental.h2o=v;}});
+Object.defineProperty(window,'rnT0Res',{get:function(){return AppState.rental.t0Res;},set:function(v){AppState.rental.t0Res=v;}});
+Object.defineProperty(window,'rnManualPcts', {get:function(){return AppState.rental.manualPcts;},set:function(v){AppState.rental.manualPcts=v;}});
+Object.defineProperty(window,'rnManualNotes',{get:function(){return AppState.rental.manualNotes;},set:function(v){AppState.rental.manualNotes=v;}});
+// Deal calc form
+Object.defineProperty(window,'dExcl',{get:function(){return AppState.deal.excl;},set:function(v){AppState.deal.excl=v;}});
+Object.defineProperty(window,'dType', {get:function(){return AppState.deal.type;}, set:function(v){AppState.deal.type=v;}});
+Object.defineProperty(window,'dSub',  {get:function(){return AppState.deal.sub;},  set:function(v){AppState.deal.sub=v;}});
+Object.defineProperty(window,'dLvl',  {get:function(){return AppState.deal.lvl;},  set:function(v){AppState.deal.lvl=v;}});
+// Navigation
+Object.defineProperty(window,'prevTab',{get:function(){return AppState.nav.prevTab;},set:function(v){AppState.nav.prevTab=v;}});
+// Misc form state
+Object.defineProperty(window,'showRes', {get:function(){return AppState.misc.showRes;}, set:function(v){AppState.misc.showRes=v;}});
+Object.defineProperty(window,'t0Res',   {get:function(){return AppState.misc.t0Res;},   set:function(v){AppState.misc.t0Res=v;}});
+Object.defineProperty(window,'t14Res',  {get:function(){return AppState.misc.t14Res;},  set:function(v){AppState.misc.t14Res=v;}});
+Object.defineProperty(window,'compSel', {get:function(){return AppState.misc.compSel;}, set:function(v){AppState.misc.compSel=v;}});
+Object.defineProperty(window,'h2o',     {get:function(){return AppState.misc.h2o;},     set:function(v){AppState.misc.h2o=v;}});
+Object.defineProperty(window,'pdfTimer',{get:function(){return AppState.misc.pdfTimer;},set:function(v){AppState.misc.pdfTimer=v;}});
+// Contract wizard
+Object.defineProperty(window,'cStep',{get:function(){return AppState.contract.step;},set:function(v){AppState.contract.step=v;}});
+Object.defineProperty(window,'cLang', {get:function(){return AppState.contract.lang;}, set:function(v){AppState.contract.lang=v;}});
+// Quiz
+Object.defineProperty(window,'quizAnswers', {get:function(){return AppState.quiz.answers;}, set:function(v){AppState.quiz.answers=v;}});
+Object.defineProperty(window,'quizCurrent', {get:function(){return AppState.quiz.current;}, set:function(v){AppState.quiz.current=v;}});
+Object.defineProperty(window,'quizScore',   {get:function(){return AppState.quiz.score;},   set:function(v){AppState.quiz.score=v;}});
+
+// ─── DRAFT AUTO-SAVE (sessionStorage) ───────────────────
+// Saves/restores input values for complex forms so data
+// survives accidental back navigation within the session.
+var DRAFT_FORMS = {
+  'calc':       ['rn-price','rn-comm-pct','rn-link','rn-cadastral','rn-cname','rn-cphone','rn-oname','rn-ophone','rn-from','rn-to','t0-comment','rn-agent'],
+  'form-daily': ['daily-author','daily-date','daily-calls','daily-calls-no','daily-calls-yes','daily-stickers','daily-photos','daily-showings','daily-st-dist','daily-ph-addr','daily-sh-addr'],
+  'form-general':['gr-author-sel','gr-stickers-cnt','gr-calls-total','gr-calls-no','gr-calls-yes','gr-photo-addr','gr-stickers-dist']
+};
+
+function draftSave(formKey) {
+  var ids = DRAFT_FORMS[formKey]; if (!ids) return;
+  var draft = {};
+  ids.forEach(function(id){ var el=document.getElementById(id); if(el) draft[id]=el.value; });
+  try { sessionStorage.setItem('draft_'+formKey, JSON.stringify(draft)); } catch(e){}
+}
+
+function draftRestore(formKey) {
+  var ids = DRAFT_FORMS[formKey]; if (!ids) return;
+  try {
+    var raw = sessionStorage.getItem('draft_'+formKey);
+    if (!raw) return;
+    var draft = JSON.parse(raw);
+    ids.forEach(function(id){ var el=document.getElementById(id); if(el && draft[id] !== undefined) el.value=draft[id]; });
+  } catch(e){}
+}
+
+function draftClear(formKey) {
+  try { sessionStorage.removeItem('draft_'+formKey); } catch(e){}
+}
 
 // SPLASH
 window.addEventListener('load', function() {
@@ -1474,36 +1558,49 @@ document.addEventListener('focusin', function(e) {
 });
 });
 
-// TABS
-function goTab(tab) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  document.getElementById('nav-'+tab).classList.add('on');
-  if(tab==='stats') { switchStatsTab('agents'); renderStats(); }
-  if(tab==='contract') {cxReset();}
-  if(tab==='deals') { renderDash(); }
-  window.scrollTo(0,0);
+// ─── NAVIGATION (single source of truth) ───────────────
+// navigate(screenId, fromTab?)
+// screenId: 'tab-deals' | 'tab-reports' | 'form-daily' | etc.
+// fromTab:  optional — sets prevTab for goBack()
+function navigate(screenId, fromTab) {
+  // Guard: protect against non-existent screens
+  var target = document.getElementById(screenId);
+  if (!target) { console.warn('navigate: screen not found:', screenId); return; }
+  // Clear dashAutoTimer whenever leaving dashboard
+  if (screenId !== 'tab-deals' && dashAutoTimer) {
+    clearInterval(dashAutoTimer);
+    dashAutoTimer = null;
+  }
+  if (fromTab) prevTab = fromTab;
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.bni').forEach(function(b){ b.classList.remove('on'); });
+  target.classList.add('active');
+  // Highlight bottom nav for top-level tabs
+  var navId = screenId.replace('tab-', 'nav-');
+  var navBtn = document.getElementById(navId);
+  if (navBtn) navBtn.classList.add('on');
+  // Tab-specific init hooks
+  if (screenId === 'tab-stats')    { switchStatsTab('agents'); renderStats(); }
+  if (screenId === 'tab-contract') { cxReset(); }
+  if (screenId === 'tab-deals')    { renderDash(); }
+  window.scrollTo(0, 0);
 }
+
+// TABS — thin wrappers (all existing calls unchanged)
+function goTab(tab) { navigate('tab-'+tab); }
 
 function openForm(type) {
-  prevTab='reports';
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
-  document.getElementById('form-'+type).classList.add('active');
+  navigate('form-'+type, 'reports');
   populateForm(type);
   setToday(type);
-  if(type==='t14') { const el=document.getElementById('t14-agent'); el.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>el.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`); }
-  window.scrollTo(0,0);
+  if (type==='t14') {
+    var el=document.getElementById('t14-agent');
+    el.innerHTML='<option value="">Выбрать...</option>';
+    AGENTS.forEach(function(a){ el.innerHTML+='<option value="'+a.telegram+'">'+a.name+'</option>'; });
+  }
 }
 
-function goBack() {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
-  document.getElementById('tab-'+prevTab).classList.add('active');
-  document.getElementById('nav-'+prevTab).classList.add('on');
-  window.scrollTo(0,0);
-}
+function goBack() { navigate('tab-'+prevTab); }
 
 // POPULATE
 function populateForm(type) {
@@ -1752,28 +1849,67 @@ function buildRnManual(){
   if(el)el.innerHTML=html;
 }
 
+// ─── COMMISSION RULES (single source of truth) ──────────
+// All percentage logic lives here. To change a rule — edit
+// only this object. rnCalcDist() reads it; nothing else should.
+var COMMISSION_RULES = {
+  AGENT_LEVELS: [50, 70, 90],          // valid agent level values
+  NON_EXCL_PCT: 50,                    // agent % when non-exclusive
+  CLIENT_TRANSFER_PCT: 10,             // fixed % for client-source agent (sc6)
+  // sc0: Агент сам (эксклюзив = rnLvl%, неэксклюзив = 50%)
+  sc0: function(excl, lvl) {
+    var a = excl ? lvl : COMMISSION_RULES.NON_EXCL_PCT;
+    return [{n:'Агент', p:a, c:'#22c55e'}, {n:'Платформа', p:100-a, c:'#55556a'}];
+  },
+  // sc1: Агент дал объект + рекрут/агент показал (показ=20%)
+  sc1: function(excl, lvl) {
+    var a = excl ? (lvl===50?30:lvl===70?50:70) : 30;
+    return [{n:'Агент (объект)', p:a, c:'#22c55e'}, {n:'Рекрут/Агент (показ)', p:20, c:'#a89fff'}, {n:'Платформа', p:100-a-20, c:'#55556a'}];
+  },
+  // sc2: Агент передал объект рекруту (рекрут сделал всё=40%)
+  sc2: function(excl, lvl) {
+    var a = excl ? (lvl===50?10:lvl===70?30:50) : 10;
+    return [{n:'Агент (передал)', p:a, c:'#22c55e'}, {n:'Рекрут (сделал всё)', p:40, c:'#a89fff'}, {n:'Платформа', p:100-a-40, c:'#55556a'}];
+  },
+  // sc3: Рекрут первые 5 сделок (рекрут=20%)
+  sc3: function(excl) {
+    var a = excl ? 70 : 30;
+    return [{n:'Агент', p:a, c:'#22c55e'}, {n:'Рекрут (5 сд.)', p:20, c:'#a89fff'}, {n:'Платформа', p:100-a-20, c:'#55556a'}];
+  },
+  // sc4: Рекрут 10 сделок (наставник=25%, рекрут=50%, платф=25%)
+  sc4: function() {
+    return [{n:'Агент-наставник', p:25, c:'#22c55e'}, {n:'Рекрут (10 сд.)', p:50, c:'#a89fff'}, {n:'Платформа', p:25, c:'#55556a'}];
+  },
+  // sc5: Объект рекрута (lt10 vs gte10)
+  sc5: function(recD) {
+    var a=recD==='lt10'?25:15, r=recD==='lt10'?50:70, p=recD==='lt10'?25:15;
+    return [{n:'Агент-наставник', p:a, c:'#22c55e'}, {n:'Рекрут', p:r, c:'#a89fff'}, {n:'Платформа', p:p, c:'#55556a'}];
+  },
+  // sc6: Передача клиента (источник получает 10% от доли агента)
+  sc6: function(excl, lvl) {
+    var agPct = excl ? lvl : COMMISSION_RULES.NON_EXCL_PCT;
+    var src   = COMMISSION_RULES.CLIENT_TRANSFER_PCT;
+    return [{n:'Агент (получил клиента)', p:agPct-src, c:'#22c55e'}, {n:'Агент-источник (10%)', p:src, c:'#fb923c'}, {n:'Платформа', p:100-agPct, c:'#55556a'}];
+  }
+};
+
 function rnCalcDist(comm){
-  var rows=[];
-  if(rnSc===0){var a=rnExcl?rnLvl:50,p=100-a;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Платформа',p:p,c:'#55556a'}];}
-  else if(rnSc===1){var a=rnExcl?(rnLvl===50?30:rnLvl===70?50:70):30,p=100-a-20;rows=[{n:'Агент (объект)',p:a,c:'#22c55e'},{n:'Рекрут/Агент (показ)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
-  else if(rnSc===2){var a=rnExcl?(rnLvl===50?10:rnLvl===70?30:50):10,p=100-a-40;rows=[{n:'Агент (передал)',p:a,c:'#22c55e'},{n:'Рекрут (сделал всё)',p:40,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
-  else if(rnSc===3){var a=rnExcl?70:30,p=100-a-20;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Рекрут (5 сд.)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
-  else if(rnSc===4){rows=[{n:'Агент-наставник',p:25,c:'#22c55e'},{n:'Рекрут (10 сд.)',p:50,c:'#a89fff'},{n:'Платформа',p:25,c:'#55556a'}];}
-  else if(rnSc===5){var a=rnRecD==='lt10'?25:15,r=rnRecD==='lt10'?50:70,p2=rnRecD==='lt10'?25:15;rows=[{n:'Агент-наставник',p:a,c:'#22c55e'},{n:'Рекрут',p:r,c:'#a89fff'},{n:'Платформа',p:p2,c:'#55556a'}];}
-  else if(rnSc===6){
-    // Сценарий 6: Передача клиента — агент-получатель платит 10% из своей доли агенту-источнику
-    var agPct=rnExcl?rnLvl:50;
-    var platPct2=100-agPct;
-    var srcPct=10; // фиксировано 10% от комиссии
-    var receiverPct=agPct-srcPct;
-    rows=[{n:'Агент (получил клиента)',p:receiverPct,c:'#22c55e'},{n:'Агент-источник (10%)',p:srcPct,c:'#fb923c'},{n:'Платформа',p:platPct2,c:'#55556a'}];
+  var CR = COMMISSION_RULES;
+  var rows;
+  switch(rnSc){
+    case 0: rows=CR.sc0(rnExcl,rnLvl); break;
+    case 1: rows=CR.sc1(rnExcl,rnLvl); break;
+    case 2: rows=CR.sc2(rnExcl,rnLvl); break;
+    case 3: rows=CR.sc3(rnExcl);       break;
+    case 4: rows=CR.sc4();             break;
+    case 5: rows=CR.sc5(rnRecD);       break;
+    case 6: rows=CR.sc6(rnExcl,rnLvl); break;
+    default:
+      // sc7: ручное — нули, заполняется вручную
+      rows=rnScDefs[7].map(function(r){return{n:r.n,p:0,c:r.c,val:0};});
   }
-  else{
-    // Сценарий 7: Ручное — возвращаем строки из rnScDefs с нулями (заполняется вручную)
-    rows=rnScDefs[7].map(function(r){return{n:r.n,p:0,c:r.c,val:0};});
-  }
-  // Check manual overrides
-  var hasM=rnScDefs[rnSc].some(function(r,i){return rnManualPcts['r'+rnSc+'_'+i]&&rnManualPcts['r'+rnSc+'_'+i]!=='';});
+  // Manual overrides (UI позволяет задать % вручную)
+  var hasM=rnScDefs[rnSc].some(function(r,i){var k='r'+rnSc+'_'+i;return rnManualPcts[k]&&rnManualPcts[k]!=='';});
   if(hasM){rows=rnScDefs[rnSc].map(function(r,i){var k='r'+rnSc+'_'+i;var pct=parseFloat(rnManualPcts[k])||0;return{n:r.n,p:pct,c:r.c,val:Math.round(comm*pct/100),note:rnManualNotes[k]||''};});}
   else{rows=rows.map(function(r){r.val=Math.round(comm*r.p/100);return r;});}
   return rows;
@@ -1905,6 +2041,7 @@ function rnUpd(){
   if(comment){lines.push('');lines.push('Комментарий: '+comment);}
   var el=document.getElementById('rental-preview');
   if(el) el.textContent=lines.join('\n');
+  draftSave('calc');
 }
 
 function updateRentalPreview(){rnUpd();}
@@ -2008,11 +2145,18 @@ function sub(type, directData) {
     };
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
-  send(type,data);
-  if(type==='rental'||type==='general'||type==='daily'||type==='makefoto'){
+  var criticalTypes=['rental','general','daily','makefoto','t14'];
+  if(criticalTypes.indexOf(type)!==-1){
     showToast('Отправляю... ✈️');
-    setTimeout(function(){ showToast('Отправлено! ✓'); goBack(); }, 2000);
+    send(type,data,function(){
+      if(type==='rental') draftClear('calc');
+      showToast('Отправлено! ✓');
+      setTimeout(goBack,800);
+    },function(){
+      // error toast already shown by send(); stay on form
+    });
   } else {
+    send(type,data);
     showToast('Отправлено! ✓');
     setTimeout(goBack,1500);
   }
@@ -2029,22 +2173,28 @@ function submitCalc() {
   showToast('Расчёт отправлен! ✓');
 }
 
-function send(type,data) {
+function send(type,data,onSuccess,onError) {
   var payload = JSON.stringify({type:type, data:data});
   var cbName = 'sendCb'+Date.now();
   var url = API_URL + '?action=submit&payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
   window[cbName] = function(resp){
     delete window[cbName];
     var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
-    if(resp && resp.ok===false) showToast('Ошибка GAS: '+(resp.error||'unknown'));
+    if(resp && resp.ok===false){
+      showToast('❌ Ошибка: '+(resp.error||'unknown'));
+      if(onError) onError(resp.error);
+    } else {
+      if(onSuccess) onSuccess();
+    }
   };
   var sc = document.createElement('script');
   sc.id = 'sc-'+cbName;
   sc.src = url;
   sc.onerror = function(){
-    showToast('❌ Ошибка сети — проверь деплой');
-    console.log('send error type='+type+' url='+url);
     delete window[cbName];
+    showToast('❌ Нет связи с сервером. Попробуй ещё раз.');
+    console.log('send error type='+type);
+    if(onError) onError('network');
   };
   document.body.appendChild(sc);
 }
@@ -2411,7 +2561,6 @@ function isAdmin(){
       }
     }
   }catch(e){}
-  if(window.location.search.indexOf('admin=1')!==-1) return true;
   return false;
 }
 
@@ -2742,27 +2891,24 @@ function loadData(){
     try {
       if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
       if(data.agents&&data.agents.length)AGENTS=data.agents;
-      if(data.agentCounters)AGENT_C=data.agentCounters;
-      if(data.counters){
-        if(Array.isArray(data.counters)){
-          COUNTERS=data.counters;
-        } else {
-          COUNTERS=Object.keys(data.counters).map(function(k){
-            var c=data.counters[k];
-            return {name:k,photo:c.photo,showing:c.showing,stickers:c.stickers,rental:c.rental};
-          });
-        }
+      // Soft version check: warn in console if fallback is stale
+      if(data.version && data.version !== FALLBACK_VERSION){
+        console.warn('[miniapp] Fallback version mismatch. GAS='+data.version+' local='+FALLBACK_VERSION+'. Update useFallback() to match current agent list.');
       }
+      if(data.agentCounters)AGENT_C=data.agentCounters;
       if(data.rentalStats)RENTAL_STATS=data.rentalStats;
+      // COUNTERS built once from recruits+counters — no double overwrite
+      if(data.recruits&&data.recruits.length){
+        COUNTERS=data.recruits.map(function(r){
+          var c=(data.counters&&data.counters[r.name])||{};
+          function n(v){return v===''||v===null||v===undefined?0:parseInt(v)||0;}
+          return{name:r.name,
+            showing:[n(c.showing&&c.showing.done), c.showing?n(c.showing.plan):15],
+            stickers:[n(c.stickers&&c.stickers.done), c.stickers?n(c.stickers.plan):15],
+            rental:[n(c.rental&&c.rental.done), c.rental?n(c.rental.plan):10]};
+        });
+      }
       try{loadDash({rentalStats:RENTAL_STATS,agentCounters:AGENT_C,counters:COUNTERS});}catch(e){console.log('loadDash error:',e);}
-      if(data.recruits)COUNTERS=data.recruits.map(function(r){
-        var c=data.counters&&data.counters[r.name]||{};
-        function n(v){return v===''||v===null||v===undefined?0:parseInt(v)||0;}
-        return{name:r.name,
-          showing:[n(c.showing&&c.showing.done), c.showing?n(c.showing.plan):15],
-          stickers:[n(c.stickers&&c.stickers.done), c.stickers?n(c.stickers.plan):15],
-          rental:[n(c.rental&&c.rental.done), c.rental?n(c.rental.plan):10]};
-      });
       afterLoad();
     } catch(e) { console.log('loadData parse error:',e); useFallback(); }
   };
@@ -2783,13 +2929,18 @@ function loadData(){
   }, 6000);
 }
 
+// ─── FALLBACK VERSION ────────────────────────────────────
+// Update FALLBACK_VERSION when agents/recruits list changes.
+// If GAS returns a different version, a soft warning is shown.
+var FALLBACK_VERSION = '2025-05-21';
+
 function useFallback(){
   RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0'},{id:2,name:'Artem',telegram:'@levittart'},{id:3,name:'Mariam',telegram:'@sourlylight'},{id:4,name:'Liana',telegram:'@lianagadzhikhana'},{id:5,name:'Mari',telegram:'@marikhitarishvili'},{id:6,name:'Nikita',telegram:'@krezonik'},{id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail'},{id:8,name:'Irakli',telegram:'@iraklibu'},{id:9,name:'Anton',telegram:'@Antonio_ozzz'},{id:10,name:'Gio',telegram:'@giosar'},{id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva'},{id:12,name:'Tunar',telegram:'@tunaotchenash'}];
   AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:90},{id:3,name:'Sergi',telegram:'@SergiTb',level:90},{id:4,name:'Zaza',telegram:'@eforit',level:90},{id:5,name:'Omari',telegram:'@thatomss',level:90},{id:6,name:'Shorena',telegram:'@shorena_jvaridze',level:70},{id:7,name:'Giorgi',telegram:'@chuluxagio',level:70},{id:8,name:'Dmitri',telegram:'@Aion82',level:70},{id:9,name:'Alex',telegram:'@Alexunder90',level:70}];
   COUNTERS=RECRUITS.map(function(r){return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]};});
   AGENT_C={David:{deals:500,level:'Агент 90%',next:'Snowflake'},Daniil:{deals:137,level:'Агент 90%',next:'Snowflake'},Sergi:{deals:286,level:'Агент 90%',next:'Snowflake'},Zaza:{deals:154,level:'Агент 90%',next:'Snowflake'},Omari:{deals:129,level:'Агент 90%',next:'Snowflake'},Shorena:{deals:12,level:'Агент 70%',next:''},Giorgi:{deals:15,level:'Агент 70%',next:''},Dmitri:{deals:67,level:'Агент 70%',next:''},Alex:{deals:62,level:'Агент 70%',next:''}};
   RENTAL_STATS={};
-  COUNTERS=[];
+  // COUNTERS built above from RECRUITS — do NOT reset to []
   afterLoad();
 }
 
@@ -3284,10 +3435,8 @@ function switchStatsTab(tab) {
 
 // ══ DAILY REPORT ══
 function openDailyReport(){
-  prevTab='reports';
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('form-daily').classList.add('active');
+  navigate('form-daily','reports');
+  draftRestore('form-daily');
 
   // Заполняем автора — все агенты + все рекруты
   var aEl=document.getElementById('daily-author');
@@ -3343,6 +3492,7 @@ function updateDailyPreview(){
     '🧾 Report by: #'+author;
 
   document.getElementById('daily-preview').textContent=text;
+  draftSave('form-daily');
 }
 
 function setDailyCheck(){}
@@ -3367,9 +3517,12 @@ function subDaily(){
     preview:document.getElementById('daily-preview').textContent
   };
 
-  send('daily', data);
-  showToast('Daily Report sent! ✓');
-  setTimeout(goBack,1500);
+  showToast('Отправляю... ✈️');
+  send('daily', data, function(){
+    draftClear('form-daily');
+    showToast('Daily Report sent! ✓');
+    setTimeout(goBack,800);
+  });
 }
 
 
@@ -3378,12 +3531,10 @@ var grAuthor='', grOpen={photo:false,showing:false,stickers:false,calling:false,
 var grPickerCurrent=0, grPickerOffset=0, grIsDrag=false, grStartY=0, grStartOffset=0;
 var GR_ITEM_H=44;
 
-function openCalc(){ goTab('calc'); }
+function openCalc(){ goTab('calc'); draftRestore('calc'); }
 function openGeneralReport(){
-  prevTab='deals';
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('form-general').classList.add('active');
+  navigate('form-general','deals');
+  draftRestore('form-general');
 
   var all=[];
   AGENTS.forEach(function(a){all.push({name:a.name,role:'агент'});});
@@ -3480,19 +3631,19 @@ function grSubmit(){
     stickersMember: stickersMember,
     stickersDist: stickersDist,
   };
-  send('general',data);
-  showToast('Отчёт отправлен! ✓');
-  setTimeout(goBack,1500);
+  showToast('Отправляю... ✈️');
+  send('general', data, function(){
+    draftClear('form-general');
+    showToast('Отчёт отправлен! ✓');
+    setTimeout(goBack,800);
+  });
 }
 
 function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 // ══ CHECK PROPERTY ══
 function openCheckProperty(){
-  prevTab='reports';
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('form-check').classList.add('active');
+  navigate('form-check','reports');
   clearCheck();
   window.scrollTo(0,0);
 }
@@ -3580,10 +3731,7 @@ function clearCheck(){
 }
 
 function openMakeFoto(){
-  prevTab='reports';
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
-  document.getElementById('form-makefoto').classList.add('active');
+  navigate('form-makefoto','reports');
   var today=new Date();
   var dd=String(today.getDate()).padStart(2,'0');
   var mm=String(today.getMonth()+1).padStart(2,'0');
@@ -3634,6 +3782,7 @@ function mfSubmit(){
   var phone = document.getElementById('mf-phone').value||'';
   var link  = document.getElementById('mf-link').value||'';
   var preview = document.getElementById('mf-preview').textContent;
+  showToast('Отправляю... ✈️');
   send('makefoto', {
     address: addr,
     agent:   agent,
@@ -3642,9 +3791,10 @@ function mfSubmit(){
     phone:   phone,
     link:    link,
     preview: preview
+  }, function(){
+    showToast('Отправлено! ✓');
+    setTimeout(goBack, 800);
   });
-  showToast('Отправлено! ✓');
-  setTimeout(goBack, 1500);
 }
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
