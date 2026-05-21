@@ -2466,7 +2466,7 @@ function renderDash() {
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
-    var lastDeals = (rs.lastDeals && rs.lastDeals.length) ? rs.lastDeals : STATIC.platform.lastDeals;
+    var lastDeals = (STATIC.platform.lastDeals && STATIC.platform.lastDeals.length) ? STATIC.platform.lastDeals : [];
     // Filter out zero price deals
     lastDeals = (lastDeals||[]).filter(function(d){ return (d.price||0) > 0 || (d.commission||0) > 0; }).slice(0,10);
     if (lastDeals && lastDeals.length) {
@@ -2511,6 +2511,9 @@ function loadAnalytics() {
     delete window[cbName];
     var sc = document.getElementById(cbName); if(sc) sc.remove();
     if (!d) return;
+    // DEBUG analytics structure
+    console.log('[analytics] keys:', Object.keys(d));
+    if(d.deals) console.log('[analytics] deals keys:', Object.keys(d.deals), '| lastDeals count:', d.deals.lastDeals ? d.deals.lastDeals.length : 'MISSING');
     dashData.analytics = d;
     // Обновляем STATIC из реальных данных
     if (d.listings) {
@@ -2519,8 +2522,9 @@ function loadAnalytics() {
       STATIC.listings = d.listings;
     }
     if (d.deals) {
-      STATIC.platform.monthly = d.deals.monthly || STATIC.platform.monthly;
-      STATIC.platform.agents = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
+      STATIC.platform.monthly  = d.deals.monthly   || STATIC.platform.monthly;
+      STATIC.platform.agents   = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
+      STATIC.platform.lastDeals= d.deals.lastDeals  || STATIC.platform.lastDeals;
       STATIC.analytics = d.deals;
     }
     renderDash();
