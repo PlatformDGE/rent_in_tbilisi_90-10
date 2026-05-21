@@ -1,0 +1,154 @@
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+.splash {
+  width:100%; min-height:620px;
+  background:#ffffff;
+  border-radius:20px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:space-between;
+  padding:52px 24px 44px;
+  overflow:hidden; position:relative;
+}
+.bg-canvas { position:absolute; inset:0; width:100%; height:100%; }
+.logo-area {
+  position:relative; z-index:2;
+  display:flex; flex-direction:column;
+  align-items:center; flex:1; justify-content:center;
+}
+.logo-name {
+  margin-top:24px;
+  font-family:Helvetica,Arial,sans-serif;
+  font-weight:700; font-size:42px;
+  letter-spacing:0.18em; color:#1f3864; text-align:center;
+}
+.bottom-area { position:relative; z-index:2; text-align:center; }
+.platform-label {
+  font-family:Helvetica,Arial,sans-serif;
+  font-size:11px; font-weight:400;
+  letter-spacing:0.26em; color:rgba(31,56,100,0.45);
+  text-transform:uppercase; margin-bottom:7px;
+}
+.platform-title {
+  font-family:Helvetica,Arial,sans-serif;
+  font-weight:700; font-size:24px;
+  letter-spacing:0.07em; color:#1f3864;
+}
+.divider { width:36px; height:1px; background:rgba(31,56,100,0.18); margin:12px auto; }
+.version-tag {
+  display:inline-block;
+  font-family:Helvetica,Arial,sans-serif;
+  font-size:11px; font-weight:600;
+  letter-spacing:0.18em; color:#ffffff;
+  background:#c41230; border-radius:20px; padding:4px 14px; margin-top:6px;
+}
+</style>
+
+<div class="splash">
+  <canvas class="bg-canvas" id="bgCanvas"></canvas>
+  <div class="logo-area">
+    <canvas id="logoCanvas" width="180" height="180"></canvas>
+    <div class="logo-name">MOLECULA</div>
+  </div>
+  <div class="bottom-area">
+    <div class="platform-label">powered by</div>
+    <div class="platform-title">Platform 90/10</div>
+    <div class="divider"></div>
+    <span class="version-tag">MiniApp V1</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const RED='#c41230', WHITE='#ffffff', NAVY='#1f3864';
+
+  const bgCanvas=document.getElementById('bgCanvas');
+  const bgCtx=bgCanvas.getContext('2d');
+  function resizeBg(){
+    const r=bgCanvas.parentElement.getBoundingClientRect();
+    bgCanvas.width=r.width||380; bgCanvas.height=r.height||620;
+  }
+  resizeBg();
+
+  let seed=42;
+  function rnd(){ seed=(seed*1664525+1013904223)>>>0; return seed/0xffffffff; }
+  const mols=[];
+  for(let i=0;i<20;i++){
+    mols.push({
+      x:rnd()*(bgCanvas.width||380), y:rnd()*(bgCanvas.height||620),
+      r:16+rnd()*28, vx:(rnd()-.5)*.28, vy:(rnd()-.5)*.28,
+      phase:rnd()*Math.PI*2, speed:.003+rnd()*.005, alpha:.04+rnd()*.07
+    });
+  }
+
+  function drawBgMol(ctx,x,y,r,alpha){
+    ctx.save(); ctx.globalAlpha=alpha;
+    ctx.strokeStyle=NAVY; ctx.lineWidth=1.2;
+    const S=r/220.8;
+    const configs=[[220.8*S,67.2*S,0],[67.2*S,220.8*S,-Math.PI/6],[220.8*S,67.2*S,-Math.PI/3]];
+    for(let [rx2,ry2,rot] of configs){
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+      ctx.beginPath(); ctx.ellipse(0,0,rx2,ry2,0,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+    ctx.beginPath(); ctx.arc(x,y,91.2*S,0,Math.PI*2); ctx.fillStyle=RED; ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,52.8*S,0,Math.PI*2); ctx.fillStyle=WHITE; ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,24*S,0,Math.PI*2); ctx.fillStyle=RED; ctx.fill();
+    ctx.restore();
+  }
+
+  function animateBg(){
+    const W=bgCanvas.width, H=bgCanvas.height;
+    bgCtx.clearRect(0,0,W,H);
+    for(let m of mols){
+      m.x+=m.vx; m.y+=m.vy;
+      if(m.x<-m.r*2) m.x=W+m.r; if(m.x>W+m.r*2) m.x=-m.r;
+      if(m.y<-m.r*2) m.y=H+m.r; if(m.y>H+m.r*2) m.y=-m.r;
+      const b=m.alpha+Math.sin(Date.now()*.0001*m.speed*10+m.phase)*.02;
+      drawBgMol(bgCtx,m.x,m.y,m.r,Math.max(.015,b));
+    }
+    requestAnimationFrame(animateBg);
+  }
+  requestAnimationFrame(animateBg);
+
+  const lc=document.getElementById('logoCanvas');
+  const ctx=lc.getContext('2d');
+  const CX=90, CY=90;
+  const SCALE=82/220.8;
+  const RX_H=220.8*SCALE, RY_H=67.2*SCALE;
+  const RX_V=67.2*SCALE,  RY_V=220.8*SCALE;
+  const SW=38.4*SCALE;
+  const R1=91.2*SCALE, R2=52.8*SCALE, R3=24*SCALE;
+  let angle=0;
+
+  function drawLogo(){
+    ctx.clearRect(0,0,180,180);
+    ctx.save();
+    ctx.translate(CX,CY);
+    ctx.rotate(angle);
+
+    ctx.strokeStyle=RED; ctx.lineWidth=SW; ctx.lineCap='round';
+
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(0,0,RX_H,RY_H,0,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+
+    ctx.save(); ctx.rotate(-Math.PI/6);
+    ctx.beginPath(); ctx.ellipse(0,0,RX_V,RY_V,0,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+
+    ctx.save(); ctx.rotate(-Math.PI/3);
+    ctx.beginPath(); ctx.ellipse(0,0,RX_H,RY_H,0,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+
+    ctx.beginPath(); ctx.arc(0,0,R1,0,Math.PI*2); ctx.fillStyle=RED; ctx.fill();
+    ctx.beginPath(); ctx.arc(0,0,R2,0,Math.PI*2); ctx.fillStyle=WHITE; ctx.fill();
+    ctx.beginPath(); ctx.arc(0,0,R3,0,Math.PI*2); ctx.fillStyle=RED; ctx.fill();
+
+    ctx.restore();
+    angle+=0.004;
+    requestAnimationFrame(drawLogo);
+  }
+  requestAnimationFrame(drawLogo);
+})();
+</script>
