@@ -2898,9 +2898,14 @@ function loadData(){
     delete window[cbName];
     var sc = document.getElementById('sc-' + cbName);
     if (sc) sc.remove();
+    // DEBUG — видно в DevTools Console (убрать после диагностики)
+    console.log('[loadData] GAS response keys:', Object.keys(data));
+    console.log('[loadData] agents:', data.agents ? data.agents.length + ' шт' : 'отсутствует');
+    console.log('[loadData] recruits:', data.recruits ? data.recruits.length + ' шт' : 'отсутствует');
+    console.log('[loadData] raw agents[0]:', data.agents && data.agents[0]);
     try {
-      if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
-      if(data.agents&&data.agents.length)AGENTS=data.agents;
+      if(data.recruits && Array.isArray(data.recruits) && data.recruits.length) RECRUITS=data.recruits;
+      if(data.agents  && Array.isArray(data.agents)  && data.agents.length)  AGENTS=data.agents;
       // Soft version check: warn in console if fallback is stale
       if(data.version && data.version !== FALLBACK_VERSION){
         console.warn('[miniapp] Fallback version mismatch. GAS='+data.version+' local='+FALLBACK_VERSION+'. Update useFallback() to match current agent list.');
