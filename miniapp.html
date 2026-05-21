@@ -2954,9 +2954,10 @@ function loadData(){
           var c=(data.counters&&data.counters[r.name])||{};
           function n(v){return v===''||v===null||v===undefined?0:parseInt(v)||0;}
           return{name:r.name,
-            showing:[n(c.showing&&c.showing.done), c.showing?n(c.showing.plan):15],
-            stickers:[n(c.stickers&&c.stickers.done), c.stickers?n(c.stickers.plan):15],
-            rental:[n(c.rental&&c.rental.done), c.rental?n(c.rental.plan):10]};
+            photo:   [n(c.photo&&c.photo.done),    c.photo   ?n(c.photo.plan):15],
+            showing: [n(c.showing&&c.showing.done), c.showing ?n(c.showing.plan):15],
+            stickers:[n(c.stickers&&c.stickers.done),c.stickers?n(c.stickers.plan):15],
+            rental:  [n(c.rental&&c.rental.done),   c.rental  ?n(c.rental.plan):10]};
         });
       }
       try{loadDash({rentalStats:RENTAL_STATS,agentCounters:AGENT_C,counters:COUNTERS});}catch(e){console.log('loadDash error:',e);}
@@ -3030,12 +3031,14 @@ function renderStats(){
     if(rList){
       rList.innerHTML='';
       COUNTERS.forEach(function(r){
+        var photo=r.photo||[0,15];
         var show=r.showing||[0,15];
         var stick=r.stickers||[0,15];
         var rent=r.rental||[0,10];
         var row=document.createElement('div');row.className='scard';
         row.innerHTML='<div style="font-weight:700;font-size:14px;margin-bottom:6px;">'+r.name+'</div>'
-          +'<div style="display:flex;gap:16px;font-size:12px;">'
+          +'<div style="display:flex;gap:12px;font-size:12px;flex-wrap:wrap;">'
+          +'<span>📸 <b>'+photo[0]+'</b>/'+photo[1]+'</span>'
           +'<span>👁 <b>'+show[0]+'</b>/'+show[1]+'</span>'
           +'<span>📌 <b>'+stick[0]+'</b>/'+stick[1]+'</span>'
           +'<span>🏠 <b>'+rent[0]+'</b>/'+rent[1]+'</span>'
