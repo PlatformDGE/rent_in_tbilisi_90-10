@@ -2892,6 +2892,7 @@ function showNoAccess(msg) {
 function loadData(){
   var cbName = '__listsLoaded_' + Date.now();
   var done = false;
+  var retried = false;
 
   window[cbName] = function(data) {
     done = true;
@@ -2940,8 +2941,19 @@ function loadData(){
   document.head.appendChild(sc);
 
   setTimeout(function(){
-    if(!done){ done=true; delete window[cbName]; useFallback(); }
-  }, 6000);
+    if(!done){
+      if(!retried){
+        // Первый таймаут — пробуем ещё раз (GAS cold start)
+        retried=true;
+        var sc2=document.createElement('script');
+        sc2.id='sc-'+cbName+'-r2';
+        sc2.src=API_URL+'?action=getLists&callback='+cbName+'&_='+Date.now();
+        sc2.onerror=function(){if(!done){done=true;delete window[cbName];useFallback();}};
+        document.head.appendChild(sc2);
+        setTimeout(function(){if(!done){done=true;delete window[cbName];useFallback();}},12000);
+      }
+    }
+  }, 15000); // GAS cold start может занимать 10-12с
 }
 
 // ─── FALLBACK VERSION ────────────────────────────────────
