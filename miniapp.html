@@ -1443,7 +1443,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzH3MRad_3qT8_uWjf5_dhUPwicu-lp-ec5c2_Prs8_kI-vYFsqamgrDXZrXJL-xbX8rA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyv8iCZpeVh8-0eINgZjMk0dtMCK6A5V0SY5-6dKjegxdUxz7_YvHAU4uTtcrbdYgmWUA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2511,9 +2511,9 @@ function loadAnalytics() {
     delete window[cbName];
     var sc = document.getElementById(cbName); if(sc) sc.remove();
     if (!d) return;
-    // DEBUG analytics structure
     console.log('[analytics] keys:', Object.keys(d));
-    if(d.deals) console.log('[analytics] deals keys:', Object.keys(d.deals), '| lastDeals count:', d.deals.lastDeals ? d.deals.lastDeals.length : 'MISSING');
+    if(d.deals) console.log('[analytics] deals keys:', Object.keys(d.deals), '| lastDeals:', JSON.stringify(d.deals.lastDeals).slice(0,200));
+    else console.log('[analytics] no d.deals — top keys:', JSON.stringify(d).slice(0,300));
     dashData.analytics = d;
     // Обновляем STATIC из реальных данных
     if (d.listings) {
@@ -2904,12 +2904,7 @@ function loadData(){
     delete window[cbName];
     var sc = document.getElementById('sc-' + cbName);
     if (sc) sc.remove();
-    // DEBUG — видно в DevTools Console (убрать после диагностики)
-    console.log('[loadData] ответ получен за', Date.now()-_loadStart, 'мс', wasLate ? '(ПОЗДНО — после таймаута)' : '(вовремя)');
-    console.log('[loadData] GAS response keys:', Object.keys(data));
-    console.log('[loadData] agents:', data.agents ? data.agents.length + ' шт' : 'отсутствует');
-    console.log('[loadData] recruits:', data.recruits ? data.recruits.length + ' шт' : 'отсутствует');
-    console.log('[loadData] raw agents[0]:', data.agents && data.agents[0]);
+
     try {
       if(data.recruits && Array.isArray(data.recruits) && data.recruits.length) RECRUITS=data.recruits;
       if(data.agents  && Array.isArray(data.agents)  && data.agents.length)  AGENTS=data.agents;
@@ -2936,8 +2931,7 @@ function loadData(){
     } catch(e) { console.log('loadData parse error:',e); if(!wasLate) useFallback(); }
   };
 
-  var _loadStart = Date.now();
-  console.log('[loadData] запрос отправлен', new Date().toLocaleTimeString());
+
   var sc = document.createElement('script');
   sc.id = 'sc-' + cbName;
   sc.src = API_URL + '?action=getLists&callback=' + cbName + '&_=' + Date.now();
