@@ -760,14 +760,23 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="field"><label class="fl">Кол-во стикеров</label><input type="number" id="daily-stickers" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
         </div>
 
+        <!-- РАСКЛЕЙКА РАЙОН -->
+        <div class="section"><div class="sl">📍 Stickers district</div>
+          <div class="field"><input type="text" id="daily-st-dist" placeholder="Район расклейки" oninput="updateDailyPreview()"></div>
+        </div>
+
         <!-- ФОТО -->
         <div class="section"><div class="sl">📸 Photo</div>
           <div class="field"><label class="fl">Кол-во объектов</label><input type="number" id="daily-photos" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
+          <div class="field"><label class="fl">Адрес</label><input type="text" id="daily-ph-addr" placeholder="Адрес объекта" oninput="updateDailyPreview()"></div>
+          <div class="field"><label class="fl">Photo Master</label><select id="daily-ph-master" onchange="updateDailyPreview()"><option value="">—</option></select></div>
         </div>
 
         <!-- ПОКАЗЫ -->
         <div class="section"><div class="sl">🚪 Showing</div>
           <div class="field"><label class="fl">Кол-во показов</label><input type="number" id="daily-showings" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
+          <div class="field"><label class="fl">Адрес</label><input type="text" id="daily-sh-addr" placeholder="Адрес показа" oninput="updateDailyPreview()"></div>
+          <div class="field"><label class="fl">Showing Master</label><select id="daily-sh-master" onchange="updateDailyPreview()"><option value="">—</option></select></div>
         </div>
 
         <!-- ПРЕВЬЮ -->
@@ -3569,6 +3578,15 @@ function openDailyReport(){
   AGENTS.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+' (агент)</option>';});
   RECRUITS.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+' (рекрут)</option>';});
 
+  // Заполняем Photo Master и Showing Master
+  var allPeople='<option value="">—</option>';
+  AGENTS.forEach(function(a){allPeople+='<option value="'+a.name+'">'+a.name+'</option>';});
+  RECRUITS.forEach(function(r){allPeople+='<option value="'+r.name+'">'+r.name+'</option>';});
+  var phM=document.getElementById('daily-ph-master');
+  var shM=document.getElementById('daily-sh-master');
+  if(phM) phM.innerHTML=allPeople;
+  if(shM) shM.innerHTML=allPeople;
+
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('daily-date').value=today;
   ['daily-calls','daily-calls-no','daily-calls-yes','daily-stickers','daily-photos','daily-showings'].forEach(function(id){
@@ -3612,8 +3630,8 @@ function updateDailyPreview(){
     '📍 Stickers: '+stickers+' стикеров\n'+
     '📸 Photo: '+photos+' объект'+(photos===1?'а':'ов')+'\n'+
     '🚪 Showing: '+showings+' объект'+(showings===1?'а':'ов')+'\n\n'+
-    '👤 Photo Master: -\n'+
-    '👤 Showing Master: -\n\n'+
+    '👤 Photo Master: '+(document.getElementById('daily-ph-master')&&document.getElementById('daily-ph-master').value||'-')+'\n'+
+    '👤 Showing Master: '+(document.getElementById('daily-sh-master')&&document.getElementById('daily-sh-master').value||'-')+'\n\n'+
     '🧾 Report by: #'+author;
 
   document.getElementById('daily-preview').textContent=text;
@@ -3637,8 +3655,10 @@ function subDaily(){
     stickers_district:document.getElementById('daily-st-dist').value,
     photos:parseInt(document.getElementById('daily-photos').value)||0,
     photo_address:document.getElementById('daily-ph-addr').value,
+    photo_master:(document.getElementById('daily-ph-master')||{}).value||'',
     showings:parseInt(document.getElementById('daily-showings').value)||0,
     showing_address:document.getElementById('daily-sh-addr').value,
+    showing_master:(document.getElementById('daily-sh-master')||{}).value||'',
     preview:document.getElementById('daily-preview').textContent
   };
 
