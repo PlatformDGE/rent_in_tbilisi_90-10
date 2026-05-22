@@ -1443,7 +1443,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbw7fvA8fBFxItq8RUTp0kX5yb6W1E4ljqZejFm4Pc99dWe4KbE0jX4gWaqff6lSr4wxBg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzhyd3a9FAVrmX44R7ecUxcom9SIjS-zN10k6Ig5K__1lUrrbHNxkKR3uVhsS7uZEH54Q/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2544,9 +2544,6 @@ function loadAnalytics() {
     delete window[cbName];
     var sc = document.getElementById(cbName); if(sc) sc.remove();
     if (!d) return;
-    console.log('[analytics] keys:', Object.keys(d));
-    if(d.deals) console.log('[analytics] deals keys:', Object.keys(d.deals), '| lastDeals:', JSON.stringify(d.deals.lastDeals).slice(0,200));
-    else console.log('[analytics] no d.deals — top keys:', JSON.stringify(d).slice(0,300));
     dashData.analytics = d;
     // Обновляем STATIC из реальных данных
     if (d.listings) {
