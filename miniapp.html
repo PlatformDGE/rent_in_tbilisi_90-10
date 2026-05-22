@@ -482,20 +482,13 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- АГЕНТЫ — СДЕЛКИ + КОМИССИЯ -->
-        <div class="section" id="dash-sec-agents">
-          <div class="sl">Агенты — заработок за период</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-deals">
-            <div style="display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);background:var(--bg3);">
-              <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Агент</span>
-              <div style="display:flex;gap:16px;">
-                <span style="font-size:9px;color:var(--accent2);font-weight:600;text-transform:uppercase;">Агент $</span>
-                <span style="font-size:9px;color:var(--green);font-weight:600;text-transform:uppercase;">Платф. $</span>
-                <span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;width:30px;text-align:right;">Сд.</span>
-              </div>
-            </div>
-            <div id="ds-agents-rows">
-              <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
-            </div>
+
+
+        <!-- АГЕНТ МЕСЯЦА -->
+        <div class="section" id="dash-sec-agent-month">
+          <div class="sl">🏆 Агент месяца</div>
+          <div id="ds-agent-month" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
         </div>
 
@@ -1412,9 +1405,10 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <span style="font-size:13px;color:var(--text);">График комиссии по месяцам</span>
               <div id="sw-monthly" onclick="toggleDashSec('monthly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
             </div>
+
             <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
-              <span style="font-size:13px;color:var(--text);">Агенты — заработок за период</span>
-              <div id="sw-agents" onclick="toggleDashSec('agents')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+              <span style="font-size:13px;color:var(--text);">Агент месяца</span>
+              <div id="sw-agent-month" onclick="toggleDashSec('agent-month')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;">
               <span style="font-size:13px;color:var(--text);">Последние сделки</span>
@@ -2393,7 +2387,10 @@ function renderDash() {
   // Агенты — объекты в канале (из Listings)
   var alEl = document.getElementById('ds-agent-listings');
   if (alEl) {
-    var byAgent = (STATIC.listings && STATIC.listings.byAgent) ? STATIC.listings.byAgent : {};
+    // Приоритет: живые данные из analytics GAS → fallback STATIC
+    var byAgent = (dashData.analytics && dashData.analytics.listings && dashData.analytics.listings.byAgent)
+      ? dashData.analytics.listings.byAgent
+      : (STATIC.listings && STATIC.listings.byAgent) ? STATIC.listings.byAgent : {};
     var agentNames = Object.keys(byAgent).sort(function(a,b){return byAgent[b]-byAgent[a];});
     if (agentNames.length) {
       var maxA = byAgent[agentNames[0]]||1;
@@ -2419,59 +2416,19 @@ function renderDash() {
   }
 
   // Агенты — сделки + комиссия агент vs платформа
-  var adEl = document.getElementById('ds-agents-rows');
-  if (adEl) {
-    var agSrc = (rs.topAgents && rs.topAgents.length) ? rs.topAgents : STATIC.platform.agents;
-    // Build full agent stats with agent_comm
-    var agStats = [];
-    agSrc.forEach(function(a) {
-      var name = a.agent || a.name || '';
-      var deals = a.deals || 0;
-      var comm = Math.round(a.commission || 0);
-      var plat = Math.round(a.platform || 0);
-      var agComm = a.agent_comm ? Math.round(a.agent_comm) : (comm - plat);
-      agStats.push({name:name, deals:deals, agComm:agComm, platComm:plat, totalComm:comm});
-    });
-    // Filter by period
-    agStats = agStats.filter(function(a){return a.deals > 0;});
-    if (agStats.length) {
-      var maxComm = agStats[0].totalComm || 1;
-      var aColors3 = ['var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','var(--green)','#94a3b8','#c084fc'];
-      adEl.innerHTML = agStats.map(function(a,i){
-        var pct = Math.round(a.totalComm/maxComm*100);
-        var platPct = a.totalComm > 0 ? Math.round(a.platComm/a.totalComm*100) : 0;
-        var c = aColors3[i%aColors3.length];
-        return '<div style="padding:10px 13px;border-bottom:0.5px solid var(--border);">'
-          +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">'
-          +'<div style="display:flex;align-items:center;gap:7px;">'
-          +'<div style="width:24px;height:24px;border-radius:50%;background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+c+';">'+a.name[0].toUpperCase()+'</div>'
-          +'<span style="font-size:12px;font-weight:600;color:var(--text);">'+a.name+'</span>'
-          +'</div>'
-          +'<div style="display:flex;gap:12px;align-items:center;">'
-          +'<span style="font-size:11px;font-weight:700;color:var(--accent2);">$'+(a.agComm>0?a.agComm:'—')+'</span>'
-          +'<span style="font-size:11px;font-weight:700;color:var(--green);">$'+(a.platComm>0?a.platComm:'—')+'</span>'
-          +'<span style="font-size:11px;color:var(--text3);width:28px;text-align:right;">'+a.deals+'</span>'
-          +'</div></div>'
-          +'<div style="height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;">'
-          +'<div style="height:100%;display:flex;">'
-          +'<div style="width:'+Math.round(pct*(100-platPct)/100)+'%;background:'+c+';opacity:.7;"></div>'
-          +'<div style="width:'+Math.round(pct*platPct/100)+'%;background:var(--green);opacity:.8;"></div>'
-          +'</div></div>'
-          +'</div>';
-      }).join('');
-    } else {
-      adEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);">Нет данных</div>';
-    }
   }
 
   // Объекты за неделю
   renderWeekly();
 
+  // Агент месяца
+  renderAgentMonth();
+
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
-    // Show skeleton until analytics loads
-    if (!STATIC.platform.lastDeals || !STATIC.platform.lastDeals.length) {
+    // Show skeleton until analytics loads (analyticsLoaded = flag set after getAnalytics returns)
+    if (!window._analyticsLoaded) {
       ldEl.innerHTML = '<div style="padding:14px 13px;">'
         + [1,2,3,4,5].map(function(){
             return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);">'
@@ -2521,8 +2478,7 @@ function renderDash() {
     } else {
       ldEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
     }
-    } // end else (analytics loaded)
-  }
+  } // end else (analytics loaded)
 }
 
 
@@ -2559,6 +2515,7 @@ function loadAnalytics() {
       STATIC.platform.agents   = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
       STATIC.platform.lastDeals= d.deals.lastDeals  || STATIC.platform.lastDeals;
       STATIC.analytics = d.deals;
+      window._analyticsLoaded = true;
 
     }
     renderDash();
@@ -2576,7 +2533,7 @@ function loadAnalytics() {
 // ═══════════════════════════════════════════════════
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
-var dashSettings = {'agent-listings':true,districts:true,rooms:true,weekly:true,monthly:true,agents:false,lastdeals:true};
+var dashSettings = {'agent-listings':true,districts:true,rooms:true,weekly:true,monthly:true,'agent-month':true,lastdeals:true};
 
 function isAdmin(){
   var SUPER_IDS=['6577307207','6014886676','114756692'];
@@ -2696,13 +2653,97 @@ function switchWeek(mode) {
   renderWeekly();
 }
 
+function renderAgentMonth() {
+  var el = document.getElementById('ds-agent-month');
+  if (!el) return;
+
+  // Берём topAgents из аналитики GAS — это данные за всё время
+  // Фильтруем по текущему месяцу через monthly данные
+  var analytics = dashData.analytics || STATIC.analytics || {};
+  var monthly = analytics.monthly || [];
+  var topAgents = analytics.topAgents || [];
+
+  // Текущий месяц в формате "M/YYYY"
+  var now = new Date();
+  var curMonth = (now.getMonth()+1) + '/' + now.getFullYear();
+  var prevMonth = now.getMonth() === 0
+    ? '12/' + (now.getFullYear()-1)
+    : now.getMonth() + '/' + now.getFullYear();
+
+  // Данные текущего и прошлого месяца
+  var curData  = monthly.find(function(m){ return m.month === curMonth; }) || {};
+  var prevData = monthly.find(function(m){ return m.month === prevMonth; }) || {};
+
+  // topAgents — сортировка по сделкам за всё время
+  // Для "агент месяца" используем topAgents — кто больше всего сделок суммарно
+  // Реальный агент месяца = кто больше всего в текущем месяце (из lastDeals)
+  var lastDeals = STATIC.platform.lastDeals || [];
+  var byAgentCur = {};
+  var byCommCur  = {};
+  lastDeals.forEach(function(d) {
+    var dt = d.date || '';
+    // date format dd.MM.yy
+    var parts = dt.split('.');
+    if (parts.length === 3) {
+      var mo = parseInt(parts[1]);
+      var yr = 2000 + parseInt(parts[2]);
+      if (mo === now.getMonth()+1 && yr === now.getFullYear()) {
+        var a = d.agent || '?';
+        byAgentCur[a] = (byAgentCur[a]||0) + 1;
+        byCommCur[a]  = (byCommCur[a]||0) + (d.commission||0);
+      }
+    }
+  });
+
+  // Если нет данных текущего месяца из lastDeals — используем topAgents
+  var winners = Object.keys(byAgentCur).sort(function(a,b){ return byAgentCur[b]-byAgentCur[a]; });
+  var useTopAgents = winners.length === 0;
+  if (useTopAgents) {
+    winners = topAgents.slice(0,3).map(function(a){ return a.name; });
+  }
+
+  if (!winners.length) {
+    el.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных за текущий месяц</div>';
+    return;
+  }
+
+  var medals = ['🥇','🥈','🥉'];
+  var colors  = ['#FFD700','#C0C0C0','#CD7F32'];
+
+  el.innerHTML = '<div style="padding:12px 13px 4px;">'
+    + '<div style="font-size:10px;color:var(--text3);text-transform:uppercase;font-weight:600;margin-bottom:10px;">'
+    + (now.toLocaleString('ru',{month:'long'})) + ' ' + now.getFullYear()
+    + (useTopAgents ? ' · все время' : '')
+    + '</div>'
+    + winners.slice(0,3).map(function(name, i) {
+        var deals = useTopAgents
+          ? (topAgents.find(function(a){return a.name===name;})||{}).deals || 0
+          : byAgentCur[name]||0;
+        var comm  = byCommCur[name] || 0;
+        var isFirst = i === 0;
+        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;'
+          + (i < 2 ? 'border-bottom:0.5px solid var(--border);' : '')
+          + (isFirst ? 'background:linear-gradient(90deg,rgba(255,215,0,.06),transparent);border-radius:8px;padding:10px 6px;' : '')
+          + '">'
+          + '<div style="font-size:'+(isFirst?'24':'20')+'px;flex-shrink:0;">'+medals[i]+'</div>'
+          + '<div style="width:'+(isFirst?'36':'30')+'px;height:'+(isFirst?'36':'30')+'px;border-radius:50%;'
+          + 'background:rgba(124,111,255,.15);display:flex;align-items:center;justify-content:center;'
+          + 'font-size:'+(isFirst?'14':'12')+'px;font-weight:700;color:'+colors[i]+';flex-shrink:0;">'
+          + name[0].toUpperCase()+'</div>'
+          + '<div style="flex:1;">'
+          + '<div style="font-size:'+(isFirst?'15':'13')+'px;font-weight:'+(isFirst?'700':'600')+';color:var(--text);">'+name+'</div>'
+          + '<div style="font-size:11px;color:var(--text3);">'+deals+' сделок'+(comm?' · $'+comm:'')+' </div>'
+          + '</div></div>';
+      }).join('')
+    + '</div>';
+}
+
 function renderWeekly() {
   var wkEl = document.getElementById('ds-weekly-listings');
   var wkTitle = document.getElementById('ds-weekly-title');
   var wkData = (dashData.analytics && dashData.analytics.weeklyListings)
     ? dashData.analytics.weeklyListings
     : STATIC.weeklyListings;
-  console.log('[weekly] wkData keys:', wkData ? Object.keys(wkData) : 'null', '| mode:', weeklyMode);
   if (!wkEl || !wkData) return;
 
   // Поддержка новой структуры {current, lastWeek} и старой {topAgents, lastWeek}
@@ -2745,7 +2786,7 @@ function renderWeekly() {
 }
 
 function updateSwitches(){
-  var keys=['agent-listings','districts','rooms','weekly','monthly','agents','lastdeals'];
+  var keys=['agent-listings','districts','rooms','weekly','monthly','agent-month','lastdeals'];
   keys.forEach(function(k){
     var sw=document.getElementById('sw-'+k);
     if(!sw) return;
@@ -2785,7 +2826,8 @@ function saveDashSettings(){
   applyDashSection('dash-sec-districts',      dashSettings.districts);
   applyDashSection('dash-sec-rooms',          dashSettings.rooms);
   applyDashSection('dash-sec-monthly',        dashSettings.monthly);
-  applyDashSection('dash-sec-agents',         dashSettings.agents);
+
+  applyDashSection('dash-sec-agent-month',    dashSettings['agent-month']);
   applyDashSection('dash-sec-lastdeals',      dashSettings.lastdeals);
   applyDashSection('dash-sec-monthly',   dashSettings.monthly);
   applyDashSection('dash-sec-deals-month', dashSettings.monthly);
@@ -2793,6 +2835,7 @@ function saveDashSettings(){
   applyDashSection('dash-sec-dyn',       dashSettings.dyn);
   applyDashSection('dash-sec-rooms',     dashSettings.rooms);
   applyDashSection('dash-sec-prices',    dashSettings.prices);
+  applyDashSection('dash-sec-agent-month', dashSettings['agent-month']);
   applyDashSection('dash-sec-lastdeals', dashSettings.lastdeals);
   showToast('Настройки сохранены ✓');
 }
