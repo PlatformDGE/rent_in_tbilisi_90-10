@@ -2500,9 +2500,6 @@ function loadAnalytics() {
     delete window[cbName];
     var sc = document.getElementById(cbName); if(sc) sc.remove();
     if (!d) return;
-    console.log('[analytics] keys:', Object.keys(d));
-    if(d.deals) console.log('[analytics] deals keys:', Object.keys(d.deals), '| lastDeals:', JSON.stringify(d.deals.lastDeals).slice(0,200));
-    else console.log('[analytics] no d.deals — top keys:', JSON.stringify(d).slice(0,300));
     dashData.analytics = d;
     // Обновляем STATIC из реальных данных
     if (d.listings) {
