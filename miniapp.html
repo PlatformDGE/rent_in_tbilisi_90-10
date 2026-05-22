@@ -142,6 +142,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 .swrap{padding:12px 16px 4px;}
 .sbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:var(--r);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--glow);}
 .sbtn:active{opacity:.85;}
+@keyframes sk-shine{0%{background-position:-200px 0}100%{background-position:calc(200px + 100%) 0}}
+.sk{background:var(--bg3);border-radius:4px;animation:sk-shine 1.4s ease infinite;background-image:linear-gradient(90deg,var(--bg3) 0px,var(--bg2) 40px,var(--bg3) 80px);background-size:300px 100%;}
+.sk-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:0.5px solid var(--border);}
 .sbtn.navy{background:var(--navy);}
 
 /* CONTRACT STEPS */
@@ -2220,31 +2223,24 @@ var dashAutoTimer = null;
 // ── Статика из канала (3081 постов) ─────────────────
 var STATIC = {
   channel: {
-    total: 3081,
-    avgPrice: 844,
-    exclPct: 3,
-    districts: [{"district": "Saburtalo", "count": 139, "avgPrice": 853, "minPrice": 350, "maxPrice": 4500}, {"district": "Vake", "count": 80, "avgPrice": 1040, "minPrice": 400, "maxPrice": 2500}, {"district": "Vera", "count": 44, "avgPrice": 781, "minPrice": 100, "maxPrice": 1900}, {"district": "Sololaki", "count": 28, "avgPrice": 692, "minPrice": 300, "maxPrice": 1800}, {"district": "Chugureti", "count": 27, "avgPrice": 644, "minPrice": 300, "maxPrice": 1100}, {"district": "Mtatsminda", "count": 17, "avgPrice": 716, "minPrice": 300, "maxPrice": 1300}, {"district": "Didube", "count": 15, "avgPrice": 666, "minPrice": 100, "maxPrice": 1400}, {"district": "Avlabari", "count": 13, "avgPrice": 725, "minPrice": 500, "maxPrice": 1000}, {"district": "Ortachala", "count": 12, "avgPrice": 608, "minPrice": 300, "maxPrice": 900}, {"district": "Rustaveli", "count": 6, "avgPrice": 850, "minPrice": 550, "maxPrice": 1600}, {"district": "Gldani", "count": 5, "avgPrice": 425, "minPrice": 300, "maxPrice": 500}, {"district": "Isani", "count": 4, "avgPrice": 612, "minPrice": 550, "maxPrice": 700}, {"district": "Marjanishvili", "count": 3, "avgPrice": 800, "minPrice": 300, "maxPrice": 1300}, {"district": "Digomi", "count": 2, "avgPrice": 750, "minPrice": 650, "maxPrice": 850}, {"district": "Krtsanisi", "count": 2, "avgPrice": 1550, "minPrice": 1400, "maxPrice": 1700}, {"district": "LibertySquare", "count": 2, "avgPrice": 725, "minPrice": 700, "maxPrice": 750}, {"district": "Varketili", "count": 2, "avgPrice": 425, "minPrice": 400, "maxPrice": 450}],
-    rooms: {"1Bed": 205, "2Bed": 117, "3Bed": 35, "Studio": 14, "4Bed": 7},
-    byAgent: {"David": 573, "Omari": 509, "Artyom": 507, "Vladislav": 482, "Semyon": 439, "Viktoriia": 392, "Sergi": 386, "Zaza": 347, "Irakli": 316, "Gio": 241, "Dmitri": 220, "Vitaly": 213, "Daniil": 189, "Alex": 171, "Shafi": 151, "Coathor": 132, "Ilya": 126, "Max": 99, "Mari": 84, "Arkada": 84, "Dasha": 72, "Egor": 72, "Bardo": 50, "Lada": 45, "Giorgi": 42, "Shorena": 42, "Oxana": 25, "Baron": 21, "Mariam": 14, "Danila": 7, "GioBeska": 7, "Valentin": 2},
+    districts: [],
+    rooms: {},
+    byAgent: {},
   },
-  weeklyListings: {"total": 10, "weekStart": "18.05", "topAgents": [{"name": "Mari", "count": 4}, {"name": "Zaza", "count": 2}, {"name": "Dmitri", "count": 1}, {"name": "Danila", "count": 1}, {"name": "David", "count": 1}, {"name": "Gio", "count": 1}], "lastWeek": {"total": 93, "weekStart": "11.05", "topAgents": [{"name": "David", "count": 28}, {"name": "Sergi", "count": 17}, {"name": "Zaza", "count": 14}, {"name": "Gio", "count": 12}, {"name": "Danila", "count": 6}, {"name": "Giorgi", "count": 5}, {"name": "Viktoriia", "count": 5}, {"name": "Dmitri", "count": 3}, {"name": "Mariam", "count": 1}, {"name": "Mari", "count": 1}, {"name": "Daniil", "count": 1}]}},
+  weeklyListings: {},
   listings: {
-    total: 3081,
-    avgPrice: 844,
-    byDistrict: [{"district": "Saburtalo", "count": 139, "avgPrice": 853, "minPrice": 350, "maxPrice": 4500}, {"district": "Vake", "count": 80, "avgPrice": 1040, "minPrice": 400, "maxPrice": 2500}, {"district": "Vera", "count": 44, "avgPrice": 781, "minPrice": 100, "maxPrice": 1900}, {"district": "Sololaki", "count": 28, "avgPrice": 692, "minPrice": 300, "maxPrice": 1800}, {"district": "Chugureti", "count": 27, "avgPrice": 644, "minPrice": 300, "maxPrice": 1100}, {"district": "Mtatsminda", "count": 17, "avgPrice": 716, "minPrice": 300, "maxPrice": 1300}, {"district": "Didube", "count": 15, "avgPrice": 666, "minPrice": 100, "maxPrice": 1400}, {"district": "Avlabari", "count": 13, "avgPrice": 725, "minPrice": 500, "maxPrice": 1000}, {"district": "Ortachala", "count": 12, "avgPrice": 608, "minPrice": 300, "maxPrice": 900}, {"district": "Rustaveli", "count": 6, "avgPrice": 850, "minPrice": 550, "maxPrice": 1600}, {"district": "Gldani", "count": 5, "avgPrice": 425, "minPrice": 300, "maxPrice": 500}, {"district": "Isani", "count": 4, "avgPrice": 612, "minPrice": 550, "maxPrice": 700}, {"district": "Marjanishvili", "count": 3, "avgPrice": 800, "minPrice": 300, "maxPrice": 1300}, {"district": "Digomi", "count": 2, "avgPrice": 750, "minPrice": 650, "maxPrice": 850}, {"district": "Krtsanisi", "count": 2, "avgPrice": 1550, "minPrice": 1400, "maxPrice": 1700}, {"district": "LibertySquare", "count": 2, "avgPrice": 725, "minPrice": 700, "maxPrice": 750}, {"district": "Varketili", "count": 2, "avgPrice": 425, "minPrice": 400, "maxPrice": 450}],
-    byAgent: {"David": 573, "Omari": 509, "Artyom": 507, "Vladislav": 482, "Semyon": 439, "Viktoriia": 392, "Sergi": 386, "Zaza": 347, "Irakli": 316, "Gio": 241, "Dmitri": 220, "Vitaly": 213, "Daniil": 189, "Alex": 171, "Shafi": 151, "Coathor": 132, "Ilya": 126, "Max": 99, "Mari": 84, "Arkada": 84, "Dasha": 72, "Egor": 72, "Bardo": 50, "Lada": 45, "Giorgi": 42, "Shorena": 42, "Oxana": 25, "Baron": 21, "Mariam": 14, "Danila": 7, "GioBeska": 7, "Valentin": 2},
-    byRooms: {"1Bed": 205, "2Bed": 117, "3Bed": 35, "Studio": 14, "4Bed": 7},
+    total: 0,
+    avgPrice: 0,
+    byDistrict: [],
+    byAgent: {},
+    byRooms: {},
   },
   platform: {
-    total: 1457,
-    commission: 451908,
-    platformComm: 116273,
-    turnover: 1570148,
-    avgComm: 310,
-    monthly: [{"month": "1/2025", "deals": 77, "commission": 25728.0, "platform": 5577.4, "price": 133771.0}, {"month": "2/2025", "deals": 69, "commission": 21770.0, "platform": 6753.0, "price": 42540.0}, {"month": "3/2025", "deals": 68, "commission": 18826.0, "platform": 4687.4, "price": 37103.0}, {"month": "4/2025", "deals": 78, "commission": 23299.0, "platform": 5617.4, "price": 46678.0}, {"month": "5/2025", "deals": 99, "commission": 28387.42, "platform": 8224.25, "price": 104355.5}, {"month": "6/2025", "deals": 83, "commission": 24535.0, "platform": 7019.5, "price": 55090.0}, {"month": "7/2025", "deals": 105, "commission": 31032.31, "platform": 7283.05, "price": 62034.02}, {"month": "8/2025", "deals": 117, "commission": 34358.75, "platform": 8614.6, "price": 68777.5}, {"month": "9/2025", "deals": 127, "commission": 42239.75, "platform": 10543.57, "price": 151414.5}, {"month": "10/2025", "deals": 127, "commission": 44893.6, "platform": 10678.16, "price": 355812.3}, {"month": "11/2025", "deals": 120, "commission": 35549.51, "platform": 10345.65, "price": 71083.84}, {"month": "12/2025", "deals": 92, "commission": 29077.95, "platform": 8276.99, "price": 137593.0}, {"month": "1/2026", "deals": 80, "commission": 24819.03, "platform": 5702.7, "price": 47852.04}, {"month": "2/2026", "deals": 46, "commission": 13402.1, "platform": 2837.63, "price": 26846.0}, {"month": "3/2026", "deals": 65, "commission": 23248.25, "platform": 5247.13, "price": 167596.5}, {"month": "4/2026", "deals": 66, "commission": 19963.83, "platform": 5485.3, "price": 40095.6}, {"month": "5/2026", "deals": 38, "commission": 10777.5, "platform": 3379.75, "price": 21505.0}],
-    agents: [{"agent": "Sergi", "deals": 199, "commission": 70748.5, "platform": 7074.85, "agent_comm": 63673.65}, {"agent": "Viktoriia", "deals": 108, "commission": 32090.59, "platform": 16045.29, "agent_comm": 16045.29}, {"agent": "Omari", "deals": 107, "commission": 32263.55, "platform": 3256.48, "agent_comm": 29037.2}, {"agent": "Irakli", "deals": 97, "commission": 28660.05, "platform": 8598.02, "agent_comm": 20062.04}, {"agent": "Artyom", "deals": 93, "commission": 29655.68, "platform": 8896.69, "agent_comm": 20758.98}, {"agent": "Zaza", "deals": 93, "commission": 29659.54, "platform": 2965.95, "agent_comm": 26693.58}, {"agent": "Semyon", "deals": 83, "commission": 24735.5, "platform": 7420.65, "agent_comm": 17314.85}, {"agent": "Vladislav", "deals": 79, "commission": 23519.2, "platform": 7055.76, "agent_comm": 16463.44}, {"agent": "Daniil", "deals": 74, "commission": 26940.75, "platform": 2694.08, "agent_comm": 24246.68}, {"agent": "David", "deals": 72, "commission": 20145.42, "platform": 2014.54, "agent_comm": 18130.89}, {"agent": "Vitaly", "deals": 63, "commission": 18757.5, "platform": 5627.25, "agent_comm": 13130.25}, {"agent": "Shafi", "deals": 60, "commission": 19863.3, "platform": 5958.99, "agent_comm": 13904.31}, {"agent": "Gio", "deals": 56, "commission": 14121.05, "platform": 7060.53, "agent_comm": 7060.53}, {"agent": "Dmitri", "deals": 43, "commission": 9772.25, "platform": 2931.67, "agent_comm": 6840.57}, {"agent": "Alex", "deals": 35, "commission": 10630.0, "platform": 3219.12, "agent_comm": 7441.0}],
+    monthly: [],
+    agents: [],
     lastDeals: [],
   },
+  analytics: null,
 };
 
 
@@ -2294,6 +2290,26 @@ function getFilteredPlatform() {
   }
   return {deals:deals, platform:Math.round(platform), comm:Math.round(comm), price:Math.round(price)};
 }
+
+// ── SKELETON HELPERS ────────────────────────────────
+function skRow(w1,w2){
+  return '<div class="sk-row">'
+    +'<div style="display:flex;align-items:center;gap:8px;">'
+    +'<div class="sk" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;"></div>'
+    +'<div class="sk" style="width:'+w1+'px;height:10px;"></div></div>'
+    +'<div class="sk" style="width:'+w2+'px;height:10px;"></div>'
+    +'</div>';
+}
+function skRows(n,w1,w2){var h='';for(var i=0;i<n;i++)h+=skRow(w1||70,w2||40);return h;}
+function skBar(){
+  return '<div style="padding:10px 13px;border-bottom:0.5px solid var(--border);">'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:6px;">'
+    +'<div class="sk" style="width:80px;height:10px;"></div>'
+    +'<div class="sk" style="width:35px;height:10px;"></div></div>'
+    +'<div class="sk" style="width:100%;height:4px;border-radius:2px;"></div>'
+    +'</div>';
+}
+function skBars(n){var h='';for(var i=0;i<n;i++)h+=skBar();return h;}
 
 function renderDash() {
   var rs = (dashData.rentalStats) || {};
@@ -2362,6 +2378,8 @@ function renderDash() {
   var dEl = document.getElementById('ds-districts');
   if (dEl) {
     var dist = STATIC.channel.districts;
+    if (!dist || !dist.length) { dEl.innerHTML = skBars(5); }
+    else {
     var maxC = dist[0].count||1;
     var colors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc','#fb7185','#facc15'];
     dEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);"><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Район</span><div style="display:flex;gap:20px;"><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Ср. цена</span><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;width:28px;text-align:right;">Кол</span></div></div>'
@@ -2382,12 +2400,18 @@ function renderDash() {
         +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.6;"></div>'
         +'</div></div></div>';
     }).join('');
+    }
   }
 
   // Типы квартир
   var rEl = document.getElementById('ds-rooms');
   if (rEl) {
     var rooms = STATIC.channel.rooms;
+    if (!rooms || !Object.keys(rooms).length) {
+      rEl.innerHTML = [1,2,3].map(function(){
+        return '<div class="sk" style="height:56px;border-radius:var(--r);"></div>';
+      }).join('');
+    } else {
     var total = Object.values(rooms).reduce(function(a,b){return a+b;},0);
     var order = ['1Bed','2Bed','Studio','3Bed','4Bed','Other'];
     var labels = {'1Bed':'1 Bed','2Bed':'2 Bed','Studio':'Studio','3Bed':'3 Bed','4Bed':'4+ Bed','Other':'Other'};
@@ -2402,6 +2426,7 @@ function renderDash() {
         +'<div style="font-size:9px;color:var(--text3);margin-top:2px;">'+pct+'%</div>'
         +'</div>';
     }).join('');
+    }
   }
 
   // Агенты — объекты в канале (из Listings)
@@ -2418,7 +2443,8 @@ function renderDash() {
     var alTitle = document.querySelector('#dash-sec-agent-listings .sl');
     if (alTitle && totalActive !== null) alTitle.textContent = 'Агенты — активные объекты в канале (' + totalActive + ')';
     var agentNames = Object.keys(byAgent).sort(function(a,b){return byAgent[b]-byAgent[a];});
-    if (agentNames.length) {
+    if (!agentNames.length) { alEl.innerHTML = skBars(6); }
+    else {
       var maxA = byAgent[agentNames[0]]||1;
       var aColors2=['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc'];
       alEl.innerHTML = agentNames.slice(0,12).map(function(name,i){
@@ -2436,8 +2462,6 @@ function renderDash() {
           +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.7;"></div>'
           +'</div></div></div>';
       }).join('');
-    } else {
-      alEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Данные появятся по мере парсинга новых постов канала</div>';
     }
   }
 
