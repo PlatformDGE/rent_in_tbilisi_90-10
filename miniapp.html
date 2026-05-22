@@ -1668,7 +1668,13 @@ function populateForm(type) {
     mEl.innerHTML='<option value="">Выбрать наставника...</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
   }
   if(type==='rental') {
-    const agEl=document.getElementById('rn-agent'); agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}">${a.name} (${a.level||50}%)</option>`);
+    const agEl=document.getElementById('rn-agent');
+    agEl.innerHTML='<option value="">Выбрать...</option>';
+    AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}">${a.name} (${a.level||50}%)</option>`);
+    if(RECRUITS.length){
+      agEl.innerHTML+='<optgroup label="── Рекруты ──"></optgroup>';
+      RECRUITS.forEach(r=>agEl.innerHTML+=`<option value="${r.telegram}">${r.name} (рекрут)</option>`);
+    }
     const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
     const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
   }
@@ -1690,6 +1696,10 @@ function populateRentalInDeals() {
   var agEl=document.getElementById('rn-agent'); if(!agEl)return;
   agEl.innerHTML='<option value="">Выбрать агента...</option>';
   AGENTS.forEach(function(a){agEl.innerHTML+='<option value="'+a.telegram+'" data-level="'+(a.level||50)+'">'+a.name+' ('+(a.level||50)+'%)</option>';});
+  if(RECRUITS.length){
+    agEl.innerHTML+='<optgroup label="── Рекруты ──"></optgroup>';
+    RECRUITS.forEach(function(r){agEl.innerHTML+='<option value="'+r.telegram+'" data-level="50">'+r.name+' (рекрут)</option>';});
+  }
   var rEl=document.getElementById('rn-recruit'); if(!rEl)return;
   rEl.innerHTML='<option value="">Без рекрута</option>';
   RECRUITS.forEach(function(r){rEl.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});
