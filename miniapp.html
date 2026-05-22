@@ -1653,14 +1653,6 @@ function onAgentChange() {
   setLvl(lvl);
 }
 
-function onAgentChangeRental() {
-  var aEl = document.getElementById('rn-agent');
-  var opt = aEl.options[aEl.selectedIndex];
-  var lvl = parseInt(opt.getAttribute('data-level') || 50);
-  setRnLvl(lvl);
-  calcRental();
-}
-
 function onRCRental() {
   const rEl=document.getElementById('rn-recruit');
   const rec=RECRUITS.find(r=>r.name===rEl.value);
@@ -2173,8 +2165,11 @@ function submitCalc() {
   const comm=Math.round(price*commPct/100),plat=Math.round(comm*(100-dLvl)/100),agent=comm-plat;
   const rEl=document.getElementById('d-recruit');
   const data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,price,comm_pct:commPct,comm_total:comm,platform:plat,agent_amt:agent,agent_level:dLvl,is_exclusive:dExcl,deal_type:dType,deal_subtype:dSub,link:document.getElementById('d-link').value,cadastral:document.getElementById('d-cadastral').value,rent_from:document.getElementById('d-from').value,rent_to:document.getElementById('d-to').value};
-  send('calc',data);
-  showToast('Расчёт отправлен! ✓');
+  send('calc', data, function(){
+    showToast('Расчёт отправлен! ✓');
+  }, function(){
+    showToast('❌ Ошибка отправки расчёта');
+  });
 }
 
 function send(type,data,onSuccess,onError) {
@@ -2836,19 +2831,31 @@ function adminAddRecruit(){
 }
 
 function adminToggleAgent(tg){
-  send('admin_toggle_agent',{telegram:tg});
   var a=AGENTS.find(function(x){return x.telegram===tg;});
-  if(a) a.active=!a.active;
+  if(a) a.active=!a.active; // optimistic
   renderAdminLists();
-  showToast('Обновлено ✓');
+  send('admin_toggle_agent',{telegram:tg}, function(){
+    showToast('Обновлено ✓');
+  }, function(){
+    // rollback
+    if(a) a.active=!a.active;
+    renderAdminLists();
+    showToast('❌ Ошибка — изменение не сохранено');
+  });
 }
 
 function adminToggleRecruit(tg){
-  send('admin_toggle_recruit',{telegram:tg});
   var r=RECRUITS.find(function(x){return x.telegram===tg;});
-  if(r) r.active=!r.active;
+  if(r) r.active=!r.active; // optimistic
   renderAdminLists();
-  showToast('Обновлено ✓');
+  send('admin_toggle_recruit',{telegram:tg}, function(){
+    showToast('Обновлено ✓');
+  }, function(){
+    // rollback
+    if(r) r.active=!r.active;
+    renderAdminLists();
+    showToast('❌ Ошибка — изменение не сохранено');
+  });
 }
 
 
@@ -2921,12 +2928,14 @@ function checkAccess() {
       var cb = '__access_'+Date.now();
       window[cb] = function(d) {
         delete window[cb];
+        var sc2=document.getElementById('sc-'+cb); if(sc2) sc2.remove();
         if (d && d.agents) { AGENTS = d.agents; RECRUITS = d.recruits || []; }
         verifyUsername();
       };
       var sc = document.createElement('script');
+      sc.id = 'sc-' + cb;
       sc.src = API_URL + '?action=getLists&callback=' + cb;
-      sc.onerror = function() { delete window[cb]; verifyUsername(); };
+      sc.onerror = function() { delete window[cb]; var s=document.getElementById('sc-'+cb); if(s) s.remove(); verifyUsername(); };
       document.head.appendChild(sc);
     }
   }, 500);
@@ -2958,6 +2967,8 @@ function loadData(){
     try {
       if(data.recruits && Array.isArray(data.recruits) && data.recruits.length) RECRUITS=data.recruits;
       if(data.agents  && Array.isArray(data.agents)  && data.agents.length)  AGENTS=data.agents;
+      // Кэшируем в localStorage — используется как fallback если GAS недоступен
+      try{localStorage.setItem('cachedLists',JSON.stringify({agents:AGENTS,recruits:RECRUITS,ts:Date.now()}));}catch(e){}
       // Soft version check: warn in console if fallback is stale
       if(data.version && data.version !== FALLBACK_VERSION){
         console.warn('[miniapp] Fallback version mismatch. GAS='+data.version+' local='+FALLBACK_VERSION+'. Update useFallback() to match current agent list.');
@@ -3007,15 +3018,52 @@ function loadData(){
 // ─── FALLBACK VERSION ────────────────────────────────────
 // Update FALLBACK_VERSION when agents/recruits list changes.
 // If GAS returns a different version, a soft warning is shown.
-var FALLBACK_VERSION = '2025-05-21';
+var FALLBACK_VERSION = '2026-05-22';
 
 function useFallback(){
-  RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0'},{id:2,name:'Artem',telegram:'@levittart'},{id:3,name:'Mariam',telegram:'@sourlylight'},{id:4,name:'Liana',telegram:'@lianagadzhikhana'},{id:5,name:'Mari',telegram:'@marikhitarishvili'},{id:6,name:'Nikita',telegram:'@krezonik'},{id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail'},{id:8,name:'Irakli',telegram:'@iraklibu'},{id:9,name:'Anton',telegram:'@Antonio_ozzz'},{id:10,name:'Gio',telegram:'@giosar'},{id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva'},{id:12,name:'Tunar',telegram:'@tunaotchenash'}];
-  AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:90},{id:3,name:'Sergi',telegram:'@SergiTb',level:90},{id:4,name:'Zaza',telegram:'@eforit',level:90},{id:5,name:'Omari',telegram:'@thatomss',level:90},{id:6,name:'Shorena',telegram:'@shorena_jvaridze',level:70},{id:7,name:'Giorgi',telegram:'@chuluxagio',level:70},{id:8,name:'Dmitri',telegram:'@Aion82',level:70},{id:9,name:'Alex',telegram:'@Alexunder90',level:70}];
-  COUNTERS=RECRUITS.map(function(r){return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]};});
-  AGENT_C={David:{deals:500,level:'Агент 90%',next:'Snowflake'},Daniil:{deals:137,level:'Агент 90%',next:'Snowflake'},Sergi:{deals:286,level:'Агент 90%',next:'Snowflake'},Zaza:{deals:154,level:'Агент 90%',next:'Snowflake'},Omari:{deals:129,level:'Агент 90%',next:'Snowflake'},Shorena:{deals:12,level:'Агент 70%',next:''},Giorgi:{deals:15,level:'Агент 70%',next:''},Dmitri:{deals:67,level:'Агент 70%',next:''},Alex:{deals:62,level:'Агент 70%',next:''}};
+  // Пробуем кэш из localStorage (сохраняется при каждом успешном getLists)
+  try {
+    var cached = JSON.parse(localStorage.getItem('cachedLists')||'null');
+    var age = cached ? (Date.now() - cached.ts) : Infinity;
+    if (cached && cached.agents && cached.agents.length && age < 7*24*60*60*1000) {
+      AGENTS = cached.agents;
+      RECRUITS = cached.recruits || [];
+      COUNTERS = RECRUITS.map(function(r){return{name:r.name,photo:[0,15],showing:[0,15],stickers:[0,15],rental:[0,10]};});
+      AGENT_C = {}; RENTAL_STATS = {};
+      afterLoad();
+      return;
+    }
+  } catch(e) {}
+  // Хардкод — актуально на 2026-05-22
+  AGENTS=[
+    {id:1, name:'David',   telegram:'@davidtibelashvili', level:90},
+    {id:2, name:'Daniil',  telegram:'@dogruller',         level:90},
+    {id:3, name:'Sergi',   telegram:'@SergiTb',           level:90},
+    {id:4, name:'Zaza',    telegram:'@eforit',            level:90},
+    {id:5, name:'Omari',   telegram:'@thatomss',          level:90},
+    {id:6, name:'Shorena', telegram:'@shorena_jvaridze',  level:70},
+    {id:7, name:'Giorgi',  telegram:'@chuluxagio',        level:70},
+    {id:8, name:'Dmitri',  telegram:'@Aion82',            level:70},
+    {id:9, name:'Alex',    telegram:'@Alexunder90',        level:70},
+    {id:10,name:'Danila',  telegram:'@DanilaPavlenk0',    level:50},
+    {id:11,name:'GioBeska',telegram:'@giobeska',          level:50},
+  ];
+  // Только активные рекруты (is_active=TRUE)
+  RECRUITS=[
+    {id:1, name:'Michel',    telegram:'@michelivar'},
+    {id:2, name:'Andria',    telegram:'@andria_kalandarishvili'},
+    {id:3, name:'Mariam',    telegram:'@sourlylight'},
+    {id:4, name:'Liana',     telegram:'@lianagadzhikhana'},
+    {id:5, name:'Mari',      telegram:'@marikhitarishvili'},
+    {id:6, name:'Dumbadze',  telegram:'@Dumbadze_Mikhail'},
+    {id:7, name:'Gio',       telegram:'@giosar'},
+    {id:8, name:'Viktoriia', telegram:'@viktoriia_radaeva'},
+    {id:9, name:'Ioann',     telegram:'@Ioannhop'},
+    {id:10,name:'Tony',      telegram:'@Antonio_ozzz'},
+  ];
+  COUNTERS=RECRUITS.map(function(r){return{name:r.name,photo:[0,15],showing:[0,15],stickers:[0,15],rental:[0,10]};});
+  AGENT_C={};
   RENTAL_STATS={};
-  // COUNTERS built above from RECRUITS — do NOT reset to []
   afterLoad();
 }
 
