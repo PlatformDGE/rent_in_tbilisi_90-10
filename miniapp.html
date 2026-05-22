@@ -2487,8 +2487,19 @@ function renderDash() {
         + '</div>';
     } else {
     var lastDeals = STATIC.platform.lastDeals;
-    // Filter out zero price deals
-    lastDeals = (lastDeals||[]).filter(function(d){ return (d.price||0) > 0 || (d.commission||0) > 0; }).slice(0,10);
+    // Filter: valid price + last 30 days only
+    var cutoff = new Date(); cutoff.setDate(cutoff.getDate()-30);
+    lastDeals = (lastDeals||[]).filter(function(d){
+      if ((d.price||0)===0 && (d.commission||0)===0) return false;
+      // parse date dd.MM.yy or timestamp
+      var ds = d.date||d.timestamp||'';
+      var parts = ds.split('.');
+      if (parts.length===3){
+        var dt = new Date('20'+parts[2]+'-'+parts[1]+'-'+parts[0]);
+        if (!isNaN(dt) && dt < cutoff) return false;
+      }
+      return true;
+    }).slice(0,10);
     if (lastDeals && lastDeals.length) {
       ldEl.innerHTML = lastDeals.map(function(d,i){
         var isLast=i===lastDeals.length-1;
@@ -2702,11 +2713,18 @@ function renderWeekly() {
     : STATIC.weeklyListings;
   if (!wkEl || !wkData) return;
 
-  var showWk = weeklyMode === 'last' ? wkData.lastWeek : wkData;
+  // Поддержка новой структуры {current, lastWeek} и старой {topAgents, lastWeek, total}
+  var showWk;
+  if (weeklyMode === 'last') {
+    showWk = wkData.lastWeek || null;
+  } else {
+    showWk = wkData.current || wkData; // новая или старая структура
+  }
   if (!showWk) return;
 
   var label = weeklyMode === 'last' ? 'Прошлая неделя' : 'Эта неделя';
-  if (wkTitle) wkTitle.textContent = label + ' · с ' + (showWk.weekStart||'') + ' · итого ' + (showWk.total||0) + ' объектов';
+  var weekStart = showWk.weekStart || wkData.weekStart || '';
+  if (wkTitle) wkTitle.textContent = label + ' · с ' + weekStart + ' · итого ' + (showWk.total||0) + ' объектов';
 
   var wColors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316'];
   var topA = showWk.topAgents || [];
