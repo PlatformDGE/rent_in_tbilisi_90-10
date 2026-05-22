@@ -1499,7 +1499,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwDlo0h_uxPiEX6E4bJyKxNcienXNy83ZeLKaGlhodHSiCYJaqFaDjpHusopOq8swsscg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzZgaw4a-A_cmPLi_goqVQ51r3CELGtLHDILx22Le5_6EwRm8E6cctpC-pKyzQJ4EtlAA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2477,7 +2477,12 @@ function renderDash() {
   // Типы квартир
   var rEl = document.getElementById('ds-rooms');
   if (rEl) {
-    var rooms = STATIC.channel.rooms;
+    // Приоритет: activeListings.byRooms → listings.byRooms → STATIC
+    var rooms = (dashData.analytics && dashData.analytics.activeListings && dashData.analytics.activeListings.byRooms)
+      ? dashData.analytics.activeListings.byRooms
+      : (dashData.analytics && dashData.analytics.listings && dashData.analytics.listings.byRooms)
+      ? dashData.analytics.listings.byRooms
+      : STATIC.channel.rooms;
     if (!rooms || !Object.keys(rooms).length) {
       rEl.innerHTML = [1,2,3].map(function(){
         return '<div class="sk" style="height:56px;border-radius:var(--r);"></div>';
