@@ -142,6 +142,16 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 .swrap{padding:12px 16px 4px;}
 .sbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:var(--r);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--glow);}
 .sbtn:active{opacity:.85;}
+.ticker-wrap{position:relative;overflow:hidden;height:36px;display:flex;align-items:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;}
+.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:36px;z-index:2;pointer-events:none;}
+.ticker-wrap::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent);}
+.ticker-wrap::after{right:0;background:linear-gradient(270deg,var(--bg2),transparent);}
+.ticker-track{display:flex;white-space:nowrap;animation:tickerSlide 30s linear infinite;}
+.ticker-track:hover{animation-play-state:paused;}
+.ticker-item{display:flex;align-items:center;gap:7px;padding:0 20px;font-size:12px;color:var(--text2);}
+.ticker-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.ticker-val{font-weight:700;color:var(--text);font-size:13px;}
+@keyframes tickerSlide{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 @keyframes sk-shine{0%{background-position:-200px 0}100%{background-position:calc(200px + 100%) 0}}
 .sk{background:var(--bg3);border-radius:4px;animation:sk-shine 1.4s ease infinite;background-image:linear-gradient(90deg,var(--bg3) 0px,var(--bg2) 40px,var(--bg3) 80px);background-size:300px 100%;}
 .sk-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:0.5px solid var(--border);}
@@ -379,6 +389,11 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
       </div>
       <div class="pad pb">
+
+        <!-- БЕГУЩАЯ СТРОКА (срочные сообщения от администратора) -->
+        <div class="ticker-wrap" id="dash-ticker" style="display:none;">
+          <div class="ticker-track" id="dash-ticker-track"></div>
+        </div>
 
         <!-- МЕТРИКИ ПЛАТФОРМЫ -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
@@ -1379,6 +1394,15 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
         </div>
         <div class="section">
+          <div class="sl">📢 Бегущая строка</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px;">
+            <div id="admin-ticker-list" style="padding:8px 0;"></div>
+          </div>
+          <div class="field"><label class="fl">Новое сообщение</label><input type="text" id="admin-ticker-text" placeholder="Срочное объявление..."></div>
+          <button class="sbtn" onclick="adminAddTicker()" style="margin-top:4px;">Опубликовать</button>
+        </div>
+
+        <div class="section">
           <div class="sl">Метрики дашборда</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 14px;border-bottom:0.5px solid var(--border);"><span style="font-size:13px;color:var(--text);">Объектов</span><div id="sw-m-total" onclick="toggleMetric('total')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div></div>
@@ -1455,7 +1479,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxzUuJgJh24edOmP169_l71jx424idRmjKQG8PwspLIqm23OGYLz4yT4_OJyPWcnn2AvQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwDlo0h_uxPiEX6E4bJyKxNcienXNy83ZeLKaGlhodHSiCYJaqFaDjpHusopOq8swsscg/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2292,6 +2316,21 @@ function getFilteredPlatform() {
 }
 
 // ── SKELETON HELPERS ────────────────────────────────
+function updateTicker() {
+  var wrap  = document.getElementById('dash-ticker');
+  var track = document.getElementById('dash-ticker-track');
+  if (!wrap || !track) return;
+  var msgs = dashData.analytics && dashData.analytics.tickerMessages;
+  if (!msgs || !msgs.length) { wrap.style.display = 'none'; return; }
+  // Build items — duplicate for seamless loop
+  var items = msgs.map(function(m) {
+    return '<div class="ticker-item"><span class="ticker-dot" style="background:#fbbf24"></span>'
+      + '<span style="color:var(--text);">' + m + '</span></div>';
+  }).join('');
+  track.innerHTML = items + items; // duplicate for loop
+  wrap.style.display = 'flex';
+}
+
 function skRow(w1,w2){
   return '<div class="sk-row">'
     +'<div style="display:flex;align-items:center;gap:8px;">'
@@ -2335,6 +2374,8 @@ function renderDash() {
     set('ds-ch-price', actL.avgPrice ? '$'+actL.avgPrice : '—');
     set('ds-ch-excl', actL.exclPct !== undefined ? actL.exclPct+'%' : '—');
   }
+
+  updateTicker();
 
   // Время обновления
   var now = new Date();
@@ -2659,6 +2700,7 @@ function isAdmin(){
 }
 
 function initAdmin(){
+  loadTickerList();
   if(!isAdmin()) return;
   var btn=document.getElementById('nav-admin');
   if(btn) btn.style.display='flex';
@@ -2880,6 +2922,46 @@ function adminAddRecruit(){
   document.getElementById('admin-new-rec-tg').value='';
   renderAdminLists();
   showToast('Рекрут добавлен ✓');
+}
+
+function adminAddTicker(){
+  var text = (document.getElementById('admin-ticker-text').value||'').trim();
+  if (!text) { showToast('Введи текст'); return; }
+  send('ticker_add', {text: text}, function(){
+    document.getElementById('admin-ticker-text').value = '';
+    showToast('Опубликовано ✓');
+    loadTickerList();
+  });
+}
+
+function adminDeleteTicker(id){
+  send('ticker_delete', {id: id}, function(){
+    showToast('Удалено ✓');
+    loadTickerList();
+  });
+}
+
+function loadTickerList(){
+  var cbName = '__ticker_' + Date.now();
+  var el = document.getElementById('admin-ticker-list');
+  if (!el) return;
+  el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Загрузка...</div>';
+  window[cbName] = function(d){
+    delete window[cbName];
+    var msgs = (d && d.messages) || [];
+    if (!msgs.length) { el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Нет сообщений</div>'; return; }
+    el.innerHTML = msgs.map(function(m){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--border);">'
+        +'<span style="font-size:13px;color:var(--text);flex:1;margin-right:10px;">'+m.text+'</span>'
+        +'<button onclick="adminDeleteTicker(this.dataset.id)" data-id="'+m.id+'" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.1);color:#ef4444;cursor:pointer;font-family:inherit;flex-shrink:0;">Удалить</button>'
+        +'</div>';
+    }).join('');
+  };
+  var sc = document.createElement('script');
+  sc.id = 'sc-'+cbName;
+  sc.src = API_URL + '?action=getTicker&callback=' + cbName;
+  sc.onerror = function(){ delete window[cbName]; el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Ошибка загрузки</div>'; };
+  document.head.appendChild(sc);
 }
 
 function adminToggleAgent(tg){
