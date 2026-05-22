@@ -1363,7 +1363,11 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       </div>
       <div class="pad pb">
         <div class="section">
-          <div class="sl">Агенты</div>
+          <div class="sl" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Агенты</span>
+            <button onclick="toggleAdminSection('agents')" id="btn-collapse-agents" style="font-size:10px;padding:3px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">Свернуть</button>
+          </div>
+          <div id="admin-agents-body">
           <div id="admin-agents-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
             <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
           </div>
@@ -1380,9 +1384,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             </div>
             <button class="sbtn" onclick="adminAddAgent()" style="margin-top:8px;">+ Добавить агента</button>
           </div>
+          </div>
         </div>
         <div class="section">
-          <div class="sl">Рекруты</div>
+          <div class="sl" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>Рекруты</span>
+            <button onclick="toggleAdminSection('recruits')" id="btn-collapse-recruits" style="font-size:10px;padding:3px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">Свернуть</button>
+          </div>
+          <div id="admin-recruits-body">
           <div id="admin-recruits-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
             <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
           </div>
@@ -1392,13 +1401,27 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             <div class="field"><label class="fl">Telegram</label><input type="text" id="admin-new-rec-tg" placeholder="@username"></div>
             <button class="sbtn" onclick="adminAddRecruit()" style="margin-top:8px;">+ Добавить рекрута</button>
           </div>
+          </div>
         </div>
         <div class="section">
           <div class="sl">📢 Бегущая строка</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px;">
+            <div style="padding:10px 14px;border-bottom:0.5px solid var(--border);">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Что показывать</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                  <input type="checkbox" id="tk-show-news" checked onchange="updateTickerFromAdmin()" style="width:16px;height:16px;">
+                  <span style="font-size:13px;color:var(--text);">Последняя новость из канала</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+                  <input type="checkbox" id="tk-show-custom" checked onchange="updateTickerFromAdmin()" style="width:16px;height:16px;">
+                  <span style="font-size:13px;color:var(--text);">Срочные сообщения (ниже)</span>
+                </label>
+              </div>
+            </div>
             <div id="admin-ticker-list" style="padding:8px 0;"></div>
           </div>
-          <div class="field"><label class="fl">Новое сообщение</label><input type="text" id="admin-ticker-text" placeholder="Срочное объявление..."></div>
+          <div class="field"><label class="fl">Новое срочное сообщение</label><input type="text" id="admin-ticker-text" placeholder="Срочное объявление..."></div>
           <button class="sbtn" onclick="adminAddTicker()" style="margin-top:4px;">Опубликовать</button>
         </div>
 
@@ -2655,7 +2678,21 @@ function loadAnalytics() {
       STATIC.platform.agents   = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
       STATIC.platform.lastDeals= d.deals.lastDeals  || STATIC.platform.lastDeals;
       STATIC.analytics = d.deals;
-
+      window._analyticsLoaded = true;
+    }
+    // Load custom ticker messages from GAS
+    if (d.tickerMessages) {
+      if (!dashData.analytics) dashData.analytics = {};
+      dashData.analytics._customTicker = d.tickerMessages;
+      updateTickerFromAdmin();
+    }
+    if (d.activeListings) {
+      if (!dashData.analytics) dashData.analytics = {};
+      dashData.analytics.activeListings = d.activeListings;
+    }
+    if (d.weeklyListings) {
+      if (!dashData.analytics) dashData.analytics = {};
+      dashData.analytics.weeklyListings = d.weeklyListings;
     }
     renderDash();
   };
@@ -2922,6 +2959,32 @@ function adminAddRecruit(){
   document.getElementById('admin-new-rec-tg').value='';
   renderAdminLists();
   showToast('Рекрут добавлен ✓');
+}
+
+function updateTickerFromAdmin() {
+  var showNews   = document.getElementById('tk-show-news');
+  var showCustom = document.getElementById('tk-show-custom');
+  if (!showNews || !showCustom) return;
+  // Rebuild tickerMessages based on checkboxes
+  var msgs = [];
+  if (showCustom.checked && dashData.analytics && dashData.analytics._customTicker) {
+    msgs = msgs.concat(dashData.analytics._customTicker);
+  }
+  if (showNews.checked && dashData.analytics && dashData.analytics._lastNews) {
+    msgs = msgs.concat([dashData.analytics._lastNews]);
+  }
+  if (!dashData.analytics) dashData.analytics = {};
+  dashData.analytics.tickerMessages = msgs;
+  updateTicker();
+}
+
+function toggleAdminSection(section) {
+  var body = document.getElementById('admin-'+section+'-body');
+  var btn  = document.getElementById('btn-collapse-'+section);
+  if (!body || !btn) return;
+  var collapsed = body.style.display === 'none';
+  body.style.display = collapsed ? '' : 'none';
+  btn.textContent = collapsed ? 'Свернуть' : 'Развернуть';
 }
 
 function adminAddTicker(){
@@ -3664,6 +3727,13 @@ function loadNews(){
     if(!data||!data.messages||!data.messages.length){
       list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3);"><div style="font-size:36px;margin-bottom:12px;">📰</div><div style="font-size:14px;font-weight:600;">Новостей пока нет</div></div>';
       return;
+    }
+    // Добавляем последнюю новость в бегущую строку
+    if (!dashData.analytics) dashData.analytics = {};
+    var lastNews = data.messages[0] && data.messages[0].text ? data.messages[0].text.slice(0,100) : null;
+    if (lastNews) {
+      dashData.analytics._lastNews = lastNews;
+      updateTickerFromAdmin();
     }
     list.innerHTML='';
     data.messages.forEach(function(msg){
