@@ -1499,7 +1499,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzZgaw4a-A_cmPLi_goqVQ51r3CELGtLHDILx22Le5_6EwRm8E6cctpC-pKyzQJ4EtlAA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz91h5MQ6Fddc5YC5gjK-iSWm9ophzDVrNWG2Rsseh4UMvMoBKeIKf6zbDOWQcFnRrCkQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2187,14 +2187,29 @@ function sub(type, directData) {
     if(!agentName && CURRENT_USER && CURRENT_USER.name) agentName=CURRENT_USER.name;
     const recruitName=cleanName(rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'');
     const mentorName=cleanName(mEl&&mEl.selectedIndex>0?mEl.options[mEl.selectedIndex].text:'');
+    // Считаем реальное распределение по сценарию
+    var distRows = rnCalcDist(comm);
+    var recruitRow = distRows.find(function(r){ return r.n && (r.n.indexOf('Рекрут')!==-1 || r.n.indexOf('рекрут')!==-1); });
+    var agentRow   = distRows.find(function(r){ return r.n && (r.n.indexOf('Агент')!==-1 || r.n.indexOf('Наставник')!==-1); });
+    var platRow    = distRows.find(function(r){ return r.n && r.n.indexOf('Платформа')!==-1; });
+    var recruitAmt = recruitRow ? (recruitRow.val||0) : 0;
+    var recruitPct = recruitRow ? (recruitRow.p||0)  : 0;
+    var realAgentAmt = agentRow ? (agentRow.val||0)  : agentComm;
+    var realPlatAmt  = platRow  ? (platRow.val||0)   : plat;
     data={
       agent:agentName, recruit:recruitName, mentor:mentorName,
       agent_level:rnLvl, scenario:rnSc,
+      comm_pct:commPct,
+      recruit_commission: recruitAmt,
+      recruit_pct: recruitPct,
+      agent_commission_final: realAgentAmt,
+      platform_commission: realPlatAmt,
+      dist_rows: JSON.stringify(distRows),
       ad_link_advertising:document.getElementById('rn-link').value,
       cadastral_number:document.getElementById('rn-cadastral').value,
       is_exclusive:rnExcl, deal_type:rnType, deal_subtype:rnSub,
       rent_price:price, commission_pct:commPct,
-      commission_total:comm, commission_platform:plat, commission_agent:agentComm,
+      commission_total:comm, commission_platform:realPlatAmt, commission_agent:realAgentAmt,
       client_name:document.getElementById('rn-cname').value,
       client_phone:document.getElementById('rn-cphone').value,
       owner_name:document.getElementById('rn-oname').value,
