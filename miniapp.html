@@ -985,6 +985,31 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свои проценты</div>
             </div>
           </div>
+          <!-- Повторная сдача — отдельный сценарий без комиссии -->
+            <div class="rn-sc-btn" id="rnsc-rerented" onclick="setRnRerented()" style="background:rgba(251,191,36,.07);border:0.5px solid rgba(251,191,36,.3);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;grid-column:span 2;">
+              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(251,191,36,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck" id="rnsc-rerented-ck">✓</div>
+              <div style="font-size:20px;margin-bottom:7px;">🔄</div>
+              <div style="font-size:12px;font-weight:700;color:#fbbf24;margin-bottom:3px;">Повторная сдача</div>
+              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Новый клиент · Комиссия 0$ · Без счётчика</div>
+            </div>
+          </div>
+
+          <!-- Блок пересдачи -->
+          <div id="rn-rerented-block" style="display:none;background:rgba(251,191,36,.07);border:0.5px solid rgba(251,191,36,.25);border-radius:12px;padding:14px;margin-top:10px;">
+            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">🔄 Повторная сдача — комиссия 0$</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
+                <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Платформа</div>
+                <div style="font-size:18px;font-weight:800;color:#fbbf24;">0$</div>
+              </div>
+              <div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
+                <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Агент</div>
+                <div style="font-size:18px;font-weight:800;color:#fbbf24;">0$</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);text-align:center;">Сделка фиксируется без комиссии.<br>В счётчик и аналитику не идёт.</div>
+          </div>
+
           <!-- Ручное распределение — только для сценария 7 -->
           <div id="rn-manual-block" style="background:var(--bg3);border:0.5px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 14px;margin-top:10px;display:none;">
             <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение %</div>
@@ -1499,14 +1524,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbz91h5MQ6Fddc5YC5gjK-iSWm9ophzDVrNWG2Rsseh4UMvMoBKeIKf6zbDOWQcFnRrCkQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxU8R84SFsQ23CicmMz43DTFpZn9ocFHOVGdK-7r4NiNu-bjN691Q0IGWuH5JhxMIY9sA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
 
 // State
 // showRes, h2o, t0Res, t14Res, compSel — defined in AppState aliases below
-let rnExcl=true, rnType='rent', rnSub='long', rnLvl=90, rnSc=0, rnRecD='lt10';
+let rnExcl=true, rnType='rent', rnSub='long', rnLvl=90, rnSc=0, rnRecD='lt10', rnIsRerented=false;
 // ─── APP STATE (UI state grouped by domain) ─────────────
 // Access: AppState.rental.excl  etc.
 // Backward-compat aliases kept below for existing code.
@@ -1825,6 +1850,31 @@ function setRnType(v) {
   calcRental();
 }
 
+function setRnRerented(){
+  // Toggle пересдача
+  rnIsRerented = !rnIsRerented;
+  var btn = document.getElementById('rnsc-rerented');
+  var ck  = document.getElementById('rnsc-rerented-ck');
+  var blk = document.getElementById('rn-rerented-block');
+  if (rnIsRerented) {
+    btn.style.borderColor = 'rgba(251,191,36,.7)';
+    ck.style.color = '#fbbf24';
+    ck.style.borderColor = '#fbbf24';
+    blk.style.display = 'block';
+    // Блокируем поле комиссии
+    var commEl = document.getElementById('rn-comm');
+    if (commEl) { commEl.value = '0'; commEl.readOnly = true; commEl.style.opacity = '.5'; }
+  } else {
+    btn.style.borderColor = 'rgba(251,191,36,.3)';
+    ck.style.color = 'transparent';
+    ck.style.borderColor = 'rgba(251,191,36,.3)';
+    blk.style.display = 'none';
+    var commEl2 = document.getElementById('rn-comm');
+    if (commEl2) { commEl2.value = '50'; commEl2.readOnly = false; commEl2.style.opacity = '1'; }
+  }
+  rnCalc();
+}
+
 function setRnSc(i){
   rnSc=i;
   for(var j=0;j<8;j++){
@@ -1952,6 +2002,10 @@ var COMMISSION_RULES = {
 };
 
 function rnCalcDist(comm){
+  if (rnIsRerented) return [
+    {n:'Платформа', p:0, c:'var(--text3)', val:0},
+    {n:'Агент', p:0, c:'var(--accent)', val:0},
+  ];
   var CR = COMMISSION_RULES;
   var rows;
   switch(rnSc){
@@ -2078,7 +2132,7 @@ function rnUpd(){
   var dealNum=rnExcl?(' | Deal #'+(agentDeals+1)):'';
   var lines=[
     '#Rented'+dealNum+' | '+(rnExcl?'#Exclusive':'#NonExclusive')+' | '+rnLvl+'%',
-    'Сценарий: '+scNames[rnSc],
+    rnIsRerented ? '🔄 ПОВТОРНАЯ СДАЧА | Комиссия: 0$' : 'Сценарий: '+scNames[rnSc],
     '',
     'Link 🔗 '+link,
     'Price: $'+(price||'—'),
@@ -2207,7 +2261,7 @@ function sub(type, directData) {
       dist_rows: JSON.stringify(distRows),
       ad_link_advertising:document.getElementById('rn-link').value,
       cadastral_number:document.getElementById('rn-cadastral').value,
-      is_exclusive:rnExcl, deal_type:rnType, deal_subtype:rnSub,
+      is_exclusive:rnExcl, deal_type:rnType, deal_subtype:rnSub, is_rerented:rnIsRerented,
       rent_price:price, commission_pct:commPct,
       commission_total:comm, commission_platform:realPlatAmt, commission_agent:realAgentAmt,
       client_name:document.getElementById('rn-cname').value,
