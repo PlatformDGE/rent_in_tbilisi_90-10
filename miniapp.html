@@ -1506,101 +1506,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       </div>
     </div>
 
-  <!-- ══ ЛИЧНЫЙ КАБИНЕТ ══════════════════════════════════ -->
-  <div class="screen" id="tab-cabinet">
-    <div class="ht">Личный кабинет</div>
-
-    <!-- Загрузка -->
-    <div id="cab-loading" style="text-align:center;padding:60px 20px;">
-      <div class="spin" style="margin:0 auto 16px;"></div>
-      <div style="font-size:13px;color:var(--text3);">Загружаем данные...</div>
-    </div>
-
-    <!-- Ошибка -->
-    <div id="cab-error" style="display:none;text-align:center;padding:60px 20px;">
-      <div style="font-size:36px;margin-bottom:12px;">🔒</div>
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;">Нет доступа</div>
-      <div style="font-size:13px;color:var(--text3);">Аккаунт не найден в базе агентов</div>
-    </div>
-
-    <!-- Контент -->
-    <div id="cab-content" style="display:none;">
-
-      <!-- Профиль -->
-      <div style="background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:var(--r);padding:20px;margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div id="cab-avatar" style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">👤</div>
-          <div style="flex:1;">
-            <div id="cab-name" style="font-size:18px;font-weight:800;color:#fff;margin-bottom:2px;">—</div>
-            <div id="cab-level" style="font-size:12px;color:rgba(255,255,255,.8);">—</div>
-            <div id="cab-type" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;">—</div>
-          </div>
-          <div style="text-align:right;">
-            <div id="cab-deals" style="font-size:28px;font-weight:800;color:#fff;">0</div>
-            <div style="font-size:10px;color:rgba(255,255,255,.7);">сделок</div>
-          </div>
-        </div>
-        <!-- Прогресс -->
-        <div id="cab-progress-wrap" style="margin-top:14px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <div style="font-size:10px;color:rgba(255,255,255,.7);" id="cab-next-label">До следующего уровня</div>
-            <div style="font-size:10px;color:#fff;font-weight:700;" id="cab-next-val">—</div>
-          </div>
-          <div style="background:rgba(255,255,255,.2);border-radius:4px;height:4px;">
-            <div id="cab-progress-bar" style="background:#fff;border-radius:4px;height:4px;width:0%;transition:width .5s;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Счётчики рекрута (только для рекрутов) -->
-      <div id="cab-recruit-counters" style="display:none;margin-bottom:14px;">
-        <div class="sl">Мои показатели</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:20px;margin-bottom:4px;">📸</div>
-            <div id="cab-cnt-photo" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Фото</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:20px;margin-bottom:4px;">👁</div>
-            <div id="cab-cnt-showing" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Показы</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:20px;margin-bottom:4px;">📌</div>
-            <div id="cab-cnt-stickers" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Расклейка</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:20px;margin-bottom:4px;">🏠</div>
-            <div id="cab-cnt-rental" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Сдачи</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Договора -->
-      <div id="cab-contracts-sec" style="margin-bottom:14px;">
-        <div class="sl">Мои договора</div>
-        <div id="cab-contracts-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-          <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет активных договоров</div>
-        </div>
-      </div>
-
-      <!-- Мои сделки -->
-      <div id="cab-deals-sec" style="margin-bottom:14px;">
-        <div class="sl">Мои сделки</div>
-        <div id="cab-deals-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
-          <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет сделок</div>
-        </div>
-      </div>
-
-      <!-- CRM кнопка -->
-      <button class="sbtn navy" onclick="openCRM()" style="margin-bottom:8px;">🏠 Открыть CRM</button>
-
-    </div>
-  </div><!-- /cabinet -->
-
   </div><!-- /screens -->
 
   <nav class="bnav">
@@ -1608,7 +1513,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
     <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Reports</span></button>
     <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Contract</span></button>
     <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Agent</span></button>
-    <button class="bni" id="nav-cabinet" onclick="goTab('cabinet')"><span class="bni-ic">👤</span><span class="bni-lb">Кабинет</span></button>
+    <button class="bni" id="nav-crm" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
     <button class="bni" id="nav-admin" onclick="goTab('admin')" style="display:none;"><span class="bni-ic">⚙️</span><span class="bni-lb">Admin</span></button>
   </nav>
 </div>
@@ -1762,10 +1667,7 @@ function navigate(screenId, fromTab) {
 }
 
 // TABS — thin wrappers (all existing calls unchanged)
-function goTab(tab) {
-  navigate('tab-'+tab);
-  if (tab === 'cabinet') loadCabinet();
-}
+function goTab(tab) { navigate('tab-'+tab); }
 
 function openForm(type) {
   navigate('form-'+type, 'reports');
@@ -4055,122 +3957,6 @@ function subDaily(){
 var grAuthor='', grOpen={photo:false,showing:false,stickers:false,calling:false,deal:false};
 var grPickerCurrent=0, grPickerOffset=0, grIsDrag=false, grStartY=0, grStartOffset=0;
 var GR_ITEM_H=44;
-
-// ── ЛИЧНЫЙ КАБИНЕТ ─────────────────────────────────────
-var _cabData = null;
-
-function loadCabinet() {
-  if (_cabData) { renderCabinet(_cabData); return; }
-  var tgId = AppState.user && AppState.user.id ? String(AppState.user.id) : '';
-  if (!tgId) {
-    show('cab-error'); hide('cab-loading'); hide('cab-content'); return;
-  }
-  show('cab-loading'); hide('cab-error'); hide('cab-content');
-  var cbName = '__cab_' + Date.now();
-  window[cbName] = function(d) {
-    var sc = document.getElementById('sc-'+cbName);
-    if (sc) sc.remove();
-    delete window[cbName];
-    hide('cab-loading');
-    if (!d || d.error) { show('cab-error'); return; }
-    _cabData = d;
-    renderCabinet(d);
-  };
-  var sc = document.createElement('script');
-  sc.id = 'sc-'+cbName;
-  sc.src = API_URL + '?action=getPersonalData&tg_id=' + tgId + '&callback=' + cbName;
-  sc.onerror = function(){ hide('cab-loading'); show('cab-error'); delete window[cbName]; };
-  document.head.appendChild(sc);
-}
-
-function renderCabinet(d) {
-  show('cab-content'); hide('cab-loading'); hide('cab-error');
-  var agent = d.agent || {};
-
-  // Профиль
-  set('cab-name', agent.name || '—');
-  var lvl = parseInt(agent.level) || 50;
-  set('cab-level', 'Агент ' + lvl + '%');
-  set('cab-type', agent.type === 'recruit' ? '📋 Рекрут' : '🏆 Агент');
-
-  // Инициалы в аватаре
-  var initials = (agent.name||'?').substring(0,2).toUpperCase();
-  set('cab-avatar', initials);
-
-  // Счётчик сделок и прогресс
-  var counters = d.counters || {};
-  var deals = counters.deals || 0;
-  set('cab-deals', deals);
-
-  var nextAt = counters.nextAt || '';
-  var progressPct = 0;
-  if (deals < 11) progressPct = Math.round(deals/11*100);
-  else if (deals < 101) progressPct = Math.round((deals-11)/90*100);
-  else progressPct = 100;
-
-  set('cab-next-val', nextAt || (deals >= 100 ? '❄️ Snowflake' : ''));
-  set('cab-next-label', deals >= 100 ? 'Максимальный уровень' : 'До следующего уровня');
-  var bar = document.getElementById('cab-progress-bar');
-  if (bar) bar.style.width = progressPct + '%';
-
-  // Счётчики рекрута
-  if (d.recruitCounters) {
-    document.getElementById('cab-recruit-counters').style.display = '';
-    set('cab-cnt-photo',    d.recruitCounters.photo    || 0);
-    set('cab-cnt-showing',  d.recruitCounters.showing  || 0);
-    set('cab-cnt-stickers', d.recruitCounters.stickers || 0);
-    set('cab-cnt-rental',   d.recruitCounters.rental   || 0);
-  }
-
-  // Договора
-  var contracts = d.contracts || [];
-  var contractsEl = document.getElementById('cab-contracts-list');
-  if (contractsEl) {
-    if (!contracts.length) {
-      contractsEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет активных договоров</div>';
-    } else {
-      contractsEl.innerHTML = contracts.map(function(c) {
-        var color = c.daysLeft < 0 ? '#ef4444' : c.daysLeft <= 7 ? '#ef4444' : c.daysLeft <= 30 ? '#fbbf24' : '#22c55e';
-        var badge = c.daysLeft < 0 ? 'Истёк' : c.daysLeft + ' дн.';
-        var renewTip = c.renewType === 'new_contract' ? '📄 Новый договор' : '🔄 Rerented';
-        return '<div style="padding:12px 14px;border-bottom:0.5px solid var(--border);">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (c.link ? '<a href="'+c.link+'" style="color:var(--accent2);">Объект ↗</a>' : '—') + '</div>' +
-          '<div style="font-size:11px;font-weight:700;color:'+color+';background:'+color+'22;padding:2px 8px;border-radius:10px;">' + badge + '</div>' +
-          '</div>' +
-          '<div style="font-size:11px;color:var(--text2);">👤 ' + (c.clientTg||'—') + ' · 💰 ' + (c.price||0) + '$</div>' +
-          '<div style="font-size:11px;color:var(--text3);margin-top:2px;">📅 ' + (c.rentFrom||'—') + ' → ' + (c.rentTo||'—') + '</div>' +
-          '<div style="font-size:10px;color:var(--accent);margin-top:4px;">' + renewTip + '</div>' +
-          '</div>';
-      }).join('');
-    }
-  }
-
-  // Сделки
-  var deals2 = d.deals || [];
-  var dealsEl = document.getElementById('cab-deals-list');
-  if (dealsEl) {
-    if (!deals2.length) {
-      dealsEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет сделок</div>';
-    } else {
-      dealsEl.innerHTML = deals2.slice(0,10).map(function(deal) {
-        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--border);">' +
-          '<div>' +
-          '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (deal.isExcl ? '⭐ ' : '') + (deal.link ? '<a href="'+deal.link+'" style="color:var(--accent2);">Сделка #'+deal.dealNum+'</a>' : 'Сделка #'+deal.dealNum) + '</div>' +
-          '<div style="font-size:11px;color:var(--text3);">' + (deal.date||'—') + '</div>' +
-          '</div>' +
-          '<div style="text-align:right;">' +
-          '<div style="font-size:13px;font-weight:700;color:var(--green);">+' + (deal.comm||0) + '$</div>' +
-          '<div style="font-size:10px;color:var(--text3);">' + (deal.price||0) + '$ аренда</div>' +
-          '</div>' +
-          '</div>';
-      }).join('');
-    }
-  }
-}
-
-function show(id) { var el=document.getElementById(id); if(el) el.style.display=''; }
-function hide(id) { var el=document.getElementById(id); if(el) el.style.display='none'; }
 
 function openCalc(){ goTab('calc'); draftRestore('calc'); }
 function openGeneralReport(){
