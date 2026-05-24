@@ -1523,7 +1523,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxU8R84SFsQ23CicmMz43DTFpZn9ocFHOVGdK-7r4NiNu-bjN691Q0IGWuH5JhxMIY9sA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyFxipq1omonj7ov2W418I3OQta4E2DgG8ZKxo8sQ9S5UlT1ld1ETcKw51FlMAkDH20FQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2105,6 +2105,13 @@ function calcRental() {
   rnUpd();
 }
 
+function fmtDate(d){
+  if(!d) return '—';
+  var p=d.split('-');
+  if(p.length===3) return p[2]+'.'+p[1]+'.'+p[0];
+  return d;
+}
+
 function rnUpd(){
   var price=parseFloat(document.getElementById('rn-price').value)||0;
   var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
@@ -2128,7 +2135,7 @@ function rnUpd(){
   var scNames=['Агент','Агент+показ','Агент передал','Рекрут 5сд','Рекрут 10сд','Объект рекрута','Передача клиента','Ручное распределение'];
   // Номер сделки агента (если эксклюзив)
   var agentDeals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
-  var dealNum=rnExcl?(' | Deal #'+(agentDeals+1)):'';
+  var dealNum=(!rnIsRerented&&rnExcl)?(' | Deal #'+(agentDeals+1)):'';
   var lines=[
     '#Rented'+dealNum+' | '+(rnExcl?'#Exclusive':'#NonExclusive')+' | '+rnLvl+'%',
     rnIsRerented ? '🔄 RERENTED | Комиссия: 0$' : 'Сценарий: '+scNames[rnSc],
@@ -2147,7 +2154,7 @@ function rnUpd(){
   lines.push('');
   lines.push('Client: '+cname+' '+cphone);
   lines.push('Owner: '+oname+' '+ophone);
-  lines.push('Date of Rent: '+from+' – '+to);
+  lines.push('Date of Rent: '+fmtDate(from)+' – '+fmtDate(to));
   if(total>0){lines.push('');lines.push('H2O T0: '+rnH2O.c+'/'+rnH2O.o+'/'+rnH2O.p+' → '+(total>=7?'✓ Чистая':'✗ Грязная')+' ('+total+'/9)');}
   if(comment){lines.push('');lines.push('Комментарий: '+comment);}
   var el=document.getElementById('rental-preview');
@@ -2267,8 +2274,8 @@ function sub(type, directData) {
       client_phone:document.getElementById('rn-cphone').value,
       owner_name:document.getElementById('rn-oname').value,
       owner_phone:document.getElementById('rn-ophone').value,
-      rent_from:document.getElementById('rn-from').value,
-      rent_to:document.getElementById('rn-to').value,
+      rent_from:fmtDate(document.getElementById('rn-from').value),
+      rent_to:fmtDate(document.getElementById('rn-to').value),
       t0_h2o_client:rnH2O.c, t0_h2o_owner:rnH2O.o, t0_h2o_process:rnH2O.p,
       t0_result:rnT0Res,
       t0_comment:(document.getElementById('t0-comment')||{}).value||'',
