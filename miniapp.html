@@ -1861,15 +1861,15 @@ function setRnRerented(){
     ck.style.borderColor = '#fbbf24';
     blk.style.display = 'block';
     // Блокируем поле комиссии
-    var commEl = document.getElementById('rn-comm');
-    if (commEl) { commEl.value = '0'; commEl.readOnly = true; commEl.style.opacity = '.5'; }
+    var commPctEl = document.getElementById('rn-comm-pct');
+    if (commPctEl) { commPctEl.value = '0'; commPctEl.readOnly = true; commPctEl.style.opacity = '.5'; commPctEl.dispatchEvent(new Event('input')); }
   } else {
     btn.style.borderColor = 'rgba(251,191,36,.3)';
     ck.style.color = 'transparent';
     ck.style.borderColor = 'rgba(251,191,36,.3)';
     blk.style.display = 'none';
-    var commEl2 = document.getElementById('rn-comm');
-    if (commEl2) { commEl2.value = '50'; commEl2.readOnly = false; commEl2.style.opacity = '1'; }
+    var commPctEl2 = document.getElementById('rn-comm-pct');
+    if (commPctEl2) { commPctEl2.value = '50'; commPctEl2.readOnly = false; commPctEl2.style.opacity = '1'; commPctEl2.dispatchEvent(new Event('input')); }
   }
   rnCalc();
 }
