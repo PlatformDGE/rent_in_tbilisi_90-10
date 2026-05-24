@@ -985,17 +985,17 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свои проценты</div>
             </div>
           </div>
-          <!-- Повторная сдача — отдельный сценарий без комиссии -->
+          <!-- Rerented — отдельный сценарий без комиссии -->
             <div class="rn-sc-btn" id="rnsc-rerented" onclick="setRnRerented()" style="background:rgba(251,191,36,.07);border:0.5px solid rgba(251,191,36,.3);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;grid-column:span 2;">
               <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(251,191,36,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck" id="rnsc-rerented-ck">✓</div>
               <div style="font-size:20px;margin-bottom:7px;">🔄</div>
-              <div style="font-size:12px;font-weight:700;color:#fbbf24;margin-bottom:3px;">Повторная сдача</div>
+              <div style="font-size:12px;font-weight:700;color:#fbbf24;margin-bottom:3px;">Rerented</div>
               <div style="font-size:10px;color:var(--text3);line-height:1.4;">Новый клиент · Комиссия 0$ · Без счётчика</div>
             </div>
 
           <!-- Блок повторной сдачи -->
           <div id="rn-rerented-block" style="display:none;background:rgba(251,191,36,.07);border:0.5px solid rgba(251,191,36,.25);border-radius:12px;padding:14px;margin-top:10px;">
-            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">🔄 Повторная сдача — комиссия 0$</div>
+            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">🔄 Rerented — комиссия 0$</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
               <div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
                 <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Платформа</div>
@@ -2131,15 +2131,15 @@ function rnUpd(){
   var dealNum=rnExcl?(' | Deal #'+(agentDeals+1)):'';
   var lines=[
     '#Rented'+dealNum+' | '+(rnExcl?'#Exclusive':'#NonExclusive')+' | '+rnLvl+'%',
-    rnIsRerented ? '🔄 ПОВТОРНАЯ СДАЧА | Комиссия: 0$' : 'Сценарий: '+scNames[rnSc],
+    rnIsRerented ? '🔄 RERENTED | Комиссия: 0$' : 'Сценарий: '+scNames[rnSc],
     '',
     'Link 🔗 '+link,
     'Price: $'+(price||'—'),
-    'Commission: $'+(comm||'—'),
-    'Platforms Commission'+(platRow.p?(' ('+platRow.p+'%)'):'')+ ': $'+platRow.val,
-    '#'+agentName+' Commission'+(agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+agRow.val,
+    'Commission: $'+(rnIsRerented ? '0 (Rerented)' : (comm||'—')),
+    'Platforms Commission'+(rnIsRerented?'':platRow.p?(' ('+platRow.p+'%)'):'')+ ': $'+(rnIsRerented?0:platRow.val),
+    '#'+agentName+' Commission'+(rnIsRerented?'':agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+(rnIsRerented?0:agRow.val),
   ];
-  if(recRow) lines.push(recRow.n+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
+  if(!rnIsRerented && recRow) lines.push(recRow.n+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
   if(rnSc===6){var csEl=document.getElementById('rn-client-src');var csName=csEl&&csEl.value?csEl.value:'—';lines.push('Передал клиента: '+csName+' (10%)');}
   lines.push('');
   lines.push('Cadastral number:');
