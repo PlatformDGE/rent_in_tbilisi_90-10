@@ -1511,7 +1511,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
     <div class="ht" id="cab-title">Личный кабинет</div>
 
     <!-- Загрузка -->
-    <div id="cab-screen-loading" style="text-align:center;padding:60px 20px;">
+    <div id="cab-screen-loading" style="display:none;text-align:center;padding:60px 20px;">
       <div class="spin" style="margin:0 auto 16px;"></div>
       <div style="font-size:13px;color:var(--text3);">Загружаем...</div>
     </div>
@@ -4146,13 +4146,40 @@ function cabShow(s){
 }
 
 function loadCabinet(){
+  // Reset state каждый раз
+  _cabCurrentAgent=null;_cabCalData=null;_cabSelDay=null;
+
   var tg=window.Telegram&&window.Telegram.WebApp,tgId='',tgUn='';
-  if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user){tgId=String(tg.initDataUnsafe.user.id||'');tgUn=tg.initDataUnsafe.user.username||'';}
-  if(!tgId&&AppState.user){tgId=String(AppState.user.id||'');tgUn=AppState.user.username||'';}
+  if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user){
+    tgId=String(tg.initDataUnsafe.user.id||'');
+    tgUn=tg.initDataUnsafe.user.username||'';
+  }
+  if(!tgId&&AppState&&AppState.user){
+    tgId=String(AppState.user&&AppState.user.id||'');
+    tgUn=(AppState.user&&AppState.user.username)||'';
+  }
+
   _cabIsSA=SUPER_IDS_CAB.indexOf(tgId)!==-1||SUPER_UN_CAB.indexOf((tgUn||'').toLowerCase())!==-1;
-  if(_cabIsSA){cabShow('list');cabLoadAgentList();}
-  else if(tgId||tgUn){cabShow('loading');cabFetchAgent('',tgId,tgUn,function(d){if(!d||d.error){cabShow('error');return;}_cabCurrentAgent=d.agent?d.agent.name:'';cabRenderDetail(d);cabShow('detail');if(_cabCurrentAgent)cabLoadCalendar(_cabCurrentAgent);});}
-  else cabShow('error');
+
+  if(_cabIsSA){
+    cabShow('list');
+    cabLoadAgentList();
+  } else if(tgId||tgUn){
+    cabShow('loading');
+    cabFetchAgent('',tgId,tgUn,function(d){
+      if(!d||d.error){cabShow('error');return;}
+      _cabCurrentAgent=d.agent?d.agent.name:'';
+      cabRenderDetail(d);
+      cabShow('detail');
+      if(_cabCurrentAgent) cabLoadCalendar(_cabCurrentAgent);
+    });
+  } else {
+    // В браузере без Telegram — показываем детальный вид для теста
+    cabShow('detail');
+    set('cab-name','Тест');
+    set('cab-level-label','🏆 Агент · 90%');
+    set('cab-deals-count','—');
+  }
 }
 
 function cabFetchAgent(name,tgId,tgUn,cb){
