@@ -1551,7 +1551,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             <div style="font-size:10px;color:rgba(255,255,255,.7);">сделок</div>
           </div>
         </div>
-        <div style="margin-top:12px;background:rgba(255,255,255,.2);border-radius:4px;height:4px;">
+        <div id="cab-progress-wrap" style="display:none;margin-top:12px;background:rgba(255,255,255,.2);border-radius:4px;height:4px;">
           <div id="cab-progress-bar" style="background:#fff;border-radius:4px;height:4px;width:0%;transition:width .5s;"></div>
         </div>
       </div>
@@ -1658,6 +1658,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
       </div>
 
+      <!-- Make Foto кнопка -->
+      <button onclick="openMakeFoto()" style="width:100%;padding:12px;border-radius:10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        📸 Make Foto From Platform
+      </button>
+
+      <!-- Ближайший договор (предупреждение) -->
+      <div id="cab-contract-alert" style="display:none;margin-bottom:12px;"></div>
+
       <!-- Договора -->
       <div class="sl" id="cab-contracts-title">Договора</div>
       <div id="cab-contracts-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;">
@@ -1693,7 +1701,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzMoBQ95qbO9B7fgAPrPYpA5J4wSFEY-U4UiEnCMTojrvbWSldzNLmlMqcA_Ag7XHmttQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzCL_gIMy2DJ4TUAnb4YW_2sdHMeuNWr7Lf4p3Ohk6qipc1QZpRGhw1ag5Nz3E34SL0yw/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -4270,12 +4278,46 @@ function cabRenderDetail(d){
   cabSet('cab-level-label',(ag.type==='recruit'?'📋 Рекрут':'🏆 Агент')+' · '+lvl+'%');
   cabSet('cab-next-val',cn.nextAt||'');
   cabSet('cab-deals-count',dc);
+  // Прогресс бар — только для рекрутов
+  var pw=document.getElementById('cab-progress-wrap');
+  if(pw) pw.style.display=ag.type==='recruit'?'':'none';
   var bar=document.getElementById('cab-progress-bar');if(bar)setTimeout(function(){bar.style.width=prog+'%';},100);
   var rb=document.getElementById('cab-recruit-block');if(rb)rb.style.display=d.recruitCounters?'':'none';
   if(d.recruitCounters){var rc=d.recruitCounters;cabSet('cab-cnt-photo',rc.photo||0);cabSet('cab-cnt-showing',rc.showing||0);cabSet('cab-cnt-stickers',rc.stickers||0);cabSet('cab-cnt-rental',rc.rental||0);}
+  // Предупреждение о ближайшем окончании (в течение 30 дней)
+  var alertEl=document.getElementById('cab-contract-alert');
+  if(alertEl){
+    var nearest=ct.filter(function(c){return c.daysLeft>=0&&c.daysLeft<=30;});
+    if(nearest.length){
+      var nc=nearest[0],col=nc.daysLeft<=7?'#ef4444':'#f59e0b';
+      alertEl.style.display='';
+      alertEl.innerHTML='<div style="background:'+col+'18;border:1px solid '+col+'44;border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:center;">' +
+        '<div style="font-size:22px;">⚠️</div>' +
+        '<div><div style="font-size:12px;font-weight:700;color:'+col+';">Договор заканчивается через '+nc.daysLeft+' дн.</div>' +
+        '<div style="font-size:11px;color:var(--text2);margin-top:2px;">📍 '+(nc.address||'Адрес не указан')+' · '+(nc.price||0)+'$/мес · до '+(nc.rentTo||'—')+'</div>' +
+        '<div style="font-size:10px;color:var(--text3);margin-top:2px;">'+(nc.renewType==='new_contract'?'📄 Нужен новый договор':'🔄 Оформи Rerented')+'</div></div></div>';
+    } else alertEl.style.display='none';
+  }
   var cti=document.getElementById('cab-contracts-title');if(cti)cti.textContent='Договора ('+ct.length+')';
   var cli=document.getElementById('cab-contracts-list');
-  if(cli)cli.innerHTML=!ct.length?'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>':ct.map(function(c){var col=c.daysLeft<0?'#ef4444':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';var badge=c.daysLeft<0?'Истёк':c.daysLeft+' дн.';var renew=c.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented';return '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;"><div style="font-size:12px;font-weight:600;color:var(--text);">'+(c.link?'<a href="'+c.link+'" style="color:var(--accent2);">Объект →</a>':'Объект')+' · '+(c.price||0)+'$/мес</div><div style="font-size:11px;font-weight:700;color:'+col+';background:'+col+'22;padding:2px 7px;border-radius:8px;">'+badge+'</div></div><div style="font-size:11px;color:var(--text2);">👤 '+(c.clientTg||'—')+' · 🏠 '+(c.ownerName||'—')+'</div><div style="font-size:10px;color:var(--text3);">'+(c.rentFrom||'—')+' → '+(c.rentTo||'—')+' · '+renew+'</div></div>';}).join('');
+  if(cli)cli.innerHTML=!ct.length?'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>':ct.map(function(c){
+    var col=c.daysLeft<0?'#ef4444':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';
+    var badge=c.daysLeft<0?'Истёк':c.daysLeft+' дн.';
+    var renew=c.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented';
+    var addr=c.address||'Адрес не указан';
+    return '<div style="padding:11px 14px;border-bottom:0.5px solid var(--border);">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">' +
+      '<div style="font-size:13px;font-weight:700;color:var(--text);flex:1;margin-right:8px;">📍 '+addr+'</div>' +
+      '<div style="font-size:11px;font-weight:700;color:'+col+';background:'+col+'22;padding:2px 8px;border-radius:8px;white-space:nowrap;">'+badge+'</div>' +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:4px;">'+(c.price||0)+'$/мес</div>' +
+      '<div style="font-size:11px;color:var(--text2);margin-bottom:2px;">👤 '+(c.clientName||'—')+(c.clientPhone?' <span style=\"color:var(--text3)\">'+c.clientPhone+'</span>':'')+'</div>' +
+      '<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">🏠 '+(c.ownerName||'—')+(c.ownerPhone?' <span style=\"color:var(--text3)\">'+c.ownerPhone+'</span>':'')+'</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="font-size:10px;color:var(--text3);">'+(c.rentFrom||'—')+' → '+(c.rentTo||'—')+'</div>' +
+      '<div style="font-size:10px;color:var(--accent);">'+renew+'</div>' +
+      '</div></div>';
+  }).join('');
   var fd=dl.filter(function(x){return x.comm>0||x.price>0;});
   var dti=document.getElementById('cab-deals-title');if(dti)dti.textContent='Сделки ('+fd.length+')';
   var dli=document.getElementById('cab-deals-list');
