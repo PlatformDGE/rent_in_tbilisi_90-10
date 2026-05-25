@@ -4134,6 +4134,15 @@ var GR_ITEM_H=44;
 // ── ЛИЧНЫЙ КАБИНЕТ ─────────────────────────────────────
 var _cabData = null;
 
+// ── Глобальные хелперы ──────────────────────────────────
+function cabSet(id,val){ var e=document.getElementById(id); if(e) e.textContent=String(val); }
+function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
+function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
+
+
+function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
+function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
+
 // ═══ ЛИЧНЫЙ КАБИНЕТ ════════════════════════════════════
 
 var _cabCurrentAgent=null,_cabIsSA=false,_cabCalData=null,_cabWeekStart=null,_cabSelDay=null,_cabOwners=[],_cabCache={};
@@ -4178,9 +4187,9 @@ function loadCabinet(){
   } else {
     // В браузере без Telegram — показываем детальный вид для теста
     cabShow('detail');
-    set('cab-name','Тест');
-    set('cab-level-label','🏆 Агент · 90%');
-    set('cab-deals-count','—');
+    cabSet('cab-name','Тест');
+    cabSet('cab-level-label','🏆 Агент · 90%');
+    cabSet('cab-deals-count','—');
   }
 }
 
@@ -4233,9 +4242,9 @@ function cabOpenAgent(name){
     if(!d||d.error){
       // Показываем detail с пустыми данными
       cabShow('detail');
-      set('cab-name',name);
-      set('cab-level-label','Данные не найдены');
-      set('cab-deals-count','—');
+      cabSet('cab-name',name);
+      cabSet('cab-level-label','Данные не найдены');
+      cabSet('cab-deals-count','—');
       return;
     }
     cabShow('detail');
@@ -4256,14 +4265,14 @@ function cabRenderDetail(d){
   var lvl=parseInt(ag.level)||50,dc=cn.deals||0;
   var prog=lvl>=90?100:lvl>=70?Math.round((dc-11)/90*100):Math.round(dc/11*100);
   prog=Math.min(100,Math.max(0,prog));
-  set('cab-avatar',(ag.name||'?').substring(0,2).toUpperCase());
-  set('cab-name',ag.name||'—');
-  set('cab-level-label',(ag.type==='recruit'?'📋 Рекрут':'🏆 Агент')+' · '+lvl+'%');
-  set('cab-next-val',cn.nextAt||'');
-  set('cab-deals-count',dc);
+  cabSet('cab-avatar',(ag.name||'?').substring(0,2).toUpperCase());
+  cabSet('cab-name',ag.name||'—');
+  cabSet('cab-level-label',(ag.type==='recruit'?'📋 Рекрут':'🏆 Агент')+' · '+lvl+'%');
+  cabSet('cab-next-val',cn.nextAt||'');
+  cabSet('cab-deals-count',dc);
   var bar=document.getElementById('cab-progress-bar');if(bar)setTimeout(function(){bar.style.width=prog+'%';},100);
   var rb=document.getElementById('cab-recruit-block');if(rb)rb.style.display=d.recruitCounters?'':'none';
-  if(d.recruitCounters){var rc=d.recruitCounters;set('cab-cnt-photo',rc.photo||0);set('cab-cnt-showing',rc.showing||0);set('cab-cnt-stickers',rc.stickers||0);set('cab-cnt-rental',rc.rental||0);}
+  if(d.recruitCounters){var rc=d.recruitCounters;cabSet('cab-cnt-photo',rc.photo||0);cabSet('cab-cnt-showing',rc.showing||0);cabSet('cab-cnt-stickers',rc.stickers||0);cabSet('cab-cnt-rental',rc.rental||0);}
   var cti=document.getElementById('cab-contracts-title');if(cti)cti.textContent='Договора ('+ct.length+')';
   var cli=document.getElementById('cab-contracts-list');
   if(cli)cli.innerHTML=!ct.length?'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>':ct.map(function(c){var col=c.daysLeft<0?'#ef4444':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';var badge=c.daysLeft<0?'Истёк':c.daysLeft+' дн.';var renew=c.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented';return '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;"><div style="font-size:12px;font-weight:600;color:var(--text);">'+(c.link?'<a href="'+c.link+'" style="color:var(--accent2);">Объект →</a>':'Объект')+' · '+(c.price||0)+'$/мес</div><div style="font-size:11px;font-weight:700;color:'+col+';background:'+col+'22;padding:2px 7px;border-radius:8px;">'+badge+'</div></div><div style="font-size:11px;color:var(--text2);">👤 '+(c.clientTg||'—')+' · 🏠 '+(c.ownerName||'—')+'</div><div style="font-size:10px;color:var(--text3);">'+(c.rentFrom||'—')+' → '+(c.rentTo||'—')+' · '+renew+'</div></div>';}).join('');
