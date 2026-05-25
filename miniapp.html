@@ -1506,6 +1506,207 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       </div>
     </div>
 
+  <!-- ══ ЛИЧНЫЙ КАБИНЕТ ══════════════════════════════════ -->
+  <div class="screen" id="tab-cabinet">
+    <div class="ht">Личный кабинет</div>
+
+    <!-- Загрузка -->
+    <div id="cab-loading" style="text-align:center;padding:60px 20px;">
+      <div class="spin" style="margin:0 auto 16px;"></div>
+      <div style="font-size:13px;color:var(--text3);">Загружаем данные...</div>
+    </div>
+
+    <!-- Ошибка -->
+    <div id="cab-error" style="display:none;text-align:center;padding:60px 20px;">
+      <div style="font-size:36px;margin-bottom:12px;">🔒</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;">Нет доступа</div>
+      <div style="font-size:13px;color:var(--text3);">Аккаунт не найден в базе агентов</div>
+    </div>
+
+    <!-- Контент -->
+    <div id="cab-content" style="display:none;">
+
+      <!-- Профиль -->
+      <div style="background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:var(--r);padding:20px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div id="cab-avatar" style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">👤</div>
+          <div style="flex:1;">
+            <div id="cab-name" style="font-size:18px;font-weight:800;color:#fff;margin-bottom:2px;">—</div>
+            <div id="cab-level" style="font-size:12px;color:rgba(255,255,255,.8);">—</div>
+            <div id="cab-type" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;">—</div>
+          </div>
+          <div style="text-align:right;">
+            <div id="cab-deals" style="font-size:28px;font-weight:800;color:#fff;">0</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.7);">сделок</div>
+          </div>
+        </div>
+        <!-- Прогресс -->
+        <div id="cab-progress-wrap" style="margin-top:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <div style="font-size:10px;color:rgba(255,255,255,.7);" id="cab-next-label">До следующего уровня</div>
+            <div style="font-size:10px;color:#fff;font-weight:700;" id="cab-next-val">—</div>
+          </div>
+          <div style="background:rgba(255,255,255,.2);border-radius:4px;height:4px;">
+            <div id="cab-progress-bar" style="background:#fff;border-radius:4px;height:4px;width:0%;transition:width .5s;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Счётчики рекрута (только для рекрутов) -->
+      <div id="cab-recruit-counters" style="display:none;margin-bottom:14px;">
+        <div class="sl">Мои показатели</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:4px;">📸</div>
+            <div id="cab-cnt-photo" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
+            <div style="font-size:9px;color:var(--text3);">Фото</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:4px;">👁</div>
+            <div id="cab-cnt-showing" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
+            <div style="font-size:9px;color:var(--text3);">Показы</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:4px;">📌</div>
+            <div id="cab-cnt-stickers" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
+            <div style="font-size:9px;color:var(--text3);">Расклейка</div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:4px;">🏠</div>
+            <div id="cab-cnt-rental" style="font-size:18px;font-weight:800;color:var(--accent2);">0</div>
+            <div style="font-size:9px;color:var(--text3);">Сдачи</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Календарь -->
+      <div id="cab-calendar-sec" style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="sl" style="margin:0;">📅 Календарь</div>
+          <button onclick="cabShowAddForm()" style="font-size:11px;padding:5px 12px;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:inherit;">+ Показ</button>
+        </div>
+
+        <!-- Переключатель недели -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <button onclick="cabWeekPrev()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">‹</button>
+          <div id="cab-week-label" style="font-size:12px;font-weight:600;color:var(--text2);">—</div>
+          <button onclick="cabWeekNext()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">›</button>
+        </div>
+
+        <!-- Дни недели -->
+        <div id="cab-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px;">
+        </div>
+
+        <!-- События дня -->
+        <div id="cab-day-events" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:60px;">
+          <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Выбери день</div>
+        </div>
+      </div>
+
+      <!-- Форма добавления показа -->
+      <div id="cab-add-form" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">🏠 Новый показ</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Дата</div>
+            <input type="date" id="cab-f-date" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;">
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Время</div>
+            <input type="time" id="cab-f-time" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;">
+          </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Ссылка на объявление</div>
+          <input type="url" id="cab-f-link" placeholder="https://t.me/rent_tbilisi_ge/..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:8px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Адрес объекта</div>
+          <input type="text" id="cab-f-addr" placeholder="Saburtalo, Nutsubidze 19..." oninput="cabSearchOwner(this.value)" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
+          <div id="cab-owner-hint" style="display:none;font-size:11px;color:var(--green);margin-top:3px;padding:6px 8px;background:rgba(34,197,94,.1);border-radius:6px;"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Собственник</div>
+            <input type="text" id="cab-f-owner" placeholder="Имя..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Телефон собств.</div>
+            <input type="tel" id="cab-f-owner-phone" placeholder="+995..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Клиент</div>
+            <input type="text" id="cab-f-client" placeholder="Имя клиента..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Телефон клиента</div>
+            <input type="tel" id="cab-f-client-phone" placeholder="+995..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
+          </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Рекрут / Второй агент</div>
+          <select id="cab-f-recruit" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;">
+            <option value="">— не выбрано —</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Комментарий</div>
+          <textarea id="cab-f-comment" rows="2" placeholder="Заметки..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;resize:none;box-sizing:border-box;"></textarea>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+          <button onclick="cabSubmitShowing()" style="flex:1;padding:10px;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;">✓ Сохранить</button>
+          <button onclick="cabHideForm()" style="padding:10px 14px;border-radius:8px;background:transparent;color:var(--text2);border:1px solid var(--border);cursor:pointer;font-size:13px;font-family:inherit;">Отмена</button>
+        </div>
+      </div>
+
+      <!-- Договора -->
+      <div id="cab-contracts-sec" style="margin-bottom:14px;">
+        <div class="sl">Мои договора</div>
+        <div id="cab-contracts-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+          <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет активных договоров</div>
+        </div>
+      </div>
+
+      <!-- Мои сделки -->
+      <div id="cab-deals-sec" style="margin-bottom:14px;">
+        <div class="sl">Мои сделки</div>
+        <div id="cab-deals-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+          <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет сделок</div>
+        </div>
+      </div>
+
+      <!-- CRM кнопка -->
+      <button class="sbtn navy" onclick="openCRM()" style="margin-bottom:8px;">🏠 Открыть CRM</button>
+
+    </div>
+
+    <!-- Суперадмин: список агентов -->
+    <div id="cab-superadmin" style="display:none;">
+      <div class="sl">👑 Суперадмин — все агенты</div>
+      <div id="cab-sa-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;">
+        <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
+      </div>
+      <div id="cab-sa-detail" style="display:none;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <button onclick="closeSADetail()" style="font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">← Назад</button>
+          <div id="cab-sa-agent-name" style="font-size:15px;font-weight:700;color:var(--text);"></div>
+        </div>
+        <div id="cab-sa-content"></div>
+      </div>
+    </div>
+
+  </div><!-- /cabinet -->
+
   </div><!-- /screens -->
 
   <nav class="bnav">
@@ -1513,7 +1714,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
     <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Reports</span></button>
     <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Contract</span></button>
     <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Agent</span></button>
-    <button class="bni" id="nav-crm" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
+    <button class="bni" id="nav-cabinet" onclick="goTab('cabinet')"><span class="bni-ic">👤</span><span class="bni-lb">Кабинет</span></button>
     <button class="bni" id="nav-admin" onclick="goTab('admin')" style="display:none;"><span class="bni-ic">⚙️</span><span class="bni-lb">Admin</span></button>
   </nav>
 </div>
@@ -1523,7 +1724,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbyFxipq1omonj7ov2W418I3OQta4E2DgG8ZKxo8sQ9S5UlT1ld1ETcKw51FlMAkDH20FQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzMoBQ95qbO9B7fgAPrPYpA5J4wSFEY-U4UiEnCMTojrvbWSldzNLmlMqcA_Ag7XHmttQ/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -1667,7 +1868,10 @@ function navigate(screenId, fromTab) {
 }
 
 // TABS — thin wrappers (all existing calls unchanged)
-function goTab(tab) { navigate('tab-'+tab); }
+function goTab(tab) {
+  navigate('tab-'+tab);
+  if (tab === 'cabinet') loadCabinet();
+}
 
 function openForm(type) {
   navigate('form-'+type, 'reports');
@@ -3957,6 +4161,503 @@ function subDaily(){
 var grAuthor='', grOpen={photo:false,showing:false,stickers:false,calling:false,deal:false};
 var grPickerCurrent=0, grPickerOffset=0, grIsDrag=false, grStartY=0, grStartOffset=0;
 var GR_ITEM_H=44;
+
+// ── ЛИЧНЫЙ КАБИНЕТ ─────────────────────────────────────
+var _cabData = null;
+
+function loadCabinet() {
+  if (_cabData) { renderCabinet(_cabData); return; }
+  // Читаем tgId из всех возможных источников
+  var tgId = '';
+  var tgUsername = '';
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    tgId = String(tg.initDataUnsafe.user.id || '');
+    tgUsername = tg.initDataUnsafe.user.username || '';
+  }
+  if (!tgId && AppState.user && AppState.user.id) tgId = String(AppState.user.id);
+  if (!tgUsername && AppState.user && AppState.user.username) tgUsername = AppState.user.username;
+
+  if (!tgId && !tgUsername) {
+    show('cab-error'); hide('cab-loading'); hide('cab-content'); return;
+  }
+  // Суперадмин — показываем список всех агентов
+  var SUPER = ['6577307207','6014886676','114756692'];
+  var SUPER_UN = ['kvirkvel1a','davidtibelashvili'];
+  if (SUPER.indexOf(tgId) !== -1 || SUPER_UN.indexOf((tgUsername||'').toLowerCase()) !== -1) {
+    hide('cab-loading'); hide('cab-error'); hide('cab-content');
+    show('cab-superadmin');
+    loadSAList();
+    return;
+  }
+  show('cab-loading'); hide('cab-error'); hide('cab-content');
+  var cbName = '__cab_' + Date.now();
+  window[cbName] = function(d) {
+    var sc = document.getElementById('sc-'+cbName);
+    if (sc) sc.remove();
+    delete window[cbName];
+    hide('cab-loading');
+    if (!d || d.error) { show('cab-error'); return; }
+    _cabData = d;
+    renderCabinet(d);
+  };
+  var sc = document.createElement('script');
+  sc.id = 'sc-'+cbName;
+  sc.src = API_URL + '?action=getPersonalData&tg_id=' + tgId + '&tg_username=' + encodeURIComponent('@'+tgUsername) + '&callback=' + cbName;
+  sc.onerror = function(){ hide('cab-loading'); show('cab-error'); delete window[cbName]; };
+  document.head.appendChild(sc);
+}
+
+function renderCabinet(d) {
+  show('cab-content'); hide('cab-loading'); hide('cab-error');
+  var agent = d.agent || {};
+
+  // Профиль
+  set('cab-name', agent.name || '—');
+  var lvl = parseInt(agent.level) || 50;
+  set('cab-level', 'Агент ' + lvl + '%');
+  set('cab-type', agent.type === 'recruit' ? '📋 Рекрут' : '🏆 Агент');
+
+  // Инициалы в аватаре
+  var initials = (agent.name||'?').substring(0,2).toUpperCase();
+  set('cab-avatar', initials);
+
+  // Счётчик сделок и прогресс
+  var counters = d.counters || {};
+  var deals = counters.deals || 0;
+  set('cab-deals', deals);
+
+  var nextAt = counters.nextAt || '';
+  var progressPct = 0;
+  if (deals < 11) progressPct = Math.round(deals/11*100);
+  else if (deals < 101) progressPct = Math.round((deals-11)/90*100);
+  else progressPct = 100;
+
+  set('cab-next-val', nextAt || (deals >= 100 ? '❄️ Snowflake' : ''));
+  set('cab-next-label', deals >= 100 ? 'Максимальный уровень' : 'До следующего уровня');
+  var bar = document.getElementById('cab-progress-bar');
+  if (bar) bar.style.width = progressPct + '%';
+
+  // Загружаем данные календаря
+  if (agent.name) loadCabCalendar(agent.name);
+  else cabInitWeek();
+
+  // Счётчики рекрута
+  if (d.recruitCounters) {
+    document.getElementById('cab-recruit-counters').style.display = '';
+    set('cab-cnt-photo',    d.recruitCounters.photo    || 0);
+    set('cab-cnt-showing',  d.recruitCounters.showing  || 0);
+    set('cab-cnt-stickers', d.recruitCounters.stickers || 0);
+    set('cab-cnt-rental',   d.recruitCounters.rental   || 0);
+  }
+
+  // Договора
+  var contracts = d.contracts || [];
+  var contractsEl = document.getElementById('cab-contracts-list');
+  if (contractsEl) {
+    if (!contracts.length) {
+      contractsEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет активных договоров</div>';
+    } else {
+      contractsEl.innerHTML = contracts.map(function(c) {
+        var color = c.daysLeft < 0 ? '#ef4444' : c.daysLeft <= 7 ? '#ef4444' : c.daysLeft <= 30 ? '#fbbf24' : '#22c55e';
+        var badge = c.daysLeft < 0 ? 'Истёк' : c.daysLeft + ' дн.';
+        var renewTip = c.renewType === 'new_contract' ? '📄 Новый договор' : '🔄 Rerented';
+        return '<div style="padding:12px 14px;border-bottom:0.5px solid var(--border);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (c.link ? '<a href="'+c.link+'" style="color:var(--accent2);">Объект ↗</a>' : '—') + '</div>' +
+          '<div style="font-size:11px;font-weight:700;color:'+color+';background:'+color+'22;padding:2px 8px;border-radius:10px;">' + badge + '</div>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--text2);">👤 ' + (c.clientTg||'—') + ' · 💰 ' + (c.price||0) + '$</div>' +
+          '<div style="font-size:11px;color:var(--text3);margin-top:2px;">📅 ' + (c.rentFrom||'—') + ' → ' + (c.rentTo||'—') + '</div>' +
+          '<div style="font-size:10px;color:var(--accent);margin-top:4px;">' + renewTip + '</div>' +
+          '</div>';
+      }).join('');
+    }
+  }
+
+  // Сделки
+  var deals2 = d.deals || [];
+  var dealsEl = document.getElementById('cab-deals-list');
+  if (dealsEl) {
+    if (!deals2.length) {
+      dealsEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет сделок</div>';
+    } else {
+      dealsEl.innerHTML = deals2.slice(0,10).map(function(deal) {
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--border);">' +
+          '<div>' +
+          '<div style="font-size:12px;font-weight:700;color:var(--text);">' + (deal.isExcl ? '⭐ ' : '') + (deal.link ? '<a href="'+deal.link+'" style="color:var(--accent2);">Сделка #'+deal.dealNum+'</a>' : 'Сделка #'+deal.dealNum) + '</div>' +
+          '<div style="font-size:11px;color:var(--text3);">' + (deal.date||'—') + '</div>' +
+          '</div>' +
+          '<div style="text-align:right;">' +
+          '<div style="font-size:13px;font-weight:700;color:var(--green);">+' + (deal.comm||0) + '$</div>' +
+          '<div style="font-size:10px;color:var(--text3);">' + (deal.price||0) + '$ аренда</div>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+  }
+}
+
+// ── Суперадмин функции ─────────────────────────────────
+var _saCache = {};
+
+function loadSAList() {
+  var listEl = document.getElementById('cab-sa-list');
+  if (!listEl) return;
+  var all = [];
+  (AGENTS||[]).forEach(function(a){ all.push({name:a.name, tg:a.telegram, type:'agent', level:a.level||50}); });
+  (RECRUITS||[]).forEach(function(r){ all.push({name:r.name, tg:r.telegram, type:'recruit', level:50}); });
+  // Если AGENTS ещё не загружен — грузим напрямую
+  if (!all.length) {
+    listEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>';
+    var cbName = '__sal_' + Date.now();
+    window[cbName] = function(d) {
+      var sc = document.getElementById('sc-'+cbName); if(sc) sc.remove();
+      delete window[cbName];
+      if (d && d.agents) { AGENTS = d.agents; RECRUITS = d.recruits || []; }
+      loadSAList();
+    };
+    var sc = document.createElement('script');
+    sc.id = 'sc-'+cbName;
+    sc.src = API_URL + '?action=getLists&callback=' + cbName;
+    document.head.appendChild(sc);
+    return;
+  }
+  listEl.innerHTML = all.map(function(a) {
+    return '<div onclick="openSAAgent(this.dataset.name,this.dataset.tg)" data-name="'+a.name+'" data-tg="'+a.tg+'" style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;">' +
+      '<div>' +
+      '<div style="font-size:13px;font-weight:600;color:var(--text);">' + a.name + '</div>' +
+      '<div style="font-size:11px;color:var(--text3);">' + (a.type==='agent'?'🏆 Агент':'📋 Рекрут') + ' · ' + a.tg + '</div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--accent2);">→</div>' +
+      '</div>';
+  }).join('');
+}
+
+function openSAAgent(name, tg) {
+  hide('cab-sa-list');
+  show('cab-sa-detail');
+  set('cab-sa-agent-name', name);
+  var detailEl = document.getElementById('cab-sa-content');
+  if (!detailEl) return;
+  if (_saCache[tg]) { renderSADetail(_saCache[tg], detailEl); return; }
+  detailEl.innerHTML = '<div style="text-align:center;padding:30px;"><div class="spin" style="margin:0 auto;"></div></div>';
+  // Ищем tg_id в TG_Users через checkAccess по username
+  // Используем имя для поиска в getPersonalData по username
+  var cbName = '__sa_' + Date.now();
+  window[cbName] = function(d) {
+    var sc = document.getElementById('sc-'+cbName);
+    if (sc) sc.remove();
+    delete window[cbName];
+    if (!d || d.error) { detailEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);">Нет данных для ' + name + '</div>'; return; }
+    _saCache[tg] = d;
+    renderSADetail(d, detailEl);
+  };
+  var sc = document.createElement('script');
+  sc.id = 'sc-'+cbName;
+  sc.src = API_URL + '?action=getPersonalData&agent_name=' + encodeURIComponent(name) + '&callback=' + cbName;
+  sc.onerror = function(){ detailEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);">Ошибка загрузки</div>'; };
+  document.head.appendChild(sc);
+}
+
+function renderSADetail(d, el) {
+  var agent = d.agent || {};
+  var counters = d.counters || {};
+  var contracts = d.contracts || [];
+  var deals = d.deals || [];
+  var html = '';
+  // Профиль
+  html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;">';
+  html += '<div style="display:flex;justify-content:space-between;">';
+  html += '<div><div style="font-size:12px;color:var(--text3);">Уровень</div><div style="font-size:15px;font-weight:700;color:var(--accent2);">Агент '+(agent.level||50)+'%</div></div>';
+  html += '<div style="text-align:right;"><div style="font-size:12px;color:var(--text3);">Сделок</div><div style="font-size:22px;font-weight:800;color:var(--green);">'+(counters.deals||0)+'</div></div>';
+  html += '</div>';
+  if (counters.nextAt) html += '<div style="font-size:11px;color:var(--text3);margin-top:6px;">'+counters.nextAt+'</div>';
+  html += '</div>';
+  // Договора
+  html += '<div class="sl">Договора ('+contracts.length+')</div>';
+  html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">';
+  if (!contracts.length) {
+    html += '<div style="padding:10px 14px;text-align:center;color:var(--text3);font-size:12px;">Нет</div>';
+  } else {
+    contracts.slice(0,5).forEach(function(c) {
+      var color = c.daysLeft < 0 ? '#ef4444' : c.daysLeft <= 7 ? '#ef4444' : c.daysLeft <= 30 ? '#fbbf24' : '#22c55e';
+      html += '<div style="padding:8px 14px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;">';
+      html += '<div style="font-size:11px;color:var(--text);">'+(c.price||0)+'$ · '+(c.clientTg||'—')+'</div>';
+      html += '<div style="font-size:11px;font-weight:700;color:'+color+';">'+(c.daysLeft<0?'Истёк':c.daysLeft+' дн.')+'</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div>';
+  // Сделки
+  html += '<div class="sl">Последние сделки ('+deals.length+')</div>';
+  html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">';
+  if (!deals.length) {
+    html += '<div style="padding:10px 14px;text-align:center;color:var(--text3);font-size:12px;">Нет</div>';
+  } else {
+    deals.slice(0,5).forEach(function(deal) {
+      html += '<div style="padding:8px 14px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;">';
+      html += '<div style="font-size:11px;color:var(--text);">'+(deal.isExcl?'⭐ ':'')+'#'+deal.dealNum+' · '+(deal.date||'—')+'</div>';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--green);">+'+(deal.comm||0)+'$</div>';
+      html += '</div>';
+    });
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function closeSADetail() {
+  hide('cab-sa-detail');
+  show('cab-sa-list');
+}
+
+// ── КАЛЕНДАРЬ КАБИНЕТА ─────────────────────────────────
+var _cabCalData   = null;  // данные из getCabinetData
+var _cabWeekStart = null;  // понедельник текущей недели
+var _cabSelDay    = null;  // выбранный день YYYY-MM-DD
+var _cabOwners    = [];    // кэш собственников
+
+function cabGetMonday(d) {
+  var dt = new Date(d); dt.setHours(0,0,0,0);
+  var day = dt.getDay(); var diff = day === 0 ? -6 : 1 - day;
+  dt.setDate(dt.getDate() + diff); return dt;
+}
+
+function cabInitWeek() {
+  if (!_cabWeekStart) _cabWeekStart = cabGetMonday(new Date());
+  cabRenderWeek();
+}
+
+function cabWeekPrev() { _cabWeekStart.setDate(_cabWeekStart.getDate()-7); cabRenderWeek(); }
+function cabWeekNext() { _cabWeekStart.setDate(_cabWeekStart.getDate()+7); cabRenderWeek(); }
+
+function cabRenderWeek() {
+  var ms = _cabWeekStart;
+  var me = new Date(ms); me.setDate(ms.getDate()+6);
+  var fmt = function(d){ return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2); };
+  var lbl = document.getElementById('cab-week-label');
+  if (lbl) lbl.textContent = fmt(ms) + ' – ' + fmt(me);
+
+  var grid = document.getElementById('cab-week-grid');
+  if (!grid) return;
+  var days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  var today = new Date(); today.setHours(0,0,0,0);
+  var html = '';
+  for (var i = 0; i < 7; i++) {
+    var dt = new Date(ms); dt.setDate(ms.getDate()+i);
+    var iso = dt.toISOString().slice(0,10);
+    var isToday = dt.getTime() === today.getTime();
+    var isSel   = iso === _cabSelDay;
+    var hasDot  = _cabCalData ? cabDayHasEvents(iso) : false;
+    html += '<div onclick="cabSelectDay(this.dataset.iso)" data-iso="'+iso+'" style="text-align:center;padding:6px 2px;border-radius:8px;cursor:pointer;' +
+      (isSel ? 'background:var(--accent);' : isToday ? 'background:rgba(99,102,241,.15);' : '') + '">' +
+      '<div style="font-size:9px;color:' + (isSel?'#fff':'var(--text3)') + ';">' + days[i] + '</div>' +
+      '<div style="font-size:14px;font-weight:'+(isToday||isSel?'700':'400')+';color:'+(isSel?'#fff':'var(--text)')+';margin:2px 0;">' + dt.getDate() + '</div>' +
+      '<div style="height:4px;display:flex;justify-content:center;">' + (hasDot ? '<div style="width:4px;height:4px;border-radius:50%;background:'+(isSel?'#fff':'var(--accent)')+'"></div>' : '') + '</div>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+
+  // Если день не выбран — выбираем сегодня или первый день недели
+  if (!_cabSelDay) {
+    var todayIso = today.toISOString().slice(0,10);
+    _cabSelDay = todayIso;
+  }
+  cabRenderDayEvents(_cabSelDay);
+}
+
+function cabDayHasEvents(iso) {
+  if (!_cabCalData) return false;
+  var d = _cabCalData;
+  return (d.showings||[]).some(function(s){ return (s.date||'').slice(0,10) === iso || (s.timestamp||'').slice(0,10) === iso; }) ||
+         (d.deals||[]).some(function(s){ return s.t14_date && cabFmtToIso(s.t14_date) === iso; }) ||
+         (d.photos||[]).some(function(s){ return (s.date||'').slice(0,10) === iso || (s.timestamp||'').slice(0,10) === iso; });
+}
+
+function cabFmtToIso(ddmmyyyy) {
+  if (!ddmmyyyy) return '';
+  var p = ddmmyyyy.split('.');
+  if (p.length === 3) return p[2]+'-'+p[1]+'-'+p[0];
+  return ddmmyyyy.slice(0,10);
+}
+
+function cabSelectDay(iso) {
+  _cabSelDay = iso;
+  cabRenderWeek();
+}
+
+function cabRenderDayEvents(iso) {
+  var el = document.getElementById('cab-day-events');
+  if (!el) return;
+  if (!_cabCalData) { el.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Загрузка...</div>'; return; }
+
+  var events = [];
+  var d = _cabCalData;
+
+  // Показы
+  (d.showings||[]).forEach(function(s) {
+    var sDate = (s.date||'').slice(0,10) || (s.timestamp||'').slice(0,10);
+    if (sDate !== iso) return;
+    events.push({ type:'showing', time:s.show_time||'', icon:'🏠', title:'Показ' + (s.address?' — '+s.address:''), sub: (s.client_name||s.client_tg||'') + (s.show_time?' в '+s.show_time:''), detail: s });
+  });
+
+  // T14 дедлайны
+  (d.deals||[]).forEach(function(s) {
+    if (!s.t14_date) return;
+    if (cabFmtToIso(s.t14_date) !== iso) return;
+    events.push({ type:'t14', time:'', icon:'⏰', title:'T14 — ' + (s.link||'объект'), sub: 'Клиент: ' + (s.client_name||'—'), detail: s });
+  });
+
+  // Фото
+  (d.photos||[]).forEach(function(s) {
+    var sDate = (s.date||'').slice(0,10) || (s.timestamp||'').slice(0,10);
+    if (sDate !== iso) return;
+    events.push({ type:'photo', time:'', icon:'📸', title:'Фото — ' + (s.address||'—'), sub: 'Рекрут: ' + (s.recruit||'—'), detail: s });
+  });
+
+  if (!events.length) {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px;">Нет событий</div>'; return;
+  }
+
+  var colors = { showing:'#3b82f6', t14:'#f59e0b', photo:'#8b5cf6' };
+  el.innerHTML = events.map(function(ev) {
+    var col = colors[ev.type] || 'var(--accent)';
+    return '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start;">' +
+      '<div style="font-size:18px;flex-shrink:0;margin-top:1px;">' + ev.icon + '</div>' +
+      '<div style="flex:1;">' +
+      '<div style="font-size:12px;font-weight:600;color:var(--text);">' + ev.title + '</div>' +
+      (ev.sub ? '<div style="font-size:11px;color:var(--text3);margin-top:1px;">' + ev.sub + '</div>' : '') +
+      '</div>' +
+      (ev.time ? '<div style="font-size:11px;font-weight:700;color:'+col+';flex-shrink:0;">' + ev.time + '</div>' : '') +
+      '</div>';
+  }).join('');
+}
+
+// ── ЗАГРУЗКА ДАННЫХ КАБИНЕТА ────────────────────────────
+function loadCabCalendar(agentName) {
+  var cbName = '__caldata_' + Date.now();
+  window[cbName] = function(d) {
+    var sc = document.getElementById('sc-'+cbName); if(sc) sc.remove();
+    delete window[cbName];
+    if (!d || d.error) return;
+    _cabCalData = d;
+    _cabOwners  = d.owners || [];
+    cabInitWeek();
+    // Заполняем селект рекрутов
+    var sel = document.getElementById('cab-f-recruit');
+    if (sel) {
+      (RECRUITS||[]).forEach(function(r){
+        var opt = document.createElement('option');
+        opt.value = r.name; opt.textContent = r.name + ' (рекрут)';
+        sel.appendChild(opt);
+      });
+      (AGENTS||[]).forEach(function(a){
+        var opt = document.createElement('option');
+        opt.value = a.name; opt.textContent = a.name + ' (агент)';
+        sel.appendChild(opt);
+      });
+    }
+  };
+  var sc = document.createElement('script');
+  sc.id = 'sc-'+cbName;
+  sc.src = API_URL + '?action=getCabinetData&agent_name=' + encodeURIComponent(agentName) + '&callback=' + cbName;
+  sc.onerror = function(){ delete window[cbName]; };
+  document.head.appendChild(sc);
+}
+
+// ── ФОРМА ПОКАЗА ────────────────────────────────────────
+function cabShowAddForm() {
+  show('cab-add-form');
+  var di = document.getElementById('cab-f-date');
+  if (di && _cabSelDay) di.value = _cabSelDay;
+  var ti = document.getElementById('cab-f-time');
+  if (ti && !ti.value) ti.value = '10:00';
+}
+
+function cabHideForm() { hide('cab-add-form'); }
+
+function cabSearchOwner(addr) {
+  if (!addr || addr.length < 3 || !_cabOwners.length) {
+    hide('cab-owner-hint'); return;
+  }
+  var q = addr.toLowerCase();
+  var found = _cabOwners.filter(function(o){ return o.address && o.address.toLowerCase().indexOf(q) !== -1; })[0];
+  var hint = document.getElementById('cab-owner-hint');
+  if (found && hint) {
+    hint.style.display = '';
+    hint.textContent = '✓ ' + found.name + ' · ' + found.phone;
+    var ownerEl = document.getElementById('cab-f-owner');
+    var ownerPhEl = document.getElementById('cab-f-owner-phone');
+    if (ownerEl && !ownerEl.value) ownerEl.value = found.name;
+    if (ownerPhEl && !ownerPhEl.value) ownerPhEl.value = found.phone;
+  } else if (hint) { hint.style.display = 'none'; }
+}
+
+function cabSubmitShowing() {
+  var date        = document.getElementById('cab-f-date').value;
+  var time        = document.getElementById('cab-f-time').value;
+  var link        = document.getElementById('cab-f-link').value;
+  var addr        = document.getElementById('cab-f-addr').value;
+  var owner       = document.getElementById('cab-f-owner').value;
+  var ownerPhone  = document.getElementById('cab-f-owner-phone').value;
+  var client      = document.getElementById('cab-f-client').value;
+  var clientPhone = document.getElementById('cab-f-client-phone').value;
+  var recruit     = document.getElementById('cab-f-recruit').value;
+  var comment     = document.getElementById('cab-f-comment').value;
+
+  if (!date || !addr) { showToast('Укажи дату и адрес','warn'); return; }
+
+  var agentName = _cabData && _cabData.agent ? _cabData.agent.name : (AGENTS && AGENTS[0] ? AGENTS[0].name : '');
+
+  var payload = {
+    type: 'showing',
+    data: {
+      recruit:            recruit || agentName,
+      mentor:             agentName,
+      district_address:   addr,
+      ad_link_advertising: link,
+      client_telegram:    client,
+      result:             'Запланирован',
+      date:               date,
+      show_time:          time,
+      owner_phone:        ownerPhone,
+      client_name:        client,
+      client_phone:       clientPhone,
+      listing_link:       link,
+      photo_url:          comment,
+    }
+  };
+
+  send(payload, function(ok) {
+    if (ok) {
+      showToast('Показ добавлен ✓');
+      cabHideForm();
+      // Добавляем в локальный кэш
+      if (_cabCalData) {
+        _cabCalData.showings.unshift({
+          timestamp: new Date().toISOString(),
+          recruit: recruit || agentName,
+          mentor: agentName,
+          address: addr,
+          ad_link: link,
+          client_tg: client,
+          result: 'Запланирован',
+          date: date,
+          show_time: time,
+          owner_phone: ownerPhone,
+          client_name: client,
+          client_phone: clientPhone,
+          listing_link: link,
+        });
+      }
+      _cabSelDay = date;
+      cabRenderWeek();
+    } else { showToast('Ошибка сохранения','warn'); }
+  });
+}
+
+function show(id) { var el=document.getElementById(id); if(el) el.style.display=''; }
+function hide(id) { var el=document.getElementById(id); if(el) el.style.display='none'; }
 
 function openCalc(){ goTab('calc'); draftRestore('calc'); }
 function openGeneralReport(){
