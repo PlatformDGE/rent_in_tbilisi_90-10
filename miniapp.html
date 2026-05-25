@@ -1589,16 +1589,16 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <!-- Переключатель недели -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <button onclick="cabWeekPrev()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">‹</button>
-          <div id="cab-week-label" style="font-size:12px;font-weight:600;color:var(--text2);">—</div>
+          <div id="cab-my-week-label" style="font-size:12px;font-weight:600;color:var(--text2);">—</div>
           <button onclick="cabWeekNext()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">›</button>
         </div>
 
         <!-- Дни недели -->
-        <div id="cab-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px;">
+        <div id="cab-my-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px;">
         </div>
 
         <!-- События дня -->
-        <div id="cab-day-events" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:60px;">
+        <div id="cab-my-day-events" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:60px);">
           <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Выбери день</div>
         </div>
       </div>
@@ -1694,31 +1694,32 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
     <div id="cab-superadmin" style="display:none;">
       <!-- Шапка суперадмина -->
       <div id="cab-sa-header"></div>
-      <!-- Календарь суперадмина -->
-      <div id="cab-sa-calendar" style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div class="sl" style="margin:0;">📅 Мой календарь</div>
-          <button onclick="cabShowAddForm()" style="font-size:11px;padding:5px 12px;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:inherit;">+ Показ</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <button onclick="cabWeekPrev()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">‹</button>
-          <div id="cab-week-label" style="font-size:12px;font-weight:600;color:var(--text2);">—</div>
-          <button onclick="cabWeekNext()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">›</button>
-        </div>
-        <div id="cab-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px;"></div>
-        <div id="cab-day-events" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:60px;">
-          <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Выбери день</div>
-        </div>
-      </div>
+
       <div class="sl">👑 Суперадмин — все агенты</div>
       <div id="cab-sa-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;">
         <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
       </div>
       <div id="cab-sa-detail" style="display:none;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-          <button onclick="closeSADetail()" style="font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">← Назад</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <button onclick="closeSADetail()" style="font-size:11px;padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">← Назад</button>
           <div id="cab-sa-agent-name" style="font-size:15px;font-weight:700;color:var(--text);"></div>
         </div>
+        <!-- Календарь агента -->
+        <div id="cab-sa-cal-wrap" style="display:none;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div class="sl" style="margin:0;">📅 Календарь</div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <button onclick="cabWeekPrev()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">‹</button>
+            <div id="cab-week-label" style="font-size:12px;font-weight:600;color:var(--text2);">—</div>
+            <button onclick="cabWeekNext()" style="font-size:18px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 8px;">›</button>
+          </div>
+          <div id="cab-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px;"></div>
+          <div id="cab-day-events" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:50px;">
+            <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Выбери день</div>
+          </div>
+        </div>
+        <!-- Данные агента -->
         <div id="cab-sa-content"></div>
       </div>
     </div>
@@ -4543,10 +4544,16 @@ function cabRenderWeek() {
   var ms = _cabWeekStart;
   var me = new Date(ms); me.setDate(ms.getDate()+6);
   var fmt = function(d){ return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2); };
-  var lbl = document.getElementById('cab-week-label');
+  // Use SA detail IDs if visible, else regular
+  var saDetail = document.getElementById('cab-sa-detail');
+  var useSA = saDetail && saDetail.style.display !== 'none';
+  var lblId  = useSA ? 'cab-week-label'  : 'cab-my-week-label';
+  var gridId = useSA ? 'cab-week-grid'   : 'cab-my-week-grid';
+  var evtId  = useSA ? 'cab-day-events'  : 'cab-my-day-events';
+  var lbl = document.getElementById(lblId);
   if (lbl) lbl.textContent = fmt(ms) + ' – ' + fmt(me);
 
-  var grid = document.getElementById('cab-week-grid');
+  var grid = document.getElementById(gridId);
   if (!grid) return;
   var days = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
   var today = new Date(); today.setHours(0,0,0,0);
@@ -4571,7 +4578,7 @@ function cabRenderWeek() {
     var todayIso = today.toISOString().slice(0,10);
     _cabSelDay = todayIso;
   }
-  cabRenderDayEvents(_cabSelDay);
+  cabRenderDayEvents(_cabSelDay, evtId);
 }
 
 function cabDayHasEvents(iso) {
@@ -4594,8 +4601,8 @@ function cabSelectDay(iso) {
   cabRenderWeek();
 }
 
-function cabRenderDayEvents(iso) {
-  var el = document.getElementById('cab-day-events');
+function cabRenderDayEvents(iso, evtId) {
+  var el = document.getElementById(evtId || 'cab-day-events');
   if (!el) return;
   if (!_cabCalData) { el.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Загрузка...</div>'; return; }
 
