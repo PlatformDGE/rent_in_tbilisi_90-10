@@ -4146,8 +4146,10 @@ function cabShow(s){
 }
 
 function loadCabinet(){
-  // Reset state каждый раз
+  // Reset navigation state but keep agent cache
   _cabCurrentAgent=null;_cabCalData=null;_cabSelDay=null;
+  var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='none';
+  var t=document.getElementById('cab-title');if(t)t.textContent='Личный кабинет';
 
   var tg=window.Telegram&&window.Telegram.WebApp,tgId='',tgUn='';
   if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user){
@@ -4198,12 +4200,20 @@ function cabFetchAgent(name,tgId,tgUn,cb){
 function cabLoadAgentList(){
   var listEl=document.getElementById('cab-agents-list');if(!listEl)return;
   var all=[];
-  (AGENTS||[]).forEach(function(a){all.push({name:a.name,tg:a.telegram,type:'agent'});});
-  (RECRUITS||[]).forEach(function(r){all.push({name:r.name,tg:r.telegram,type:'recruit'});});
+  (typeof AGENTS!=='undefined'&&AGENTS||[]).forEach(function(a){if(a&&a.name)all.push({name:a.name,tg:a.telegram||'',type:'agent'});});
+  (typeof RECRUITS!=='undefined'&&RECRUITS||[]).forEach(function(r){if(r&&r.name)all.push({name:r.name,tg:r.telegram||'',type:'recruit'});});
   if(!all.length){
+    listEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:12px;"><div class=\"spin\" style=\"margin:0 auto 8px;\"></div>Загрузка...</div>';
     var cn='__agl_'+Date.now();
-    window[cn]=function(d){var sc=document.getElementById('sc-'+cn);if(sc)sc.remove();delete window[cn];if(d&&d.agents){AGENTS=d.agents;RECRUITS=d.recruits||[];}cabLoadAgentList();};
-    var sc=document.createElement('script');sc.id='sc-'+cn;sc.src=API_URL+'?action=getLists&callback='+cn;document.head.appendChild(sc);return;
+    window[cn]=function(d){
+      var sc=document.getElementById('sc-'+cn);if(sc)sc.remove();delete window[cn];
+      if(d&&d.agents){AGENTS=d.agents;RECRUITS=d.recruits||[];}
+      cabLoadAgentList();
+    };
+    var sc=document.createElement('script');sc.id='sc-'+cn;
+    sc.src=API_URL+'?action=getLists&callback='+cn;
+    sc.onerror=function(){listEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);">Ошибка загрузки</div>';};
+    document.head.appendChild(sc);return;
   }
   listEl.innerHTML=all.map(function(a){
     return '<div onclick="cabOpenAgent(\''+a.name+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;">' +
@@ -4215,13 +4225,22 @@ function cabLoadAgentList(){
 
 function cabOpenAgent(name){
   _cabCurrentAgent=name;_cabCalData=null;_cabSelDay=null;
-  var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='';
-  var t=document.getElementById('cab-title');if(t)t.textContent=name;
-  set('cab-name',name);set('cab-level-label','...');set('cab-deals-count','...');
-  cabShow('detail');
+  // Сначала показываем экран загрузки
+  cabShow('loading');
   cabFetchAgent(name,'','',function(d){
-    if(!d||d.error){set('cab-level-label','Нет данных');set('cab-deals-count','—');return;}
-    cabRenderDetail(d);cabLoadCalendar(name);
+    var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='';
+    var t=document.getElementById('cab-title');if(t)t.textContent=name;
+    if(!d||d.error){
+      // Показываем detail с пустыми данными
+      cabShow('detail');
+      set('cab-name',name);
+      set('cab-level-label','Данные не найдены');
+      set('cab-deals-count','—');
+      return;
+    }
+    cabShow('detail');
+    cabRenderDetail(d);
+    cabLoadCalendar(name);
   });
 }
 
