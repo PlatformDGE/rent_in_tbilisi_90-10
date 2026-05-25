@@ -1702,6 +1702,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div id="cab-sa-agent-name" style="font-size:15px;font-weight:700;color:var(--text);"></div>
         </div>
         <div id="cab-sa-content"></div>
+        <button class="sbtn navy" onclick="openCRM()" style="margin-top:10px;width:100%;">🏠 Открыть CRM</button>
       </div>
     </div>
 
@@ -4181,12 +4182,26 @@ function loadCabinet() {
   if (!tgId && !tgUsername) {
     show('cab-error'); hide('cab-loading'); hide('cab-content'); return;
   }
-  // Суперадмин — показываем список всех агентов
+  // Суперадмин — показываем и список агентов И свой календарь
   var SUPER = ['6577307207','6014886676','114756692'];
   var SUPER_UN = ['kvirkvel1a','davidtibelashvili'];
   if (SUPER.indexOf(tgId) !== -1 || SUPER_UN.indexOf((tgUsername||'').toLowerCase()) !== -1) {
-    hide('cab-loading'); hide('cab-error'); hide('cab-content');
-    show('cab-superadmin');
+    hide('cab-loading'); hide('cab-error');
+    show('cab-content'); show('cab-superadmin');
+    // Грузим личные данные суперадмина
+    var cbSA = '__cabsa_' + Date.now();
+    window[cbSA] = function(d) {
+      var sc = document.getElementById('sc-'+cbSA); if(sc) sc.remove();
+      delete window[cbSA];
+      if (d && !d.error) {
+        _cabData = d;
+        renderCabinet(d);
+      }
+    };
+    var scSA = document.createElement('script');
+    scSA.id = 'sc-'+cbSA;
+    scSA.src = API_URL + '?action=getPersonalData&tg_id=' + tgId + '&tg_username=' + encodeURIComponent('@'+tgUsername) + '&callback=' + cbSA;
+    document.head.appendChild(scSA);
     loadSAList();
     return;
   }
@@ -4349,7 +4364,10 @@ function openSAAgent(name, tg) {
     var sc = document.getElementById('sc-'+cbName);
     if (sc) sc.remove();
     delete window[cbName];
-    if (!d || d.error) { detailEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);">Нет данных для ' + name + '</div>'; return; }
+    if (!d || d.error) {
+      detailEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);">Нет данных для ' + name + '<br><small style="font-size:10px;opacity:.5;">' + (d&&d.error||'unknown') + '</small></div>';
+      return;
+    }
     _saCache[tg] = d;
     renderSADetail(d, detailEl);
   };
@@ -4361,48 +4379,71 @@ function openSAAgent(name, tg) {
 }
 
 function renderSADetail(d, el) {
-  var agent = d.agent || {};
+  var agent    = d.agent    || {};
   var counters = d.counters || {};
-  var contracts = d.contracts || [];
-  var deals = d.deals || [];
+  var contracts= d.contracts|| [];
+  var deals    = d.deals    || [];
   var html = '';
+
   // Профиль
-  html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;">';
-  html += '<div style="display:flex;justify-content:space-between;">';
-  html += '<div><div style="font-size:12px;color:var(--text3);">Уровень</div><div style="font-size:15px;font-weight:700;color:var(--accent2);">Агент '+(agent.level||50)+'%</div></div>';
-  html += '<div style="text-align:right;"><div style="font-size:12px;color:var(--text3);">Сделок</div><div style="font-size:22px;font-weight:800;color:var(--green);">'+(counters.deals||0)+'</div></div>';
-  html += '</div>';
-  if (counters.nextAt) html += '<div style="font-size:11px;color:var(--text3);margin-top:6px;">'+counters.nextAt+'</div>';
-  html += '</div>';
+  html += '<div style="background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:var(--r);padding:14px;margin-bottom:10px;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+    '<div>' +
+    '<div style="font-size:16px;font-weight:800;color:#fff;">'+(agent.name||'—')+'</div>' +
+    '<div style="font-size:12px;color:rgba(255,255,255,.8);">Агент '+(agent.level||50)+'%</div>' +
+    (counters.nextAt?'<div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:2px;">'+counters.nextAt+'</div>':'') +
+    '</div>' +
+    '<div style="text-align:right;">' +
+    '<div style="font-size:28px;font-weight:800;color:#fff;">'+(counters.deals||0)+'</div>' +
+    '<div style="font-size:10px;color:rgba(255,255,255,.7);">сделок</div>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
+
   // Договора
   html += '<div class="sl">Договора ('+contracts.length+')</div>';
   html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">';
   if (!contracts.length) {
-    html += '<div style="padding:10px 14px;text-align:center;color:var(--text3);font-size:12px;">Нет</div>';
+    html += '<div style="padding:10px 14px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>';
   } else {
-    contracts.slice(0,5).forEach(function(c) {
+    contracts.forEach(function(c) {
       var color = c.daysLeft < 0 ? '#ef4444' : c.daysLeft <= 7 ? '#ef4444' : c.daysLeft <= 30 ? '#fbbf24' : '#22c55e';
-      html += '<div style="padding:8px 14px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;">';
-      html += '<div style="font-size:11px;color:var(--text);">'+(c.price||0)+'$ · '+(c.clientTg||'—')+'</div>';
-      html += '<div style="font-size:11px;font-weight:700;color:'+color+';">'+(c.daysLeft<0?'Истёк':c.daysLeft+' дн.')+'</div>';
-      html += '</div>';
+      var badge = c.daysLeft < 0 ? 'Истёк' : c.daysLeft+' дн.';
+      html += '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">' +
+        '<div style="font-size:12px;font-weight:600;color:var(--text);">' + (c.link?'<a href="'+c.link+'" style="color:var(--accent2);">Объект →</a>':'Объект') + '</div>' +
+        '<div style="font-size:11px;font-weight:700;color:'+color+';background:'+color+'22;padding:2px 7px;border-radius:8px;">'+badge+'</div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text2);">'+( c.price||0)+'$/мес · '+( c.clientTg||'—')+'</div>' +
+        '<div style="font-size:10px;color:var(--text3);">'+( c.rentFrom||'—')+' → '+(c.rentTo||'—')+'</div>' +
+        '</div>';
     });
   }
   html += '</div>';
+
   // Сделки
-  html += '<div class="sl">Последние сделки ('+deals.length+')</div>';
-  html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">';
+  html += '<div class="sl">Сделки ('+deals.length+')</div>';
+  html += '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">';
   if (!deals.length) {
-    html += '<div style="padding:10px 14px;text-align:center;color:var(--text3);font-size:12px;">Нет</div>';
+    html += '<div style="padding:10px 14px;text-align:center;color:var(--text3);font-size:12px;">Нет сделок</div>';
   } else {
-    deals.slice(0,5).forEach(function(deal) {
-      html += '<div style="padding:8px 14px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;">';
-      html += '<div style="font-size:11px;color:var(--text);">'+(deal.isExcl?'⭐ ':'')+'#'+deal.dealNum+' · '+(deal.date||'—')+'</div>';
-      html += '<div style="font-size:11px;font-weight:700;color:var(--green);">+'+(deal.comm||0)+'$</div>';
-      html += '</div>';
+    deals.slice(0,10).forEach(function(deal) {
+      if (!deal.comm && !deal.price) return;
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:0.5px solid var(--border);">' +
+        '<div>' +
+        '<div style="font-size:12px;color:var(--text);">' + (deal.isExcl?'⭐ ':'') + (deal.link?'<a href="'+deal.link+'" style="color:var(--accent2);">Объект</a>':'Объект') + '</div>' +
+        '<div style="font-size:10px;color:var(--text3);">'+(deal.date||'—')+'</div>' +
+        '</div>' +
+        '<div style="text-align:right;">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--green);">+'+(deal.comm||0)+'$</div>' +
+        '<div style="font-size:10px;color:var(--text3);">'+(deal.price||0)+'$ аренда</div>' +
+        '</div>' +
+        '</div>';
     });
   }
   html += '</div>';
+
+  html += '<button class="sbtn navy" onclick="openCRM()" style="width:100%;">🏠 Открыть CRM</button>';
   el.innerHTML = html;
 }
 
