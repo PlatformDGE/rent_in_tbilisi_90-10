@@ -4210,11 +4210,25 @@ var _saCache = {};
 function loadSAList() {
   var listEl = document.getElementById('cab-sa-list');
   if (!listEl) return;
-  // Берём список из уже загруженных AGENTS + RECRUITS
   var all = [];
   (AGENTS||[]).forEach(function(a){ all.push({name:a.name, tg:a.telegram, type:'agent', level:a.level||50}); });
   (RECRUITS||[]).forEach(function(r){ all.push({name:r.name, tg:r.telegram, type:'recruit', level:50}); });
-  if (!all.length) { listEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);">Нет данных</div>'; return; }
+  // Если AGENTS ещё не загружен — грузим напрямую
+  if (!all.length) {
+    listEl.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>';
+    var cbName = '__sal_' + Date.now();
+    window[cbName] = function(d) {
+      var sc = document.getElementById('sc-'+cbName); if(sc) sc.remove();
+      delete window[cbName];
+      if (d && d.agents) { AGENTS = d.agents; RECRUITS = d.recruits || []; }
+      loadSAList();
+    };
+    var sc = document.createElement('script');
+    sc.id = 'sc-'+cbName;
+    sc.src = API_URL + '?action=getLists&callback=' + cbName;
+    document.head.appendChild(sc);
+    return;
+  }
   listEl.innerHTML = all.map(function(a) {
     return '<div onclick="openSAAgent(this.dataset.name,this.dataset.tg)" data-name="'+a.name+'" data-tg="'+a.tg+'" style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;">' +
       '<div>' +
