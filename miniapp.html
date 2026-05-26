@@ -1698,7 +1698,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxNT4790D-xgwF9KcYj7u9uZ1fBOEKinCo5bnCf3ZRDNZtQPPDUudIb00l4fY-2n2RTjg/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz3MFVyX_geCWyGzRMZJWWLO2hcoOX5BxdoGf0XaJXiGKnNfdcKYOEJkuGBFN6mS4M-0w/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -4390,20 +4390,15 @@ function cabFmtToIso(s){
 // Кнопки связи: звонок, WhatsApp, Telegram
 function cabContactBtns(phone, tgUsername) {
   var clean = String(phone||'').replace(/[\s\-\(\)\u200b\u200c\u200d\ufeff]/g,'');
-  // Нормализуем для WhatsApp — нужен международный формат
-  var wa = clean;
-  if (wa.indexOf('+') === 0) wa = wa.slice(1);
-  if (wa.indexOf('995') === 0 && wa.length > 9) {} // уже норм
-  var html = '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
-  // Звонок
-  html += '<a href="tel:'+clean+'" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#3b82f6;border-radius:8px;">📞 Звонок</a>';
-  // WhatsApp
-  html += '<a href="https://wa.me/'+wa+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#25d366;border-radius:8px;">💬 WhatsApp</a>';
-  // Telegram — по username или номеру
+  var wa = clean.indexOf('+') === 0 ? clean.slice(1) : clean;
+  var btn = 'display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;text-decoration:none;padding:3px 8px;border-radius:6px;border:1px solid;';
+  var html = '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;">';
+  html += '<a href="tel:'+clean+'" style="'+btn+'color:var(--blue);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08);">📞 Call</a>';
+  html += '<a href="https://wa.me/'+wa+'" target="_blank" style="'+btn+'color:#25d366;border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.08);">💬 WA</a>';
   if (tgUsername && tgUsername.indexOf('@') === 0) {
-    html += '<a href="https://t.me/'+tgUsername.replace('@','')+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#229ed9;border-radius:8px;">✈️ Telegram</a>';
+    html += '<a href="https://t.me/'+tgUsername.replace('@','')+'" target="_blank" style="'+btn+'color:#229ed9;border-color:rgba(34,158,217,.3);background:rgba(34,158,217,.08);">✈️ TG</a>';
   } else if (clean.length >= 9) {
-    html += '<a href="https://t.me/+'+wa+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#229ed9;border-radius:8px;">✈️ Telegram</a>';
+    html += '<a href="https://t.me/+'+wa+'" target="_blank" style="'+btn+'color:#229ed9;border-color:rgba(34,158,217,.3);background:rgba(34,158,217,.08);">✈️ TG</a>';
   }
   html += '</div>';
   return html;
