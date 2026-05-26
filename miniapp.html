@@ -1696,7 +1696,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwCF7nCo_X5uLvSbuPogpPdulHLiCRCTGTcNAmokl_7o9V1ibj2DudmnSYk_JBK-WJLUQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxkswYWZNVf1R6cuk3zUiqBShvgRJ0XIcHR3V_LWZfjLD2tCB08uJcdii_HNJZpkZ_J0Q/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -4309,8 +4309,14 @@ function cabRenderDetail(d){
       '<div style="font-size:11px;font-weight:700;color:'+col+';background:'+col+'22;padding:2px 8px;border-radius:8px;white-space:nowrap;">'+badge+'</div>' +
       '</div>' +
       '<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:4px;">'+(c.price||0)+'$/мес</div>' +
-      '<div style="font-size:11px;color:var(--text2);margin-bottom:2px;">👤 '+(c.clientName||'—')+(c.clientPhone?' <span style=\"color:var(--text3)\">'+fmtPhone(c.clientPhone)+'</span>':'')+'</div>' +
-      '<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">🏠 '+(c.ownerName||'—')+(c.ownerPhone?' <span style=\"color:var(--text3)\">'+fmtPhone(c.ownerPhone)+'</span>':'')+'</div>' +
+      '<div style="margin-bottom:6px;">' +
+        '<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">👤 '+(c.clientName||'—')+(c.clientPhone?' · '+fmtPhone(c.clientPhone):'')+'</div>' +
+        (c.clientPhone ? cabContactBtns(c.clientPhone, c.clientTg||'') : '') +
+      '</div>' +
+      '<div style="margin-bottom:4px;">' +
+        '<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">🏠 '+(c.ownerName||'—')+(c.ownerPhone?' · '+fmtPhone(c.ownerPhone):'')+'</div>' +
+        (c.ownerPhone ? cabContactBtns(c.ownerPhone, '') : '') +
+      '</div>' +
       '<div style="display:flex;justify-content:space-between;align-items:center;">' +
       '<div style="font-size:10px;color:var(--text3);">'+(c.rentFrom||'—')+' → '+(c.rentTo||'—')+'</div>' +
       '<div style="font-size:10px;color:var(--accent);">'+renew+'</div>' +
@@ -4377,6 +4383,28 @@ function cabFmtToIso(s){
   var d=new Date(s);
   if(!isNaN(d.getTime())&&d.getFullYear()>2000)return d.toISOString().slice(0,10);
   return '';
+}
+
+// Кнопки связи: звонок, WhatsApp, Telegram
+function cabContactBtns(phone, tgUsername) {
+  var clean = String(phone||'').replace(/[\s\-\(\)\u200b\u200c\u200d\ufeff]/g,'');
+  // Нормализуем для WhatsApp — нужен международный формат
+  var wa = clean;
+  if (wa.indexOf('+') === 0) wa = wa.slice(1);
+  if (wa.indexOf('995') === 0 && wa.length > 9) {} // уже норм
+  var html = '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
+  // Звонок
+  html += '<a href="tel:'+clean+'" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#3b82f6;border-radius:8px;">📞 Звонок</a>';
+  // WhatsApp
+  html += '<a href="https://wa.me/'+wa+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#25d366;border-radius:8px;">💬 WhatsApp</a>';
+  // Telegram — по username или номеру
+  if (tgUsername && tgUsername.indexOf('@') === 0) {
+    html += '<a href="https://t.me/'+tgUsername.replace('@','')+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#229ed9;border-radius:8px;">✈️ Telegram</a>';
+  } else if (clean.length >= 9) {
+    html += '<a href="https://t.me/+'+wa+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#fff;text-decoration:none;padding:4px 10px;background:#229ed9;border-radius:8px;">✈️ Telegram</a>';
+  }
+  html += '</div>';
+  return html;
 }
 
 // Универсальный форматтер телефона — показывает как есть, убирает лишние символы
