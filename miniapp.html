@@ -4299,10 +4299,10 @@ function cabRenderDetail(d){
   var cti=document.getElementById('cab-contracts-title');if(cti)cti.textContent='Договора ('+ct.length+')';
   var cli=document.getElementById('cab-contracts-list');
   if(cli)cli.innerHTML=!ct.length?'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>':ct.map(function(c){
-    var col=c.daysLeft<0?'#ef4444':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';
-    var badge=c.daysLeft<0?'Истёк':c.daysLeft+' дн.';
+    var col=c.daysLeft<0?'#6b7280':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';
+    var badge=c.daysLeft<0?'Истёк '+Math.abs(c.daysLeft)+' дн. назад':c.daysLeft+' дн.';
     var renew=c.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented';
-    var addr=c.address||(c.ownerName?c.ownerName+' (собственник)':'Адрес не указан');
+    var addr=c.address||(c.ownerName?c.ownerName:'Адрес не указан');
     return '<div style="padding:11px 14px;border-bottom:0.5px solid var(--border);">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">' +
       '<div style="font-size:13px;font-weight:700;color:var(--text);flex:1;margin-right:8px;">📍 '+addr+'</div>' +
@@ -4359,21 +4359,56 @@ function cabRenderWeek(){
 
 function cabDayHasEvents(iso){
   if(!_cabCalData)return false;
-  return (_cabCalData.showings||[]).some(function(s){return(s.date||'').slice(0,10)===iso||(s.timestamp||'').slice(0,10)===iso;})||
-         (_cabCalData.deals||[]).some(function(s){return s.t14_date&&cabFmtToIso(s.t14_date)===iso;})||
-         (_cabCalData.photos||[]).some(function(s){return((s.date||'').slice(0,10)===iso)||((s.timestamp||'').slice(0,10)===iso);});
+  return (_cabCalData.showings||[]).some(function(s){return cabFmtToIso(s.date||(s.timestamp||'').slice(0,10))===iso;})||
+         (_cabCalData.deals||[]).some(function(s){return (s.t14_date&&cabFmtToIso(s.t14_date)===iso)||(s.rent_to&&cabFmtToIso(s.rent_to)===iso);})||
+         (_cabCalData.photos||[]).some(function(s){return cabFmtToIso(s.date||(s.timestamp||'').slice(0,10))===iso;});
 }
-function cabFmtToIso(s){if(!s)return'';var p=s.split('.');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:s.slice(0,10);}
+function cabFmtToIso(s){
+  if(!s)return'';
+  s=String(s).trim();
+  // dd.MM.yyyy → yyyy-MM-dd
+  if(/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(s)){
+    var p=s.split('.');
+    return p[2]+'-'+('0'+p[1]).slice(-2)+'-'+('0'+p[0]).slice(-2);
+  }
+  // yyyy-MM-dd already
+  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);
+  // "Tue Apr 21 2026..." or any other JS date string
+  var d=new Date(s);
+  if(!isNaN(d.getTime())&&d.getFullYear()>2000)return d.toISOString().slice(0,10);
+  return '';
+}
+
+// Format date dd.MM.yyyy for display
+function cabFmtDate(s){
+  if(!s)return'—';
+  s=String(s).trim();
+  // Already dd.MM.yyyy
+  if(/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(s))return s;
+  // yyyy-MM-dd
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)){var p=s.slice(0,10).split('-');return p[2]+'.'+p[1]+'.'+p[0];}
+  // JS date string
+  var d=new Date(s);
+  if(!isNaN(d.getTime())&&d.getFullYear()>2000){
+    return ('0'+d.getDate()).slice(-2)+'.'+(('0'+(d.getMonth()+1)).slice(-2))+'.'+d.getFullYear();
+  }
+  return s.slice(0,10)||'—';
+}
 function cabSelectDay(iso){_cabSelDay=iso;cabRenderWeek();}
 
 function cabRenderDayEvents(iso){
   var el=document.getElementById('cab-day-events');if(!el)return;
   if(!_cabCalData){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Загрузка...</div>';return;}
   var events=[];
-  (_cabCalData.showings||[]).forEach(function(s){var d=(s.date||'').slice(0,10)||(s.timestamp||'').slice(0,10);if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.show_time?' в '+s.show_time:''),time:s.show_time||'',col:'#3b82f6'});});
-  (_cabCalData.deals||[]).forEach(function(s){if(!s.t14_date||cabFmtToIso(s.t14_date)!==iso)return;events.push({icon:'⏰',title:'T14 — '+(s.link||'объект'),sub:'Клиент: '+(s.client_name||'—'),time:'',col:'#f59e0b'});});
+  (_cabCalData.showings||[]).forEach(function(s){var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.show_time?' в '+s.show_time:''),time:s.show_time||'',col:'#3b82f6'});});
+  (_cabCalData.deals||[]).forEach(function(s){
+    if(s.t14_date&&cabFmtToIso(s.t14_date)===iso)
+      events.push({icon:'⏰',title:'T14 — '+(s.address||s.owner_name||'объект'),sub:'Клиент: '+(s.client_name||'—'),time:'',col:'#f59e0b'});
+    if(s.rent_to&&cabFmtToIso(s.rent_to)===iso)
+      events.push({icon:'📋',title:'Конец договора'+(s.address?' — '+s.address:''),sub:(s.price||0)+'$/мес · '+(s.client_name||'—'),time:'',col:'#ef4444'});
+  });
   (_cabCalData.photos||[]).forEach(function(s){
-    var d=(s.date||'').slice(0,10)||(s.timestamp||'').slice(0,10);
+    var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));
     if(d!==iso)return;
     var isMakeFoto=s.type==='makefoto';
     events.push({
@@ -4406,7 +4441,26 @@ function cabSubmitShowing(){
   if(!date||!addr){showToast('Укажи дату и адрес','warn');return;}
   var an=_cabCurrentAgent||'';
   var payload={type:'showing',data:{recruit:document.getElementById('cab-f-recruit').value||an,mentor:an,district_address:addr,ad_link_advertising:document.getElementById('cab-f-link').value,client_telegram:document.getElementById('cab-f-client').value,result:'Запланирован',date:date,show_time:document.getElementById('cab-f-time').value,owner_phone:document.getElementById('cab-f-owner-phone').value,client_name:document.getElementById('cab-f-client').value,client_phone:document.getElementById('cab-f-client-phone').value,listing_link:document.getElementById('cab-f-link').value,photo_url:document.getElementById('cab-f-comment').value}};
-  send(payload,function(ok){if(ok){showToast('Показ добавлен ✓');cabHideForm();if(_cabCalData)_cabCalData.showings.unshift({timestamp:new Date().toISOString(),recruit:payload.data.recruit,mentor:an,address:addr,date:date,show_time:payload.data.show_time,client_name:payload.data.client_name,client_tg:payload.data.client_telegram});_cabSelDay=date;cabRenderWeek();}else showToast('Ошибка сохранения','warn');});
+  var showData = payload.data;
+  send('showing', showData,
+    function(){
+      showToast('Показ добавлен ✓');
+      cabHideForm();
+      if(_cabCalData) _cabCalData.showings.unshift({
+        timestamp: new Date().toISOString(),
+        date: date,
+        recruit: showData.recruit,
+        mentor: an,
+        address: addr,
+        show_time: showData.show_time,
+        client_name: showData.client_name,
+        client_tg: showData.client_telegram
+      });
+      _cabSelDay = date;
+      cabRenderWeek();
+    },
+    function(){ showToast('Ошибка сохранения'); }
+  );
 }
 
 
