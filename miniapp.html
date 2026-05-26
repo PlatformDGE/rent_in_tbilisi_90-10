@@ -1658,11 +1658,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
       </div>
 
-      <!-- Make Foto кнопка -->
-      <button onclick="openMakeFoto()" style="width:100%;padding:12px;border-radius:10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        📸 Make Foto From Platform
-      </button>
-
       <!-- Ближайший договор (предупреждение) -->
       <div id="cab-contract-alert" style="display:none;margin-bottom:12px;"></div>
 
@@ -4282,20 +4277,23 @@ function cabRenderDetail(d){
   var pw=document.getElementById('cab-progress-wrap');
   if(pw) pw.style.display=ag.type==='recruit'?'':'none';
   var bar=document.getElementById('cab-progress-bar');if(bar)setTimeout(function(){bar.style.width=prog+'%';},100);
-  var rb=document.getElementById('cab-recruit-block');if(rb)rb.style.display=d.recruitCounters?'':'none';
+  var rb=document.getElementById('cab-recruit-block');if(rb)rb.style.display=(ag.type==='recruit'&&d.recruitCounters)?'':'none';
   if(d.recruitCounters){var rc=d.recruitCounters;cabSet('cab-cnt-photo',rc.photo||0);cabSet('cab-cnt-showing',rc.showing||0);cabSet('cab-cnt-stickers',rc.stickers||0);cabSet('cab-cnt-rental',rc.rental||0);}
-  // Предупреждение о ближайшем окончании (в течение 30 дней)
+  // Предупреждение о ближайших окончаниях (до 30 дней)
   var alertEl=document.getElementById('cab-contract-alert');
   if(alertEl){
-    var nearest=ct.filter(function(c){return c.daysLeft>=0&&c.daysLeft<=30;});
-    if(nearest.length){
-      var nc=nearest[0],col=nc.daysLeft<=7?'#ef4444':'#f59e0b';
+    var expiring=ct.filter(function(c){return c.daysLeft>=0&&c.daysLeft<=30;});
+    if(expiring.length){
       alertEl.style.display='';
-      alertEl.innerHTML='<div style="background:'+col+'18;border:1px solid '+col+'44;border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:center;">' +
-        '<div style="font-size:22px;">⚠️</div>' +
-        '<div><div style="font-size:12px;font-weight:700;color:'+col+';">Договор заканчивается через '+nc.daysLeft+' дн.</div>' +
-        '<div style="font-size:11px;color:var(--text2);margin-top:2px;">📍 '+(nc.address||'Адрес не указан')+' · '+(nc.price||0)+'$/мес · до '+(nc.rentTo||'—')+'</div>' +
-        '<div style="font-size:10px;color:var(--text3);margin-top:2px;">'+(nc.renewType==='new_contract'?'📄 Нужен новый договор':'🔄 Оформи Rerented')+'</div></div></div>';
+      alertEl.innerHTML=expiring.map(function(nc){
+        var col=nc.daysLeft<=7?'#ef4444':'#f59e0b';
+        return '<div style="background:'+col+'18;border:1px solid '+col+'44;border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:center;margin-bottom:6px;">' +
+          '<div style="font-size:20px;">⚠️</div>' +
+          '<div><div style="font-size:12px;font-weight:700;color:'+col+';">Заканчивается через '+nc.daysLeft+' дн.</div>' +
+          '<div style="font-size:11px;color:var(--text2);margin-top:2px;">📍 '+(nc.address||nc.ownerName||'—')+' · '+(nc.price||0)+'$/мес</div>' +
+          '<div style="font-size:10px;color:var(--text3);margin-top:1px;">до '+(nc.rentTo||'—')+' · '+(nc.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented')+'</div>' +
+          '</div></div>';
+      }).join('');
     } else alertEl.style.display='none';
   }
   var cti=document.getElementById('cab-contracts-title');if(cti)cti.textContent='Договора ('+ct.length+')';
@@ -4304,7 +4302,7 @@ function cabRenderDetail(d){
     var col=c.daysLeft<0?'#ef4444':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';
     var badge=c.daysLeft<0?'Истёк':c.daysLeft+' дн.';
     var renew=c.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented';
-    var addr=c.address||'Адрес не указан';
+    var addr=c.address||(c.ownerName?c.ownerName+' (собственник)':'Адрес не указан');
     return '<div style="padding:11px 14px;border-bottom:0.5px solid var(--border);">' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">' +
       '<div style="font-size:13px;font-weight:700;color:var(--text);flex:1;margin-right:8px;">📍 '+addr+'</div>' +
@@ -4363,7 +4361,7 @@ function cabDayHasEvents(iso){
   if(!_cabCalData)return false;
   return (_cabCalData.showings||[]).some(function(s){return(s.date||'').slice(0,10)===iso||(s.timestamp||'').slice(0,10)===iso;})||
          (_cabCalData.deals||[]).some(function(s){return s.t14_date&&cabFmtToIso(s.t14_date)===iso;})||
-         (_cabCalData.photos||[]).some(function(s){return(s.date||'').slice(0,10)===iso||(s.timestamp||'').slice(0,10)===iso;});
+         (_cabCalData.photos||[]).some(function(s){return((s.date||'').slice(0,10)===iso)||((s.timestamp||'').slice(0,10)===iso);});
 }
 function cabFmtToIso(s){if(!s)return'';var p=s.split('.');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:s.slice(0,10);}
 function cabSelectDay(iso){_cabSelDay=iso;cabRenderWeek();}
@@ -4374,7 +4372,20 @@ function cabRenderDayEvents(iso){
   var events=[];
   (_cabCalData.showings||[]).forEach(function(s){var d=(s.date||'').slice(0,10)||(s.timestamp||'').slice(0,10);if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.show_time?' в '+s.show_time:''),time:s.show_time||'',col:'#3b82f6'});});
   (_cabCalData.deals||[]).forEach(function(s){if(!s.t14_date||cabFmtToIso(s.t14_date)!==iso)return;events.push({icon:'⏰',title:'T14 — '+(s.link||'объект'),sub:'Клиент: '+(s.client_name||'—'),time:'',col:'#f59e0b'});});
-  (_cabCalData.photos||[]).forEach(function(s){var d=(s.date||'').slice(0,10)||(s.timestamp||'').slice(0,10);if(d!==iso)return;events.push({icon:'📸',title:'Фото — '+(s.address||'—'),sub:'Рекрут: '+(s.recruit||'—'),time:'',col:'#8b5cf6'});});
+  (_cabCalData.photos||[]).forEach(function(s){
+    var d=(s.date||'').slice(0,10)||(s.timestamp||'').slice(0,10);
+    if(d!==iso)return;
+    var isMakeFoto=s.type==='makefoto';
+    events.push({
+      icon: isMakeFoto?'📸':'📷',
+      title: (isMakeFoto?'Make Foto':'Фото')+' — '+(s.address||'—'),
+      sub: isMakeFoto
+        ? (s.owner?'Собственник: '+s.owner:'')
+        : 'Рекрут: '+(s.recruit||'—'),
+      time: s.show_time||'',
+      col:'#8b5cf6'
+    });
+  });
   if(!events.length){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет событий</div>';return;}
   el.innerHTML=events.map(function(ev){return '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start;"><div style="font-size:18px;">'+ev.icon+'</div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">'+ev.title+'</div>'+(ev.sub?'<div style="font-size:11px;color:var(--text3);">'+ev.sub+'</div>':'')+'</div>'+(ev.time?'<div style="font-size:11px;font-weight:700;color:'+ev.col+';">'+ev.time+'</div>':'')+'</div>';}).join('');
 }
