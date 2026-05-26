@@ -1768,6 +1768,102 @@ Object.defineProperty(window,'quizAnswers', {get:function(){return AppState.quiz
 Object.defineProperty(window,'quizCurrent', {get:function(){return AppState.quiz.current;}, set:function(v){AppState.quiz.current=v;}});
 Object.defineProperty(window,'quizScore',   {get:function(){return AppState.quiz.score;},   set:function(v){AppState.quiz.score=v;}});
 
+// ─── CONFETTI ───────────────────────────────────────────
+function launchConfetti() {
+  var canvas = document.getElementById('confetti-canvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    canvas.id = 'confetti-canvas';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+    document.body.appendChild(canvas);
+  }
+  var ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  var pieces = [];
+  var colors = ['#7c6fff','#22c55e','#f59e0b','#ef4444','#3b82f6','#a78bfa','#34d399','#fbbf24'];
+  for (var i = 0; i < 120; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: -10 - Math.random() * 100,
+      w: 6 + Math.random() * 8,
+      h: 3 + Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      speed: 2 + Math.random() * 4,
+      drift: (Math.random() - 0.5) * 2,
+      spin: (Math.random() - 0.5) * 8,
+      opacity: 1
+    });
+  }
+
+  var startTime = Date.now();
+  var duration = 3500;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var elapsed = Date.now() - startTime;
+    var progress = elapsed / duration;
+
+    pieces.forEach(function(p) {
+      p.y += p.speed;
+      p.x += p.drift;
+      p.rotation += p.spin;
+      if (progress > 0.6) p.opacity = Math.max(0, 1 - (progress - 0.6) / 0.4);
+
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x + p.w/2, p.y + p.h/2);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+
+    if (elapsed < duration) {
+      requestAnimationFrame(draw);
+    } else {
+      canvas.remove();
+    }
+  }
+  draw();
+  haptic('success');
+}
+
+// ─── ANIMATED COUNTER ───────────────────────────────────
+function animateCounter(id, target, duration) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var start = 0;
+  var num = parseFloat(target) || 0;
+  if (num === 0) { el.textContent = '0'; return; }
+  var startTime = null;
+  var step = function(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = Math.min((timestamp - startTime) / (duration || 800), 1);
+    // easeOutCubic
+    var ease = 1 - Math.pow(1 - progress, 3);
+    var current = Math.round(ease * num);
+    el.textContent = current;
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = num;
+  };
+  requestAnimationFrame(step);
+}
+
+// ─── HAPTIC FEEDBACK ────────────────────────────────────
+function haptic(type) {
+  try {
+    var hf = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback;
+    if (!hf) return;
+    if (type === 'success') hf.notificationOccurred('success');
+    else if (type === 'error') hf.notificationOccurred('error');
+    else if (type === 'warning') hf.notificationOccurred('warning');
+    else hf.impactOccurred(type || 'light');
+  } catch(e) {}
+}
+
 // ─── DRAFT AUTO-SAVE (sessionStorage) ───────────────────
 // Saves/restores input values for complex forms so data
 // survives accidental back navigation within the session.
@@ -1843,6 +1939,7 @@ function navigate(screenId, fromTab) {
 
 // TABS — thin wrappers (all existing calls unchanged)
 function goTab(tab) {
+  haptic('light');
   navigate('tab-'+tab);
   if (tab === 'cabinet') loadCabinet();
 }
@@ -1858,7 +1955,7 @@ function openForm(type) {
   }
 }
 
-function goBack() { navigate('tab-'+prevTab); }
+function goBack() { haptic('light'); navigate('tab-'+prevTab); }
 
 // POPULATE
 function populateForm(type) {
@@ -2204,7 +2301,7 @@ function rnCalcDist(comm){
   return rows;
 }
 
-function setRnH2O(k,v,btn){
+function setRnH2O(k,v,btn){haptic('medium');
   rnH2O[k]=v;
   var pill=document.getElementById('hp-'+k);
   if(pill){pill.textContent=v;pill.style.opacity='1';}
@@ -2464,7 +2561,7 @@ function sub(type, directData) {
   if(criticalTypes.indexOf(type)!==-1){
     showToast('Отправляю... ✈️');
     send(type,data,function(){
-      if(type==='rental') draftClear('calc');
+      if(type==='rental') { draftClear('calc'); launchConfetti(); }
       showToast('Отправлено! ✓');
       setTimeout(goBack,800);
     },function(){
@@ -2492,6 +2589,7 @@ function submitCalc() {
 }
 
 function send(type,data,onSuccess,onError) {
+  haptic('medium');
   var payload = JSON.stringify({type:type, data:data});
   var cbName = 'sendCb'+Date.now();
   var url = API_URL + '?action=submit&payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
@@ -4237,7 +4335,7 @@ function cabLoadAgentList(){
   }).join('');
 }
 
-function cabOpenAgent(name){
+function cabOpenAgent(name){haptic('light');
   _cabCurrentAgent=name;_cabCalData=null;_cabSelDay=null;
   // Сначала показываем экран загрузки
   cabShow('loading');
@@ -4258,7 +4356,7 @@ function cabOpenAgent(name){
   });
 }
 
-function cabGoBack(){
+function cabGoBack(){haptic('light');
   _cabCurrentAgent=null;_cabCalData=null;
   var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='none';
   var t=document.getElementById('cab-title');if(t)t.textContent='Личный кабинет';
@@ -4274,13 +4372,22 @@ function cabRenderDetail(d){
   cabSet('cab-name',ag.name||'—');
   cabSet('cab-level-label',(ag.type==='recruit'?'📋 Рекрут':'🏆 Агент')+' · '+lvl+'%');
   cabSet('cab-next-val',cn.nextAt||'');
-  cabSet('cab-deals-count',dc);
+  // Анимируем счётчик сделок
+  var cabEl=document.getElementById('cab-deals-count');
+  if(cabEl){cabEl.textContent='0';setTimeout(function(){animateCounter('cab-deals-count',dc,900);},300);}
   // Прогресс бар — только для рекрутов
   var pw=document.getElementById('cab-progress-wrap');
   if(pw) pw.style.display=ag.type==='recruit'?'':'none';
   var bar=document.getElementById('cab-progress-bar');if(bar)setTimeout(function(){bar.style.width=prog+'%';},100);
   var rb=document.getElementById('cab-recruit-block');if(rb)rb.style.display=(ag.type==='recruit'&&d.recruitCounters)?'':'none';
-  if(d.recruitCounters){var rc=d.recruitCounters;cabSet('cab-cnt-photo',rc.photo||0);cabSet('cab-cnt-showing',rc.showing||0);cabSet('cab-cnt-stickers',rc.stickers||0);cabSet('cab-cnt-rental',rc.rental||0);}
+  if(d.recruitCounters){
+    var rc=d.recruitCounters;
+    ['photo','showing','stickers','rental'].forEach(function(k,i){
+      var cid='cab-cnt-'+k, val=rc[k]||0;
+      var cel=document.getElementById(cid);
+      if(cel){cel.textContent='0';setTimeout(function(){animateCounter(cid,val,700);},400+i*80);}
+    });
+  }
   // Предупреждение о ближайших окончаниях (до 30 дней)
   var alertEl=document.getElementById('cab-contract-alert');
   if(alertEl){
@@ -4340,8 +4447,53 @@ function cabLoadCalendar(name){
   sc.onerror=function(){delete window[cn];};document.head.appendChild(sc);
 }
 
-function cabWeekPrev(){if(_cabWeekStart){_cabWeekStart.setDate(_cabWeekStart.getDate()-7);cabRenderWeek();}}
-function cabWeekNext(){if(_cabWeekStart){_cabWeekStart.setDate(_cabWeekStart.getDate()+7);cabRenderWeek();}}
+function cabWeekPrev(){haptic('light');if(_cabWeekStart){
+  var g=document.getElementById('cab-week-grid');
+  if(g){g.style.transition='transform .2s ease';g.style.transform='translateX(30px)';g.style.opacity='0.5';
+  setTimeout(function(){g.style.transition='';g.style.transform='';g.style.opacity='';},200);}_cabWeekStart.setDate(_cabWeekStart.getDate()-7);cabRenderWeek();}}
+function cabWeekNext(){haptic('light');if(_cabWeekStart){
+  var g=document.getElementById('cab-week-grid');
+  if(g){g.style.transition='transform .2s ease';g.style.transform='translateX(-30px)';g.style.opacity='0.5';
+  setTimeout(function(){g.style.transition='';g.style.transform='';g.style.opacity='';},200);}_cabWeekStart.setDate(_cabWeekStart.getDate()+7);cabRenderWeek();}}
+
+function cabInitSwipe(){
+  var el=document.getElementById('cab-week-grid');
+  if(!el||el._swipe)return;
+  el._swipe=true;
+  var startX=0,startY=0,moved=false;
+  el.addEventListener('touchstart',function(e){
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+    moved=false;
+  },{passive:true});
+  el.addEventListener('touchmove',function(e){
+    moved=true;
+  },{passive:true});
+  el.addEventListener('touchend',function(e){
+    if(!moved)return;
+    var dx=e.changedTouches[0].clientX-startX;
+    var dy=e.changedTouches[0].clientY-startY;
+    if(Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<40)return;
+    if(dx<0){cabWeekNext();}
+    else{cabWeekPrev();}
+  },{passive:true});
+
+  // Also add swipe on day-events panel
+  var ev=document.getElementById('cab-day-events');
+  if(ev&&!ev._swipe){
+    ev._swipe=true;
+    var sx2=0,sy2=0,mv2=false;
+    ev.addEventListener('touchstart',function(e){sx2=e.touches[0].clientX;sy2=e.touches[0].clientY;mv2=false;},{passive:true});
+    ev.addEventListener('touchmove',function(e){mv2=true;},{passive:true});
+    ev.addEventListener('touchend',function(e){
+      if(!mv2)return;
+      var dx2=e.changedTouches[0].clientX-sx2;
+      var dy2=e.changedTouches[0].clientY-sy2;
+      if(Math.abs(dx2)<Math.abs(dy2)||Math.abs(dx2)<40)return;
+      if(dx2<0){cabWeekNext();}else{cabWeekPrev();}
+    },{passive:true});
+  }
+}
 
 function cabRenderWeek(){
   if(!_cabWeekStart)_cabWeekStart=cabGetMonday(new Date());
@@ -4359,7 +4511,7 @@ function cabRenderWeek(){
       '<div style="font-size:14px;font-weight:'+(isSel||isToday?700:400)+';color:'+(isSel?'#fff':'var(--text)')+';margin:2px 0;">'+dt.getDate()+'</div>' +
       '<div style="height:4px;display:flex;justify-content:center;">'+(hasDot?'<div style="width:4px;height:4px;border-radius:50%;background:'+(isSel?'#fff':'var(--accent)')+'"></div>':'')+'</div></div>';
   }
-  grid.innerHTML=html;cabRenderDayEvents(_cabSelDay);
+  grid.innerHTML=html;cabRenderDayEvents(_cabSelDay);cabInitSwipe();
 }
 
 function cabDayHasEvents(iso){
@@ -4402,7 +4554,7 @@ function cabContactBtns(phone, tgUsername) {
   // Нормализуем номер для звонка
   var tel = String(phone||'').replace(/[\u200b\u200c\u200d\ufeff]/g,'').replace(/[\s\-\(\)]/g,'');
   if (tel && tel[0] !== '+' && tel.length >= 9) tel = '+' + tel;
-  html += '<button onclick="cabCall(\''+tel+'\')" style="'+btn+'color:var(--blue);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08);cursor:pointer;font-family:inherit;">📞 Call</button>';
+  html += '<button onclick="cabCall(\''+tel+'\')" style="'+btn+'color:var(--blue);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08);cursor:pointer;font-family:inherit;">📋 Копировать</button>';
   html += '<a href="https://wa.me/'+wa+'" target="_blank" style="'+btn+'color:#25d366;border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.08);"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"#25d366\"><path d=\"M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.534 5.845L0 24l6.29-1.507A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm6.22 16.452c-.258.724-1.283 1.326-2.096 1.5-.558.12-1.286.215-3.738-.803-3.14-1.288-5.166-4.476-5.32-4.682-.149-.207-1.216-1.618-1.216-3.086 0-1.469.768-2.19 1.04-2.488.258-.285.565-.356.753-.356.19 0 .376.002.54.01.174.008.407-.066.637.486.237.569.804 1.963.874 2.107.07.143.116.31.023.498-.088.19-.132.308-.26.474-.13.166-.273.37-.388.497-.13.14-.265.292-.114.572.151.28.673 1.11 1.444 1.797 1 .887 1.843 1.162 2.116 1.294.272.13.43.108.59-.065.16-.173.683-.796.865-1.07.18-.273.363-.228.612-.137.248.09 1.576.743 1.846.879.27.136.45.204.516.317.065.113.065.655-.193 1.379z\"/></svg> WA</a>';
   if (tgUsername && tgUsername.indexOf('@') === 0) {
     html += '<a href="https://t.me/'+tgUsername.replace('@','')+'" target="_blank" style="'+btn+'color:#229ed9;border-color:rgba(34,158,217,.3);background:rgba(34,158,217,.08);"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"#229ed9\"><path d=\"M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.018 9.505c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 14.4l-2.95-.924c-.64-.203-.654-.64.136-.948l11.527-4.446c.537-.194 1.006.131.589.166z\"/></svg> TG</a>';
@@ -4439,7 +4591,7 @@ function cabFmtDate(s){
   }
   return s.slice(0,10)||'—';
 }
-function cabSelectDay(iso){_cabSelDay=iso;cabRenderWeek();}
+function cabSelectDay(iso){haptic('light');_cabSelDay=iso;cabRenderWeek();}
 
 function cabRenderDayEvents(iso){
   var el=document.getElementById('cab-day-events');if(!el)return;
@@ -4620,7 +4772,7 @@ function grSubmit(){
   });
 }
 
-function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);haptic(msg&&msg.indexOf('❌')!==-1?'error':'success');}
 
 // ══ CHECK PROPERTY ══
 function openCheckProperty(){
