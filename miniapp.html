@@ -1696,7 +1696,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycby-sDfPe0j8DM31vbIsH0TWJckm66cdNl_eGNRDjrgw5zhjv0h_2ml5Lk16Ka1BwYyV/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyOekpNfwD71q5ce8nWz_ijduI9aRierko6LW786ENIZXOr0NTOdt3FXnQPUtd8jy_q1g/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -4411,7 +4411,7 @@ function cabRenderDayEvents(iso){
   var el=document.getElementById('cab-day-events');if(!el)return;
   if(!_cabCalData){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Загрузка...</div>';return;}
   var events=[];
-  (_cabCalData.showings||[]).forEach(function(s){var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.client_phone?' · '+fmtPhone(s.client_phone):'')+(s.show_time?' в '+s.show_time:''),time:s.show_time||'',col:'#3b82f6'});});
+  (_cabCalData.showings||[]).forEach(function(s){var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.client_phone?' · '+fmtPhone(s.client_phone):'')+(s.show_time&&s.show_time!=='00:00'?' в '+s.show_time:''),time:(s.show_time&&s.show_time!=='00:00')?s.show_time:'',col:'#3b82f6'});});
   (_cabCalData.deals||[]).forEach(function(s){
     if(s.t14_date&&cabFmtToIso(s.t14_date)===iso)
       events.push({icon:'⏰',title:'T14 — '+(s.address||s.owner_name||'объект'),sub:'Клиент: '+(s.client_name||'—'),time:'',col:'#f59e0b'});
@@ -4428,7 +4428,7 @@ function cabRenderDayEvents(iso){
       sub: isMakeFoto
         ? (s.owner?'Собственник: '+s.owner:'')+(s.phone?' · '+fmtPhone(s.phone):'')
         : 'Рекрут: '+(s.recruit||'—'),
-      time: s.show_time||'',
+      time: (s.show_time&&s.show_time!=='00:00')?s.show_time:'',
       col:'#8b5cf6'
     });
   });
