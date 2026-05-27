@@ -25,7 +25,7 @@
   --r:12px;--rsm:8px;--rlg:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;position:fixed;width:100%;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 
 /* SPLASH */
@@ -36,7 +36,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 /* APP */
 .app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;}
 .screens{flex:1;overflow:hidden;position:relative;}
-.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;background:var(--bg);}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;background:var(--bg);overscroll-behavior:contain;touch-action:pan-y;}
 .screen.active{display:flex;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
@@ -1896,6 +1896,20 @@ function draftClear(formKey) {
 
 // SPLASH
 window.addEventListener('load', function() {
+  // Expand fullscreen + disable swipe-to-close
+  if(window.Telegram&&window.Telegram.WebApp){
+    window.Telegram.WebApp.expand();
+    if(window.Telegram.WebApp.disableVerticalSwipes) window.Telegram.WebApp.disableVerticalSwipes();
+  }
+  // Block horizontal browser swipes (back/forward navigation)
+  var _tx=0,_ty=0;
+  document.addEventListener('touchstart',function(e){_tx=e.touches[0].clientX;_ty=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchmove',function(e){
+    var dx=Math.abs(e.touches[0].clientX-_tx);
+    var dy=Math.abs(e.touches[0].clientY-_ty);
+    if(dx>dy&&dx>10){e.preventDefault();}
+  },{passive:false});
+
   setTimeout(function(){ document.getElementById('splash').classList.add('hide'); setTimeout(function(){ document.getElementById('splash').style.display='none'; },500); },1800);
   checkAccess();
 loadData();
