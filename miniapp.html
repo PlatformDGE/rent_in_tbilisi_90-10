@@ -381,7 +381,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:17px;font-weight:800;letter-spacing:-.3px;">📈 Dashboard</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:1px;" id="dash-updated">загрузка...</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px;" id="dash-updated">loading...</div>
           </div>
           <div style="display:flex;gap:3px;">
             <button onclick="setDashPeriod('month')" id="dp-month" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Месяц</button>
@@ -471,7 +471,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section" id="dash-sec-agent-listings">
           <div class="sl">Агенты — активные объекты в канале</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agent-listings">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
           </div>
         </div>
 
@@ -485,7 +485,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             </div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-weekly-listings">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
           </div>
         </div>
 
@@ -514,7 +514,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               </div>
             </div>
             <div id="ds-agents-rows">
-              <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+              <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
             </div>
           </div>
         </div>
@@ -523,7 +523,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section" id="dash-sec-lastdeals">
           <div class="sl">Последние сделки</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-last-deals">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
           </div>
         </div>
 
@@ -1374,7 +1374,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div id="news-list">
             <div style="text-align:center;padding:40px 20px;color:var(--text3);">
               <div style="font-size:36px;margin-bottom:12px;">⏳</div>
-              <div style="font-size:14px;font-weight:600;">Загрузка новостей...</div>
+              <div style="font-size:14px;font-weight:600;">News load...</div>
             </div>
           </div>
         </div>
@@ -1395,7 +1395,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
           <div id="admin-agents-body" style="display:none;">
           <div id="admin-agents-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
-            <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);">Loading...</div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
             <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;">Добавить агента</div>
@@ -1419,7 +1419,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
           <div id="admin-recruits-body" style="display:none;">
           <div id="admin-recruits-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
-            <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);">Loading...</div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
             <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;">Добавить рекрута</div>
@@ -1528,7 +1528,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
     <!-- Список агентов (суперадмин) -->
     <div id="cab-screen-list" style="display:none;">
       <div id="cab-agents-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;">
-        <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
+        <div style="padding:14px;text-align:center;color:var(--text3);">Loading...</div>
       </div>
     </div>
 
@@ -3385,7 +3385,7 @@ function loadTickerList(){
   var cbName = '__ticker_' + Date.now();
   var el = document.getElementById('admin-ticker-list');
   if (!el) return;
-  el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Загрузка...</div>';
+  el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Loading...</div>';
   window[cbName] = function(d){
     delete window[cbName];
     var msgs = (d && d.messages) || [];
@@ -4609,7 +4609,7 @@ function cabSelectDay(iso){haptic('light');_cabSelDay=iso;cabRenderWeek();}
 
 function cabRenderDayEvents(iso){
   var el=document.getElementById('cab-day-events');if(!el)return;
-  if(!_cabCalData){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Загрузка...</div>';return;}
+  if(!_cabCalData){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Loading...</div>';return;}
   var events=[];
   (_cabCalData.showings||[]).forEach(function(s){var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.client_phone?' · '+fmtPhone(s.client_phone):'')+(s.show_time&&s.show_time!=='00:00'?' в '+s.show_time:''),time:(s.show_time&&s.show_time!=='00:00')?s.show_time:'',col:'#3b82f6'});});
   (_cabCalData.deals||[]).forEach(function(s){
