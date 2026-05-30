@@ -1,5 +1,3 @@
----
----
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -25,7 +23,7 @@
   --r:12px;--rsm:8px;--rlg:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;overscroll-behavior:none;position:fixed;width:100%;}
+html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 
 /* SPLASH */
@@ -36,7 +34,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
 /* APP */
 .app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;}
 .screens{flex:1;overflow:hidden;position:relative;}
-.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;background:var(--bg);overscroll-behavior:contain;touch-action:pan-y;}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;background:var(--bg);}
 .screen.active{display:flex;animation:fu .2s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
@@ -144,19 +142,6 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.5);}
 .swrap{padding:12px 16px 4px;}
 .sbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:var(--r);color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px var(--glow);}
 .sbtn:active{opacity:.85;}
-.ticker-wrap{position:relative;overflow:hidden;height:36px;display:flex;align-items:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);margin-bottom:10px;}
-.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:36px;z-index:2;pointer-events:none;}
-.ticker-wrap::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent);}
-.ticker-wrap::after{right:0;background:linear-gradient(270deg,var(--bg2),transparent);}
-.ticker-track{display:flex;white-space:nowrap;animation:tickerSlide 30s linear infinite;}
-.ticker-track:hover{animation-play-state:paused;}
-.ticker-item{display:flex;align-items:center;gap:7px;padding:0 20px;font-size:12px;color:var(--text2);}
-.ticker-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-.ticker-val{font-weight:700;color:var(--text);font-size:13px;}
-@keyframes tickerSlide{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-@keyframes sk-shine{0%{background-position:-200px 0}100%{background-position:calc(200px + 100%) 0}}
-.sk{background:var(--bg3);border-radius:4px;animation:sk-shine 1.4s ease infinite;background-image:linear-gradient(90deg,var(--bg3) 0px,var(--bg2) 40px,var(--bg3) 80px);background-size:300px 100%;}
-.sk-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:0.5px solid var(--border);}
 .sbtn.navy{background:var(--navy);}
 
 /* CONTRACT STEPS */
@@ -381,7 +366,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <div>
             <div style="font-size:17px;font-weight:800;letter-spacing:-.3px;">📈 Dashboard</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:1px;" id="dash-updated">loading...</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:1px;" id="dash-updated">загрузка...</div>
           </div>
           <div style="display:flex;gap:3px;">
             <button onclick="setDashPeriod('month')" id="dp-month" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid var(--accent);background:var(--glow);color:var(--accent2);cursor:pointer;font-family:inherit;font-weight:600;">Месяц</button>
@@ -391,11 +376,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
       </div>
       <div class="pad pb">
-
-        <!-- БЕГУЩАЯ СТРОКА (срочные сообщения от администратора) -->
-        <div class="ticker-wrap" id="dash-ticker" style="display:none;">
-          <div class="ticker-track" id="dash-ticker-track"></div>
-        </div>
 
         <!-- МЕТРИКИ ПЛАТФОРМЫ -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
@@ -439,17 +419,17 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
             <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
               <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Объектов</div>
-              <div id="ds-ch-total" style="font-size:20px;font-weight:800;color:var(--accent2);">—</div>
-              <div style="font-size:8px;color:var(--text3);">активных</div>
+              <div style="font-size:20px;font-weight:800;color:var(--accent2);">401</div>
+              <div style="font-size:8px;color:var(--text3);">с районом</div>
             </div>
             <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
               <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Ср. цена</div>
-              <div id="ds-ch-price" style="font-size:20px;font-weight:800;color:var(--accent2);">—</div>
+              <div style="font-size:20px;font-weight:800;color:var(--accent2);">$840</div>
               <div style="font-size:8px;color:var(--text3);">аренда</div>
             </div>
             <div style="background:var(--bg2);border:1px solid rgba(74,144,217,.2);border-radius:var(--r);padding:10px 11px;text-align:center;">
               <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">Эксклюзив</div>
-              <div id="ds-ch-excl" style="font-size:20px;font-weight:800;color:var(--amber);">—</div>
+              <div style="font-size:20px;font-weight:800;color:var(--amber);">22%</div>
               <div style="font-size:8px;color:var(--text3);">от всех</div>
             </div>
           </div>
@@ -471,7 +451,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section" id="dash-sec-agent-listings">
           <div class="sl">Агенты — активные объекты в канале</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agent-listings">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
         </div>
 
@@ -485,7 +465,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             </div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-weekly-listings">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
         </div>
 
@@ -502,7 +482,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         </div>
 
         <!-- АГЕНТЫ — СДЕЛКИ + КОМИССИЯ -->
-        <div class="section" id="dash-sec-agents" style="display:none!important;">
+        <div class="section" id="dash-sec-agents">
           <div class="sl">Агенты — заработок за период</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-agents-deals">
             <div style="display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);background:var(--bg3);">
@@ -514,7 +494,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               </div>
             </div>
             <div id="ds-agents-rows">
-              <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+              <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
             </div>
           </div>
         </div>
@@ -523,7 +503,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section" id="dash-sec-lastdeals">
           <div class="sl">Последние сделки</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;" id="ds-last-deals">
-            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Loading...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Загрузка...</div>
           </div>
         </div>
 
@@ -780,23 +760,14 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="field"><label class="fl">Кол-во стикеров</label><input type="number" id="daily-stickers" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
         </div>
 
-        <!-- РАСКЛЕЙКА РАЙОН -->
-        <div class="section"><div class="sl">📍 Stickers district</div>
-          <div class="field"><input type="text" id="daily-st-dist" placeholder="Район расклейки" oninput="updateDailyPreview()"></div>
-        </div>
-
         <!-- ФОТО -->
         <div class="section"><div class="sl">📸 Photo</div>
           <div class="field"><label class="fl">Кол-во объектов</label><input type="number" id="daily-photos" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
-          <div class="field"><label class="fl">Адрес</label><input type="text" id="daily-ph-addr" placeholder="Адрес объекта" oninput="updateDailyPreview()"></div>
-          <div class="field"><label class="fl">Photo Master</label><select id="daily-ph-master" onchange="updateDailyPreview()"><option value="">—</option></select></div>
         </div>
 
         <!-- ПОКАЗЫ -->
         <div class="section"><div class="sl">🚪 Showing</div>
           <div class="field"><label class="fl">Кол-во показов</label><input type="number" id="daily-showings" placeholder="0" min="0" oninput="updateDailyPreview()"></div>
-          <div class="field"><label class="fl">Адрес</label><input type="text" id="daily-sh-addr" placeholder="Адрес показа" oninput="updateDailyPreview()"></div>
-          <div class="field"><label class="fl">Showing Master</label><select id="daily-sh-master" onchange="updateDailyPreview()"><option value="">—</option></select></div>
         </div>
 
         <!-- ПРЕВЬЮ -->
@@ -875,7 +846,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
         <div class="section"><div class="sl">Объект и агент</div>
           <div class="field"><label class="fl">Объект / Адрес <span class="req">*</span></label><input type="text" id="t14-obj" placeholder="#Vera, ул. Мира 12..."></div>
           <div class="field"><label class="fl">Агент <span class="req">*</span></label><select id="t14-agent"><option value="">Выбрать...</option></select></div>
-          <div class="field"><label class="fl">Дата сделки <span class="req">*</span></label><input type="date" id="t14-date"></div>
+          <div class="field"><label class="fl">Дата сделки <span class="req">*</span></label><input type="date" id="t14-date"><div id="t14-date-hint" style="font-size:11px;color:var(--accent2);margin-top:5px;"></div></div>
         </div>
         <div class="section"><div class="sl">H2O — T14 оценка</div>
           <div class="h2o"><div class="h2o-t">Client Delivery</div><div class="h2o-s">Клиент получил ожидаемое?</div><div class="h2o-b" id="h14-c"><button class="hb" onclick="setH2O('t14','client',1,this)">1</button><button class="hb" onclick="setH2O('t14','client',2,this)">2</button><button class="hb" onclick="setH2O('t14','client',3,this)">3</button></div></div>
@@ -904,8 +875,8 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       </div>
       <div class="pad pb">
 
-        <!-- 1. ОБЪЕКТ -->
-        <div class="section"><div class="sl">1. Объект</div>
+        <!-- 3. ОБЪЕКТ -->
+        <div class="section"><div class="sl">3. Объект</div>
           <div class="field"><label class="fl">Ссылка на объект <span class="req">*</span></label>
             <input type="url" id="rn-link" placeholder="https://t.me/rent_tbilisi_ge/..." oninput="rnUpd()"></div>
           <div class="field"><label class="fl">Кадастровый номер <span class="req">*</span></label>
@@ -935,8 +906,8 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
         </div>
 
-        <!-- 2. СЦЕНАРИЙ -->
-        <div class="section"><div class="sl">2. Сценарий</div>
+        <!-- 1. СЦЕНАРИЙ -->
+        <div class="section"><div class="sl">1. Сценарий</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div class="rn-sc-btn on" id="rnsc-0" onclick="setRnSc(0)" style="background:var(--bg3);border:0.5px solid rgba(255,255,255,.07);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;">
               <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;background:#1d3560;border:1.5px solid #4a90d9;display:flex;align-items:center;justify-content:center;font-size:9px;color:#7eb3ff;" class="rnsc-ck">✓</div>
@@ -987,30 +958,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <div style="font-size:10px;color:var(--text3);line-height:1.4;">Свои проценты</div>
             </div>
           </div>
-          <!-- Rerented — отдельный сценарий без комиссии -->
-            <div class="rn-sc-btn" id="rnsc-rerented" onclick="setRnRerented()" style="background:rgba(251,191,36,.07);border:0.5px solid rgba(251,191,36,.3);border-radius:13px;padding:12px 10px;cursor:pointer;text-align:left;position:relative;transition:all .18s;grid-column:span 2;">
-              <div style="position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(251,191,36,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;" class="rnsc-ck" id="rnsc-rerented-ck">✓</div>
-              <div style="font-size:20px;margin-bottom:7px;">🔄</div>
-              <div style="font-size:12px;font-weight:700;color:#fbbf24;margin-bottom:3px;">Rerented</div>
-              <div style="font-size:10px;color:var(--text3);line-height:1.4;">Новый клиент · Комиссия 0$ · Без счётчика</div>
-            </div>
-
-          <!-- Блок повторной сдачи -->
-          <div id="rn-rerented-block" style="display:none;background:rgba(251,191,36,.07);border:0.5px solid rgba(251,191,36,.25);border-radius:12px;padding:14px;margin-top:10px;">
-            <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">🔄 Rerented — комиссия 0$</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-              <div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
-                <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Платформа</div>
-                <div style="font-size:18px;font-weight:800;color:#fbbf24;">0$</div>
-              </div>
-              <div style="background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
-                <div style="font-size:9px;color:var(--text3);margin-bottom:2px;">Агент</div>
-                <div style="font-size:18px;font-weight:800;color:#fbbf24;">0$</div>
-              </div>
-            </div>
-            <div style="font-size:11px;color:var(--text3);text-align:center;">Сделка фиксируется без комиссии.<br>В счётчик и аналитику не идёт.</div>
-          </div>
-
           <!-- Ручное распределение — только для сценария 7 -->
           <div id="rn-manual-block" style="background:var(--bg3);border:0.5px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 14px;margin-top:10px;display:none;">
             <div style="font-size:10px;font-weight:700;color:#fbbf24;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">✏️ Ручное распределение %</div>
@@ -1018,8 +965,8 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           </div>
         </div>
 
-        <!-- 3. УЧАСТНИКИ -->
-        <div class="section"><div class="sl">3. Участники</div>
+        <!-- 2. УЧАСТНИКИ -->
+        <div class="section"><div class="sl">2. Участники</div>
           <div class="field"><label class="fl">Агент <span class="req">*</span></label>
             <select id="rn-agent" onchange="onAgentChangeRental()"><option value="">Выбрать агента...</option></select>
           </div>
@@ -1374,7 +1321,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div id="news-list">
             <div style="text-align:center;padding:40px 20px;color:var(--text3);">
               <div style="font-size:36px;margin-bottom:12px;">⏳</div>
-              <div style="font-size:14px;font-weight:600;">News load...</div>
+              <div style="font-size:14px;font-weight:600;">Загрузка новостей...</div>
             </div>
           </div>
         </div>
@@ -1389,13 +1336,9 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       </div>
       <div class="pad pb">
         <div class="section">
-          <div class="sl" style="display:flex;justify-content:space-between;align-items:center;">
-            <span>Агенты</span>
-            <button onclick="toggleAdminSection('agents')" id="btn-collapse-agents" style="font-size:10px;padding:3px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">Развернуть</button>
-          </div>
-          <div id="admin-agents-body" style="display:none;">
+          <div class="sl">Агенты</div>
           <div id="admin-agents-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
-            <div style="padding:14px;text-align:center;color:var(--text3);">Loading...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
             <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;">Добавить агента</div>
@@ -1410,16 +1353,11 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             </div>
             <button class="sbtn" onclick="adminAddAgent()" style="margin-top:8px;">+ Добавить агента</button>
           </div>
-          </div>
         </div>
         <div class="section">
-          <div class="sl" style="display:flex;justify-content:space-between;align-items:center;">
-            <span>Рекруты</span>
-            <button onclick="toggleAdminSection('recruits')" id="btn-collapse-recruits" style="font-size:10px;padding:3px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">Развернуть</button>
-          </div>
-          <div id="admin-recruits-body" style="display:none;">
+          <div class="sl">Рекруты</div>
           <div id="admin-recruits-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;">
-            <div style="padding:14px;text-align:center;color:var(--text3);">Loading...</div>
+            <div style="padding:14px;text-align:center;color:var(--text3);">Загрузка...</div>
           </div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;">
             <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;">Добавить рекрута</div>
@@ -1427,30 +1365,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
             <div class="field"><label class="fl">Telegram</label><input type="text" id="admin-new-rec-tg" placeholder="@username"></div>
             <button class="sbtn" onclick="adminAddRecruit()" style="margin-top:8px;">+ Добавить рекрута</button>
           </div>
-          </div>
         </div>
-        <div class="section">
-          <div class="sl">📢 Бегущая строка</div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px;">
-            <div style="padding:10px 14px;border-bottom:0.5px solid var(--border);">
-              <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Что показывать</div>
-              <div style="display:flex;flex-direction:column;gap:8px;">
-                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-                  <input type="checkbox" id="tk-show-news" checked onchange="updateTickerFromAdmin()" style="width:16px;height:16px;">
-                  <span style="font-size:13px;color:var(--text);">Последняя новость из канала</span>
-                </label>
-                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-                  <input type="checkbox" id="tk-show-custom" checked onchange="updateTickerFromAdmin()" style="width:16px;height:16px;">
-                  <span style="font-size:13px;color:var(--text);">Срочные сообщения (ниже)</span>
-                </label>
-              </div>
-            </div>
-            <div id="admin-ticker-list" style="padding:8px 0;"></div>
-          </div>
-          <div class="field"><label class="fl">Новое срочное сообщение</label><input type="text" id="admin-ticker-text" placeholder="Срочное объявление..."></div>
-          <button class="sbtn" onclick="adminAddTicker()" style="margin-top:4px;">Опубликовать</button>
-        </div>
-
         <div class="section">
           <div class="sl">Метрики дашборда</div>
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
@@ -1497,7 +1412,10 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <span style="font-size:13px;color:var(--text);">График комиссии по месяцам</span>
               <div id="sw-monthly" onclick="toggleDashSec('monthly')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
             </div>
-
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);">
+              <span style="font-size:13px;color:var(--text);">Агенты — заработок за период</span>
+              <div id="sw-agents" onclick="toggleDashSec('agents')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
+            </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;">
               <span style="font-size:13px;color:var(--text);">Последние сделки</span>
               <div id="sw-lastdeals" onclick="toggleDashSec('lastdeals')" style="width:44px;height:26px;border-radius:13px;background:var(--green);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;"><div style="position:absolute;top:3px;left:21px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);"></div></div>
@@ -1508,179 +1426,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
       </div>
     </div>
 
-  <!-- ══ ЛИЧНЫЙ КАБИНЕТ ══════════════════════════════════ -->
-  <div class="screen" id="tab-cabinet" style="padding:0 14px 100px;">
-    <div class="ht" id="cab-title" style="padding:14px 0 10px;margin:0;">Profile</div>
-
-    <!-- Загрузка -->
-    <div id="cab-screen-loading" style="display:none;text-align:center;padding:60px 20px;">
-      <div class="spin" style="margin:0 auto 16px;"></div>
-      <div style="font-size:13px;color:var(--text3);">Загружаем...</div>
-    </div>
-
-    <!-- Ошибка -->
-    <div id="cab-screen-error" style="display:none;text-align:center;padding:60px 20px;">
-      <div style="font-size:36px;margin-bottom:12px;">🔒</div>
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;">Нет доступа</div>
-      <div style="font-size:13px;color:var(--text3);">Аккаунт не найден в базе</div>
-    </div>
-
-    <!-- Список агентов (суперадмин) -->
-    <div id="cab-screen-list" style="display:none;">
-      <div id="cab-agents-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;">
-        <div style="padding:14px;text-align:center;color:var(--text3);">Loading...</div>
-      </div>
-    </div>
-
-    <!-- Детальный кабинет (агент или суперадмин смотрит агента) -->
-    <div id="cab-screen-detail" style="display:none;">
-      <!-- Кнопка назад (только для суперадмина) -->
-      <div id="cab-back-btn" style="display:none;margin-bottom:10px;">
-        <button onclick="cabGoBack()" style="font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;">← Назад</button>
-      </div>
-
-      <!-- Профиль -->
-      <div id="cab-profile-card" style="background:linear-gradient(135deg,var(--accent),#a78bfa);border-radius:var(--r);padding:18px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div id="cab-avatar" style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;">?</div>
-          <div style="flex:1;">
-            <div id="cab-name" style="font-size:17px;font-weight:800;color:#fff;">—</div>
-            <div id="cab-level-label" style="font-size:12px;color:rgba(255,255,255,.8);">—</div>
-            <div id="cab-next-val" style="font-size:10px;color:rgba(255,255,255,.6);"></div>
-          </div>
-          <div style="text-align:right;">
-            <div id="cab-deals-count" style="font-size:30px;font-weight:800;color:#fff;">0</div>
-            <div style="font-size:10px;color:rgba(255,255,255,.7);">сделок</div>
-          </div>
-        </div>
-        <div id="cab-progress-wrap" style="display:none;margin-top:12px;background:rgba(255,255,255,.2);border-radius:4px;height:4px;">
-          <div id="cab-progress-bar" style="background:#fff;border-radius:4px;height:4px;width:0%;transition:width .5s;"></div>
-        </div>
-      </div>
-
-      <!-- Счётчики рекрута -->
-      <div id="cab-recruit-block" style="display:none;margin-bottom:12px;">
-        <div class="sl">Показатели</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:3px;">📸</div>
-            <div id="cab-cnt-photo" style="font-size:16px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Фото</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:3px;">👁</div>
-            <div id="cab-cnt-showing" style="font-size:16px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Показы</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:3px;">📌</div>
-            <div id="cab-cnt-stickers" style="font-size:16px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Расклейка</div>
-          </div>
-          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:3px;">🏠</div>
-            <div id="cab-cnt-rental" style="font-size:16px;font-weight:800;color:var(--accent2);">0</div>
-            <div style="font-size:9px;color:var(--text3);">Сдачи</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Календарь -->
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div class="sl" style="margin:0;">📅 Календарь</div>
-          <button onclick="cabShowAddForm()" style="font-size:11px;padding:5px 12px;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:inherit;">+ Показ</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <button onclick="cabWeekPrev()" style="font-size:20px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 10px;">‹</button>
-          <div id="cab-week-label" style="font-size:12px;font-weight:600;color:var(--text2);">—</div>
-          <button onclick="cabWeekNext()" style="font-size:20px;background:transparent;border:none;cursor:pointer;color:var(--text2);padding:4px 10px;">›</button>
-        </div>
-        <div id="cab-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;"></div>
-        <div id="cab-day-events" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);min-height:50px;">
-          <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Выбери день</div>
-        </div>
-      </div>
-
-      <!-- Форма добавления показа -->
-      <div id="cab-add-form" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px;">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">🏠 Новый показ</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-          <div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Дата</div>
-            <input type="date" id="cab-f-date" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          </div>
-          <div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Время</div>
-            <input type="time" id="cab-f-time" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          </div>
-        </div>
-        <div style="margin-bottom:8px;">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Ссылка из канала</div>
-          <input type="url" id="cab-f-link" placeholder="https://t.me/rent_tbilisi_ge/..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-        </div>
-        <div style="margin-bottom:8px;">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Адрес объекта</div>
-          <input type="text" id="cab-f-addr" placeholder="Saburtalo, Nutsubidze..." oninput="cabSearchOwner(this.value)" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          <div id="cab-owner-hint" style="display:none;font-size:11px;color:var(--green);margin-top:3px;padding:5px 8px;background:rgba(34,197,94,.1);border-radius:6px;"></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-          <div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Собственник</div>
-            <input type="text" id="cab-f-owner" placeholder="Имя..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          </div>
-          <div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Тел. собств.</div>
-            <input type="tel" id="cab-f-owner-phone" placeholder="+995..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-          <div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Клиент</div>
-            <input type="text" id="cab-f-client" placeholder="Имя клиента..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          </div>
-          <div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Тел. клиента</div>
-            <input type="tel" id="cab-f-client-phone" placeholder="+995..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;box-sizing:border-box;">
-          </div>
-        </div>
-        <div style="margin-bottom:8px;">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Рекрут / Второй агент</div>
-          <select id="cab-f-recruit" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;">
-            <option value="">— не выбрано —</option>
-          </select>
-        </div>
-        <div style="margin-bottom:12px;">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">Комментарий</div>
-          <textarea id="cab-f-comment" rows="2" placeholder="Заметки..." style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;font-family:inherit;resize:none;box-sizing:border-box;"></textarea>
-        </div>
-        <div style="display:flex;gap:8px;padding-bottom:20px;">
-          <button onclick="cabSubmitShowing()" style="flex:1;padding:14px;border-radius:10px;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;">✓ Сохранить</button>
-          <button onclick="cabHideForm()" style="padding:14px 18px;border-radius:10px;background:transparent;color:var(--text2);border:1px solid var(--border);cursor:pointer;font-size:15px;font-family:inherit;">✕</button>
-        </div>
-      </div>
-
-      <!-- Ближайший договор (предупреждение) -->
-      <div id="cab-contract-alert" style="display:none;margin-bottom:12px;"></div>
-
-      <!-- Договора -->
-      <div class="sl" id="cab-contracts-title">Договора</div>
-      <div id="cab-contracts-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;">
-        <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>
-      </div>
-
-      <!-- Сделки -->
-      <div class="sl" id="cab-deals-title">Сделки</div>
-      <div id="cab-deals-list" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;">
-        <div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет сделок</div>
-      </div>
-
-      <!-- CRM -->
-      <button class="sbtn navy" onclick="openCRM()" style="width:100%;margin-bottom:20px;padding:14px;">🏠 Открыть CRM</button>
-    </div>
-
-  </div><!-- /cabinet -->
-
   </div><!-- /screens -->
 
   <nav class="bnav">
@@ -1688,7 +1433,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
     <button class="bni" id="nav-reports" onclick="goTab('reports')"><span class="bni-ic">📋</span><span class="bni-lb">Reports</span></button>
     <button class="bni" id="nav-contract" onclick="goTab('contract')"><span class="bni-ic">📄</span><span class="bni-lb">Contract</span></button>
     <button class="bni" id="nav-stats" onclick="goTab('stats')"><span class="bni-ic">📊</span><span class="bni-lb">Agent</span></button>
-    <button class="bni" id="nav-cabinet" onclick="goTab('cabinet')"><span class="bni-ic">👤</span><span class="bni-lb">Profile</span></button>
+    <button class="bni" id="nav-crm" onclick="openCRM()"><span class="bni-ic">🏠</span><span class="bni-lb">CRM</span></button>
     <button class="bni" id="nav-admin" onclick="goTab('admin')" style="display:none;"><span class="bni-ic">⚙️</span><span class="bni-lb">Admin</span></button>
   </nav>
 </div>
@@ -1698,218 +1443,24 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwrLMoJWg-hiCcV63_aCTpp3QvIEXDXiuoH3mJ0TlBuzMkKsrC9ntEvOz79QXEonvLlKQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzH3MRad_3qT8_uWjf5_dhUPwicu-lp-ec5c2_Prs8_kI-vYFsqamgrDXZrXJL-xbX8rA/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
 
 // State
-// showRes, h2o, t0Res, t14Res, compSel — defined in AppState aliases below
-let rnExcl=true, rnType='rent', rnSub='long', rnLvl=90, rnSc=0, rnRecD='lt10', rnIsRerented=false;
-// ─── APP STATE (UI state grouped by domain) ─────────────
-// Access: AppState.rental.excl  etc.
-// Backward-compat aliases kept below for existing code.
-var AppState = {
-  nav: {
-    prevTab: 'reports'           // tab to return to on goBack()
-  },
-  rental: {
-    excl: true, type: 'rent', sub: 'long', lvl: 90, sc: 0, recD: 'lt10',
-    h2o: {c:0, o:0, p:0}, t0Res: '', manualPcts: {}, manualNotes: {}
-  },
-  deal: {
-    excl: true, type: 'rent', sub: 'long', lvl: 50
-  },
-  contract: {
-    step: 1, lang: ''
-  },
-  quiz: {
-    answers: [], current: 0, score: 0
-  },
-  misc: {
-    showRes: '', t0Res: '', t14Res: '', compSel: '',
-    h2o: {t0:{client:0,owner:0,process:0}, t14:{client:0,owner:0,process:0}},
-    pdfTimer: {}
-  }
-};
-
-// ── Backward-compat aliases (existing code uses these var names) ──
-// These are live references so reads/writes stay in sync with AppState.
-// Rental form
-Object.defineProperty(window,'rnExcl',{get:function(){return AppState.rental.excl;},set:function(v){AppState.rental.excl=v;}});
-Object.defineProperty(window,'rnType', {get:function(){return AppState.rental.type;}, set:function(v){AppState.rental.type=v;}});
-Object.defineProperty(window,'rnSub',  {get:function(){return AppState.rental.sub;},  set:function(v){AppState.rental.sub=v;}});
-Object.defineProperty(window,'rnLvl',  {get:function(){return AppState.rental.lvl;},  set:function(v){AppState.rental.lvl=v;}});
-Object.defineProperty(window,'rnSc',   {get:function(){return AppState.rental.sc;},   set:function(v){AppState.rental.sc=v;}});
-Object.defineProperty(window,'rnRecD', {get:function(){return AppState.rental.recD;}, set:function(v){AppState.rental.recD=v;}});
-Object.defineProperty(window,'rnH2O',  {get:function(){return AppState.rental.h2o;},  set:function(v){AppState.rental.h2o=v;}});
-Object.defineProperty(window,'rnT0Res',{get:function(){return AppState.rental.t0Res;},set:function(v){AppState.rental.t0Res=v;}});
-Object.defineProperty(window,'rnManualPcts', {get:function(){return AppState.rental.manualPcts;},set:function(v){AppState.rental.manualPcts=v;}});
-Object.defineProperty(window,'rnManualNotes',{get:function(){return AppState.rental.manualNotes;},set:function(v){AppState.rental.manualNotes=v;}});
-// Deal calc form
-Object.defineProperty(window,'dExcl',{get:function(){return AppState.deal.excl;},set:function(v){AppState.deal.excl=v;}});
-Object.defineProperty(window,'dType', {get:function(){return AppState.deal.type;}, set:function(v){AppState.deal.type=v;}});
-Object.defineProperty(window,'dSub',  {get:function(){return AppState.deal.sub;},  set:function(v){AppState.deal.sub=v;}});
-Object.defineProperty(window,'dLvl',  {get:function(){return AppState.deal.lvl;},  set:function(v){AppState.deal.lvl=v;}});
-// Navigation
-Object.defineProperty(window,'prevTab',{get:function(){return AppState.nav.prevTab;},set:function(v){AppState.nav.prevTab=v;}});
-// Misc form state
-Object.defineProperty(window,'showRes', {get:function(){return AppState.misc.showRes;}, set:function(v){AppState.misc.showRes=v;}});
-Object.defineProperty(window,'t0Res',   {get:function(){return AppState.misc.t0Res;},   set:function(v){AppState.misc.t0Res=v;}});
-Object.defineProperty(window,'t14Res',  {get:function(){return AppState.misc.t14Res;},  set:function(v){AppState.misc.t14Res=v;}});
-Object.defineProperty(window,'compSel', {get:function(){return AppState.misc.compSel;}, set:function(v){AppState.misc.compSel=v;}});
-Object.defineProperty(window,'h2o',     {get:function(){return AppState.misc.h2o;},     set:function(v){AppState.misc.h2o=v;}});
-Object.defineProperty(window,'pdfTimer',{get:function(){return AppState.misc.pdfTimer;},set:function(v){AppState.misc.pdfTimer=v;}});
-// Contract wizard
-Object.defineProperty(window,'cStep',{get:function(){return AppState.contract.step;},set:function(v){AppState.contract.step=v;}});
-Object.defineProperty(window,'cLang', {get:function(){return AppState.contract.lang;}, set:function(v){AppState.contract.lang=v;}});
-// Quiz
-Object.defineProperty(window,'quizAnswers', {get:function(){return AppState.quiz.answers;}, set:function(v){AppState.quiz.answers=v;}});
-Object.defineProperty(window,'quizCurrent', {get:function(){return AppState.quiz.current;}, set:function(v){AppState.quiz.current=v;}});
-Object.defineProperty(window,'quizScore',   {get:function(){return AppState.quiz.score;},   set:function(v){AppState.quiz.score=v;}});
-
-// ─── CONFETTI ───────────────────────────────────────────
-function launchConfetti() {
-  var canvas = document.getElementById('confetti-canvas');
-  if (!canvas) {
-    canvas = document.createElement('canvas');
-    canvas.id = 'confetti-canvas';
-    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
-    document.body.appendChild(canvas);
-  }
-  var ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  var pieces = [];
-  var colors = ['#7c6fff','#22c55e','#f59e0b','#ef4444','#3b82f6','#a78bfa','#34d399','#fbbf24'];
-  for (var i = 0; i < 120; i++) {
-    pieces.push({
-      x: Math.random() * canvas.width,
-      y: -10 - Math.random() * 100,
-      w: 6 + Math.random() * 8,
-      h: 3 + Math.random() * 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      rotation: Math.random() * 360,
-      speed: 2 + Math.random() * 4,
-      drift: (Math.random() - 0.5) * 2,
-      spin: (Math.random() - 0.5) * 8,
-      opacity: 1
-    });
-  }
-
-  var startTime = Date.now();
-  var duration = 3500;
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    var elapsed = Date.now() - startTime;
-    var progress = elapsed / duration;
-
-    pieces.forEach(function(p) {
-      p.y += p.speed;
-      p.x += p.drift;
-      p.rotation += p.spin;
-      if (progress > 0.6) p.opacity = Math.max(0, 1 - (progress - 0.6) / 0.4);
-
-      ctx.save();
-      ctx.globalAlpha = p.opacity;
-      ctx.translate(p.x + p.w/2, p.y + p.h/2);
-      ctx.rotate(p.rotation * Math.PI / 180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-      ctx.restore();
-    });
-
-    if (elapsed < duration) {
-      requestAnimationFrame(draw);
-    } else {
-      canvas.remove();
-    }
-  }
-  draw();
-  haptic('success');
-}
-
-// ─── ANIMATED COUNTER ───────────────────────────────────
-function animateCounter(id, target, duration) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var start = 0;
-  var num = parseFloat(target) || 0;
-  if (num === 0) { el.textContent = '0'; return; }
-  var startTime = null;
-  var step = function(timestamp) {
-    if (!startTime) startTime = timestamp;
-    var progress = Math.min((timestamp - startTime) / (duration || 800), 1);
-    // easeOutCubic
-    var ease = 1 - Math.pow(1 - progress, 3);
-    var current = Math.round(ease * num);
-    el.textContent = current;
-    if (progress < 1) requestAnimationFrame(step);
-    else el.textContent = num;
-  };
-  requestAnimationFrame(step);
-}
-
-// ─── HAPTIC FEEDBACK ────────────────────────────────────
-function haptic(type) {
-  try {
-    var hf = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback;
-    if (!hf) return;
-    if (type === 'success') hf.notificationOccurred('success');
-    else if (type === 'error') hf.notificationOccurred('error');
-    else if (type === 'warning') hf.notificationOccurred('warning');
-    else hf.impactOccurred(type || 'light');
-  } catch(e) {}
-}
-
-// ─── DRAFT AUTO-SAVE (sessionStorage) ───────────────────
-// Saves/restores input values for complex forms so data
-// survives accidental back navigation within the session.
-var DRAFT_FORMS = {
-  'calc':       ['rn-price','rn-comm-pct','rn-link','rn-cadastral','rn-cname','rn-cphone','rn-oname','rn-ophone','rn-from','rn-to','t0-comment','rn-agent'],
-  'form-daily': ['daily-author','daily-date','daily-calls','daily-calls-no','daily-calls-yes','daily-stickers','daily-photos','daily-showings','daily-st-dist','daily-ph-addr','daily-sh-addr'],
-  'form-general':['gr-author-sel','gr-stickers-cnt','gr-calls-total','gr-calls-no','gr-calls-yes','gr-photo-addr','gr-stickers-dist']
-};
-
-function draftSave(formKey) {
-  var ids = DRAFT_FORMS[formKey]; if (!ids) return;
-  var draft = {};
-  ids.forEach(function(id){ var el=document.getElementById(id); if(el) draft[id]=el.value; });
-  try { sessionStorage.setItem('draft_'+formKey, JSON.stringify(draft)); } catch(e){}
-}
-
-function draftRestore(formKey) {
-  var ids = DRAFT_FORMS[formKey]; if (!ids) return;
-  try {
-    var raw = sessionStorage.getItem('draft_'+formKey);
-    if (!raw) return;
-    var draft = JSON.parse(raw);
-    ids.forEach(function(id){ var el=document.getElementById(id); if(el && draft[id] !== undefined) el.value=draft[id]; });
-  } catch(e){}
-}
-
-function draftClear(formKey) {
-  try { sessionStorage.removeItem('draft_'+formKey); } catch(e){}
-}
+let showRes='', h2o={t0:{client:0,owner:0,process:0},t14:{client:0,owner:0,process:0}};
+let t0Res='', t14Res='', compSel='';
+let rnExcl=true, rnType='rent', rnSub='long', rnLvl=90, rnSc=0, rnRecD='lt10';
+let rnH2O={c:0,o:0,p:0}, rnT0Res='', rnManualPcts={}, rnManualNotes={};
+let dExcl=true, dType='rent', dSub='long', dLvl=50;
+let prevTab='reports';
+let cStep=1, cLang='';
+let quizAnswers=[], quizCurrent=0, quizScore=0;
+let pdfTimer={};
 
 // SPLASH
 window.addEventListener('load', function() {
-  // Expand fullscreen + disable swipe-to-close
-  if(window.Telegram&&window.Telegram.WebApp){
-    window.Telegram.WebApp.expand();
-    if(window.Telegram.WebApp.disableVerticalSwipes) window.Telegram.WebApp.disableVerticalSwipes();
-  }
-  // Block horizontal browser swipes (back/forward navigation)
-  var _tx=0,_ty=0;
-  document.addEventListener('touchstart',function(e){_tx=e.touches[0].clientX;_ty=e.touches[0].clientY;},{passive:true});
-  document.addEventListener('touchmove',function(e){
-    var dx=Math.abs(e.touches[0].clientX-_tx);
-    var dy=Math.abs(e.touches[0].clientY-_ty);
-    if(dx>dy&&dx>10){e.preventDefault();}
-  },{passive:false});
-
   setTimeout(function(){ document.getElementById('splash').classList.add('hide'); setTimeout(function(){ document.getElementById('splash').style.display='none'; },500); },1800);
   checkAccess();
 loadData();
@@ -1923,53 +1474,36 @@ document.addEventListener('focusin', function(e) {
 });
 });
 
-// ─── NAVIGATION (single source of truth) ───────────────
-// navigate(screenId, fromTab?)
-// screenId: 'tab-deals' | 'tab-reports' | 'form-daily' | etc.
-// fromTab:  optional — sets prevTab for goBack()
-function navigate(screenId, fromTab) {
-  // Guard: protect against non-existent screens
-  var target = document.getElementById(screenId);
-  if (!target) { console.warn('navigate: screen not found:', screenId); return; }
-  // Clear dashAutoTimer whenever leaving dashboard
-  if (screenId !== 'tab-deals' && dashAutoTimer) {
-    clearInterval(dashAutoTimer);
-    dashAutoTimer = null;
-  }
-  if (fromTab) prevTab = fromTab;
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  document.querySelectorAll('.bni').forEach(function(b){ b.classList.remove('on'); });
-  target.classList.add('active');
-  // Highlight bottom nav for top-level tabs
-  var navId = screenId.replace('tab-', 'nav-');
-  var navBtn = document.getElementById(navId);
-  if (navBtn) navBtn.classList.add('on');
-  // Tab-specific init hooks
-  if (screenId === 'tab-stats')    { switchStatsTab('agents'); renderStats(); }
-  if (screenId === 'tab-contract') { cxReset(); }
-  if (screenId === 'tab-deals')    { renderDash(); }
-  window.scrollTo(0, 0);
-}
-
-// TABS — thin wrappers (all existing calls unchanged)
+// TABS
 function goTab(tab) {
-  haptic('light');
-  navigate('tab-'+tab);
-  if (tab === 'cabinet') loadCabinet();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('nav-'+tab).classList.add('on');
+  if(tab==='stats') { switchStatsTab('agents'); renderStats(); }
+  if(tab==='contract') {cxReset();}
+  if(tab==='deals') { renderDash(); }
+  window.scrollTo(0,0);
 }
 
 function openForm(type) {
-  navigate('form-'+type, 'reports');
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('form-'+type).classList.add('active');
   populateForm(type);
   setToday(type);
-  if (type==='t14') {
-    var el=document.getElementById('t14-agent');
-    el.innerHTML='<option value="">Выбрать...</option>';
-    AGENTS.forEach(function(a){ el.innerHTML+='<option value="'+a.telegram+'">'+a.name+'</option>'; });
-  }
+  if(type==='t14') { const el=document.getElementById('t14-agent'); el.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>el.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`); }
+  window.scrollTo(0,0);
 }
 
-function goBack() { haptic('light'); navigate('tab-'+prevTab); }
+function goBack() {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+prevTab).classList.add('active');
+  document.getElementById('nav-'+prevTab).classList.add('on');
+  window.scrollTo(0,0);
+}
 
 // POPULATE
 function populateForm(type) {
@@ -1981,13 +1515,7 @@ function populateForm(type) {
     mEl.innerHTML='<option value="">Выбрать наставника...</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
   }
   if(type==='rental') {
-    const agEl=document.getElementById('rn-agent');
-    agEl.innerHTML='<option value="">Выбрать...</option>';
-    AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}">${a.name} (${a.level||50}%)</option>`);
-    if(RECRUITS.length){
-      agEl.innerHTML+='<optgroup label="── Рекруты ──"></optgroup>';
-      RECRUITS.forEach(r=>agEl.innerHTML+=`<option value="${r.telegram}">${r.name} (рекрут)</option>`);
-    }
+    const agEl=document.getElementById('rn-agent'); agEl.innerHTML='<option value="">Выбрать...</option>'; AGENTS.forEach(a=>agEl.innerHTML+=`<option value="${a.telegram}">${a.name} (${a.level||50}%)</option>`);
     const rEl=document.getElementById('rn-recruit'); rEl.innerHTML='<option value="">Без рекрута</option>'; RECRUITS.forEach(r=>rEl.innerHTML+=`<option value="${r.name}">${r.name}</option>`);
     const mEl=document.getElementById('rn-mentor'); mEl.innerHTML='<option value="">Без наставника</option>'; AGENTS.forEach(a=>mEl.innerHTML+=`<option value="${a.telegram}">${a.name}</option>`);
   }
@@ -2009,10 +1537,6 @@ function populateRentalInDeals() {
   var agEl=document.getElementById('rn-agent'); if(!agEl)return;
   agEl.innerHTML='<option value="">Выбрать агента...</option>';
   AGENTS.forEach(function(a){agEl.innerHTML+='<option value="'+a.telegram+'" data-level="'+(a.level||50)+'">'+a.name+' ('+(a.level||50)+'%)</option>';});
-  if(RECRUITS.length){
-    agEl.innerHTML+='<optgroup label="── Рекруты ──"></optgroup>';
-    RECRUITS.forEach(function(r){agEl.innerHTML+='<option value="'+r.telegram+'" data-level="50">'+r.name+' (рекрут)</option>';});
-  }
   var rEl=document.getElementById('rn-recruit'); if(!rEl)return;
   rEl.innerHTML='<option value="">Без рекрута</option>';
   RECRUITS.forEach(function(r){rEl.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});
@@ -2030,6 +1554,14 @@ function onAgentChange() {
   const opt=aEl.options[aEl.selectedIndex];
   const lvl=parseInt(opt.getAttribute('data-level')||50);
   setLvl(lvl);
+}
+
+function onAgentChangeRental() {
+  var aEl = document.getElementById('rn-agent');
+  var opt = aEl.options[aEl.selectedIndex];
+  var lvl = parseInt(opt.getAttribute('data-level') || 50);
+  setRnLvl(lvl);
+  calcRental();
 }
 
 function onRCRental() {
@@ -2062,6 +1594,7 @@ function setToday(type) {
   const ids={photo:'ph-date',showing:'sh-date',stickers:'st-date'};
   if(ids[type]){const el=document.getElementById(ids[type]);if(el)el.value=today;}
   if(type==='rental'){const f=document.getElementById('rn-from');if(f)f.value=today;}
+  if(type==='t14'){var f=document.getElementById('t14-date');if(f){f.value=today;f.addEventListener('change',function(){var d=new Date(this.value);if(!isNaN(d)){d.setDate(d.getDate()+14);var hint=document.getElementById('t14-date-hint');if(hint)hint.textContent='📅 T14: '+d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});}});f.dispatchEvent(new Event('change'));}}
 }
 
 // DEAL TYPE
@@ -2138,31 +1671,6 @@ function setRnType(v) {
   calcRental();
 }
 
-function setRnRerented(){
-  // Toggle пересдача
-  rnIsRerented = !rnIsRerented;
-  var btn = document.getElementById('rnsc-rerented');
-  var ck  = document.getElementById('rnsc-rerented-ck');
-  var blk = document.getElementById('rn-rerented-block');
-  if (rnIsRerented) {
-    btn.style.borderColor = 'rgba(251,191,36,.7)';
-    ck.style.color = '#fbbf24';
-    ck.style.borderColor = '#fbbf24';
-    blk.style.display = 'block';
-    // Блокируем поле комиссии
-    var commPctEl = document.getElementById('rn-comm-pct');
-    if (commPctEl) { commPctEl.value = '0'; commPctEl.readOnly = true; commPctEl.style.opacity = '.5'; commPctEl.dispatchEvent(new Event('input')); }
-  } else {
-    btn.style.borderColor = 'rgba(251,191,36,.3)';
-    ck.style.color = 'transparent';
-    ck.style.borderColor = 'rgba(251,191,36,.3)';
-    blk.style.display = 'none';
-    var commPctEl2 = document.getElementById('rn-comm-pct');
-    if (commPctEl2) { commPctEl2.value = '50'; commPctEl2.readOnly = false; commPctEl2.style.opacity = '1'; commPctEl2.dispatchEvent(new Event('input')); }
-  }
-  rnCalc();
-}
-
 function setRnSc(i){
   rnSc=i;
   for(var j=0;j<8;j++){
@@ -2183,8 +1691,26 @@ function setRnSc(i){
       if(ck){ck.style.background='transparent';ck.style.borderColor='rgba(255,255,255,.15)';ck.style.color='transparent';}
     }
   }
-  var showRec=(i>=1&&i<=3);
-  var showRecDeals=(i===5);
+  var showRec=(i>=1&&i<=5);
+  var showRecDeals=(i>=3&&i<=5);
+  // Update recruit field label based on scenario
+  var recLabel=document.querySelector('[for="rn-recruit"], #rn-recruit-block .fl');
+  if(recLabel){recLabel.textContent=(i===5)?'Рекрут':'Рекрут / Агент (показ)';}
+  // Update recdeals label based on scenario
+  var rdLabel=document.querySelector('#rn-recdeals-block .fl');
+  if(rdLabel){
+    if(i===3){rdLabel.textContent='Сделки рекрута (до 5 / от 5)';}
+    else if(i===4){rdLabel.textContent='Сделки рекрута (до 10 / от 10)';}
+    else{rdLabel.textContent='Reports_Deals рекрута';}
+  }
+  // Update recdeals buttons based on scenario
+  var rdLt=document.getElementById('rn-rd-lt');
+  var rdGte=document.getElementById('rn-rd-gte');
+  if(rdLt&&rdGte){
+    if(i===3){rdLt.textContent='До 5 сделок';rdGte.textContent='5 и более сделок';}
+    else if(i===4){rdLt.textContent='До 10 сделок';rdGte.textContent='10 и более сделок';}
+    else{rdLt.textContent='До 10 сделок';rdGte.textContent='10 — 90 сделок';}
+  }
   var showLevel=(i<=3||i===6);
   var showClientSrc=(i===6);
   // Сценарий 7 — ручное: показываем блок и подсвечиваем
@@ -2245,77 +1771,35 @@ function buildRnManual(){
   if(el)el.innerHTML=html;
 }
 
-// ─── COMMISSION RULES (single source of truth) ──────────
-// All percentage logic lives here. To change a rule — edit
-// only this object. rnCalcDist() reads it; nothing else should.
-var COMMISSION_RULES = {
-  AGENT_LEVELS: [50, 70, 90],          // valid agent level values
-  NON_EXCL_PCT: 50,                    // agent % when non-exclusive
-  CLIENT_TRANSFER_PCT: 10,             // fixed % for client-source agent (sc6)
-  // sc0: Агент сам (эксклюзив = rnLvl%, неэксклюзив = 50%)
-  sc0: function(excl, lvl) {
-    var a = excl ? lvl : COMMISSION_RULES.NON_EXCL_PCT;
-    return [{n:'Агент', p:a, c:'#22c55e'}, {n:'Платформа', p:100-a, c:'#55556a'}];
-  },
-  // sc1: Агент дал объект + рекрут/агент показал (показ=20%)
-  sc1: function(excl, lvl) {
-    var a = excl ? (lvl===50?30:lvl===70?50:70) : 30;
-    return [{n:'Агент (объект)', p:a, c:'#22c55e'}, {n:'Рекрут/Агент (показ)', p:20, c:'#a89fff'}, {n:'Платформа', p:100-a-20, c:'#55556a'}];
-  },
-  // sc2: Агент передал объект рекруту (рекрут сделал всё=40%)
-  sc2: function(excl, lvl) {
-    var a = excl ? (lvl===50?10:lvl===70?30:50) : 10;
-    return [{n:'Агент (передал)', p:a, c:'#22c55e'}, {n:'Рекрут (сделал всё)', p:40, c:'#a89fff'}, {n:'Платформа', p:100-a-40, c:'#55556a'}];
-  },
-  // sc3: Рекрут первые 5 сделок (рекрут=20%)
-  sc3: function(excl) {
-    var a = excl ? 70 : 30;
-    return [{n:'Агент', p:a, c:'#22c55e'}, {n:'Рекрут (5 сд.)', p:20, c:'#a89fff'}, {n:'Платформа', p:100-a-20, c:'#55556a'}];
-  },
-  // sc4: Рекрут 10 сделок (наставник=25%, рекрут=50%, платф=25%)
-  sc4: function() {
-    return [{n:'Агент-наставник', p:25, c:'#22c55e'}, {n:'Рекрут (10 сд.)', p:50, c:'#a89fff'}, {n:'Платформа', p:25, c:'#55556a'}];
-  },
-  // sc5: Объект рекрута (lt10 vs gte10)
-  sc5: function(recD) {
-    var a=recD==='lt10'?25:15, r=recD==='lt10'?50:70, p=recD==='lt10'?25:15;
-    return [{n:'Агент-наставник', p:a, c:'#22c55e'}, {n:'Рекрут', p:r, c:'#a89fff'}, {n:'Платформа', p:p, c:'#55556a'}];
-  },
-  // sc6: Передача клиента (источник получает 10% от доли агента)
-  sc6: function(excl, lvl) {
-    var agPct = excl ? lvl : COMMISSION_RULES.NON_EXCL_PCT;
-    var src   = COMMISSION_RULES.CLIENT_TRANSFER_PCT;
-    return [{n:'Агент (получил клиента)', p:agPct-src, c:'#22c55e'}, {n:'Агент-источник (10%)', p:src, c:'#fb923c'}, {n:'Платформа', p:100-agPct, c:'#55556a'}];
-  }
-};
-
 function rnCalcDist(comm){
-  if (rnIsRerented) return [
-    {n:'Платформа', p:0, c:'var(--text3)', val:0},
-    {n:'Агент', p:0, c:'var(--accent)', val:0},
-  ];
-  var CR = COMMISSION_RULES;
-  var rows;
-  switch(rnSc){
-    case 0: rows=CR.sc0(rnExcl,rnLvl); break;
-    case 1: rows=CR.sc1(rnExcl,rnLvl); break;
-    case 2: rows=CR.sc2(rnExcl,rnLvl); break;
-    case 3: rows=CR.sc3(rnExcl);       break;
-    case 4: rows=CR.sc4();             break;
-    case 5: rows=CR.sc5(rnRecD);       break;
-    case 6: rows=CR.sc6(rnExcl,rnLvl); break;
-    default:
-      // sc7: ручное — нули, заполняется вручную
-      rows=rnScDefs[7].map(function(r){return{n:r.n,p:0,c:r.c,val:0};});
+  var rows=[];
+  if(rnSc===0){var a=rnExcl?rnLvl:50,p=100-a;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===1){var a=rnExcl?(rnLvl===50?30:rnLvl===70?50:70):30,p=100-a-20;rows=[{n:'Агент (объект)',p:a,c:'#22c55e'},{n:'Рекрут/Агент (показ)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===2){var a=rnExcl?(rnLvl===50?10:rnLvl===70?30:50):10,p=100-a-40;rows=[{n:'Агент (передал)',p:a,c:'#22c55e'},{n:'Рекрут (сделал всё)',p:40,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===3){var a=rnExcl?70:30,p=100-a-20;rows=[{n:'Агент',p:a,c:'#22c55e'},{n:'Рекрут (5 сд.)',p:20,c:'#a89fff'},{n:'Платформа',p:p,c:'#55556a'}];}
+  else if(rnSc===4){rows=[{n:'Агент-наставник',p:25,c:'#22c55e'},{n:'Рекрут (10 сд.)',p:50,c:'#a89fff'},{n:'Платформа',p:25,c:'#55556a'}];}
+  else if(rnSc===5){var a=rnRecD==='lt10'?25:15,r=rnRecD==='lt10'?50:70,p2=rnRecD==='lt10'?25:15;rows=[{n:'Агент-наставник',p:a,c:'#22c55e'},{n:'Рекрут',p:r,c:'#a89fff'},{n:'Платформа',p:p2,c:'#55556a'}];
   }
-  // Manual overrides (UI позволяет задать % вручную)
-  var hasM=rnScDefs[rnSc].some(function(r,i){var k='r'+rnSc+'_'+i;return rnManualPcts[k]&&rnManualPcts[k]!=='';});
+  else if(rnSc===6){
+    // Сценарий 6: Передача клиента — агент-получатель платит 10% из своей доли агенту-источнику
+    var agPct=rnExcl?rnLvl:50;
+    var platPct2=100-agPct;
+    var srcPct=10; // фиксировано 10% от комиссии
+    var receiverPct=agPct-srcPct;
+    rows=[{n:'Агент (получил клиента)',p:receiverPct,c:'#22c55e'},{n:'Агент-источник (10%)',p:srcPct,c:'#fb923c'},{n:'Платформа',p:platPct2,c:'#55556a'}];
+  }
+  else{
+    // Сценарий 7: Ручное — возвращаем строки из rnScDefs с нулями (заполняется вручную)
+    rows=rnScDefs[7].map(function(r){return{n:r.n,p:0,c:r.c,val:0};});
+  }
+  // Check manual overrides
+  var hasM=rnScDefs[rnSc].some(function(r,i){return rnManualPcts['r'+rnSc+'_'+i]&&rnManualPcts['r'+rnSc+'_'+i]!=='';});
   if(hasM){rows=rnScDefs[rnSc].map(function(r,i){var k='r'+rnSc+'_'+i;var pct=parseFloat(rnManualPcts[k])||0;return{n:r.n,p:pct,c:r.c,val:Math.round(comm*pct/100),note:rnManualNotes[k]||''};});}
   else{rows=rows.map(function(r){r.val=Math.round(comm*r.p/100);return r;});}
   return rows;
 }
 
-function setRnH2O(k,v,btn){haptic('medium');
+function setRnH2O(k,v,btn){
   rnH2O[k]=v;
   var pill=document.getElementById('hp-'+k);
   if(pill){pill.textContent=v;pill.style.opacity='1';}
@@ -2394,13 +1878,6 @@ function calcRental() {
   rnUpd();
 }
 
-function fmtDate(d){
-  if(!d) return '—';
-  var p=d.split('-');
-  if(p.length===3) return p[2]+'.'+p[1]+'.'+p[0];
-  return d;
-}
-
 function rnUpd(){
   var price=parseFloat(document.getElementById('rn-price').value)||0;
   var commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
@@ -2424,18 +1901,18 @@ function rnUpd(){
   var scNames=['Агент','Агент+показ','Агент передал','Рекрут 5сд','Рекрут 10сд','Объект рекрута','Передача клиента','Ручное распределение'];
   // Номер сделки агента (если эксклюзив)
   var agentDeals=(AGENT_C[agentName]&&AGENT_C[agentName].deals)||0;
-  var dealNum=(!rnIsRerented&&rnExcl)?(' | Deal #'+(agentDeals+1)):'';
+  var dealNum=rnExcl?(' | Deal #'+(agentDeals+1)):'';
   var lines=[
     '#Rented'+dealNum+' | '+(rnExcl?'#Exclusive':'#NonExclusive')+' | '+rnLvl+'%',
-    rnIsRerented ? '🔄 RERENTED | Комиссия: 0$' : 'Сценарий: '+scNames[rnSc],
+    'Сценарий: '+scNames[rnSc],
     '',
     'Link 🔗 '+link,
     'Price: $'+(price||'—'),
-    'Commission: $'+(rnIsRerented ? '0 (Rerented)' : (comm||'—')),
-    'Platforms Commission'+(rnIsRerented?'':platRow.p?(' ('+platRow.p+'%)'):'')+ ': $'+(rnIsRerented?0:platRow.val),
-    '#'+agentName+' Commission'+(rnIsRerented?'':agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+(rnIsRerented?0:agRow.val),
+    'Commission: $'+(comm||'—'),
+    'Platforms Commission'+(platRow.p?(' ('+platRow.p+'%)'):'')+ ': $'+platRow.val,
+    '#'+agentName+' Commission'+(agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+agRow.val,
   ];
-  if(!rnIsRerented && recRow) lines.push(recRow.n+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
+  if(recRow){var recEl2=document.getElementById('rn-recruit');var recName=recEl2&&recEl2.selectedIndex>0?recEl2.options[recEl2.selectedIndex].text:'';var recLabel=recName?('#'+recName+' · '+recRow.n):recRow.n;lines.push(recLabel+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);}
   if(rnSc===6){var csEl=document.getElementById('rn-client-src');var csName=csEl&&csEl.value?csEl.value:'—';lines.push('Передал клиента: '+csName+' (10%)');}
   lines.push('');
   lines.push('Cadastral number:');
@@ -2443,12 +1920,11 @@ function rnUpd(){
   lines.push('');
   lines.push('Client: '+cname+' '+cphone);
   lines.push('Owner: '+oname+' '+ophone);
-  lines.push('Date of Rent: '+fmtDate(from)+' – '+fmtDate(to));
+  lines.push('Date of Rent: '+from+' – '+to);
   if(total>0){lines.push('');lines.push('H2O T0: '+rnH2O.c+'/'+rnH2O.o+'/'+rnH2O.p+' → '+(total>=7?'✓ Чистая':'✗ Грязная')+' ('+total+'/9)');}
   if(comment){lines.push('');lines.push('Комментарий: '+comment);}
   var el=document.getElementById('rental-preview');
   if(el) el.textContent=lines.join('\n');
-  draftSave('calc');
 }
 
 function updateRentalPreview(){rnUpd();}
@@ -2525,64 +2001,39 @@ function sub(type, directData) {
     const price=parseFloat(document.getElementById('rn-price').value)||0;
     const commPct=parseFloat(document.getElementById('rn-comm-pct').value)||50;
     const comm=Math.round(price*commPct/100);
-    // Clean agent name — remove "(90%)" suffix added by dropdown
-    function cleanName(txt){ return (txt||'').replace(/\s*\(\d+%\)\s*$/, '').trim(); }
-    const agentName2=cleanName(aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'');
+    const agentName2=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
     const effectiveLvl=rnLvl||getAgentLevelJS(agentName2)||50;
     const plat=Math.round(comm*(100-effectiveLvl)/100);
     const agentComm=comm-plat;
-    var agentName=cleanName(aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'');
-    // Fallback: use current user's name from AGENTS list
-    if(!agentName && CURRENT_USER && CURRENT_USER.name) agentName=CURRENT_USER.name;
-    const recruitName=cleanName(rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'');
-    const mentorName=cleanName(mEl&&mEl.selectedIndex>0?mEl.options[mEl.selectedIndex].text:'');
-    // Считаем реальное распределение по сценарию
-    var distRows = rnCalcDist(comm);
-    var recruitRow = distRows.find(function(r){ return r.n && (r.n.indexOf('Рекрут')!==-1 || r.n.indexOf('рекрут')!==-1); });
-    var agentRow   = distRows.find(function(r){ return r.n && (r.n.indexOf('Агент')!==-1 || r.n.indexOf('Наставник')!==-1); });
-    var platRow    = distRows.find(function(r){ return r.n && r.n.indexOf('Платформа')!==-1; });
-    var recruitAmt = recruitRow ? (recruitRow.val||0) : 0;
-    var recruitPct = recruitRow ? (recruitRow.p||0)  : 0;
-    var realAgentAmt = agentRow ? (agentRow.val||0)  : agentComm;
-    var realPlatAmt  = platRow  ? (platRow.val||0)   : plat;
+    const agentName=aEl&&aEl.selectedIndex>0?aEl.options[aEl.selectedIndex].text:'';
+    const recruitName=rEl&&rEl.selectedIndex>0?rEl.options[rEl.selectedIndex].text:'';
+    const mentorName=mEl&&mEl.selectedIndex>0?mEl.options[mEl.selectedIndex].text:'';
     data={
       agent:agentName, recruit:recruitName, mentor:mentorName,
       agent_level:rnLvl, scenario:rnSc,
-      comm_pct:commPct,
-      recruit_commission: recruitAmt,
-      recruit_pct: recruitPct,
-      agent_commission_final: realAgentAmt,
-      platform_commission: realPlatAmt,
-      dist_rows: JSON.stringify(distRows),
       ad_link_advertising:document.getElementById('rn-link').value,
       cadastral_number:document.getElementById('rn-cadastral').value,
-      is_exclusive:rnExcl, deal_type:rnType, deal_subtype:rnSub, is_rerented:rnIsRerented,
+      is_exclusive:rnExcl, deal_type:rnType, deal_subtype:rnSub,
       rent_price:price, commission_pct:commPct,
-      commission_total:comm, commission_platform:realPlatAmt, commission_agent:realAgentAmt,
+      commission_total:comm, commission_platform:plat, commission_agent:agentComm,
       client_name:document.getElementById('rn-cname').value,
       client_phone:document.getElementById('rn-cphone').value,
       owner_name:document.getElementById('rn-oname').value,
       owner_phone:document.getElementById('rn-ophone').value,
-      rent_from:fmtDate(document.getElementById('rn-from').value),
-      rent_to:fmtDate(document.getElementById('rn-to').value),
+      rent_from:document.getElementById('rn-from').value,
+      rent_to:document.getElementById('rn-to').value,
       t0_h2o_client:rnH2O.c, t0_h2o_owner:rnH2O.o, t0_h2o_process:rnH2O.p,
       t0_result:rnT0Res,
       t0_comment:(document.getElementById('t0-comment')||{}).value||'',
+      sender_tg_id: window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initDataUnsafe&&window.Telegram.WebApp.initDataUnsafe.user?String(window.Telegram.WebApp.initDataUnsafe.user.id):'',
     };
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
-  var criticalTypes=['rental','general','daily','makefoto','t14'];
-  if(criticalTypes.indexOf(type)!==-1){
+  send(type,data);
+  if(type==='rental'||type==='general'||type==='daily'||type==='makefoto'){
     showToast('Отправляю... ✈️');
-    send(type,data,function(){
-      if(type==='rental') { draftClear('calc'); launchConfetti(); }
-      showToast('Отправлено! ✓');
-      setTimeout(goBack,800);
-    },function(){
-      // error toast already shown by send(); stay on form
-    });
+    setTimeout(function(){ showToast('Отправлено! ✓'); goBack(); }, 2000);
   } else {
-    send(type,data);
     showToast('Отправлено! ✓');
     setTimeout(goBack,1500);
   }
@@ -2595,36 +2046,26 @@ function submitCalc() {
   const comm=Math.round(price*commPct/100),plat=Math.round(comm*(100-dLvl)/100),agent=comm-plat;
   const rEl=document.getElementById('d-recruit');
   const data={agent:aEl.options[aEl.selectedIndex].text,recruit:rEl.options[rEl.selectedIndex].text,price,comm_pct:commPct,comm_total:comm,platform:plat,agent_amt:agent,agent_level:dLvl,is_exclusive:dExcl,deal_type:dType,deal_subtype:dSub,link:document.getElementById('d-link').value,cadastral:document.getElementById('d-cadastral').value,rent_from:document.getElementById('d-from').value,rent_to:document.getElementById('d-to').value};
-  send('calc', data, function(){
-    showToast('Расчёт отправлен! ✓');
-  }, function(){
-    showToast('❌ Ошибка отправки расчёта');
-  });
+  send('calc',data);
+  showToast('Расчёт отправлен! ✓');
 }
 
-function send(type,data,onSuccess,onError) {
-  haptic('medium');
+function send(type,data) {
   var payload = JSON.stringify({type:type, data:data});
   var cbName = 'sendCb'+Date.now();
   var url = API_URL + '?action=submit&payload=' + encodeURIComponent(payload) + '&callback=' + cbName;
   window[cbName] = function(resp){
     delete window[cbName];
     var sc=document.getElementById('sc-'+cbName);if(sc)sc.remove();
-    if(resp && resp.ok===false){
-      showToast('❌ Ошибка: '+(resp.error||'unknown'));
-      if(onError) onError(resp.error);
-    } else {
-      if(onSuccess) onSuccess();
-    }
+    if(resp && resp.ok===false) showToast('Ошибка GAS: '+(resp.error||'unknown'));
   };
   var sc = document.createElement('script');
   sc.id = 'sc-'+cbName;
   sc.src = url;
   sc.onerror = function(){
+    showToast('❌ Ошибка сети — проверь деплой');
+    console.log('send error type='+type+' url='+url);
     delete window[cbName];
-    showToast('❌ Нет связи с сервером. Попробуй ещё раз.');
-    console.log('send error type='+type);
-    if(onError) onError('network');
   };
   document.body.appendChild(sc);
 }
@@ -2642,24 +2083,31 @@ var dashAutoTimer = null;
 // ── Статика из канала (3081 постов) ─────────────────
 var STATIC = {
   channel: {
-    districts: [],
-    rooms: {},
-    byAgent: {},
+    total: 3081,
+    avgPrice: 844,
+    exclPct: 3,
+    districts: [{"district": "Saburtalo", "count": 139, "avgPrice": 853, "minPrice": 350, "maxPrice": 4500}, {"district": "Vake", "count": 80, "avgPrice": 1040, "minPrice": 400, "maxPrice": 2500}, {"district": "Vera", "count": 44, "avgPrice": 781, "minPrice": 100, "maxPrice": 1900}, {"district": "Sololaki", "count": 28, "avgPrice": 692, "minPrice": 300, "maxPrice": 1800}, {"district": "Chugureti", "count": 27, "avgPrice": 644, "minPrice": 300, "maxPrice": 1100}, {"district": "Mtatsminda", "count": 17, "avgPrice": 716, "minPrice": 300, "maxPrice": 1300}, {"district": "Didube", "count": 15, "avgPrice": 666, "minPrice": 100, "maxPrice": 1400}, {"district": "Avlabari", "count": 13, "avgPrice": 725, "minPrice": 500, "maxPrice": 1000}, {"district": "Ortachala", "count": 12, "avgPrice": 608, "minPrice": 300, "maxPrice": 900}, {"district": "Rustaveli", "count": 6, "avgPrice": 850, "minPrice": 550, "maxPrice": 1600}, {"district": "Gldani", "count": 5, "avgPrice": 425, "minPrice": 300, "maxPrice": 500}, {"district": "Isani", "count": 4, "avgPrice": 612, "minPrice": 550, "maxPrice": 700}, {"district": "Marjanishvili", "count": 3, "avgPrice": 800, "minPrice": 300, "maxPrice": 1300}, {"district": "Digomi", "count": 2, "avgPrice": 750, "minPrice": 650, "maxPrice": 850}, {"district": "Krtsanisi", "count": 2, "avgPrice": 1550, "minPrice": 1400, "maxPrice": 1700}, {"district": "LibertySquare", "count": 2, "avgPrice": 725, "minPrice": 700, "maxPrice": 750}, {"district": "Varketili", "count": 2, "avgPrice": 425, "minPrice": 400, "maxPrice": 450}],
+    rooms: {"1Bed": 205, "2Bed": 117, "3Bed": 35, "Studio": 14, "4Bed": 7},
+    byAgent: {"David": 573, "Omari": 509, "Artyom": 507, "Vladislav": 482, "Semyon": 439, "Viktoriia": 392, "Sergi": 386, "Zaza": 347, "Irakli": 316, "Gio": 241, "Dmitri": 220, "Vitaly": 213, "Daniil": 189, "Alex": 171, "Shafi": 151, "Coathor": 132, "Ilya": 126, "Max": 99, "Mari": 84, "Arkada": 84, "Dasha": 72, "Egor": 72, "Bardo": 50, "Lada": 45, "Giorgi": 42, "Shorena": 42, "Oxana": 25, "Baron": 21, "Mariam": 14, "Danila": 7, "GioBeska": 7, "Valentin": 2},
   },
-  weeklyListings: {},
+  weeklyListings: {"total": 10, "weekStart": "18.05", "topAgents": [{"name": "Mari", "count": 4}, {"name": "Zaza", "count": 2}, {"name": "Dmitri", "count": 1}, {"name": "Danila", "count": 1}, {"name": "David", "count": 1}, {"name": "Gio", "count": 1}], "lastWeek": {"total": 93, "weekStart": "11.05", "topAgents": [{"name": "David", "count": 28}, {"name": "Sergi", "count": 17}, {"name": "Zaza", "count": 14}, {"name": "Gio", "count": 12}, {"name": "Danila", "count": 6}, {"name": "Giorgi", "count": 5}, {"name": "Viktoriia", "count": 5}, {"name": "Dmitri", "count": 3}, {"name": "Mariam", "count": 1}, {"name": "Mari", "count": 1}, {"name": "Daniil", "count": 1}]}},
   listings: {
-    total: 0,
-    avgPrice: 0,
-    byDistrict: [],
-    byAgent: {},
-    byRooms: {},
+    total: 3081,
+    avgPrice: 844,
+    byDistrict: [{"district": "Saburtalo", "count": 139, "avgPrice": 853, "minPrice": 350, "maxPrice": 4500}, {"district": "Vake", "count": 80, "avgPrice": 1040, "minPrice": 400, "maxPrice": 2500}, {"district": "Vera", "count": 44, "avgPrice": 781, "minPrice": 100, "maxPrice": 1900}, {"district": "Sololaki", "count": 28, "avgPrice": 692, "minPrice": 300, "maxPrice": 1800}, {"district": "Chugureti", "count": 27, "avgPrice": 644, "minPrice": 300, "maxPrice": 1100}, {"district": "Mtatsminda", "count": 17, "avgPrice": 716, "minPrice": 300, "maxPrice": 1300}, {"district": "Didube", "count": 15, "avgPrice": 666, "minPrice": 100, "maxPrice": 1400}, {"district": "Avlabari", "count": 13, "avgPrice": 725, "minPrice": 500, "maxPrice": 1000}, {"district": "Ortachala", "count": 12, "avgPrice": 608, "minPrice": 300, "maxPrice": 900}, {"district": "Rustaveli", "count": 6, "avgPrice": 850, "minPrice": 550, "maxPrice": 1600}, {"district": "Gldani", "count": 5, "avgPrice": 425, "minPrice": 300, "maxPrice": 500}, {"district": "Isani", "count": 4, "avgPrice": 612, "minPrice": 550, "maxPrice": 700}, {"district": "Marjanishvili", "count": 3, "avgPrice": 800, "minPrice": 300, "maxPrice": 1300}, {"district": "Digomi", "count": 2, "avgPrice": 750, "minPrice": 650, "maxPrice": 850}, {"district": "Krtsanisi", "count": 2, "avgPrice": 1550, "minPrice": 1400, "maxPrice": 1700}, {"district": "LibertySquare", "count": 2, "avgPrice": 725, "minPrice": 700, "maxPrice": 750}, {"district": "Varketili", "count": 2, "avgPrice": 425, "minPrice": 400, "maxPrice": 450}],
+    byAgent: {"David": 573, "Omari": 509, "Artyom": 507, "Vladislav": 482, "Semyon": 439, "Viktoriia": 392, "Sergi": 386, "Zaza": 347, "Irakli": 316, "Gio": 241, "Dmitri": 220, "Vitaly": 213, "Daniil": 189, "Alex": 171, "Shafi": 151, "Coathor": 132, "Ilya": 126, "Max": 99, "Mari": 84, "Arkada": 84, "Dasha": 72, "Egor": 72, "Bardo": 50, "Lada": 45, "Giorgi": 42, "Shorena": 42, "Oxana": 25, "Baron": 21, "Mariam": 14, "Danila": 7, "GioBeska": 7, "Valentin": 2},
+    byRooms: {"1Bed": 205, "2Bed": 117, "3Bed": 35, "Studio": 14, "4Bed": 7},
   },
   platform: {
-    monthly: [],
-    agents: [],
-    lastDeals: [],
+    total: 1457,
+    commission: 451908,
+    platformComm: 116273,
+    turnover: 1570148,
+    avgComm: 310,
+    monthly: [{"month": "1/2025", "deals": 77, "commission": 25728.0, "platform": 5577.4, "price": 133771.0}, {"month": "2/2025", "deals": 69, "commission": 21770.0, "platform": 6753.0, "price": 42540.0}, {"month": "3/2025", "deals": 68, "commission": 18826.0, "platform": 4687.4, "price": 37103.0}, {"month": "4/2025", "deals": 78, "commission": 23299.0, "platform": 5617.4, "price": 46678.0}, {"month": "5/2025", "deals": 99, "commission": 28387.42, "platform": 8224.25, "price": 104355.5}, {"month": "6/2025", "deals": 83, "commission": 24535.0, "platform": 7019.5, "price": 55090.0}, {"month": "7/2025", "deals": 105, "commission": 31032.31, "platform": 7283.05, "price": 62034.02}, {"month": "8/2025", "deals": 117, "commission": 34358.75, "platform": 8614.6, "price": 68777.5}, {"month": "9/2025", "deals": 127, "commission": 42239.75, "platform": 10543.57, "price": 151414.5}, {"month": "10/2025", "deals": 127, "commission": 44893.6, "platform": 10678.16, "price": 355812.3}, {"month": "11/2025", "deals": 120, "commission": 35549.51, "platform": 10345.65, "price": 71083.84}, {"month": "12/2025", "deals": 92, "commission": 29077.95, "platform": 8276.99, "price": 137593.0}, {"month": "1/2026", "deals": 80, "commission": 24819.03, "platform": 5702.7, "price": 47852.04}, {"month": "2/2026", "deals": 46, "commission": 13402.1, "platform": 2837.63, "price": 26846.0}, {"month": "3/2026", "deals": 65, "commission": 23248.25, "platform": 5247.13, "price": 167596.5}, {"month": "4/2026", "deals": 66, "commission": 19963.83, "platform": 5485.3, "price": 40095.6}, {"month": "5/2026", "deals": 38, "commission": 10777.5, "platform": 3379.75, "price": 21505.0}],
+    agents: [{"agent": "Sergi", "deals": 199, "commission": 70748.5, "platform": 7074.85, "agent_comm": 63673.65}, {"agent": "Viktoriia", "deals": 108, "commission": 32090.59, "platform": 16045.29, "agent_comm": 16045.29}, {"agent": "Omari", "deals": 107, "commission": 32263.55, "platform": 3256.48, "agent_comm": 29037.2}, {"agent": "Irakli", "deals": 97, "commission": 28660.05, "platform": 8598.02, "agent_comm": 20062.04}, {"agent": "Artyom", "deals": 93, "commission": 29655.68, "platform": 8896.69, "agent_comm": 20758.98}, {"agent": "Zaza", "deals": 93, "commission": 29659.54, "platform": 2965.95, "agent_comm": 26693.58}, {"agent": "Semyon", "deals": 83, "commission": 24735.5, "platform": 7420.65, "agent_comm": 17314.85}, {"agent": "Vladislav", "deals": 79, "commission": 23519.2, "platform": 7055.76, "agent_comm": 16463.44}, {"agent": "Daniil", "deals": 74, "commission": 26940.75, "platform": 2694.08, "agent_comm": 24246.68}, {"agent": "David", "deals": 72, "commission": 20145.42, "platform": 2014.54, "agent_comm": 18130.89}, {"agent": "Vitaly", "deals": 63, "commission": 18757.5, "platform": 5627.25, "agent_comm": 13130.25}, {"agent": "Shafi", "deals": 60, "commission": 19863.3, "platform": 5958.99, "agent_comm": 13904.31}, {"agent": "Gio", "deals": 56, "commission": 14121.05, "platform": 7060.53, "agent_comm": 7060.53}, {"agent": "Dmitri", "deals": 43, "commission": 9772.25, "platform": 2931.67, "agent_comm": 6840.57}, {"agent": "Alex", "deals": 35, "commission": 10630.0, "platform": 3219.12, "agent_comm": 7441.0}],
+    lastDeals: [{"timestamp": "17.05.26", "agent": "Daniil", "price": 350.0, "commission": 175.0, "platform": 17.5, "is_excl": "Неэксклюзив"}, {"timestamp": "16.05.26", "agent": "Viktoriia", "price": 400.0, "commission": 200.0, "platform": 100.0, "is_excl": "Неэксклюзив"}, {"timestamp": "16.05.26", "agent": "Sergi", "price": 750.0, "commission": 375.0, "platform": 37.5, "is_excl": "Неэксклюзив"}, {"timestamp": "16.05.26", "agent": "Danila", "price": 750.0, "commission": 375.0, "platform": 187.5, "is_excl": "Неэксклюзив"}, {"timestamp": "15.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив"}, {"timestamp": "14.05.26", "agent": "Dmitri", "price": 350.0, "commission": 175.0, "platform": 52.5, "is_excl": "Неэксклюзив"}, {"timestamp": "13.05.26", "agent": "Sergi", "price": 500.0, "commission": 250.0, "platform": 25.0, "is_excl": "Неэксклюзив"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 335.0, "commission": 167.5, "platform": 16.75, "is_excl": "Неэксклюзив"}, {"timestamp": "12.05.26", "agent": "Omari", "price": 600.0, "commission": 300.0, "platform": 30.0, "is_excl": "Неэксклюзив"}, {"timestamp": "12.05.26", "agent": "Danila", "price": 550.0, "commission": 275.0, "platform": 137.5, "is_excl": "Неэксклюзив"}],
   },
-  analytics: null,
 };
 
 
@@ -2710,41 +2158,6 @@ function getFilteredPlatform() {
   return {deals:deals, platform:Math.round(platform), comm:Math.round(comm), price:Math.round(price)};
 }
 
-// ── SKELETON HELPERS ────────────────────────────────
-function updateTicker() {
-  var wrap  = document.getElementById('dash-ticker');
-  var track = document.getElementById('dash-ticker-track');
-  if (!wrap || !track) return;
-  var msgs = dashData.analytics && dashData.analytics.tickerMessages;
-  if (!msgs || !msgs.length) { wrap.style.display = 'none'; return; }
-  // Build items — duplicate for seamless loop
-  var items = msgs.map(function(m) {
-    return '<div class="ticker-item"><span class="ticker-dot" style="background:#fbbf24"></span>'
-      + '<span style="color:var(--text);">' + m + '</span></div>';
-  }).join('');
-  track.innerHTML = items + items; // duplicate for loop
-  wrap.style.display = 'flex';
-}
-
-function skRow(w1,w2){
-  return '<div class="sk-row">'
-    +'<div style="display:flex;align-items:center;gap:8px;">'
-    +'<div class="sk" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;"></div>'
-    +'<div class="sk" style="width:'+w1+'px;height:10px;"></div></div>'
-    +'<div class="sk" style="width:'+w2+'px;height:10px;"></div>'
-    +'</div>';
-}
-function skRows(n,w1,w2){var h='';for(var i=0;i<n;i++)h+=skRow(w1||70,w2||40);return h;}
-function skBar(){
-  return '<div style="padding:10px 13px;border-bottom:0.5px solid var(--border);">'
-    +'<div style="display:flex;justify-content:space-between;margin-bottom:6px;">'
-    +'<div class="sk" style="width:80px;height:10px;"></div>'
-    +'<div class="sk" style="width:35px;height:10px;"></div></div>'
-    +'<div class="sk" style="width:100%;height:4px;border-radius:2px;"></div>'
-    +'</div>';
-}
-function skBars(n){var h='';for(var i=0;i<n;i++)h+=skBar();return h;}
-
 function renderDash() {
   var rs = (dashData.rentalStats) || {};
   var ac = dashData.agentCounters || {};
@@ -2760,21 +2173,9 @@ function renderDash() {
   set('ds-avg-comm', (fil.comm&&fil.deals) ? '$'+Math.round(fil.comm/fil.deals) : '—');
   set('ds-turnover', fil.price ? '$'+fil.price : '—');
 
-  // Метрики канала из Active_Listings
-  var actL = dashData.analytics && dashData.analytics.activeListings;
-  if (actL) {
-    set('ds-ch-total', actL.total || '—');
-    // Avg price from listings data
-    var listData = dashData.analytics && dashData.analytics.listings;
-    set('ds-ch-price', actL.avgPrice ? '$'+actL.avgPrice : '—');
-    set('ds-ch-excl', actL.exclPct !== undefined ? actL.exclPct+'%' : '—');
-  }
-
-  updateTicker();
-
   // Время обновления
   var now = new Date();
-  set('dash-updated', 'Update'+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0'));
+  set('dash-updated', 'обновлено '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0'));
 
   // График комиссии по месяцам
   var chartEl = document.getElementById('ds-comm-chart');
@@ -2814,8 +2215,6 @@ function renderDash() {
   var dEl = document.getElementById('ds-districts');
   if (dEl) {
     var dist = STATIC.channel.districts;
-    if (!dist || !dist.length) { dEl.innerHTML = skBars(5); }
-    else {
     var maxC = dist[0].count||1;
     var colors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc','#fb7185','#facc15'];
     dEl.innerHTML = '<div style="display:flex;justify-content:space-between;padding:8px 13px;border-bottom:1px solid var(--border);"><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Район</span><div style="display:flex;gap:20px;"><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;">Ср. цена</span><span style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;width:28px;text-align:right;">Кол</span></div></div>'
@@ -2836,23 +2235,12 @@ function renderDash() {
         +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.6;"></div>'
         +'</div></div></div>';
     }).join('');
-    }
   }
 
   // Типы квартир
   var rEl = document.getElementById('ds-rooms');
   if (rEl) {
-    // Приоритет: activeListings.byRooms → listings.byRooms → STATIC
-    var rooms = (dashData.analytics && dashData.analytics.activeListings && dashData.analytics.activeListings.byRooms)
-      ? dashData.analytics.activeListings.byRooms
-      : (dashData.analytics && dashData.analytics.listings && dashData.analytics.listings.byRooms)
-      ? dashData.analytics.listings.byRooms
-      : STATIC.channel.rooms;
-    if (!rooms || !Object.keys(rooms).length) {
-      rEl.innerHTML = [1,2,3].map(function(){
-        return '<div class="sk" style="height:56px;border-radius:var(--r);"></div>';
-      }).join('');
-    } else {
+    var rooms = STATIC.channel.rooms;
     var total = Object.values(rooms).reduce(function(a,b){return a+b;},0);
     var order = ['1Bed','2Bed','Studio','3Bed','4Bed','Other'];
     var labels = {'1Bed':'1 Bed','2Bed':'2 Bed','Studio':'Studio','3Bed':'3 Bed','4Bed':'4+ Bed','Other':'Other'};
@@ -2867,25 +2255,14 @@ function renderDash() {
         +'<div style="font-size:9px;color:var(--text3);margin-top:2px;">'+pct+'%</div>'
         +'</div>';
     }).join('');
-    }
   }
 
   // Агенты — объекты в канале (из Listings)
   var alEl = document.getElementById('ds-agent-listings');
   if (alEl) {
-    // Приоритет: activeListings (канал) → listings (топик) → STATIC
-    var byAgent = (dashData.analytics && dashData.analytics.activeListings && dashData.analytics.activeListings.byAgent)
-      ? dashData.analytics.activeListings.byAgent
-      : (dashData.analytics && dashData.analytics.listings && dashData.analytics.listings.byAgent)
-      ? dashData.analytics.listings.byAgent
-      : (STATIC.listings && STATIC.listings.byAgent) ? STATIC.listings.byAgent : {};
-    var totalActive = (dashData.analytics && dashData.analytics.activeListings)
-      ? dashData.analytics.activeListings.total : null;
-    var alTitle = document.querySelector('#dash-sec-agent-listings .sl');
-    if (alTitle && totalActive !== null) alTitle.textContent = 'Агенты — активные объекты в канале (' + totalActive + ')';
+    var byAgent = (STATIC.listings && STATIC.listings.byAgent) ? STATIC.listings.byAgent : {};
     var agentNames = Object.keys(byAgent).sort(function(a,b){return byAgent[b]-byAgent[a];});
-    if (!agentNames.length) { alEl.innerHTML = skBars(6); }
-    else {
+    if (agentNames.length) {
       var maxA = byAgent[agentNames[0]]||1;
       var aColors2=['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316','#94a3b8','#c084fc'];
       alEl.innerHTML = agentNames.slice(0,12).map(function(name,i){
@@ -2903,6 +2280,8 @@ function renderDash() {
           +'<div style="height:100%;background:'+c+';border-radius:2px;width:'+pct+'%;opacity:.7;"></div>'
           +'</div></div></div>';
       }).join('');
+    } else {
+      alEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Данные появятся по мере парсинга новых постов канала</div>';
     }
   }
 
@@ -2958,52 +2337,13 @@ function renderDash() {
   // Последние 10 сделок
   var ldEl = document.getElementById('ds-last-deals');
   if (ldEl) {
-    // Show skeleton until analytics loads
-    if (!STATIC.platform.lastDeals || !STATIC.platform.lastDeals.length) {
-      ldEl.innerHTML = '<div style="padding:14px 13px;">'
-        + [1,2,3,4,5].map(function(){
-            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);">'
-              +'<div style="display:flex;align-items:center;gap:8px;">'
-              +'<div style="width:28px;height:28px;border-radius:50%;background:var(--bg3);flex-shrink:0;"></div>'
-              +'<div><div style="width:70px;height:10px;background:var(--bg3);border-radius:4px;margin-bottom:5px;"></div>'
-              +'<div style="width:45px;height:8px;background:var(--bg3);border-radius:4px;opacity:.6;"></div></div></div>'
-              +'<div style="text-align:right;">'
-              +'<div style="width:40px;height:10px;background:var(--bg3);border-radius:4px;margin-bottom:5px;margin-left:auto;"></div>'
-              +'<div style="width:30px;height:8px;background:var(--bg3);border-radius:4px;opacity:.6;margin-left:auto;"></div>'
-              +'</div></div>';
-          }).join('')
-        + '</div>';
-    } else {
-    var lastDeals = STATIC.platform.lastDeals;
-    // Filter: valid price + last 30 days only
-    var cutoff = new Date(); cutoff.setDate(cutoff.getDate()-30);
-    lastDeals = (lastDeals||[]).filter(function(d){
-      if ((d.price||0)===0 && (d.commission||0)===0) return false;
-      // parse date dd.MM.yy or timestamp
-      var ds = d.date||d.timestamp||'';
-      var parts = ds.split('.');
-      if (parts.length===3){
-        var dt = new Date('20'+parts[2]+'-'+parts[1]+'-'+parts[0]);
-        if (!isNaN(dt) && dt < cutoff) return false;
-      }
-      return true;
-    }).slice(0,10);
+    var lastDeals = (rs.lastDeals && rs.lastDeals.length) ? rs.lastDeals : STATIC.platform.lastDeals;
+    // Filter out zero price deals
+    lastDeals = (lastDeals||[]).filter(function(d){ return (d.price||0) > 0 || (d.commission||0) > 0; }).slice(0,10);
     if (lastDeals && lastDeals.length) {
       ldEl.innerHTML = lastDeals.map(function(d,i){
         var isLast=i===lastDeals.length-1;
-        // Resolve agent name — GAS may use different field names
-        var agent = d.agent || d.name || d.agentName || d.author || '';
-        // Try matching against known agents by telegram handle
-        if (!agent && d.telegram) {
-          var fa = AGENTS.find(function(a){ return a.telegram===d.telegram||a.telegram==='@'+d.telegram; });
-          if (fa) agent = fa.name;
-        }
-        // Try matching by partial name in raw field
-        if (!agent && d.raw) {
-          var fa2 = AGENTS.find(function(a){ return d.raw.indexOf(a.name)!==-1; });
-          if (fa2) agent = fa2.name;
-        }
-        if (!agent) agent = '?';
+        var agent=d.agent||'—';
         var date=d.timestamp?d.timestamp.slice(0,10):d.date||'';
         var comm=d.commission?'$'+Math.round(d.commission):'—';
         var price=d.price?'$'+Math.round(d.price):'—';
@@ -3020,7 +2360,6 @@ function renderDash() {
     } else {
       ldEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:13px;">Нет данных</div>';
     }
-    } // end else (analytics loaded)
   }
 }
 
@@ -3051,25 +2390,9 @@ function loadAnalytics() {
       STATIC.listings = d.listings;
     }
     if (d.deals) {
-      STATIC.platform.monthly  = d.deals.monthly   || STATIC.platform.monthly;
-      STATIC.platform.agents   = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
-      STATIC.platform.lastDeals= d.deals.lastDeals  || STATIC.platform.lastDeals;
+      STATIC.platform.monthly = d.deals.monthly || STATIC.platform.monthly;
+      STATIC.platform.agents = (d.deals.topAgents||[]).map(function(a){return{agent:a.name,deals:a.deals};});
       STATIC.analytics = d.deals;
-      window._analyticsLoaded = true;
-    }
-    // Load custom ticker messages from GAS
-    if (d.tickerMessages) {
-      if (!dashData.analytics) dashData.analytics = {};
-      dashData.analytics._customTicker = d.tickerMessages;
-      updateTickerFromAdmin();
-    }
-    if (d.activeListings) {
-      if (!dashData.analytics) dashData.analytics = {};
-      dashData.analytics.activeListings = d.activeListings;
-    }
-    if (d.weeklyListings) {
-      if (!dashData.analytics) dashData.analytics = {};
-      dashData.analytics.weeklyListings = d.weeklyListings;
     }
     renderDash();
   };
@@ -3087,7 +2410,6 @@ function loadAnalytics() {
 var ADMIN_ID = '6577307207';
 var adminLvl = 70;
 var dashSettings = {'agent-listings':true,districts:true,rooms:true,weekly:true,monthly:true,agents:false,lastdeals:true};
-try{var _ds=JSON.parse(localStorage.getItem('dashSettings')||'{}');if(_ds.agents){_ds.agents=false;localStorage.setItem('dashSettings',JSON.stringify(_ds));}}catch(e){}
 
 function isAdmin(){
   var SUPER_IDS=['6577307207','6014886676','114756692'];
@@ -3110,11 +2432,11 @@ function isAdmin(){
       }
     }
   }catch(e){}
+  if(window.location.search.indexOf('admin=1')!==-1) return true;
   return false;
 }
 
 function initAdmin(){
-  loadTickerList();
   if(!isAdmin()) return;
   var btn=document.getElementById('nav-admin');
   if(btn) btn.style.display='flex';
@@ -3171,22 +2493,13 @@ function promoteRecruitBtn(btn) {
   btn.textContent = '⏳...';
   btn.disabled = true;
 
-  send('promote_recruit', {telegram: tg, level: lvl}, function() {
-    // Optimistic local update: move recruit → agent immediately
-    RECRUITS = RECRUITS.filter(function(r){ return r.telegram !== tg; });
-    COUNTERS  = COUNTERS.filter(function(c){ return c.name !== name; });
-    if (!AGENTS.find(function(a){ return a.telegram === tg; })) {
-      AGENTS.push({name: name, telegram: tg, level: lvl, active: true});
-    }
-    renderAdminLists();
-    renderStats();
-    showToast('✅ ' + name + ' теперь агент ' + lvl + '%!');
-    // Then reload from GAS to sync any other changes
-    setTimeout(loadData, 4000);
-  }, function() {
-    btn.textContent = '⬆️ Агент';
-    btn.disabled = false;
-  });
+  send('promote_recruit', {telegram: tg, level: lvl});
+
+  // Reload from GAS after delay to get fresh data
+  setTimeout(function() {
+    showToast('✅ ' + name + ' теперь агент ' + lvl + '%! Обновляю...');
+    loadData(); // Перезагружает AGENTS и RECRUITS из GAS
+  }, 3500);
 }
 
 var weeklyMode = 'this';
@@ -3216,18 +2529,11 @@ function renderWeekly() {
     : STATIC.weeklyListings;
   if (!wkEl || !wkData) return;
 
-  // Поддержка новой структуры {current, lastWeek} и старой {topAgents, lastWeek, total}
-  var showWk;
-  if (weeklyMode === 'last') {
-    showWk = wkData.lastWeek || null;
-  } else {
-    showWk = wkData.current || wkData; // новая или старая структура
-  }
+  var showWk = weeklyMode === 'last' ? wkData.lastWeek : wkData;
   if (!showWk) return;
 
   var label = weeklyMode === 'last' ? 'Прошлая неделя' : 'Эта неделя';
-  var weekStart = showWk.weekStart || wkData.weekStart || '';
-  if (wkTitle) wkTitle.textContent = label + ' · с ' + weekStart + ' · итого ' + (showWk.total||0) + ' объектов';
+  if (wkTitle) wkTitle.textContent = label + ' · с ' + (showWk.weekStart||'') + ' · итого ' + (showWk.total||0) + ' объектов';
 
   var wColors = ['var(--green)','var(--accent2)','#7eb3ff','var(--amber)','#a89fff','#60a5fa','#34d399','#f97316'];
   var topA = showWk.topAgents || [];
@@ -3322,7 +2628,6 @@ function adminAddAgent(){
   document.getElementById('admin-new-name').value='';
   document.getElementById('admin-new-tg').value='';
   renderAdminLists();
-  renderStats();
   showToast('Агент добавлен ✓');
 }
 
@@ -3338,98 +2643,20 @@ function adminAddRecruit(){
   showToast('Рекрут добавлен ✓');
 }
 
-function updateTickerFromAdmin() {
-  var showNews   = document.getElementById('tk-show-news');
-  var showCustom = document.getElementById('tk-show-custom');
-  if (!showNews || !showCustom) return;
-  // Rebuild tickerMessages based on checkboxes
-  var msgs = [];
-  if (showCustom.checked && dashData.analytics && dashData.analytics._customTicker) {
-    msgs = msgs.concat(dashData.analytics._customTicker);
-  }
-  if (showNews.checked && dashData.analytics && dashData.analytics._lastNews) {
-    msgs = msgs.concat([dashData.analytics._lastNews]);
-  }
-  if (!dashData.analytics) dashData.analytics = {};
-  dashData.analytics.tickerMessages = msgs;
-  updateTicker();
-}
-
-function toggleAdminSection(section) {
-  var body = document.getElementById('admin-'+section+'-body');
-  var btn  = document.getElementById('btn-collapse-'+section);
-  if (!body || !btn) return;
-  var collapsed = body.style.display === 'none';
-  body.style.display = collapsed ? '' : 'none';
-  btn.textContent = collapsed ? 'Свернуть' : 'Развернуть';
-}
-
-function adminAddTicker(){
-  var text = (document.getElementById('admin-ticker-text').value||'').trim();
-  if (!text) { showToast('Введи текст'); return; }
-  send('ticker_add', {text: text}, function(){
-    document.getElementById('admin-ticker-text').value = '';
-    showToast('Опубликовано ✓');
-    loadTickerList();
-  });
-}
-
-function adminDeleteTicker(id){
-  send('ticker_delete', {id: id}, function(){
-    showToast('Удалено ✓');
-    loadTickerList();
-  });
-}
-
-function loadTickerList(){
-  var cbName = '__ticker_' + Date.now();
-  var el = document.getElementById('admin-ticker-list');
-  if (!el) return;
-  el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Loading...</div>';
-  window[cbName] = function(d){
-    delete window[cbName];
-    var msgs = (d && d.messages) || [];
-    if (!msgs.length) { el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Нет сообщений</div>'; return; }
-    el.innerHTML = msgs.map(function(m){
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--border);">'
-        +'<span style="font-size:13px;color:var(--text);flex:1;margin-right:10px;">'+m.text+'</span>'
-        +'<button onclick="adminDeleteTicker(this.dataset.id)" data-id="'+m.id+'" style="font-size:10px;padding:4px 8px;border-radius:var(--rsm);border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.1);color:#ef4444;cursor:pointer;font-family:inherit;flex-shrink:0;">Удалить</button>'
-        +'</div>';
-    }).join('');
-  };
-  var sc = document.createElement('script');
-  sc.id = 'sc-'+cbName;
-  sc.src = API_URL + '?action=getTicker&callback=' + cbName;
-  sc.onerror = function(){ delete window[cbName]; el.innerHTML = '<div style="padding:10px 14px;color:var(--text3);font-size:12px;">Ошибка загрузки</div>'; };
-  document.head.appendChild(sc);
-}
-
 function adminToggleAgent(tg){
+  send('admin_toggle_agent',{telegram:tg});
   var a=AGENTS.find(function(x){return x.telegram===tg;});
-  if(a) a.active=!a.active; // optimistic
+  if(a) a.active=!a.active;
   renderAdminLists();
-  send('admin_toggle_agent',{telegram:tg}, function(){
-    showToast('Обновлено ✓');
-  }, function(){
-    // rollback
-    if(a) a.active=!a.active;
-    renderAdminLists();
-    showToast('❌ Ошибка — изменение не сохранено');
-  });
+  showToast('Обновлено ✓');
 }
 
 function adminToggleRecruit(tg){
+  send('admin_toggle_recruit',{telegram:tg});
   var r=RECRUITS.find(function(x){return x.telegram===tg;});
-  if(r) r.active=!r.active; // optimistic
+  if(r) r.active=!r.active;
   renderAdminLists();
-  send('admin_toggle_recruit',{telegram:tg}, function(){
-    showToast('Обновлено ✓');
-  }, function(){
-    // rollback
-    if(r) r.active=!r.active;
-    renderAdminLists();
-    showToast('❌ Ошибка — изменение не сохранено');
-  });
+  showToast('Обновлено ✓');
 }
 
 
@@ -3502,14 +2729,12 @@ function checkAccess() {
       var cb = '__access_'+Date.now();
       window[cb] = function(d) {
         delete window[cb];
-        var sc2=document.getElementById('sc-'+cb); if(sc2) sc2.remove();
         if (d && d.agents) { AGENTS = d.agents; RECRUITS = d.recruits || []; }
         verifyUsername();
       };
       var sc = document.createElement('script');
-      sc.id = 'sc-' + cb;
       sc.src = API_URL + '?action=getLists&callback=' + cb;
-      sc.onerror = function() { delete window[cb]; var s=document.getElementById('sc-'+cb); if(s) s.remove(); verifyUsername(); };
+      sc.onerror = function() { delete window[cb]; verifyUsername(); };
       document.head.appendChild(sc);
     }
   }, 500);
@@ -3529,44 +2754,39 @@ function showNoAccess(msg) {
 function loadData(){
   var cbName = '__listsLoaded_' + Date.now();
   var done = false;
-  var retried = false;
 
   window[cbName] = function(data) {
-    var wasLate = done; // true если таймаут уже сработал
     done = true;
     delete window[cbName];
     var sc = document.getElementById('sc-' + cbName);
     if (sc) sc.remove();
-
     try {
-      if(data.recruits && Array.isArray(data.recruits) && data.recruits.length) RECRUITS=data.recruits;
-      if(data.agents  && Array.isArray(data.agents)  && data.agents.length)  AGENTS=data.agents;
-      // Кэшируем в localStorage — используется как fallback если GAS недоступен
-      try{localStorage.setItem('cachedLists',JSON.stringify({agents:AGENTS,recruits:RECRUITS,ts:Date.now()}));}catch(e){}
-      // Soft version check: warn in console if fallback is stale
-      if(data.version && data.version !== FALLBACK_VERSION){
-        console.warn('[miniapp] Fallback version mismatch. GAS='+data.version+' local='+FALLBACK_VERSION+'. Update useFallback() to match current agent list.');
-      }
+      if(data.recruits&&data.recruits.length)RECRUITS=data.recruits;
+      if(data.agents&&data.agents.length)AGENTS=data.agents;
       if(data.agentCounters)AGENT_C=data.agentCounters;
-      if(data.rentalStats)RENTAL_STATS=data.rentalStats;
-      // COUNTERS built once from recruits+counters — no double overwrite
-      if(data.recruits&&data.recruits.length){
-        COUNTERS=data.recruits.map(function(r){
-          var c=(data.counters&&data.counters[r.name])||{};
-          function n(v){return v===''||v===null||v===undefined?0:parseInt(v)||0;}
-          return{name:r.name,
-            photo:   [n(c.photo&&c.photo.done),    c.photo   ?n(c.photo.plan):15],
-            showing: [n(c.showing&&c.showing.done), c.showing ?n(c.showing.plan):15],
-            stickers:[n(c.stickers&&c.stickers.done),c.stickers?n(c.stickers.plan):15],
-            rental:  [n(c.rental&&c.rental.done),   c.rental  ?n(c.rental.plan):10]};
-        });
+      if(data.counters){
+        if(Array.isArray(data.counters)){
+          COUNTERS=data.counters;
+        } else {
+          COUNTERS=Object.keys(data.counters).map(function(k){
+            var c=data.counters[k];
+            return {name:k,photo:c.photo,showing:c.showing,stickers:c.stickers,rental:c.rental};
+          });
+        }
       }
+      if(data.rentalStats)RENTAL_STATS=data.rentalStats;
       try{loadDash({rentalStats:RENTAL_STATS,agentCounters:AGENT_C,counters:COUNTERS});}catch(e){console.log('loadDash error:',e);}
+      if(data.recruits)COUNTERS=data.recruits.map(function(r){
+        var c=data.counters&&data.counters[r.name]||{};
+        function n(v){return v===''||v===null||v===undefined?0:parseInt(v)||0;}
+        return{name:r.name,
+          showing:[n(c.showing&&c.showing.done), c.showing?n(c.showing.plan):15],
+          stickers:[n(c.stickers&&c.stickers.done), c.stickers?n(c.stickers.plan):15],
+          rental:[n(c.rental&&c.rental.done), c.rental?n(c.rental.plan):10]};
+      });
       afterLoad();
-      if(wasLate) showToast('Данные обновлены ✓');
-    } catch(e) { console.log('loadData parse error:',e); if(!wasLate) useFallback(); }
+    } catch(e) { console.log('loadData parse error:',e); useFallback(); }
   };
-
 
   var sc = document.createElement('script');
   sc.id = 'sc-' + cbName;
@@ -3580,64 +2800,17 @@ function loadData(){
   document.head.appendChild(sc);
 
   setTimeout(function(){
-    if(!done){
-      console.warn('[loadData] таймаут 25с — GAS не ответил вовремя, показываем fallback');
-      done=true;
-      useFallback();
-      // НЕ удаляем window[cbName] — если GAS ответит позже, данные обновятся автоматически
-    }
-  }, 25000); // GAS cold start
+    if(!done){ done=true; delete window[cbName]; useFallback(); }
+  }, 6000);
 }
 
-// ─── FALLBACK VERSION ────────────────────────────────────
-// Update FALLBACK_VERSION when agents/recruits list changes.
-// If GAS returns a different version, a soft warning is shown.
-var FALLBACK_VERSION = '2026-05-22';
-
 function useFallback(){
-  // Пробуем кэш из localStorage (сохраняется при каждом успешном getLists)
-  try {
-    var cached = JSON.parse(localStorage.getItem('cachedLists')||'null');
-    var age = cached ? (Date.now() - cached.ts) : Infinity;
-    if (cached && cached.agents && cached.agents.length && age < 7*24*60*60*1000) {
-      AGENTS = cached.agents;
-      RECRUITS = cached.recruits || [];
-      COUNTERS = RECRUITS.map(function(r){return{name:r.name,photo:[0,15],showing:[0,15],stickers:[0,15],rental:[0,10]};});
-      AGENT_C = {}; RENTAL_STATS = {};
-      afterLoad();
-      return;
-    }
-  } catch(e) {}
-  // Хардкод — актуально на 2026-05-22
-  AGENTS=[
-    {id:1, name:'David',   telegram:'@davidtibelashvili', level:90},
-    {id:2, name:'Daniil',  telegram:'@dogruller',         level:90},
-    {id:3, name:'Sergi',   telegram:'@SergiTb',           level:90},
-    {id:4, name:'Zaza',    telegram:'@eforit',            level:90},
-    {id:5, name:'Omari',   telegram:'@thatomss',          level:90},
-    {id:6, name:'Shorena', telegram:'@shorena_jvaridze',  level:70},
-    {id:7, name:'Giorgi',  telegram:'@chuluxagio',        level:70},
-    {id:8, name:'Dmitri',  telegram:'@Aion82',            level:70},
-    {id:9, name:'Alex',    telegram:'@Alexunder90',        level:70},
-    {id:10,name:'Danila',  telegram:'@DanilaPavlenk0',    level:50},
-    {id:11,name:'GioBeska',telegram:'@giobeska',          level:50},
-  ];
-  // Только активные рекруты (is_active=TRUE)
-  RECRUITS=[
-    {id:1, name:'Michel',    telegram:'@michelivar'},
-    {id:2, name:'Andria',    telegram:'@andria_kalandarishvili'},
-    {id:3, name:'Mariam',    telegram:'@sourlylight'},
-    {id:4, name:'Liana',     telegram:'@lianagadzhikhana'},
-    {id:5, name:'Mari',      telegram:'@marikhitarishvili'},
-    {id:6, name:'Dumbadze',  telegram:'@Dumbadze_Mikhail'},
-    {id:7, name:'Gio',       telegram:'@giosar'},
-    {id:8, name:'Viktoriia', telegram:'@viktoriia_radaeva'},
-    {id:9, name:'Ioann',     telegram:'@Ioannhop'},
-    {id:10,name:'Tony',      telegram:'@Antonio_ozzz'},
-  ];
-  COUNTERS=RECRUITS.map(function(r){return{name:r.name,photo:[0,15],showing:[0,15],stickers:[0,15],rental:[0,10]};});
-  AGENT_C={};
+  RECRUITS=[{id:1,name:'Danila',telegram:'@DanilaPavlenk0'},{id:2,name:'Artem',telegram:'@levittart'},{id:3,name:'Mariam',telegram:'@sourlylight'},{id:4,name:'Liana',telegram:'@lianagadzhikhana'},{id:5,name:'Mari',telegram:'@marikhitarishvili'},{id:6,name:'Nikita',telegram:'@krezonik'},{id:7,name:'Mikhail',telegram:'@Dumbadze_Mikhail'},{id:8,name:'Irakli',telegram:'@iraklibu'},{id:9,name:'Anton',telegram:'@Antonio_ozzz'},{id:10,name:'Gio',telegram:'@giosar'},{id:11,name:'Viktoriia',telegram:'@viktoriia_radaeva'},{id:12,name:'Tunar',telegram:'@tunaotchenash'}];
+  AGENTS=[{id:1,name:'David',telegram:'@davidtibelashvili',level:90},{id:2,name:'Daniil',telegram:'@dogruller',level:90},{id:3,name:'Sergi',telegram:'@SergiTb',level:90},{id:4,name:'Zaza',telegram:'@eforit',level:90},{id:5,name:'Omari',telegram:'@thatomss',level:90},{id:6,name:'Shorena',telegram:'@shorena_jvaridze',level:70},{id:7,name:'Giorgi',telegram:'@chuluxagio',level:70},{id:8,name:'Dmitri',telegram:'@Aion82',level:70},{id:9,name:'Alex',telegram:'@Alexunder90',level:70}];
+  COUNTERS=RECRUITS.map(function(r){return{name:r.name,showing:[0,15],stickers:[0,15],rental:[0,10]};});
+  AGENT_C={David:{deals:500,level:'Агент 90%',next:'Snowflake'},Daniil:{deals:137,level:'Агент 90%',next:'Snowflake'},Sergi:{deals:286,level:'Агент 90%',next:'Snowflake'},Zaza:{deals:154,level:'Агент 90%',next:'Snowflake'},Omari:{deals:129,level:'Агент 90%',next:'Snowflake'},Shorena:{deals:12,level:'Агент 70%',next:''},Giorgi:{deals:15,level:'Агент 70%',next:''},Dmitri:{deals:67,level:'Агент 70%',next:''},Alex:{deals:62,level:'Агент 70%',next:''}};
   RENTAL_STATS={};
+  COUNTERS=[];
   afterLoad();
 }
 
@@ -3669,14 +2842,12 @@ function renderStats(){
     if(rList){
       rList.innerHTML='';
       COUNTERS.forEach(function(r){
-        var photo=r.photo||[0,15];
         var show=r.showing||[0,15];
         var stick=r.stickers||[0,15];
         var rent=r.rental||[0,10];
         var row=document.createElement('div');row.className='scard';
         row.innerHTML='<div style="font-weight:700;font-size:14px;margin-bottom:6px;">'+r.name+'</div>'
-          +'<div style="display:flex;gap:12px;font-size:12px;flex-wrap:wrap;">'
-          +'<span>📸 <b>'+photo[0]+'</b>/'+photo[1]+'</span>'
+          +'<div style="display:flex;gap:16px;font-size:12px;">'
           +'<span>👁 <b>'+show[0]+'</b>/'+show[1]+'</span>'
           +'<span>📌 <b>'+stick[0]+'</b>/'+stick[1]+'</span>'
           +'<span>🏠 <b>'+rent[0]+'</b>/'+rent[1]+'</span>'
@@ -4105,13 +3276,6 @@ function loadNews(){
       list.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3);"><div style="font-size:36px;margin-bottom:12px;">📰</div><div style="font-size:14px;font-weight:600;">Новостей пока нет</div></div>';
       return;
     }
-    // Добавляем последнюю новость в бегущую строку
-    if (!dashData.analytics) dashData.analytics = {};
-    var lastNews = data.messages[0] && data.messages[0].text ? data.messages[0].text.slice(0,100) : null;
-    if (lastNews) {
-      dashData.analytics._lastNews = lastNews;
-      updateTickerFromAdmin();
-    }
     list.innerHTML='';
     data.messages.forEach(function(msg){
       var d=document.createElement('div');
@@ -4141,23 +3305,16 @@ function switchStatsTab(tab) {
 
 // ══ DAILY REPORT ══
 function openDailyReport(){
-  navigate('form-daily','reports');
-  draftRestore('form-daily');
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-daily').classList.add('active');
 
   // Заполняем автора — все агенты + все рекруты
   var aEl=document.getElementById('daily-author');
   aEl.innerHTML='<option value="">Выбрать себя...</option>';
-  AGENTS.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+' (agent)</option>';});
-  RECRUITS.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+' (recruit)</option>';});
-
-  // Заполняем Photo Master и Showing Master
-  var allPeople='<option value="">—</option>';
-  AGENTS.forEach(function(a){allPeople+='<option value="'+a.name+'">'+a.name+'</option>';});
-  RECRUITS.forEach(function(r){allPeople+='<option value="'+r.name+'">'+r.name+'</option>';});
-  var phM=document.getElementById('daily-ph-master');
-  var shM=document.getElementById('daily-sh-master');
-  if(phM) phM.innerHTML=allPeople;
-  if(shM) shM.innerHTML=allPeople;
+  AGENTS.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+' (агент)</option>';});
+  RECRUITS.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+' (рекрут)</option>';});
 
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('daily-date').value=today;
@@ -4202,12 +3359,11 @@ function updateDailyPreview(){
     '📍 Stickers: '+stickers+' стикеров\n'+
     '📸 Photo: '+photos+' объект'+(photos===1?'а':'ов')+'\n'+
     '🚪 Showing: '+showings+' объект'+(showings===1?'а':'ов')+'\n\n'+
-    '👤 Photo Master: '+(document.getElementById('daily-ph-master')&&document.getElementById('daily-ph-master').value||'-')+'\n'+
-    '👤 Showing Master: '+(document.getElementById('daily-sh-master')&&document.getElementById('daily-sh-master').value||'-')+'\n\n'+
+    '👤 Photo Master: -\n'+
+    '👤 Showing Master: -\n\n'+
     '🧾 Report by: #'+author;
 
   document.getElementById('daily-preview').textContent=text;
-  draftSave('form-daily');
 }
 
 function setDailyCheck(){}
@@ -4227,19 +3383,14 @@ function subDaily(){
     stickers_district:document.getElementById('daily-st-dist').value,
     photos:parseInt(document.getElementById('daily-photos').value)||0,
     photo_address:document.getElementById('daily-ph-addr').value,
-    photo_master:(document.getElementById('daily-ph-master')||{}).value||'',
     showings:parseInt(document.getElementById('daily-showings').value)||0,
     showing_address:document.getElementById('daily-sh-addr').value,
-    showing_master:(document.getElementById('daily-sh-master')||{}).value||'',
     preview:document.getElementById('daily-preview').textContent
   };
 
-  showToast('Отправляю... ✈️');
-  send('daily', data, function(){
-    draftClear('form-daily');
-    showToast('Daily Report sent! ✓');
-    setTimeout(goBack,800);
-  });
+  send('daily', data);
+  showToast('Daily Report sent! ✓');
+  setTimeout(goBack,1500);
 }
 
 
@@ -4248,440 +3399,12 @@ var grAuthor='', grOpen={photo:false,showing:false,stickers:false,calling:false,
 var grPickerCurrent=0, grPickerOffset=0, grIsDrag=false, grStartY=0, grStartOffset=0;
 var GR_ITEM_H=44;
 
-// ── ЛИЧНЫЙ КАБИНЕТ ─────────────────────────────────────
-var _cabData = null;
-
-// ── Глобальные хелперы ──────────────────────────────────
-function cabSet(id,val){ var e=document.getElementById(id); if(e) e.textContent=String(val); }
-function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
-function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
-
-
-function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
-function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
-
-// ═══ ЛИЧНЫЙ КАБИНЕТ ════════════════════════════════════
-
-var _cabCurrentAgent=null,_cabIsSA=false,_cabCalData=null,_cabWeekStart=null,_cabSelDay=null,_cabOwners=[],_cabCache={};
-var SUPER_IDS_CAB=['6577307207','6014886676','114756692'];
-var SUPER_UN_CAB=['kvirkvel1a','davidtibelashvili'];
-
-function cabShow(s){
-  ['cab-screen-loading','cab-screen-error','cab-screen-list','cab-screen-detail'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
-  var el=document.getElementById('cab-screen-'+s);if(el)el.style.display='';
-}
-
-function loadCabinet(){
-  // Reset navigation state but keep agent cache
-  _cabCurrentAgent=null;_cabCalData=null;_cabSelDay=null;
-  var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='none';
-  var t=document.getElementById('cab-title');if(t)t.textContent='Profiles';
-
-  var tg=window.Telegram&&window.Telegram.WebApp,tgId='',tgUn='';
-  if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user){
-    tgId=String(tg.initDataUnsafe.user.id||'');
-    tgUn=tg.initDataUnsafe.user.username||'';
-  }
-  if(!tgId&&AppState&&AppState.user){
-    tgId=String(AppState.user&&AppState.user.id||'');
-    tgUn=(AppState.user&&AppState.user.username)||'';
-  }
-
-  _cabIsSA=SUPER_IDS_CAB.indexOf(tgId)!==-1||SUPER_UN_CAB.indexOf((tgUn||'').toLowerCase())!==-1;
-
-  if(_cabIsSA){
-    cabShow('list');
-    cabLoadAgentList();
-  } else if(tgId||tgUn){
-    cabShow('loading');
-    cabFetchAgent('',tgId,tgUn,function(d){
-      if(!d||d.error){cabShow('error');return;}
-      _cabCurrentAgent=d.agent?d.agent.name:'';
-      cabRenderDetail(d);
-      cabShow('detail');
-      if(_cabCurrentAgent) cabLoadCalendar(_cabCurrentAgent);
-    });
-  } else {
-    // В браузере без Telegram — показываем детальный вид для теста
-    cabShow('detail');
-    cabSet('cab-name','Тест');
-    cabSet('cab-level-label','🏆 Агент · 90%');
-    cabSet('cab-deals-count','—');
-  }
-}
-
-function cabFetchAgent(name,tgId,tgUn,cb){
-  var key=name||tgId||tgUn;
-  if(_cabCache[key]){cb(_cabCache[key]);return;}
-  var cn='__cab_'+Date.now();
-  window[cn]=function(d){var sc=document.getElementById('sc-'+cn);if(sc)sc.remove();delete window[cn];if(d&&!d.error)_cabCache[key]=d;cb(d);};
-  var sc=document.createElement('script');sc.id='sc-'+cn;
-  var url=API_URL+'?action=getPersonalData&callback='+cn;
-  if(name)url+='&agent_name='+encodeURIComponent(name);
-  if(tgId)url+='&tg_id='+encodeURIComponent(tgId);
-  if(tgUn)url+='&tg_username='+encodeURIComponent('@'+tgUn);
-  sc.src=url;sc.onerror=function(){cb({error:'err'});};document.head.appendChild(sc);
-}
-
-function cabLoadAgentList(){
-  var listEl=document.getElementById('cab-agents-list');if(!listEl)return;
-  var all=[];
-  (typeof AGENTS!=='undefined'&&AGENTS||[]).forEach(function(a){if(a&&a.name)all.push({name:a.name,tg:a.telegram||'',type:'agent'});});
-  (typeof RECRUITS!=='undefined'&&RECRUITS||[]).forEach(function(r){if(r&&r.name)all.push({name:r.name,tg:r.telegram||'',type:'recruit'});});
-  if(!all.length){
-    listEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);font-size:12px;"><div class=\"spin\" style=\"margin:0 auto 8px;\"></div>Loading...</div>';
-    var cn='__agl_'+Date.now();
-    window[cn]=function(d){
-      var sc=document.getElementById('sc-'+cn);if(sc)sc.remove();delete window[cn];
-      if(d&&d.agents){AGENTS=d.agents;RECRUITS=d.recruits||[];}
-      cabLoadAgentList();
-    };
-    var sc=document.createElement('script');sc.id='sc-'+cn;
-    sc.src=API_URL+'?action=getLists&callback='+cn;
-    sc.onerror=function(){listEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--text3);">Ошибка загрузки</div>';};
-    document.head.appendChild(sc);return;
-  }
-  listEl.innerHTML=all.map(function(a){
-    return '<div onclick="cabOpenAgent(\''+a.name+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;">' +
-      '<div><div style="font-size:13px;font-weight:600;color:var(--text);">'+a.name+'</div>' +
-      '<div style="font-size:11px;color:var(--text3);">'+(a.type==='recruit'?'📋 Рекрут':'🏆 Агент')+' · '+(a.tg||'')+'</div></div>' +
-      '<div style="font-size:16px;color:var(--text3);">→</div></div>';
-  }).join('');
-}
-
-function cabOpenAgent(name){haptic('light');
-  _cabCurrentAgent=name;_cabCalData=null;_cabSelDay=null;
-  // Сначала показываем экран загрузки
-  cabShow('loading');
-  cabFetchAgent(name,'','',function(d){
-    var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='';
-    var t=document.getElementById('cab-title');if(t)t.textContent=name;
-    if(!d||d.error){
-      // Показываем detail с пустыми данными
-      cabShow('detail');
-      cabSet('cab-name',name);
-      cabSet('cab-level-label','Данные не найдены');
-      cabSet('cab-deals-count','—');
-      return;
-    }
-    cabShow('detail');
-    cabRenderDetail(d);
-    cabLoadCalendar(name);
-  });
-}
-
-function cabGoBack(){haptic('light');
-  _cabCurrentAgent=null;_cabCalData=null;
-  var bb=document.getElementById('cab-back-btn');if(bb)bb.style.display='none';
-  var t=document.getElementById('cab-title');if(t)t.textContent='Личный кабинет';
-  cabShow('list');
-}
-
-function cabRenderDetail(d){
-  var ag=d.agent||{},cn=d.counters||{},ct=d.contracts||[],dl=d.deals||[];
-  var lvl=parseInt(ag.level)||50,dc=cn.deals||0;
-  var prog=lvl>=90?100:lvl>=70?Math.round((dc-11)/90*100):Math.round(dc/11*100);
-  prog=Math.min(100,Math.max(0,prog));
-  cabSet('cab-avatar',(ag.name||'?').substring(0,2).toUpperCase());
-  cabSet('cab-name',ag.name||'—');
-  cabSet('cab-level-label',(ag.type==='recruit'?'📋 Recruit':'🏆 Agent')+' · '+lvl+'%');
-  cabSet('cab-next-val',cn.nextAt||'');
-  // Анимируем счётчик сделок
-  var cabEl=document.getElementById('cab-deals-count');
-  if(cabEl){cabEl.textContent='0';setTimeout(function(){animateCounter('cab-deals-count',dc,900);},300);}
-  // Прогресс бар — только для рекрутов
-  var pw=document.getElementById('cab-progress-wrap');
-  if(pw) pw.style.display=ag.type==='recruit'?'':'none';
-  var bar=document.getElementById('cab-progress-bar');if(bar)setTimeout(function(){bar.style.width=prog+'%';},100);
-  var rb=document.getElementById('cab-recruit-block');if(rb)rb.style.display=(ag.type==='recruit'&&d.recruitCounters)?'':'none';
-  if(d.recruitCounters){
-    var rc=d.recruitCounters;
-    ['photo','showing','stickers','rental'].forEach(function(k,i){
-      var cid='cab-cnt-'+k, val=rc[k]||0;
-      var cel=document.getElementById(cid);
-      if(cel){cel.textContent='0';setTimeout(function(){animateCounter(cid,val,700);},400+i*80);}
-    });
-  }
-  // Предупреждение о ближайших окончаниях (до 30 дней)
-  var alertEl=document.getElementById('cab-contract-alert');
-  if(alertEl){
-    var expiring=ct.filter(function(c){return c.daysLeft>=0&&c.daysLeft<=30;});
-    if(expiring.length){
-      alertEl.style.display='';
-      alertEl.innerHTML=expiring.map(function(nc){
-        var col=nc.daysLeft<=7?'#ef4444':'#f59e0b';
-        return '<div style="background:'+col+'18;border:1px solid '+col+'44;border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:center;margin-bottom:6px;">' +
-          '<div style="font-size:20px;">⚠️</div>' +
-          '<div><div style="font-size:12px;font-weight:700;color:'+col+';">Заканчивается через '+nc.daysLeft+' дн.</div>' +
-          '<div style="font-size:11px;color:var(--text2);margin-top:2px;">📍 '+(nc.address||nc.ownerName||'—')+' · '+(nc.price||0)+'$/мес</div>' +
-          '<div style="font-size:10px;color:var(--text3);margin-top:1px;">до '+(nc.rentTo||'—')+' · '+(nc.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented')+'</div>' +
-          '</div></div>';
-      }).join('');
-    } else alertEl.style.display='none';
-  }
-  var cti=document.getElementById('cab-contracts-title');if(cti)cti.textContent='Договора ('+ct.length+')';
-  var cli=document.getElementById('cab-contracts-list');
-  if(cli)cli.innerHTML=!ct.length?'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет договоров</div>':ct.map(function(c){
-    var col=c.daysLeft<0?'#6b7280':c.daysLeft<=7?'#ef4444':c.daysLeft<=30?'#fbbf24':'#22c55e';
-    var badge=c.daysLeft<0?'Истёк '+Math.abs(c.daysLeft)+' дн. назад':c.daysLeft+' дн.';
-    var renew=c.renewType==='new_contract'?'📄 Новый договор':'🔄 Rerented';
-    var addr=c.address||(c.ownerName?c.ownerName:'Адрес не указан');
-    return '<div style="padding:11px 14px;border-bottom:0.5px solid var(--border);">' +
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">' +
-      '<div style="font-size:13px;font-weight:700;color:var(--text);flex:1;margin-right:8px;">📍 '+addr+'</div>' +
-      '<div style="font-size:11px;font-weight:700;color:'+col+';background:'+col+'22;padding:2px 8px;border-radius:8px;white-space:nowrap;">'+badge+'</div>' +
-      '</div>' +
-      '<div style="font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:4px;">'+(c.price||0)+'$/мес</div>' +
-      '<div style="font-size:11px;color:var(--text2);margin-bottom:4px;">👤 '+(c.clientName||'—')+(c.clientPhone?' · <span style=\"color:var(--text3)\">'+fmtPhone(c.clientPhone)+'</span>':'')+'</div>' +
-      '<div style="margin-bottom:6px;">' +
-        '<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">🏠 '+(c.ownerName||'—')+(c.ownerPhone?' · <span style=\"color:var(--text3)\">'+fmtPhone(c.ownerPhone)+'</span>':'')+'</div>' +
-        (c.ownerPhone ? cabContactBtns(c.ownerPhone, '') : '') +
-      '</div>' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-      '<div style="font-size:10px;color:var(--text3);">'+(c.rentFrom||'—')+' → '+(c.rentTo||'—')+'</div>' +
-      '<div style="font-size:10px;color:var(--accent);">'+renew+'</div>' +
-      '</div></div>';
-  }).join('');
-  var fd=dl.filter(function(x){return x.comm>0||x.price>0;});
-  var dti=document.getElementById('cab-deals-title');if(dti)dti.textContent='Сделки ('+fd.length+')';
-  var dli=document.getElementById('cab-deals-list');
-  if(dli)dli.innerHTML=!fd.length?'<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет сделок</div>':fd.slice(0,10).map(function(x){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:0.5px solid var(--border);"><div><div style="font-size:12px;color:var(--text);">'+(x.isExcl?'⭐ ':'')+( x.link?'<a href="'+x.link+'" style="color:var(--accent2);">Объект</a>':'Объект')+'</div><div style="font-size:10px;color:var(--text3);">'+(x.date||'—')+'</div></div><div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:var(--green);">+'+(x.comm||0)+'$</div><div style="font-size:10px;color:var(--text3);">'+(x.price||0)+'$ аренда</div></div></div>';}).join('');
-  var sel=document.getElementById('cab-f-recruit');
-  if(sel&&sel.options.length<=1){(RECRUITS||[]).forEach(function(r){var o=document.createElement('option');o.value=r.name;o.textContent=r.name+' (рекрут)';sel.appendChild(o);});(AGENTS||[]).forEach(function(a){var o=document.createElement('option');o.value=a.name;o.textContent=a.name+' (агент)';sel.appendChild(o);});}
-}
-
-function cabGetMonday(d){var dt=new Date(d);dt.setHours(0,0,0,0);var day=dt.getDay();dt.setDate(dt.getDate()+(day===0?-6:1-day));return dt;}
-
-function cabLoadCalendar(name){
-  _cabCalData=null;if(!_cabWeekStart)_cabWeekStart=cabGetMonday(new Date());cabRenderWeek();
-  var cn='__cal_'+Date.now();
-  window[cn]=function(d){var sc=document.getElementById('sc-'+cn);if(sc)sc.remove();delete window[cn];if(!d||d.error)return;_cabCalData=d;_cabOwners=d.owners||[];cabRenderWeek();};
-  var sc=document.createElement('script');sc.id='sc-'+cn;
-  sc.src=API_URL+'?action=getCabinetData&agent_name='+encodeURIComponent(name)+'&callback='+cn;
-  sc.onerror=function(){delete window[cn];};document.head.appendChild(sc);
-}
-
-function cabWeekPrev(){haptic('light');if(_cabWeekStart){
-  var g=document.getElementById('cab-week-grid');
-  if(g){g.style.transition='transform .2s ease';g.style.transform='translateX(30px)';g.style.opacity='0.5';
-  setTimeout(function(){g.style.transition='';g.style.transform='';g.style.opacity='';},200);}_cabWeekStart.setDate(_cabWeekStart.getDate()-7);cabRenderWeek();}}
-function cabWeekNext(){haptic('light');if(_cabWeekStart){
-  var g=document.getElementById('cab-week-grid');
-  if(g){g.style.transition='transform .2s ease';g.style.transform='translateX(-30px)';g.style.opacity='0.5';
-  setTimeout(function(){g.style.transition='';g.style.transform='';g.style.opacity='';},200);}_cabWeekStart.setDate(_cabWeekStart.getDate()+7);cabRenderWeek();}}
-
-function cabInitSwipe(){
-  var el=document.getElementById('cab-week-grid');
-  if(!el||el._swipe)return;
-  el._swipe=true;
-  var startX=0,startY=0,moved=false;
-  el.addEventListener('touchstart',function(e){
-    startX=e.touches[0].clientX;
-    startY=e.touches[0].clientY;
-    moved=false;
-  },{passive:true});
-  el.addEventListener('touchmove',function(e){
-    moved=true;
-  },{passive:true});
-  el.addEventListener('touchend',function(e){
-    if(!moved)return;
-    var dx=e.changedTouches[0].clientX-startX;
-    var dy=e.changedTouches[0].clientY-startY;
-    if(Math.abs(dx)<Math.abs(dy)||Math.abs(dx)<40)return;
-    if(dx<0){cabWeekNext();}
-    else{cabWeekPrev();}
-  },{passive:true});
-
-  // Also add swipe on day-events panel
-  var ev=document.getElementById('cab-day-events');
-  if(ev&&!ev._swipe){
-    ev._swipe=true;
-    var sx2=0,sy2=0,mv2=false;
-    ev.addEventListener('touchstart',function(e){sx2=e.touches[0].clientX;sy2=e.touches[0].clientY;mv2=false;},{passive:true});
-    ev.addEventListener('touchmove',function(e){mv2=true;},{passive:true});
-    ev.addEventListener('touchend',function(e){
-      if(!mv2)return;
-      var dx2=e.changedTouches[0].clientX-sx2;
-      var dy2=e.changedTouches[0].clientY-sy2;
-      if(Math.abs(dx2)<Math.abs(dy2)||Math.abs(dx2)<40)return;
-      if(dx2<0){cabWeekNext();}else{cabWeekPrev();}
-    },{passive:true});
-  }
-}
-
-function cabRenderWeek(){
-  if(!_cabWeekStart)_cabWeekStart=cabGetMonday(new Date());
-  var ms=_cabWeekStart,fmt=function(d){return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2);};
-  var lbl=document.getElementById('cab-week-label');if(lbl)lbl.textContent=fmt(ms)+' – '+fmt(new Date(ms.getTime()+6*864e5));
-  var grid=document.getElementById('cab-week-grid');if(!grid)return;
-  var days=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],today=new Date();today.setHours(0,0,0,0);
-  if(!_cabSelDay)_cabSelDay=today.toISOString().slice(0,10);
-  var html='';
-  for(var i=0;i<7;i++){
-    var dt=new Date(ms);dt.setDate(ms.getDate()+i);var iso=dt.toISOString().slice(0,10);
-    var isSel=iso===_cabSelDay,isToday=dt.getTime()===today.getTime(),hasDot=_cabCalData?cabDayHasEvents(iso):false;
-    html+='<div onclick="cabSelectDay(this.dataset.iso)" data-iso="'+iso+'" style="text-align:center;padding:6px 2px;border-radius:8px;cursor:pointer;'+(isSel?'background:var(--accent);':isToday?'background:rgba(99,102,241,.15);':'')+'">' +
-      '<div style="font-size:9px;color:'+(isSel?'#fff':'var(--text3)')+';">'+days[i]+'</div>' +
-      '<div style="font-size:14px;font-weight:'+(isSel||isToday?700:400)+';color:'+(isSel?'#fff':'var(--text)')+';margin:2px 0;">'+dt.getDate()+'</div>' +
-      '<div style="height:4px;display:flex;justify-content:center;">'+(hasDot?'<div style="width:4px;height:4px;border-radius:50%;background:'+(isSel?'#fff':'var(--accent)')+'"></div>':'')+'</div></div>';
-  }
-  grid.innerHTML=html;cabRenderDayEvents(_cabSelDay);cabInitSwipe();
-}
-
-function cabDayHasEvents(iso){
-  if(!_cabCalData)return false;
-  return (_cabCalData.showings||[]).some(function(s){return cabFmtToIso(s.date||(s.timestamp||'').slice(0,10))===iso;})||
-         (_cabCalData.deals||[]).some(function(s){return (s.t14_date&&cabFmtToIso(s.t14_date)===iso)||(s.rent_to&&cabFmtToIso(s.rent_to)===iso);})||
-         (_cabCalData.photos||[]).some(function(s){return cabFmtToIso(s.date||(s.timestamp||'').slice(0,10))===iso;});
-}
-function cabFmtToIso(s){
-  if(!s)return'';
-  s=String(s).trim();
-  // dd.MM.yyyy → yyyy-MM-dd
-  if(/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(s)){
-    var p=s.split('.');
-    return p[2]+'-'+('0'+p[1]).slice(-2)+'-'+('0'+p[0]).slice(-2);
-  }
-  // yyyy-MM-dd already
-  if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);
-  // "Tue Apr 21 2026..." or any other JS date string
-  var d=new Date(s);
-  if(!isNaN(d.getTime())&&d.getFullYear()>2000)return d.toISOString().slice(0,10);
-  return '';
-}
-
-// Звонок через Telegram или браузер
-function cabCall(tel) {
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-    window.Telegram.WebApp.openLink('tel:' + tel);
-  } else {
-    window.location.href = 'tel:' + tel;
-  }
-}
-
-// Кнопки связи: звонок, WhatsApp, Telegram
-function cabContactBtns(phone, tgUsername) {
-  var clean = String(phone||'').replace(/[\s\-\(\)\u200b\u200c\u200d\ufeff]/g,'');
-  var wa = clean.indexOf('+') === 0 ? clean.slice(1) : clean;
-  var btn = 'display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;text-decoration:none;padding:3px 8px;border-radius:6px;border:1px solid;';
-  var html = '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;">';
-  // Нормализуем номер для звонка
-  var tel = String(phone||'').replace(/[\u200b\u200c\u200d\ufeff]/g,'').replace(/[\s\-\(\)]/g,'');
-  if (tel && tel[0] !== '+' && tel.length >= 9) tel = '+' + tel;
-  html += '<button onclick="cabCall(\''+tel+'\')" style="'+btn+'color:var(--blue);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08);cursor:pointer;font-family:inherit;">📞 Phone</button>';
-  html += '<a href="https://wa.me/'+wa+'" target="_blank" style="'+btn+'color:#25d366;border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.08);"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"#25d366\"><path d=\"M12 0C5.373 0 0 5.373 0 12c0 2.123.558 4.118 1.534 5.845L0 24l6.29-1.507A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm6.22 16.452c-.258.724-1.283 1.326-2.096 1.5-.558.12-1.286.215-3.738-.803-3.14-1.288-5.166-4.476-5.32-4.682-.149-.207-1.216-1.618-1.216-3.086 0-1.469.768-2.19 1.04-2.488.258-.285.565-.356.753-.356.19 0 .376.002.54.01.174.008.407-.066.637.486.237.569.804 1.963.874 2.107.07.143.116.31.023.498-.088.19-.132.308-.26.474-.13.166-.273.37-.388.497-.13.14-.265.292-.114.572.151.28.673 1.11 1.444 1.797 1 .887 1.843 1.162 2.116 1.294.272.13.43.108.59-.065.16-.173.683-.796.865-1.07.18-.273.363-.228.612-.137.248.09 1.576.743 1.846.879.27.136.45.204.516.317.065.113.065.655-.193 1.379z\"/></svg> WA</a>';
-  if (tgUsername && tgUsername.indexOf('@') === 0) {
-    html += '<a href="https://t.me/'+tgUsername.replace('@','')+'" target="_blank" style="'+btn+'color:#229ed9;border-color:rgba(34,158,217,.3);background:rgba(34,158,217,.08);"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"#229ed9\"><path d=\"M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.018 9.505c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 14.4l-2.95-.924c-.64-.203-.654-.64.136-.948l11.527-4.446c.537-.194 1.006.131.589.166z\"/></svg> TG</a>';
-  } else if (clean.length >= 9) {
-    html += '<a href="https://t.me/+'+wa+'" target="_blank" style="'+btn+'color:#229ed9;border-color:rgba(34,158,217,.3);background:rgba(34,158,217,.08);"><svg width=\"11\" height=\"11\" viewBox=\"0 0 24 24\" fill=\"#229ed9\"><path d=\"M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.018 9.505c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 14.4l-2.95-.924c-.64-.203-.654-.64.136-.948l11.527-4.446c.537-.194 1.006.131.589.166z\"/></svg> TG</a>';
-  }
-  html += '</div>';
-  return html;
-}
-
-// Универсальный форматтер телефона — показывает как есть, убирает лишние символы
-function fmtPhone(p){
-  if(!p)return'—';
-  p=String(p).trim();
-  // Убираем невидимые символы и лишние пробелы
-  p=p.replace(/[\u200b\u200c\u200d\ufeff]/g,'').trim();
-  if(!p||p==='—')return'—';
-  // Если уже красиво — возвращаем как есть
-  return p;
-}
-
-// Format date dd.MM.yyyy for display
-function cabFmtDate(s){
-  if(!s)return'—';
-  s=String(s).trim();
-  // Already dd.MM.yyyy
-  if(/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(s))return s;
-  // yyyy-MM-dd
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)){var p=s.slice(0,10).split('-');return p[2]+'.'+p[1]+'.'+p[0];}
-  // JS date string
-  var d=new Date(s);
-  if(!isNaN(d.getTime())&&d.getFullYear()>2000){
-    return ('0'+d.getDate()).slice(-2)+'.'+(('0'+(d.getMonth()+1)).slice(-2))+'.'+d.getFullYear();
-  }
-  return s.slice(0,10)||'—';
-}
-function cabSelectDay(iso){haptic('light');_cabSelDay=iso;cabRenderWeek();}
-
-function cabRenderDayEvents(iso){
-  var el=document.getElementById('cab-day-events');if(!el)return;
-  if(!_cabCalData){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Loading...</div>';return;}
-  var events=[];
-  (_cabCalData.showings||[]).forEach(function(s){var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));if(d!==iso)return;events.push({icon:'🏠',title:'Показ'+(s.address?' — '+s.address:''),sub:(s.client_name||s.client_tg||'')+(s.client_phone?' · '+fmtPhone(s.client_phone):'')+(s.show_time&&s.show_time!=='00:00'?' в '+s.show_time:''),time:(s.show_time&&s.show_time!=='00:00')?s.show_time:'',col:'#3b82f6'});});
-  (_cabCalData.deals||[]).forEach(function(s){
-    if(s.t14_date&&cabFmtToIso(s.t14_date)===iso)
-      events.push({icon:'⏰',title:'T14 — '+(s.address||s.owner_name||'объект'),sub:'Клиент: '+(s.client_name||'—'),time:'',col:'#f59e0b'});
-    if(s.rent_to&&cabFmtToIso(s.rent_to)===iso)
-      events.push({icon:'📋',title:'Конец договора'+(s.address?' — '+s.address:''),sub:(s.price||0)+'$/мес · '+(s.client_name||'—'),time:'',col:'#ef4444'});
-  });
-  (_cabCalData.photos||[]).forEach(function(s){
-    var d=cabFmtToIso(s.date||(s.timestamp||'').slice(0,10));
-    if(d!==iso)return;
-    var isMakeFoto=s.type==='makefoto';
-    events.push({
-      icon: isMakeFoto?'📸':'📷',
-      title: (isMakeFoto?'Make Foto':'Фото')+' — '+(s.address||'—'),
-      sub: isMakeFoto
-        ? (s.owner?'Собственник: '+s.owner:'')+(s.phone?' · '+fmtPhone(s.phone):'')
-        : 'Рекрут: '+(s.recruit||'—'),
-      time: (s.show_time&&s.show_time!=='00:00')?s.show_time:'',
-      col:'#8b5cf6'
-    });
-  });
-  if(!events.length){el.innerHTML='<div style="padding:12px;text-align:center;color:var(--text3);font-size:12px;">Нет событий</div>';return;}
-  el.innerHTML=events.map(function(ev){return '<div style="padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:flex-start;"><div style="font-size:18px;">'+ev.icon+'</div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">'+ev.title+'</div>'+(ev.sub?'<div style="font-size:11px;color:var(--text3);">'+ev.sub+'</div>':'')+'</div>'+(ev.time?'<div style="font-size:11px;font-weight:700;color:'+ev.col+';">'+ev.time+'</div>':'')+'</div>';}).join('');
-}
-
-function cabShowAddForm(){show('cab-add-form');var di=document.getElementById('cab-f-date');if(di&&_cabSelDay)di.value=_cabSelDay;var ti=document.getElementById('cab-f-time');if(ti&&!ti.value)ti.value='10:00';}
-function cabHideForm(){hide('cab-add-form');}
-
-function cabSearchOwner(addr){
-  if(!addr||addr.length<3||!_cabOwners.length){hide('cab-owner-hint');return;}
-  var found=_cabOwners.filter(function(o){return o.address&&o.address.toLowerCase().indexOf(addr.toLowerCase())!==-1;})[0];
-  var hint=document.getElementById('cab-owner-hint');
-  if(found&&hint){hint.style.display='';hint.textContent='✓ '+found.name+' · '+found.phone;var oe=document.getElementById('cab-f-owner');var op=document.getElementById('cab-f-owner-phone');if(oe&&!oe.value)oe.value=found.name;if(op&&!op.value)op.value=found.phone;}
-  else if(hint)hint.style.display='none';
-}
-
-function cabSubmitShowing(){
-  var date=document.getElementById('cab-f-date').value,addr=document.getElementById('cab-f-addr').value;
-  if(!date||!addr){showToast('Укажи дату и адрес','warn');return;}
-  var an=_cabCurrentAgent||'';
-  var payload={type:'showing',data:{recruit:document.getElementById('cab-f-recruit').value||an,mentor:an,district_address:addr,ad_link_advertising:document.getElementById('cab-f-link').value,client_telegram:document.getElementById('cab-f-client').value,result:'Запланирован',date:date,show_time:document.getElementById('cab-f-time').value,owner_phone:document.getElementById('cab-f-owner-phone').value,client_name:document.getElementById('cab-f-client').value,client_phone:document.getElementById('cab-f-client-phone').value,listing_link:document.getElementById('cab-f-link').value,photo_url:document.getElementById('cab-f-comment').value}};
-  var showData = payload.data;
-  send('showing', showData,
-    function(){
-      showToast('Показ добавлен ✓');
-      cabHideForm();
-      if(_cabCalData) _cabCalData.showings.unshift({
-        timestamp: new Date().toISOString(),
-        date: date,
-        recruit: showData.recruit,
-        mentor: an,
-        address: addr,
-        show_time: showData.show_time,
-        client_name: showData.client_name,
-        client_tg: showData.client_telegram
-      });
-      _cabSelDay = date;
-      cabRenderWeek();
-    },
-    function(){ showToast('Ошибка сохранения'); }
-  );
-}
-
-
-function show(id) { var el=document.getElementById(id); if(el) el.style.display=''; }
-function hide(id) { var el=document.getElementById(id); if(el) el.style.display='none'; }
-
-function openCalc(){ goTab('calc'); draftRestore('calc'); }
+function openCalc(){ goTab('calc'); }
 function openGeneralReport(){
-  navigate('form-general','deals');
-  draftRestore('form-general');
+  prevTab='deals';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-general').classList.add('active');
 
   var all=[];
   AGENTS.forEach(function(a){all.push({name:a.name,role:'агент'});});
@@ -4778,19 +3501,19 @@ function grSubmit(){
     stickersMember: stickersMember,
     stickersDist: stickersDist,
   };
-  showToast('Отправляю... ✈️');
-  send('general', data, function(){
-    draftClear('form-general');
-    showToast('Отчёт отправлен! ✓');
-    setTimeout(goBack,800);
-  });
+  send('general',data);
+  showToast('Отчёт отправлен! ✓');
+  setTimeout(goBack,1500);
 }
 
-function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);haptic(msg&&msg.indexOf('❌')!==-1?'error':'success');}
+function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 // ══ CHECK PROPERTY ══
 function openCheckProperty(){
-  navigate('form-check','reports');
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-check').classList.add('active');
   clearCheck();
   window.scrollTo(0,0);
 }
@@ -4878,16 +3601,27 @@ function clearCheck(){
 }
 
 function openMakeFoto(){
-  navigate('form-makefoto','reports');
+  prevTab='reports';
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.bni').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('form-makefoto').classList.add('active');
   var today=new Date();
   var dd=String(today.getDate()).padStart(2,'0');
   var mm=String(today.getMonth()+1).padStart(2,'0');
   document.getElementById('mf-date').value=dd+'.'+mm;
   var aEl=document.getElementById('mf-agent');
-  // Всегда берём из живых данных — AGENTS/RECRUITS заполнены из GAS или localStorage кэша
+  var agents=AGENTS.length?AGENTS:[
+    {name:'David'},{name:'Daniil'},{name:'Sergi'},{name:'Zaza'},{name:'Omari'},
+    {name:'Shorena'},{name:'Giorgi'},{name:'Dmitri'},{name:'Alex'}
+  ];
+  var recruits=RECRUITS.length?RECRUITS:[
+    {name:'Danila'},{name:'Artem'},{name:'Mariam'},{name:'Liana'},{name:'Mari'},
+    {name:'Nikita'},{name:'Mikhail'},{name:'Irakli'},{name:'Anton'},{name:'Gio'},
+    {name:'Viktoriia'},{name:'Tunar'}
+  ];
   aEl.innerHTML='<option value="">Select agent...</option>';
-  AGENTS.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+'</option>';});
-  RECRUITS.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});
+  agents.forEach(function(a){aEl.innerHTML+='<option value="'+a.name+'">'+a.name+'</option>';});
+  recruits.forEach(function(r){aEl.innerHTML+='<option value="'+r.name+'">'+r.name+'</option>';});
   mfUpdatePreview();
   window.scrollTo(0,0);
 }
@@ -4921,7 +3655,6 @@ function mfSubmit(){
   var phone = document.getElementById('mf-phone').value||'';
   var link  = document.getElementById('mf-link').value||'';
   var preview = document.getElementById('mf-preview').textContent;
-  showToast('Отправляю... ✈️');
   send('makefoto', {
     address: addr,
     agent:   agent,
@@ -4930,10 +3663,9 @@ function mfSubmit(){
     phone:   phone,
     link:    link,
     preview: preview
-  }, function(){
-    showToast('Отправлено! ✓');
-    setTimeout(goBack, 800);
   });
+  showToast('Отправлено! ✓');
+  setTimeout(goBack, 1500);
 }
 
 function openCRM(){if(window.Telegram&&window.Telegram.WebApp)window.Telegram.WebApp.openTelegramLink('https://t.me/real_estating_bot/crm');else window.open('https://t.me/real_estating_bot/crm','_blank');}
