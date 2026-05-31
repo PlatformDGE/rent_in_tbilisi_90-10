@@ -1698,7 +1698,7 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
 <iframe name="hf" id="hf" style="display:none"></iframe>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwrLMoJWg-hiCcV63_aCTpp3QvIEXDXiuoH3mJ0TlBuzMkKsrC9ntEvOz79QXEonvLlKQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwPg3Jfv6bndI1HE5gVHDSesZn9S5VaYVYz3P7tCG0AAG6mjdC7ohOqGRdnUf418bmWdw/exec';
 
 // Data
 let RECRUITS=[], AGENTS=[], COUNTERS=[], AGENT_C={}, RENTAL_STATS={};
@@ -2568,6 +2568,7 @@ function sub(type, directData) {
       t0_h2o_client:rnH2O.c, t0_h2o_owner:rnH2O.o, t0_h2o_process:rnH2O.p,
       t0_result:rnT0Res,
       t0_comment:(document.getElementById('t0-comment')||{}).value||'',
+      client_src: (function(){ var el=document.getElementById('rn-client-src'); return el&&el.selectedIndex>0?el.options[el.selectedIndex].text:''; })(),
     };
   }
   else if(type==='t14'){const agEl=document.getElementById('t14-agent');data={object:document.getElementById('t14-obj').value,agent:agEl.options[agEl.selectedIndex].text,deal_date:document.getElementById('t14-date').value,changes:document.getElementById('t14-changes').value,complaints:compSel,complaints_text:document.getElementById('t14-comp-txt')?document.getElementById('t14-comp-txt').value:'',deal_result:t14Res,agent_comment:document.getElementById('t14-comment').value,h2o_client:h2o.t14.client,h2o_owner:h2o.t14.owner,h2o_process:h2o.t14.process};}
