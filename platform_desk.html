@@ -199,7 +199,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="section-label">Showing</div>
       <div class="field">
         <label>Listing link</label>
-        <input type="url" id="f-listing" placeholder="https://https://t.me/...myhome.ge/... or ss.ge/...">
+        <input type="url" id="f-listing" placeholder="https://myhome.ge/... or ss.ge/...">
       </div>
       <div class="field">
         <label>Address (english)</label>
@@ -232,12 +232,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
       </div>
       <div class="field">
-        <label>Children</label>
-        <div class="toggle-row" id="tg-children">
-          <div class="toggle-btn" onclick="setTg(this)">Yes</div>
-          <div class="toggle-btn on" onclick="setTg(this)">No</div>
-          <div class="toggle-btn" onclick="setTg(this)">Unknown</div>
-        </div>
+        <label>Tenants</label>
+        <input type="text" id="f-occupants" placeholder="e.g. 2 adults, family of 3">
       </div>
       <div class="field">
         <label>Rental term</label>
@@ -246,6 +242,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="toggle-btn on" onclick="setTg(this)">12 months</div>
           <div class="toggle-btn" onclick="setTg(this)">Other</div>
         </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Client message language</div>
+      <div class="toggle-row" id="tg-lang">
+        <div class="toggle-btn on" onclick="setTg(this)">English</div>
+        <div class="toggle-btn" onclick="setTg(this)">Русский</div>
+        <div class="toggle-btn" onclick="setTg(this)">ქართული</div>
       </div>
     </div>
 
@@ -335,7 +340,7 @@ var USERS={
 };
 var CURRENT_USER_NAME='';
 var CURRENT_ROLE='';
-var GAS_URL='https://script.google.com/macros/s/AKfycbwc3kO1J97BmFkg2QqRMfIWaJWnCdfqwuT-42nYpIf9fVeu_LRvy4M58vz3DifmhlRx/exec';
+var GAS_URL='https://script.google.com/macros/s/AKfycbyl8t9yrXEdXd__ZAXfySj6oNY0XTl9rlyksoaWUH6HnRA6fYQtBfyp0xjrixMd0zXlVg/exec';
 var AGENTS=[];
 var PHOTOS=[];
 var CT_TYPE='telegram';
@@ -479,7 +484,7 @@ function buildAgentMsg(){
   var date=document.getElementById('f-date').value||'—';
   var time=document.getElementById('f-time').value||'—';
   var pets=getToggleVal('tg-pets');
-  var children=getToggleVal('tg-children');
+  var tenants=(document.getElementById('f-occupants')||{}).value||'—';
   var term=getToggleVal('tg-term');
   var comment=document.getElementById('f-comment').value||'';
   var src=SRC?('#'+SRC):'';
@@ -494,7 +499,7 @@ function buildAgentMsg(){
   msg+='🏠 '+addr+'\n';
   if(maps) msg+='📍 '+maps+'\n';
   msg+='📅 '+fmtDate(date)+' | ⏰ '+time+'\n\n';
-  msg+='🐾 Pets: '+pets+' | 👶 Children: '+children+' | 📆 '+term+'\n';
+  msg+='🐾 Pets: '+pets+' | 👥 Tenants: '+tenants+' | 📆 '+term+'\n';
   if(comment) msg+='\n💬 '+comment;
   return msg;
 }
@@ -504,23 +509,47 @@ function buildClientMsg(){
   var agentData=AGENTS.find(function(a){return a.name===agentName;})||{};
   var agentTg=agentData.telegram||'';
   var addr=document.getElementById('f-address').value||'—';
-  var addrShort=addr.replace(/,\s*(apt|apartment|flat|unit|#)\s*\d+/i,'').trim();
+  var addrShort=addr.replace(/,?\s*(apt\.?|apartment|flat|unit|#)\s*\d+/i,'').trim();
   var maps=document.getElementById('f-maps').value||'';
   var date=document.getElementById('f-date').value||'—';
   var time=document.getElementById('f-time').value||'—';
   var pets=getToggleVal('tg-pets');
-  var children=getToggleVal('tg-children');
+  var tenants=(document.getElementById('f-occupants')||{}).value||'—';
   var term=getToggleVal('tg-term');
+  var lang=getToggleVal('tg-lang');
 
-  var msg='Hi! Your showing is confirmed ✅\n\n';
-  msg+='🏠 Address: '+addrShort+'\n';
-  if(maps) msg+='📍 Google Maps: '+maps+'\n';
-  msg+='📅 Date: '+fmtDate(date)+'\n';
-  msg+='⏰ Time: '+time+'\n\n';
-  msg+='🐾 Pets: '+pets+' | 👶 Children: '+children+' | 📆 '+term+'\n\n';
-  msg+='👤 Agent: '+agentName+'\n';
-  if(agentTg) msg+='✈️ Telegram: '+agentTg+'\n';
-  msg+='📞 Phone: —';
+  var fmtD=fmtDate(date);
+  var ctIcon={'telegram':'✈️ Telegram:','whatsapp':'💬 WhatsApp:','phone':'📞 Phone:'};
+  var agentContact=agentTg?('\n✈️ Telegram: '+agentTg):'';
+  var mapsLink=maps?('\n📍 <a href="'+maps+'">'+
+    (lang==='Русский'?'Точная локация':lang==='ქართული'?'ზუსტი მდებარეობა':'Exact location')+'</a>'):'';
+
+  var msg='';
+  if(lang==='Русский'){
+    msg='Привет! Показ подтверждён ✅\n\n';
+    msg+='🏠 Адрес: '+addrShort+mapsLink+'\n';
+    msg+='📅 Дата: '+fmtD+'\n';
+    msg+='⏰ Время: '+time+'\n\n';
+    msg+='🐾 Животные: '+pets+' | 👥 Жильцы: '+tenants+' | 📆 '+term+'\n\n';
+    msg+='👤 Агент: '+agentName+agentContact+'\n';
+    msg+='📞 Телефон: —';
+  } else if(lang==='ქართული'){
+    msg='გამარჯობა! ჩვენება დადასტურებულია ✅\n\n';
+    msg+='🏠 მისამართი: '+addrShort+mapsLink+'\n';
+    msg+='📅 თარიღი: '+fmtD+'\n';
+    msg+='⏰ დრო: '+time+'\n\n';
+    msg+='🐾 შინაური ცხოველები: '+pets+' | 👥 მოიჯარეები: '+tenants+' | 📆 '+term+'\n\n';
+    msg+='👤 აგენტი: '+agentName+agentContact+'\n';
+    msg+='📞 ტელეფონი: —';
+  } else {
+    msg='Hi! Your showing is confirmed ✅\n\n';
+    msg+='🏠 Address: '+addrShort+mapsLink+'\n';
+    msg+='📅 Date: '+fmtD+'\n';
+    msg+='⏰ Time: '+time+'\n\n';
+    msg+='🐾 Pets: '+pets+' | 👥 Tenants: '+tenants+' | 📆 '+term+'\n\n';
+    msg+='👤 Agent: '+agentName+agentContact+'\n';
+    msg+='📞 Phone: —';
+  }
   return msg;
 }
 
@@ -564,8 +593,9 @@ function doSend(){
     date:document.getElementById('f-date').value,
     time:document.getElementById('f-time').value,
     pets:getToggleVal('tg-pets'),
-    children:getToggleVal('tg-children'),
+    tenants:(document.getElementById('f-occupants')||{}).value||'',
     term:getToggleVal('tg-term'),
+    lang:getToggleVal('tg-lang'),
     source:SRC,
     comment:document.getElementById('f-comment').value,
     agent_message:buildAgentMsg(),
@@ -615,8 +645,9 @@ function resetForm(){
   document.getElementById('photo-previews').innerHTML='';
   document.querySelectorAll('.src-btn').forEach(function(b){b.classList.remove('on');});
   document.querySelectorAll('#tg-pets .toggle-btn').forEach(function(b,i){b.classList.toggle('on',i===1);});
-  document.querySelectorAll('#tg-children .toggle-btn').forEach(function(b,i){b.classList.toggle('on',i===1);});
   document.querySelectorAll('#tg-term .toggle-btn').forEach(function(b,i){b.classList.toggle('on',i===1);});
+  document.querySelectorAll('#tg-lang .toggle-btn').forEach(function(b,i){b.classList.toggle('on',i===0);});
+  var occ=document.getElementById('f-occupants');if(occ)occ.value='';
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('f-date').value=today;
 }
