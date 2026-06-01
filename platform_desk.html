@@ -198,6 +198,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="card">
       <div class="section-label">Showing</div>
       <div class="field">
+        <label>Listing link</label>
+        <input type="url" id="f-listing" placeholder="https://myhome.ge/... or ss.ge/...">
+      </div>
+      <div class="field">
         <label>Address (english)</label>
         <input type="text" id="f-address" placeholder="Rustaveli St 5, Saburtalo">
       </div>
@@ -471,6 +475,7 @@ function buildAgentMsg(){
   var contact=document.getElementById('f-client-contact').value||'—';
   var addr=document.getElementById('f-address').value||'—';
   var maps=document.getElementById('f-maps').value||'';
+  var listing=document.getElementById('f-listing').value||'';
   var date=document.getElementById('f-date').value||'—';
   var time=document.getElementById('f-time').value||'—';
   var pets=getToggleVal('tg-pets');
@@ -485,6 +490,7 @@ function buildAgentMsg(){
   msg+='#Client '+src+'\n\n';
   msg+='👤 Client: '+cname+'\n';
   msg+=icon+' '+contact+'\n\n';
+  if(listing) msg+='🔗 '+listing+'\n';
   msg+='🏠 '+addr+'\n';
   if(maps) msg+='📍 '+maps+'\n';
   msg+='📅 '+fmtDate(date)+' | ⏰ '+time+'\n\n';
@@ -554,6 +560,7 @@ function doSend(){
     client_contact_type:CT_TYPE,
     address:document.getElementById('f-address').value,
     maps_link:document.getElementById('f-maps').value,
+    listing_link:document.getElementById('f-listing').value,
     date:document.getElementById('f-date').value,
     time:document.getElementById('f-time').value,
     pets:getToggleVal('tg-pets'),
@@ -597,6 +604,7 @@ function uploadPhotos(agent,ts){
 function resetForm(){
   document.getElementById('f-client-name').value='';
   document.getElementById('f-client-contact').value='';
+  document.getElementById('f-listing').value='';
   document.getElementById('f-address').value='';
   document.getElementById('f-maps').value='';
   document.getElementById('f-time').value='';
