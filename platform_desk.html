@@ -372,6 +372,7 @@ function doLogin(){
     if(!d.ok){showLoginErr(d.error||'Invalid credentials');return;}
     CURRENT_USER_NAME=d.name;
     CURRENT_ROLE=d.role;
+    try { localStorage.setItem('pd_session', JSON.stringify({name:d.name,role:d.role})); } catch(e){}
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('main-screen').classList.remove('hidden');
     document.getElementById('header-user').textContent=d.name+' · '+d.role;
@@ -393,6 +394,7 @@ function showLoginErr(msg){
 }
 
 function doLogout(){
+  try { localStorage.removeItem('pd_session'); } catch(e){}
   CURRENT_USER_NAME='';
   CURRENT_ROLE='';
   document.getElementById('main-screen').classList.add('hidden');
@@ -538,7 +540,7 @@ function buildAgentMsg(){
   msg+=icon+' '+contact+'\n\n';
   if(listing) msg+='🔗 '+listing+'\n';
   msg+='🏠 Адрес: '+addr+'\n';
-  if(maps) msg+='📍 <a href="'+maps+'">Карта</a>\n';
+  if(maps) msg+='📍 <a href="'+maps+'">Точная локация</a>\n';
   msg+='📅 Дата: '+fmtDate(date)+' | ⏰ Время: '+time+'\n\n';
   msg+='🐾 Животные: '+pets+' | 👥 Жильцы: '+tenants+' | 📆 '+term+'\n';
   if(comment) msg+='\n💬 '+comment;
@@ -761,6 +763,29 @@ function showToast(msg){
 }
 
 
+
+// Auto-restore session on page load
+(function(){
+  try {
+    var saved = localStorage.getItem('pd_session');
+    if (saved) {
+      var sess = JSON.parse(saved);
+      if (sess && sess.name) {
+        CURRENT_USER_NAME = sess.name;
+        CURRENT_ROLE = sess.role || 'operator';
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('main-screen').classList.remove('hidden');
+        document.getElementById('header-user').textContent = sess.name + ' · ' + sess.role;
+        setTimeout(function(){
+          loadAgents();
+          loadHistory();
+          var today = new Date().toISOString().split('T')[0];
+          document.getElementById('f-date').value = today;
+        }, 100);
+      }
+    }
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>
