@@ -199,7 +199,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="section-label">Showing</div>
       <div class="field">
         <label>Listing link</label>
-        <input type="url" id="f-listing" placeholder="https://myhome.ge/... or ss.ge/...">
+        <div style="display:flex;gap:8px;">
+          <input type="url" id="f-listing" placeholder="https://t.me/rent_tbilisi_ge/... or myhome.ge/..." style="flex:1;">
+          <button onclick="fetchFromListing()" style="padding:10px 14px;background:var(--brand);color:#fff;border:none;border-radius:9px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">🔍 Fetch address</button>
+        </div>
       </div>
       <div class="field">
         <label>Address (english)</label>
@@ -334,7 +337,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <script>
 var CURRENT_USER_NAME='';
 var CURRENT_ROLE='';
-var GAS_URL='https://script.google.com/macros/s/AKfycbyyykTwIBoWYRZH-ikbsVWEjx7MlkOvlC6v5sWiSrXbKGKBgaph7Q6B62M2tAq6hs_-Tw/exec';
+var GAS_URL='https://script.google.com/macros/s/AKfycbzCaSZn6GurDmtBD4gHHs4_Qk58f88vMKUwlCB9n_E2bPDg4CHLgzwtVW6kF9dKA42hOQ/exec';
 
 function gasGet(params){
   var url=GAS_URL+'?'+Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k]);}).join('&');
@@ -427,6 +430,28 @@ function loadHistory(){
   });
 }
 
+function fetchFromListing(){
+  var url=document.getElementById('f-listing').value.trim();
+  if(!url){showToast('Вставь ссылку на объявление');return;}
+
+  // Только t.me ссылки можно парсить через превью
+  if(url.indexOf('t.me/')===-1){showToast('Работает только с t.me ссылками');return;}
+
+  // Используем GAS как прокси для обхода CORS
+  showToast('Загружаю...');
+  gasGet({action:'fetchListing', url: url})
+  .then(function(data){
+    if(data.address){
+      document.getElementById('f-address').value=data.address;
+      if(data.mapsLink) document.getElementById('f-maps').value=data.mapsLink;
+      showToast('Адрес и карта получены ✓');
+    } else {
+      showToast('Адрес не найден');
+    }
+  })
+  .catch(function(){showToast('Ошибка загрузки');});
+}
+
 function showTab(t){
   document.getElementById('tab-new').classList.toggle('hidden',t!=='new');
   document.getElementById('tab-history').classList.toggle('hidden',t!=='history');
@@ -508,7 +533,7 @@ function buildAgentMsg(){
   var icon=ctIcon[CT_TYPE]||'📞';
 
   var msg='📋 Показ назначен\n\n';
-  msg+='#Клиент '+src+'\n\n';
+  msg+='#Clients '+src+'\n\n';
   msg+='👤 Клиент: '+cname+'\n';
   msg+=icon+' '+contact+'\n\n';
   if(listing) msg+='🔗 '+listing+'\n';
