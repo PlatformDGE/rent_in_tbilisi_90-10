@@ -513,7 +513,7 @@ function buildAgentMsg(){
   msg+=icon+' '+contact+'\n\n';
   if(listing) msg+='🔗 '+listing+'\n';
   msg+='🏠 Адрес: '+addr+'\n';
-  if(maps) msg+='📍 Карта: '+maps+'\n';
+  if(maps) msg+='📍 <a href="'+maps+'">Карта</a>\n';
   msg+='📅 Дата: '+fmtDate(date)+' | ⏰ Время: '+time+'\n\n';
   msg+='🐾 Животные: '+pets+' | 👥 Жильцы: '+tenants+' | 📆 '+term+'\n';
   if(comment) msg+='\n💬 '+comment;
@@ -625,23 +625,23 @@ function doSend(){
   var sendBtn=document.querySelector('.modal-btn-send');
   sendBtn.disabled=true; sendBtn.textContent='Sending...';
 
-  gasPost({type:'assigned_showing',data:data})
+  gasGet({action:'submit', payload: JSON.stringify({type:'assigned_showing',data:data})})
   .then(function(){
     if(PHOTOS.length>0) uploadPhotos(agentName,ts);
     closePreview();
-    showToast('Sent to agent ✓');
+    showToast('Отправлено агенту ✓');
     resetForm();
     setTimeout(function(){showTab('history');loadHistory();},1200);
   })
   .catch(function(){
     sendBtn.disabled=false; sendBtn.textContent='Send to agent';
-    showToast('Error — try again');
+    showToast('Ошибка — попробуй снова');
   });
 }
 
 function uploadPhotos(agent,ts){
   PHOTOS.forEach(function(p,i){
-    gasPost({type:'upload_photo',data:{agent:agent,timestamp:ts,index:i,filename:p.name,base64:p.data}})
+    gasGet({action:'submit', payload: JSON.stringify({type:'upload_photo',data:{agent:agent,timestamp:ts,index:i,filename:p.name,base64:p.data}})})
     .catch(function(e){console.log('photo upload error',e);});
   });
 }
