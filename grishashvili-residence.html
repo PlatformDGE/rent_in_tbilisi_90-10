@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grishashvili Residence | Tbilisi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1d3560;
+  --navy-dark: #142548;
+  --navy-deeper: #0d1a33;
+  --navy-light: #2a4a7f;
+  --navy-muted: rgba(29,53,96,0.08);
+  --gold: #c9a96e;
+  --gold-light: #dfc08e;
+  --cream: #f5f2ec;
+  --warm-white: #faf9f6;
+  --charcoal: #1e1e1e;
+  --text-muted: #7a7a7a;
+  --border: rgba(29,53,96,0.14);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--warm-white);
+  color: var(--charcoal);
+  overflow-x: hidden;
+}
+
+/* ── LANG BAR ── */
+.lang-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 52px;
+  height: 64px;
+  background: rgba(250,249,246,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: var(--navy);
+  text-transform: uppercase;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+}
+
+.nav-link {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-link:hover { color: var(--navy); }
+
+.lang-switcher {
+  display: flex;
+  gap: 2px;
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.lang-btn.active { color: var(--navy); border-bottom: 2px solid var(--navy); }
+.lang-btn:hover { color: var(--navy); }
+
+/* ── HERO ── */
+.hero {
+  height: 100vh;
+  min-height: 680px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--navy-deeper);
+}
+
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0d1a33 0%, #1d3560 45%, #152845 100%);
+}
+
+/* Architectural grid lines */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.07;
+}
+
+.hero-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.hero-grid::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(0deg, var(--navy-deeper) 0%, transparent 100%);
+}
+
+/* Diagonal accent */
+.hero-accent {
+  position: absolute;
+  top: 0; right: 0;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 0%, rgba(201,169,110,0.06) 100%);
+  border-left: 1px solid rgba(201,169,110,0.12);
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 80px 100px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: flex-end;
+  gap: 60px;
+  animation: fadeUp 1s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-left {}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.hero-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(201,169,110,0.4);
+  padding: 5px 16px;
+}
+
+.hero-status {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.hero-status::before {
+  content: '●';
+  color: #f59e0b;
+  margin-right: 7px;
+  font-size: 8px;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(54px, 7.5vw, 104px);
+  font-weight: 300;
+  line-height: 0.92;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--gold-light);
+  display: block;
+}
+
+.hero-address {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin: 20px 0 44px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 44px;
+  margin-bottom: 48px;
+}
+
+.hstat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px;
+  font-weight: 300;
+  color: #fff;
+  line-height: 1;
+}
+
+.hstat-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-top: 5px;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--gold);
+  color: var(--navy-deeper);
+  padding: 17px 40px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.25s;
+}
+
+.hero-cta:hover { background: var(--gold-light); }
+
+/* Partner block in hero */
+.hero-partner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 32px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  min-width: 180px;
+}
+
+.hero-partner-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+.hero-partner-logo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hero-partner-name {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+}
+
+/* Scroll indicator */
+.hero-scroll {
+  position: absolute;
+  right: 52px;
+  bottom: 40px;
+  z-index: 2;
+  writing-mode: vertical-lr;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, rgba(201,169,110,0.6), transparent);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+/* ── STATUS BANNER ── */
+.status-banner {
+  background: var(--navy);
+  padding: 22px 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.status-icon {
+  font-size: 20px;
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.75);
+}
+
+.status-text strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.status-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(255,255,255,0.12);
+}
+
+/* ── SECTION BASE ── */
+section { padding: 110px 80px; }
+
+.section-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-label::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 300;
+  line-height: 1.08;
+  color: var(--charcoal);
+}
+
+.section-title em { font-style: italic; color: var(--navy); }
+
+/* ── ABOUT ── */
+.about {
+  background: var(--cream);
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 100px;
+  align-items: center;
+}
+
+.about-body {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.95;
+  color: #555;
+  margin-top: 24px;
+}
+
+.about-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.feat {
+  background: white;
+  padding: 28px 24px;
+  transition: box-shadow 0.3s;
+}
+
+.feat:hover {
+  box-shadow: 0 8px 40px rgba(29,53,96,0.08);
+}
+
+.feat-icon { font-size: 26px; margin-bottom: 14px; }
+
+.feat-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.feat-body {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+/* ── PARTNER SECTION ── */
+.partner-section {
+  background: var(--navy-deeper);
+  padding: 80px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.partner-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.partner-logo-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(201,169,110,0.3);
+}
+
+.partner-logo-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.partner-content {}
+
+.partner-section .section-label { color: var(--gold); }
+.partner-section .section-label::before { background: var(--gold); }
+
+.partner-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 3.5vw, 50px);
+  font-weight: 300;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.partner-title em { font-style: italic; color: var(--gold-light); }
+
+.partner-body {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.5);
+  max-width: 560px;
+  margin-bottom: 36px;
+}
+
+.partner-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.partner-tag {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 7px 18px;
+}
+
+/* ── APARTMENTS ── */
+.apartments { background: var(--warm-white); }
+
+.apts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 52px;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.filter-tabs { display: flex; gap: 3px; }
+
+.filter-tab {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 9px 22px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.filter-tab.active, .filter-tab:hover {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: white;
+}
+
+.apts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.apt-card {
+  background: white;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.apt-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--navy);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+  transform-origin: left;
+}
+
+.apt-card:hover::before { transform: scaleX(1); }
+
+.apt-card:hover {
+  border-color: var(--navy);
+  box-shadow: 0 16px 48px rgba(29,53,96,0.1);
+  transform: translateY(-3px);
+}
+
+.apt-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+.apt-badge.invest { background: var(--navy); color: white; }
+.apt-badge.penthouse { background: var(--gold); color: var(--navy-deeper); }
+.apt-badge.premium { background: var(--navy-light); color: white; }
+
+.apt-plan {
+  height: 150px;
+  background: var(--navy-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.apt-plan svg { width: 90px; height: 90px; opacity: 0.3; }
+
+.apt-num {
+  position: absolute;
+  bottom: 10px;
+  left: 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--navy);
+  text-transform: uppercase;
+}
+
+.apt-body { padding: 18px; }
+.apt-type { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+
+.apt-area {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  font-weight: 300;
+  color: var(--charcoal);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.apt-area span { font-size: 14px; color: var(--text-muted); }
+
+.apt-floor { font-size: 12px; font-weight: 300; color: var(--text-muted); margin-bottom: 14px; }
+
+.apt-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--navy);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-bottom: 10px;
+}
+
+.apt-inquire {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-decoration: none;
+  padding: 10px;
+  border: 1px solid var(--navy);
+  transition: all 0.2s;
+}
+
+.apt-inquire:hover { background: var(--navy); color: white; }
+
+/* ── INVESTMENT ── */
+.investment {
+  background: var(--navy);
+  color: white;
+}
+
+.investment .section-label { color: var(--gold); }
+.investment .section-label::before { background: var(--gold); }
+.investment .section-title { color: white; }
+.investment .section-title em { color: var(--gold-light); }
+
+.inv-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-top: 56px;
+  align-items: center;
+}
+
+.inv-body {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.95;
+  color: rgba(255,255,255,0.55);
+}
+
+.inv-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.inv-card {
+  padding: 28px 24px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.03);
+  transition: border-color 0.3s;
+}
+
+.inv-card:hover { border-color: rgba(201,169,110,0.35); }
+
+.inv-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 50px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.inv-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 7px;
+}
+
+.inv-desc { font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.28); line-height: 1.6; }
+
+/* ── LOCATION ── */
+.location {
+  background: var(--cream);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: start;
+}
+
+.loc-points { list-style: none; margin-top: 40px; }
+
+.loc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.loc-dot {
+  width: 34px;
+  height: 34px;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.loc-name { font-size: 14px; font-weight: 400; color: var(--charcoal); margin-bottom: 3px; }
+.loc-dist { font-size: 12px; font-weight: 300; color: var(--text-muted); }
+
+.loc-map {
+  background: white;
+  border: 1px solid var(--border);
+  height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.loc-map-inner {
+  text-align: center;
+  color: var(--navy);
+}
+
+.loc-map-inner svg {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  opacity: 0.3;
+}
+
+.loc-map-inner p {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.loc-addr {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: var(--navy);
+  color: white;
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+/* ── CONTACT ── */
+.contact {
+  background: var(--navy-deeper);
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+}
+
+.contact .section-label { color: var(--gold); }
+.contact .section-label::before { background: var(--gold); }
+.contact .section-title { color: white; }
+.contact .section-title em { color: var(--gold-light); }
+
+.contact-desc {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.45);
+  margin: 20px 0 40px;
+}
+
+.contact-items { display: flex; flex-direction: column; gap: 22px; }
+
+.c-item { display: flex; align-items: center; gap: 18px; }
+
+.c-icon {
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.c-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-bottom: 3px; }
+.c-val { font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.8); }
+
+/* Form */
+.cform { display: flex; flex-direction: column; gap: 14px; }
+
+.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.fgroup { display: flex; flex-direction: column; gap: 6px; }
+
+.flabel {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+.finput, .fselect, .ftextarea {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 14px 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.finput::placeholder, .ftextarea::placeholder { color: rgba(255,255,255,0.18); }
+.finput:focus, .fselect:focus, .ftextarea:focus { border-color: var(--gold); }
+.fselect option { background: var(--navy-deeper); }
+.ftextarea { height: 96px; resize: none; }
+
+.fsubmit {
+  background: var(--gold);
+  color: var(--navy-deeper);
+  border: none;
+  padding: 18px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 6px;
+}
+
+.fsubmit:hover { background: var(--gold-light); }
+
+/* ── FOOTER ── */
+footer {
+  background: #080e1c;
+  padding: 36px 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.foot-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.foot-partner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.2);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+}
+
+.foot-partner img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.foot-copy { font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: 0.06em; }
+
+/* ── WA FLOAT ── */
+.wa-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+  width: 56px;
+  height: 56px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 6px 28px rgba(37,211,102,0.35);
+  transition: transform 0.2s;
+}
+
+.wa-float:hover { transform: scale(1.1); }
+.wa-float svg { width: 28px; height: 28px; fill: white; }
+
+/* ── LANG DISPLAY ── */
+[data-lang] { display: none; }
+[data-lang].active { display: block; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  section { padding: 80px 28px; }
+  .lang-bar { padding: 0 28px; }
+  .nav-links { display: none; }
+  .hero-content { padding: 0 28px 80px; grid-template-columns: 1fr; }
+  .hero-partner { display: none; }
+  .status-banner { padding: 20px 28px; }
+  .about, .location, .contact { grid-template-columns: 1fr; gap: 48px; }
+  .partner-section { grid-template-columns: 1fr; padding: 60px 28px; gap: 40px; }
+  .partner-logo-wrap { flex-direction: row; justify-content: center; }
+  .apts-grid { grid-template-columns: repeat(2, 1fr); }
+  .apts-header { flex-direction: column; align-items: flex-start; }
+  .inv-layout { grid-template-columns: 1fr; gap: 40px; }
+  .inv-cards { grid-template-columns: 1fr 1fr; }
+  footer { padding: 28px; }
+  .frow { grid-template-columns: 1fr; }
+  .hero-stats { flex-wrap: wrap; gap: 28px; }
+}
+
+@media (max-width: 560px) {
+  .apts-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .about-features { grid-template-columns: 1fr; }
+  .inv-cards { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="lang-bar">
+  <div class="nav-logo">Grishashvili Residence</div>
+  <div class="nav-right">
+    <nav class="nav-links">
+      <a class="nav-link" href="#about"><span data-lang="en active">About</span><span data-lang="ru">О проекте</span><span data-lang="ge">პროექტი</span></a>
+      <a class="nav-link" href="#apartments"><span data-lang="en active">Apartments</span><span data-lang="ru">Квартиры</span><span data-lang="ge">ბინები</span></a>
+      <a class="nav-link" href="#investment"><span data-lang="en active">Investment</span><span data-lang="ru">Инвестиции</span><span data-lang="ge">ინვესტიცია</span></a>
+      <a class="nav-link" href="#contact"><span data-lang="en active">Contact</span><span data-lang="ru">Контакт</span><span data-lang="ge">კონტაქტი</span></a>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" onclick="setLang('ge')">GE</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-gradient"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-accent"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="hero-tag">
+          <span data-lang="en active">Tbilisi · Premium Residence</span>
+          <span data-lang="ru">Тбилиси · Премиум</span>
+          <span data-lang="ge">თბილისი · პრემიუმი</span>
+        </div>
+        <div class="hero-status">
+          <span data-lang="en active">Final construction stage</span>
+          <span data-lang="ru">Завершающая стадия строительства</span>
+          <span data-lang="ge">მშენებლობის საბოლოო ეტაპი</span>
+        </div>
+      </div>
+      <h1 class="hero-title">
+        Grishashvili<em>Residence</em>
+      </h1>
+      <p class="hero-address">Ioseb Grishashvili St. · Old Tbilisi, Georgia</p>
+      <div class="hero-stats">
+        <div>
+          <div class="hstat-num">20</div>
+          <div class="hstat-label"><span data-lang="en active">Apartments</span><span data-lang="ru">Квартир</span><span data-lang="ge">ბინა</span></div>
+        </div>
+        <div>
+          <div class="hstat-num">4</div>
+          <div class="hstat-label"><span data-lang="en active">Floors</span><span data-lang="ru">Этажа</span><span data-lang="ge">სართული</span></div>
+        </div>
+        <div>
+          <div class="hstat-num">62–231</div>
+          <div class="hstat-label"><span data-lang="en active">sq.m range</span><span data-lang="ru">кв.м от–до</span><span data-lang="ge">კვ.მ</span></div>
+        </div>
+        <div>
+          <div class="hstat-num">16%</div>
+          <div class="hstat-label"><span data-lang="en active">Rental yield</span><span data-lang="ru">Доходность</span><span data-lang="ge">შემოსავლიანობა</span></div>
+        </div>
+      </div>
+      <a href="#apartments" class="hero-cta">
+        <span data-lang="en active">Explore Apartments →</span>
+        <span data-lang="ru">Смотреть квартиры →</span>
+        <span data-lang="ge">ბინების ნახვა →</span>
+      </a>
+    </div>
+    <div class="hero-partner">
+      <div class="hero-partner-label">
+        <span data-lang="en active">Exclusive Sales Agent</span>
+        <span data-lang="ru">Эксклюзивный агент продаж</span>
+        <span data-lang="ge">ექსკლუზიური სარეალიზაციო აგენტი</span>
+      </div>
+      <img class="hero-partner-logo" src="/mnt/user-data/uploads/Logo_sale.png" alt="Sale in Tbilisi" onerror="this.style.display='none'">
+      <div class="hero-partner-name">Sale in Tbilisi</div>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- STATUS BANNER -->
+<div class="status-banner">
+  <div class="status-item">
+    <div class="status-icon">🏗️</div>
+    <div class="status-text">
+      <strong><span data-lang="en active">Final construction stage</span><span data-lang="ru">Завершающая стадия</span><span data-lang="ge">საბოლოო ეტაპი</span></strong>
+      <span data-lang="en active">Finishing works underway</span><span data-lang="ru">Идут отделочные работы</span><span data-lang="ge">მიმდინარეობს სამთავრობო სამუშაოები</span>
+    </div>
+  </div>
+  <div class="status-divider"></div>
+  <div class="status-item">
+    <div class="status-icon">🛗</div>
+    <div class="status-text">
+      <strong><span data-lang="en active">Lifts installed</span><span data-lang="ru">Лифты установлены</span><span data-lang="ge">ლიფტები დამონტაჟებულია</span></strong>
+      <span data-lang="en active">Fully operational</span><span data-lang="ru">Полностью функционируют</span><span data-lang="ge">სრულად ფუნქციონირებს</span>
+    </div>
+  </div>
+  <div class="status-divider"></div>
+  <div class="status-item">
+    <div class="status-icon">🧱</div>
+    <div class="status-text">
+      <strong><span data-lang="en active">Facade complete</span><span data-lang="ru">Фасад готов</span><span data-lang="ge">ფასადი მზადაა</span></strong>
+      <span data-lang="en active">Brick & timber exterior finished</span><span data-lang="ru">Кирпич и дерево — готово</span><span data-lang="ge">აგური და ხე — დასრულებულია</span>
+    </div>
+  </div>
+  <div class="status-divider"></div>
+  <div class="status-item">
+    <div class="status-icon">📅</div>
+    <div class="status-text">
+      <strong><span data-lang="en active">Handover soon</span><span data-lang="ru">Сдача скоро</span><span data-lang="ge">გადაცემა მალე</span></strong>
+      <span data-lang="en active">Reserve your apartment now</span><span data-lang="ru">Бронируйте сейчас</span><span data-lang="ge">დაჯავშნეთ ახლავე</span>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div>
+    <p class="section-label"><span data-lang="en active">About the Project</span><span data-lang="ru">О проекте</span><span data-lang="ge">პროექტის შესახებ</span></p>
+    <h2 class="section-title">
+      <span data-lang="en active">Architecture that <em>defines</em> a street</span>
+      <span data-lang="ru">Архитектура, которая <em>задаёт тон</em> улице</span>
+      <span data-lang="ge">არქიტექტურა, რომელიც <em>განსაზღვრავს</em> ქუჩას</span>
+    </h2>
+    <p class="about-body">
+      <span data-lang="en active">Grishashvili Residence is a boutique luxury development on one of Old Tbilisi's most atmospheric streets. Natural brick, timber cladding and floor-to-ceiling glazing create a building that honours its historic surroundings while delivering an unmistakably contemporary living experience. 20 individually planned apartments across 4 floors — each a statement of refined taste and intelligent investment.</span>
+      <span data-lang="ru">Grishashvili Residence — бутиковый жилой дом на одной из самых атмосферных улиц Старого Тбилиси. Природный кирпич, деревянная облицовка и панорамное остекление создают здание, которое чтит историческое окружение и одновременно предлагает безупречно современный образ жизни. 20 уникальных квартир на 4 этажах — каждая сочетает изысканный вкус и разумные инвестиции.</span>
+      <span data-lang="ge">გრიშაშვილი რეზიდენსი არის ბუტიკური ლუქსური განვითარება ძველი თბილისის ერთ-ერთ ყველაზე ატმოსფერულ ქუჩაზე. ბუნებრივი აგური, ხის საფასადე და იატაკიდან ჭერამდე მინა ქმნის შენობას, რომელიც პატივს სცემს ისტორიულ გარემოს და ამავდროულად სთავაზობს მკაფიოდ თანამედროვე ცხოვრების გამოცდილებას.</span>
+    </p>
+  </div>
+  <div class="about-features">
+    <div class="feat">
+      <div class="feat-icon">🏛️</div>
+      <div class="feat-title"><span data-lang="en active">Historic heart</span><span data-lang="ru">Историческое сердце</span><span data-lang="ge">ისტორიული გული</span></div>
+      <p class="feat-body"><span data-lang="en active">Steps from Tbilisi's most iconic landmarks and tourist hotspots</span><span data-lang="ru">Рядом с главными достопримечательностями Тбилиси</span><span data-lang="ge">თბილისის ყველაზე იკონური ადგილებიდან რამდენიმე ნაბიჯში</span></p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🛗</div>
+      <div class="feat-title"><span data-lang="en active">Lifts & infrastructure</span><span data-lang="ru">Лифты и инфраструктура</span><span data-lang="ge">ლიფტები და ინფრასტრუქტურა</span></div>
+      <p class="feat-body"><span data-lang="en active">Elevators already installed and operational. Final finishes underway.</span><span data-lang="ru">Лифты установлены и работают. Идут финальные отделочные работы.</span><span data-lang="ge">ლიფტები უკვე დამონტაჟებული და ფუნქციონირებს. მიმდინარეობს საბოლოო სამუშაოები.</span></p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🧱</div>
+      <div class="feat-title"><span data-lang="en active">Premium materials</span><span data-lang="ru">Премиальные материалы</span><span data-lang="ge">პრემიუმ მასალები</span></div>
+      <p class="feat-body"><span data-lang="en active">Brick facade with timber accents. Large-format windows. Timeless aesthetic.</span><span data-lang="ru">Кирпичный фасад с деревянными акцентами. Панорамные окна. Вне времени.</span><span data-lang="ge">აგურის ფასადი ხის აქცენტებით. პანორამული ფანჯრები. უდროო ესთეტიკა.</span></p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📈</div>
+      <div class="feat-title"><span data-lang="en active">Investment asset</span><span data-lang="ru">Инвестиционный актив</span><span data-lang="ge">საინვესტიციო აქტივი</span></div>
+      <p class="feat-body"><span data-lang="en active">Tourist district with constant Airbnb demand. Up to 16% annual yield.</span><span data-lang="ru">Туристический район с постоянным Airbnb-спросом. До 16% годовых.</span><span data-lang="ge">ტურისტული უბანი მუდმივი Airbnb მოთხოვნით. წლიური შემოსავლიანობა 16%-მდე.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER SECTION -->
+<section class="partner-section" id="partner">
+  <div class="partner-logo-wrap">
+    <img class="partner-logo-img" src="/mnt/user-data/uploads/Logo_sale.png" alt="Sale in Tbilisi" onerror="this.style.background='rgba(255,255,255,0.05)'">
+    <div class="partner-logo-label">
+      <span data-lang="en active">Exclusive Agent</span>
+      <span data-lang="ru">Эксклюзивный агент</span>
+      <span data-lang="ge">ექსკლუზიური აგენტი</span>
+    </div>
+  </div>
+  <div class="partner-content">
+    <p class="section-label">
+      <span data-lang="en active">Sales Partner</span>
+      <span data-lang="ru">Партнёр по продажам</span>
+      <span data-lang="ge">გაყიდვების პარტნიორი</span>
+    </p>
+    <h2 class="partner-title">
+      <span data-lang="en active">Sold exclusively by <em>Sale in Tbilisi</em></span>
+      <span data-lang="ru">Продаётся эксклюзивно через <em>Sale in Tbilisi</em></span>
+      <span data-lang="ge">იყიდება ექსკლუზიურად <em>Sale in Tbilisi</em>-ის მეშვეობით</span>
+    </h2>
+    <p class="partner-body">
+      <span data-lang="en active">Sale in Tbilisi is the exclusive sales agent for Grishashvili Residence — your trusted guide through every step of the purchase. From your first question to the keys in your hand, our team ensures a seamless, transparent and professional experience.</span>
+      <span data-lang="ru">Sale in Tbilisi — эксклюзивный агент продаж Grishashvili Residence. Мы сопровождаем вас на каждом этапе сделки — от первого вопроса до получения ключей. Прозрачно, профессионально, надёжно.</span>
+      <span data-lang="ge">Sale in Tbilisi არის Grishashvili Residence-ის ექსკლუზიური სარეალიზაციო აგენტი. ჩვენ გიძღვებით ყველა ეტაპზე — პირველი კითხვიდან გასაღებების ჩაბარებამდე. გამჭვირვალედ, პროფესიონალურად, სანდოდ.</span>
+    </p>
+    <div class="partner-tags">
+      <div class="partner-tag"><span data-lang="en active">Professional Guidance</span><span data-lang="ru">Профессиональное сопровождение</span><span data-lang="ge">პროფ. სახელმძღვანელო</span></div>
+      <div class="partner-tag"><span data-lang="en active">Legal Support</span><span data-lang="ru">Юридическая поддержка</span><span data-lang="ge">იურიდიული მხარდაჭერა</span></div>
+      <div class="partner-tag"><span data-lang="en active">Private Viewings</span><span data-lang="ru">Приватные показы</span><span data-lang="ge">კერძო ნახვები</span></div>
+      <div class="partner-tag"><span data-lang="en active">Investment Advice</span><span data-lang="ru">Инвест-консультации</span><span data-lang="ge">საინვესტიციო რჩევა</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- APARTMENTS -->
+<section class="apartments" id="apartments">
+  <div class="apts-header">
+    <div>
+      <p class="section-label"><span data-lang="en active">The Collection</span><span data-lang="ru">Квартиры</span><span data-lang="ge">კოლექცია</span></p>
+      <h2 class="section-title"><span data-lang="en active">20 <em>unique</em> apartments</span><span data-lang="ru">20 <em>уникальных</em> квартир</span><span data-lang="ge">20 <em>უნიკალური</em> ბინა</span></h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterApts('all',this)"><span data-lang="en active">All</span><span data-lang="ru">Все</span><span data-lang="ge">ყველა</span></button>
+      <button class="filter-tab" onclick="filterApts('1',this)">1 BR</button>
+      <button class="filter-tab" onclick="filterApts('2',this)">2 BR</button>
+      <button class="filter-tab" onclick="filterApts('3',this)">3 BR</button>
+    </div>
+  </div>
+  <div class="apts-grid" id="aptGrid"></div>
+</section>
+
+<!-- INVESTMENT -->
+<section class="investment" id="investment">
+  <p class="section-label"><span data-lang="en active">Investment Case</span><span data-lang="ru">Инвестиции</span><span data-lang="ge">ინვესტიცია</span></p>
+  <h2 class="section-title"><span data-lang="en active">Your money <em>works</em> in Tbilisi</span><span data-lang="ru">Ваши деньги <em>работают</em> в Тбилиси</span><span data-lang="ge">თქვენი ფული <em>მუშაობს</em> თბილისში</span></h2>
+  <div class="inv-layout">
+    <div>
+      <p class="inv-body">
+        <span data-lang="en active">Tbilisi's tourist district is one of Eastern Europe's strongest short-term rental markets. With over 7.6 million annual visitors to Georgia and a growing expat community, demand for quality accommodation remains high year-round. A property at Grishashvili Residence — in the heart of it all — is built to deliver exceptional returns from day one.</span>
+        <span data-lang="ru">Туристический район Тбилиси — один из сильнейших рынков краткосрочной аренды в Восточной Европе. Более 7,6 миллиона туристов в год обеспечивают постоянно высокий спрос. Квартира в Grishashvili Residence — в самом центре — начинает приносить доход с первого дня.</span>
+        <span data-lang="ge">თბილისის ტურისტული უბანი აღმოსავლეთ ევროპაში ერთ-ერთი ყველაზე ძლიერი მოკლევადიანი გაქირავების ბაზარია. წელიწადში 7,6 მილიონზე მეტი ვიზიტორი საქართველოში უზრუნველყოფს მაღალ მოთხოვნას მთელი წლის განმავლობაში.</span>
+      </p>
+    </div>
+    <div class="inv-cards">
+      <div class="inv-card">
+        <div class="inv-num">16%</div>
+        <div class="inv-label"><span data-lang="en active">Short-term yield</span><span data-lang="ru">Краткосрочная аренда</span><span data-lang="ge">მოკლევადიანი გაქირავება</span></div>
+        <p class="inv-desc"><span data-lang="en active">Airbnb/Booking in tourist district</span><span data-lang="ru">Airbnb в туристическом центре</span><span data-lang="ge">Airbnb ტურისტულ უბანში</span></p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">10%</div>
+        <div class="inv-label"><span data-lang="en active">Long-term yield</span><span data-lang="ru">Долгосрочная аренда</span><span data-lang="ge">გრძელვადიანი გაქირავება</span></div>
+        <p class="inv-desc"><span data-lang="en active">Stable monthly income</span><span data-lang="ru">Стабильный доход</span><span data-lang="ge">სტაბილური შემოსავალი</span></p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">+20%</div>
+        <div class="inv-label"><span data-lang="en active">Price growth</span><span data-lang="ru">Рост цен</span><span data-lang="ge">ფასების ზრდა</span></div>
+        <p class="inv-desc"><span data-lang="en active">Old Tbilisi over 2 years</span><span data-lang="ru">Старый Тбилиси за 2 года</span><span data-lang="ge">ძველი თბილისი 2 წელიწადში</span></p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-num">0%</div>
+        <div class="inv-label"><span data-lang="en active">Property tax</span><span data-lang="ru">Налог на имущество</span><span data-lang="ge">ქონების გადასახადი</span></div>
+        <p class="inv-desc"><span data-lang="en active">Foreign ownership fully allowed</span><span data-lang="ru">Иностранная собственность разрешена</span><span data-lang="ge">უცხოელების საკუთრება ნებადართულია</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section class="location" id="location">
+  <div>
+    <p class="section-label"><span data-lang="en active">Location</span><span data-lang="ru">Локация</span><span data-lang="ge">მდებარეობა</span></p>
+    <h2 class="section-title"><span data-lang="en active">Heart of <em>Old Tbilisi</em></span><span data-lang="ru">Сердце <em>Старого Тбилиси</em></span><span data-lang="ge">ძველი <em>თბილისის</em> გული</span></h2>
+    <ul class="loc-points">
+      <li class="loc-item">
+        <div class="loc-dot">🕌</div>
+        <div><div class="loc-name">Narikala Fortress</div><div class="loc-dist"><span data-lang="en active">5 min walk</span><span data-lang="ru">5 мин пешком</span><span data-lang="ge">5 წუთი ფეხით</span></div></div>
+      </li>
+      <li class="loc-item">
+        <div class="loc-dot">🌊</div>
+        <div><div class="loc-name">Abanotubani (Sulphur Baths)</div><div class="loc-dist"><span data-lang="en active">7 min walk</span><span data-lang="ru">7 мин пешком</span><span data-lang="ge">7 წუთი ფეხით</span></div></div>
+      </li>
+      <li class="loc-item">
+        <div class="loc-dot">⛪</div>
+        <div><div class="loc-name">Metekhi Church</div><div class="loc-dist"><span data-lang="en active">8 min walk</span><span data-lang="ru">8 мин пешком</span><span data-lang="ge">8 წუთი ფეხით</span></div></div>
+      </li>
+      <li class="loc-item">
+        <div class="loc-dot">🍷</div>
+        <div>
+          <div class="loc-name"><span data-lang="en active">Top restaurants & wine bars</span><span data-lang="ru">Лучшие рестораны и винные бары</span><span data-lang="ge">საუკეთესო რესტორნები</span></div>
+          <div class="loc-dist"><span data-lang="en active">Walking distance</span><span data-lang="ru">Пешая доступность</span><span data-lang="ge">საფეხმავლო მანძილზე</span></div>
+        </div>
+      </li>
+      <li class="loc-item">
+        <div class="loc-dot">✈️</div>
+        <div>
+          <div class="loc-name"><span data-lang="en active">Tbilisi International Airport</span><span data-lang="ru">Аэропорт Тбилиси</span><span data-lang="ge">თბილისის საერთაშორისო აეროპორტი</span></div>
+          <div class="loc-dist"><span data-lang="en active">20 min by car</span><span data-lang="ru">20 мин на машине</span><span data-lang="ge">20 წუთი მანქანით</span></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="loc-map">
+    <div class="loc-map-inner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+        <circle cx="12" cy="9" r="2.5"/>
+      </svg>
+      <p>Ioseb Grishashvili St.<br>Old Tbilisi, Georgia</p>
+    </div>
+    <div class="loc-addr">Ioseb Grishashvili St. · Old Tbilisi</div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div>
+    <p class="section-label"><span data-lang="en active">Get in Touch</span><span data-lang="ru">Связаться</span><span data-lang="ge">დაგვიკავშირდით</span></p>
+    <h2 class="section-title"><span data-lang="en active">Find your <em>apartment</em></span><span data-lang="ru">Найдём вашу <em>квартиру</em></span><span data-lang="ge">მოვძებნოთ თქვენი <em>ბინა</em></span></h2>
+    <p class="contact-desc">
+      <span data-lang="en active">Contact our Sale in Tbilisi team for floor plans, pricing, and to book a private viewing.</span>
+      <span data-lang="ru">Свяжитесь с командой Sale in Tbilisi для получения планировок, цен и записи на показ.</span>
+      <span data-lang="ge">დაუკავშირდით Sale in Tbilisi-ის გუნდს გეგმების, ფასებისა და კერძო ნახვის დასაჯავშნად.</span>
+    </p>
+    <div class="contact-items">
+      <div class="c-item">
+        <div class="c-icon">📞</div>
+        <div><div class="c-label">Phone / WhatsApp</div><div class="c-val">+995 599 206 716</div></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">👤</div>
+        <div><div class="c-label"><span data-lang="en active">Sales Manager</span><span data-lang="ru">Менеджер</span><span data-lang="ge">მენეჯერი</span></div><div class="c-val">David Tibelashvili · Sale in Tbilisi</div></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">📍</div>
+        <div><div class="c-label"><span data-lang="en active">Address</span><span data-lang="ru">Адрес</span><span data-lang="ge">მისამართი</span></div><div class="c-val">Ioseb Grishashvili St. · Old Tbilisi</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="cform">
+    <div class="frow">
+      <div class="fgroup">
+        <label class="flabel"><span data-lang="en active">Name</span><span data-lang="ru">Имя</span><span data-lang="ge">სახელი</span></label>
+        <input type="text" class="finput" id="fname" placeholder="—">
+      </div>
+      <div class="fgroup">
+        <label class="flabel"><span data-lang="en active">Phone / WhatsApp</span><span data-lang="ru">Телефон</span><span data-lang="ge">ტელეფონი</span></label>
+        <input type="tel" class="finput" id="fphone" placeholder="+xxx xxx xxx">
+      </div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel"><span data-lang="en active">Apartment of interest</span><span data-lang="ru">Квартира</span><span data-lang="ge">ბინა</span></label>
+      <select class="fselect" id="fapt">
+        <option value="">—</option>
+        <option>N1 · 81.9 m² · 1BR · Floor -1</option>
+        <option>N2 · 66.65 m² · 2BR · Floor -1</option>
+        <option>N3 · 93.6 m² · 1BR · Floor 1</option>
+        <option>N4 · 84.3 m² · 1BR · Floor 1</option>
+        <option>N5 · 231.2 m² · 1BR · Floor 1</option>
+        <option>N6 · 93.35 m² · 1BR · Floor 2</option>
+        <option>N7 · 78.85 m² · 2BR · Floor 2</option>
+        <option>N8 · 118.65 m² · 2BR · Floor 2</option>
+        <option>N9 · 95.7 m² · 1BR · Floor 2</option>
+        <option>N10 · 70.45 m² · 1BR · Floor 2</option>
+        <option>N11 · 79.9 m² · 1BR · Floor 2</option>
+        <option>N12 · 141.8 m² · 3BR · Floor 2</option>
+        <option>N13 · 84.7 m² · 1BR · Floor 3</option>
+        <option>N14 · 70.45 m² · 2BR · Floor 3</option>
+        <option>N15 · 118.5 m² · 3BR · Floor 3</option>
+        <option>N16 · 95.35 m² · 1BR · Floor 3</option>
+        <option>N17 · 62.65 m² · 1BR · Floor 3</option>
+        <option>N18 · 72.3 m² · 2BR · Floor 3</option>
+        <option>N19 · 141.7 m² · 3BR · Floor 3</option>
+        <option>N20 · 183.9 m² · 2BR · Floor 4 — Penthouse</option>
+      </select>
+    </div>
+    <div class="fgroup">
+      <label class="flabel"><span data-lang="en active">Message</span><span data-lang="ru">Сообщение</span><span data-lang="ge">შეტყობინება</span></label>
+      <textarea class="ftextarea" id="fmsg" placeholder="—"></textarea>
+    </div>
+    <button class="fsubmit" onclick="submitForm()">
+      <span data-lang="en active">Send via WhatsApp →</span>
+      <span data-lang="ru">Отправить через WhatsApp →</span>
+      <span data-lang="ge">WhatsApp-ით გაგზავნა →</span>
+    </button>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">Grishashvili Residence</div>
+  <div class="foot-partner">
+    <img src="/mnt/user-data/uploads/Logo_sale.png" alt="Sale in Tbilisi" onerror="this.style.display='none'">
+    Exclusively by Sale in Tbilisi
+  </div>
+  <div class="foot-copy">© 2026 · Ioseb Grishashvili St. · Tbilisi, Georgia</div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/995599206716" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+const apts = [
+  {num:1,br:1,floor:-1,area:81.90,badge:'invest'},
+  {num:2,br:2,floor:-1,area:66.65,badge:''},
+  {num:3,br:1,floor:1,area:93.60,badge:'invest'},
+  {num:4,br:1,floor:1,area:84.30,badge:'invest'},
+  {num:5,br:1,floor:1,area:231.20,badge:'premium'},
+  {num:6,br:1,floor:2,area:93.35,badge:'invest'},
+  {num:7,br:2,floor:2,area:78.85,badge:''},
+  {num:8,br:2,floor:2,area:118.65,badge:''},
+  {num:9,br:1,floor:2,area:95.70,badge:'invest'},
+  {num:10,br:1,floor:2,area:70.45,badge:'invest'},
+  {num:11,br:1,floor:2,area:79.90,badge:'invest'},
+  {num:12,br:3,floor:2,area:141.80,badge:''},
+  {num:13,br:1,floor:3,area:84.70,badge:'invest'},
+  {num:14,br:2,floor:3,area:70.45,badge:''},
+  {num:15,br:3,floor:3,area:118.50,badge:''},
+  {num:16,br:1,floor:3,area:95.35,badge:'invest'},
+  {num:17,br:1,floor:3,area:62.65,badge:'invest'},
+  {num:18,br:2,floor:3,area:72.30,badge:''},
+  {num:19,br:3,floor:3,area:141.70,badge:''},
+  {num:20,br:2,floor:4,area:183.90,badge:'penthouse'},
+];
+
+const brLabel = {en:{1:'1 Bedroom',2:'2 Bedrooms',3:'3 Bedrooms'},ru:{1:'1 спальня',2:'2 спальни',3:'3 спальни'},ge:{1:'1 საძინებელი',2:'2 საძინებელი',3:'3 საძინებელი'}};
+const flLabel = {en:f=>f===-1?'Ground Floor (–1)':`Floor ${f}`,ru:f=>f===-1?'Цокольный этаж':` Этаж ${f}`,ge:f=>f===-1?'მიწისქვეშა სართული':`${f} სართული`};
+const prLabel = {en:'Price on request',ru:'Цена по запросу',ge:'ფასი მოთხოვნით'};
+const badgeLabel = {invest:{en:'Investment',ru:'Инвест.',ge:'ინვესტ.'},penthouse:{en:'Penthouse',ru:'Пентхаус',ge:'პენტჰაუსი'},premium:{en:'Premium',ru:'Премиум',ge:'პრემიუმი'}};
+const inqLabel = {en:'Inquire →',ru:'Запросить →',ge:'მოთხოვნა →'};
+
+let lang = 'en';
+let filter = 'all';
+
+function renderApts() {
+  const grid = document.getElementById('aptGrid');
+  const list = filter==='all' ? apts : apts.filter(a=>a.br==filter);
+  grid.innerHTML = list.map(a=>{
+    const badge = a.badge ? `<div class="apt-badge ${a.badge}">${badgeLabel[a.badge][lang]}</div>` : '';
+    return `<div class="apt-card">
+      ${badge}
+      <div class="apt-plan">
+        <svg viewBox="0 0 100 100">
+          <rect x="8" y="8" width="84" height="84" fill="none" stroke="#1d3560" stroke-width="1.5" rx="1"/>
+          <rect x="8" y="8" width="46" height="46" fill="rgba(29,53,96,0.07)" stroke="#1d3560" stroke-width="1" rx="1"/>
+          <rect x="54" y="8" width="38" height="30" fill="rgba(29,53,96,0.05)" stroke="#1d3560" stroke-width="1" rx="1"/>
+          <rect x="8" y="54" width="38" height="38" fill="rgba(29,53,96,0.05)" stroke="#1d3560" stroke-width="1" rx="1"/>
+          <line x1="54" y1="8" x2="54" y2="92" stroke="#1d3560" stroke-width="0.5" stroke-dasharray="3,2"/>
+          <line x1="8" y1="54" x2="92" y2="54" stroke="#1d3560" stroke-width="0.5" stroke-dasharray="3,2"/>
+        </svg>
+        <span class="apt-num">N°${a.num}</span>
+      </div>
+      <div class="apt-body">
+        <div class="apt-type">${brLabel[lang][a.br]}</div>
+        <div class="apt-area">${a.area}<span> m²</span></div>
+        <div class="apt-floor">${flLabel[lang](a.floor)}</div>
+        <div class="apt-price">${prLabel[lang]}</div>
+        <a href="#contact" class="apt-inquire">${inqLabel[lang]}</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterApts(br, btn) {
+  filter = br;
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderApts();
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b=>{if(b.textContent.trim().toLowerCase()===l)b.classList.add('active');});
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    const elLang = el.getAttribute('data-lang').replace(' active','');
+    el.classList.toggle('active', elLang===l);
+  });
+  renderApts();
+}
+
+function submitForm() {
+  const name = document.getElementById('fname').value;
+  const phone = document.getElementById('fphone').value;
+  const apt = document.getElementById('fapt').value;
+  const msg = document.getElementById('fmsg').value;
+  if(!name||!phone){
+    alert(lang==='ru'?'Пожалуйста, заполните имя и телефон.':lang==='ge'?'გთხოვთ შეავსოთ სახელი და ტელეფონი.':'Please enter your name and phone number.');
+    return;
+  }
+  const text = encodeURIComponent(`Hello David! I'm interested in Grishashvili Residence.\nName: ${name}\nPhone: ${phone}\nApartment: ${apt||'—'}\nMessage: ${msg||'—'}`);
+  window.open(`https://wa.me/995599206716?text=${text}`,'_blank');
+}
+
+setLang('en');
+</script>
+</body>
+</html>
