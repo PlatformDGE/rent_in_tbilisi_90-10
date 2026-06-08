@@ -42,6 +42,433 @@ body { font-family:'Inter',sans-serif; background:var(--warm-white); color:var(-
 .lang-btn.active { color:var(--navy); border-bottom:2px solid var(--navy); }
 .lang-btn:hover { color:var(--navy); }
 
+
+/* ══════════════════════════════════════
+   BUILDING SCHEMA SECTION
+══════════════════════════════════════ */
+.schema-section {
+  background: var(--navy-deeper);
+  padding: 100px 80px;
+}
+
+.schema-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+}
+
+.schema-header-right {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.schema-legend {
+  display: flex;
+  gap: 20px;
+}
+
+.schema-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.45);
+}
+
+.schema-legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Building grid */
+.schema-building {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.schema-floor-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.schema-floor-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  width: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+}
+
+.schema-units {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+/* Individual unit */
+.schema-unit {
+  flex: 1;
+  min-height: 70px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  border: 1.5px solid transparent;
+  padding: 8px 4px;
+}
+
+.schema-unit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.schema-unit.available {
+  background: rgba(39,174,96,0.12);
+  border-color: rgba(39,174,96,0.25);
+}
+.schema-unit.available:hover {
+  background: rgba(39,174,96,0.2);
+  border-color: rgba(39,174,96,0.5);
+}
+
+.schema-unit.reserved {
+  background: rgba(230,126,34,0.15);
+  border-color: rgba(230,126,34,0.3);
+}
+.schema-unit.reserved:hover {
+  background: rgba(230,126,34,0.25);
+  border-color: rgba(230,126,34,0.5);
+}
+
+.schema-unit.sold {
+  background: rgba(192,57,43,0.15);
+  border-color: rgba(192,57,43,0.25);
+  cursor: default;
+  opacity: 0.7;
+}
+
+.schema-unit-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: white;
+  line-height: 1;
+}
+
+.schema-unit.sold .schema-unit-num { color: rgba(255,255,255,0.4); }
+
+.schema-unit-area {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.35);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+.schema-unit-br {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  margin-top: 3px;
+}
+
+.schema-unit-sold-tag {
+  position: absolute;
+  top: 4px; right: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(192,57,43,0.7);
+  border: 1px solid rgba(192,57,43,0.3);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* Stats bar under schema */
+.schema-stats {
+  display: flex;
+  gap: 0;
+  margin-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 32px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.schema-stat {
+  flex: 1;
+  text-align: center;
+  padding: 0 24px;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+.schema-stat:last-child { border-right: none; }
+
+.schema-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 44px;
+  font-weight: 300;
+  color: white;
+  line-height: 1;
+}
+
+.schema-stat-num.available-col { color: rgba(39,174,96,0.9); }
+.schema-stat-num.reserved-col { color: rgba(230,126,34,0.9); }
+.schema-stat-num.sold-col { color: rgba(192,57,43,0.8); }
+
+.schema-stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-top: 6px;
+}
+
+/* ── UNIT POPUP ── */
+.unit-popup {
+  position: fixed;
+  z-index: 400;
+  background: white;
+  width: 340px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.95) translateY(8px);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+
+.unit-popup.show {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+.unit-popup-gallery {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  background: #f0ede8;
+}
+
+.unit-popup-gallery img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.unit-popup-plan {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #f8f7f4;
+}
+
+.unit-popup-plan img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+}
+
+.unit-popup-sold-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(13,26,51,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unit-popup-sold-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: white;
+  letter-spacing: 0.14em;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 6px 24px;
+}
+
+.unit-popup-body {
+  padding: 16px 20px 20px;
+}
+
+.unit-popup-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.unit-popup-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--navy);
+}
+
+.unit-popup-type {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.unit-popup-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--navy);
+  text-align: right;
+}
+
+.unit-popup-price-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 2px;
+}
+
+.unit-popup-meta {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+  padding: 10px 0;
+}
+
+.unit-popup-meta-item {
+  flex: 1;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  padding: 0 8px;
+}
+.unit-popup-meta-item:last-child { border-right: none; }
+
+.unit-popup-meta-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.unit-popup-meta-key {
+  font-family: 'Inter', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.unit-popup-cta {
+  display: block;
+  width: 100%;
+  background: var(--navy);
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.unit-popup-cta:hover { background: var(--navy-deeper); }
+.unit-popup-cta.sold-cta { background: rgba(0,0,0,0.15); color: var(--text-muted); cursor: default; }
+
+.unit-popup-close {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: white;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+/* Popup overlay */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 390;
+  display: none;
+}
+.popup-overlay.show { display: block; }
+
+/* Mobile schema */
+@media (max-width: 960px) {
+  .schema-section { padding: 80px 28px; }
+  .schema-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .schema-unit { min-height: 58px; }
+  .schema-unit-num { font-size: 13px; }
+  .schema-unit-area { font-size: 8px; }
+  .schema-unit-br { display: none; }
+  .schema-floor-label { font-size: 9px; width: 42px; padding-right: 8px; }
+  .unit-popup { width: 300px; }
+  .schema-stat-num { font-size: 36px; }
+}
+
+@media (max-width: 480px) {
+  .schema-section { padding: 60px 16px; }
+  .schema-floor-label { width: 32px; font-size: 8px; padding-right: 6px; }
+  .schema-unit { min-height: 50px; border-radius: 3px; }
+  .schema-unit-num { font-size: 11px; }
+  .schema-unit-area { display: none; }
+  .schema-stats { flex-wrap: wrap; gap: 20px; }
+  .schema-stat { border-right: none; min-width: 40%; }
+  .unit-popup { width: calc(100vw - 32px); left: 16px !important; right: 16px; }
+}
+
 /* HERO VIDEO */
 .hero-video {
   position: absolute;
@@ -689,6 +1116,65 @@ button[data-lang].active { display:inline; }
   </div>
 </div>
 
+
+<!-- BUILDING SCHEMA -->
+<section class="schema-section" id="availability">
+
+  <div class="schema-header">
+    <div>
+      <p class="section-label" style="color:rgba(255,255,255,0.3);">
+        <span style="display:inline-block;width:32px;height:1px;background:rgba(201,169,110,0.4);vertical-align:middle;margin-right:12px;"></span>
+        <span data-lang="en active">Availability</span><span data-lang="ru">Наличие</span><span data-lang="ge">ხელმისაწვდომობა</span>
+      </p>
+      <h2 class="section-title" style="color:white;">
+        <span data-lang="en active">Building <em>overview</em></span>
+        <span data-lang="ru">Схема <em>здания</em></span>
+        <span data-lang="ge">შენობის <em>სქემა</em></span>
+      </h2>
+    </div>
+    <div class="schema-legend">
+      <div class="schema-legend-item">
+        <div class="schema-legend-dot" style="background:rgba(39,174,96,0.5);border:1px solid rgba(39,174,96,0.6);"></div>
+        <span data-lang="en active">Available</span><span data-lang="ru">Свободна</span><span data-lang="ge">ხელმისაწვდომი</span>
+      </div>
+      <div class="schema-legend-item">
+        <div class="schema-legend-dot" style="background:rgba(230,126,34,0.5);border:1px solid rgba(230,126,34,0.6);"></div>
+        <span data-lang="en active">Reserved</span><span data-lang="ru">Резерв</span><span data-lang="ge">დაჯავშნილი</span>
+      </div>
+      <div class="schema-legend-item">
+        <div class="schema-legend-dot" style="background:rgba(192,57,43,0.5);border:1px solid rgba(192,57,43,0.4);"></div>
+        <span data-lang="en active">Sold</span><span data-lang="ru">Продана</span><span data-lang="ge">გაყიდული</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="schema-building" id="siteSchemaBuilding"></div>
+
+  <div class="schema-stats" id="siteSchemaStats"></div>
+
+</section>
+
+<!-- Unit Popup -->
+<div class="popup-overlay" id="popupOverlay" onclick="closeUnitPopup()"></div>
+<div class="unit-popup" id="unitPopup">
+  <button class="unit-popup-close" onclick="closeUnitPopup()">✕</button>
+  <div class="unit-popup-gallery" id="popupGallery"></div>
+  <div class="unit-popup-body">
+    <div class="unit-popup-top">
+      <div>
+        <div class="unit-popup-num" id="popupNum"></div>
+        <div class="unit-popup-type" id="popupType"></div>
+      </div>
+      <div>
+        <div class="unit-popup-price" id="popupPrice"></div>
+        <div class="unit-popup-price-label" id="popupPriceLabel"></div>
+      </div>
+    </div>
+    <div class="unit-popup-meta" id="popupMeta"></div>
+    <a href="#contact" class="unit-popup-cta" id="popupCta" onclick="closeUnitPopup()"></a>
+  </div>
+</div>
+
 <section class="investment" id="investment">
   <p class="section-label"><span data-lang="en active">Investment Case</span><span data-lang="ru">Инвестиции</span><span data-lang="ge">ინვესტიცია</span></p>
   <h2 class="section-title"><span data-lang="en active">Your money <em>works</em> in Tbilisi</span><span data-lang="ru">Ваши деньги <em>работают</em> в Тбилиси</span><span data-lang="ge">თქვენი ფული <em>მუშაობს</em> თბილისში</span></h2>
@@ -1065,10 +1551,154 @@ function submitForm(){
     updateGalleryUI(num, cur, total);
   }
 
+
+  // ── BUILDING SCHEMA ──
+  const SCHEMA_FLOORS = [
+    { label: '4', floor: 4 },
+    { label: '3', floor: 3 },
+    { label: '2', floor: 2 },
+    { label: '1', floor: 1 },
+    { label: '−1', floor: -1 },
+  ];
+
+  const brLabelShort = { 1: '1BR', 2: '2BR', 3: '3BR' };
+
+  function renderSchema() {
+    const wrap = document.getElementById('siteSchemaBuilding');
+    if (!wrap) return;
+
+    const counts = { available: 0, reserved: 0, sold: 0 };
+
+    wrap.innerHTML = SCHEMA_FLOORS.map(f => {
+      const units = apts.filter(a => a.floor === f.floor);
+      if (!units.length) return '';
+      return `<div class="schema-floor-row">
+        <div class="schema-floor-label">${f.label}</div>
+        <div class="schema-units">
+          ${units.map(a => {
+            const admin = getAdminData(a.num);
+            const st = admin.status;
+            counts[st]++;
+            const isSold = st === 'sold';
+            return `<div class="schema-unit ${st}" onclick="${isSold ? 'void(0)' : `openUnitPopup(${a.num}, event)`}" title="N°${a.num} · ${a.area} m²">
+              <div class="schema-unit-num">N°${a.num}</div>
+              <div class="schema-unit-area">${a.area} m²</div>
+              <div class="schema-unit-br">${brLabelShort[a.br]}</div>
+              ${isSold ? '<div class="schema-unit-sold-tag">SOLD</div>' : ''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    // Stats
+    const statsWrap = document.getElementById('siteSchemaStats');
+    if (statsWrap) {
+      const total = counts.available + counts.reserved + counts.sold;
+      statsWrap.innerHTML = `
+        <div class="schema-stat"><div class="schema-stat-num available-col">${counts.available}</div><div class="schema-stat-label"><span data-lang="en active">Available</span><span data-lang="ru">Свободно</span><span data-lang="ge">ხელმისაწვდომი</span></div></div>
+        <div class="schema-stat"><div class="schema-stat-num reserved-col">${counts.reserved}</div><div class="schema-stat-label"><span data-lang="en active">Reserved</span><span data-lang="ru">Резерв</span><span data-lang="ge">დაჯავშნილი</span></div></div>
+        <div class="schema-stat"><div class="schema-stat-num sold-col">${counts.sold}</div><div class="schema-stat-label"><span data-lang="en active">Sold</span><span data-lang="ru">Продано</span><span data-lang="ge">გაყიდული</span></div></div>
+        <div class="schema-stat"><div class="schema-stat-num">${total}</div><div class="schema-stat-label"><span data-lang="en active">Total</span><span data-lang="ru">Всего</span><span data-lang="ge">სულ</span></div></div>
+      `;
+      // re-apply lang to new elements
+      setLang(lang);
+    }
+  }
+
+  // ── UNIT POPUP ──
+  let popupApt = null;
+
+  function openUnitPopup(num, event) {
+    const apt = apts.find(a => a.num === num);
+    if (!apt) return;
+    popupApt = apt;
+    const admin = getAdminData(num);
+    const status = admin.status;
+    const photos = admin.photos;
+    const isSold = status === 'sold';
+    const isReserved = status === 'reserved';
+
+    // Gallery
+    const gallery = document.getElementById('popupGallery');
+    if (photos.length > 0) {
+      gallery.innerHTML = `<img src="${photos[0]}" alt="N°${num}">
+        ${isSold ? '<div class="unit-popup-sold-overlay"><div class="unit-popup-sold-label">SOLD</div></div>' : ''}`;
+    } else {
+      gallery.innerHTML = `<div class="unit-popup-plan"><img src="${planImages[num]}" alt="Plan N°${num}"></div>
+        ${isSold ? '<div class="unit-popup-sold-overlay"><div class="unit-popup-sold-label">SOLD</div></div>' : ''}`;
+    }
+
+    // Info
+    document.getElementById('popupNum').textContent = 'N° ' + num;
+    document.getElementById('popupType').textContent = { 1: '1 Bedroom', 2: '2 Bedrooms', 3: '3 Bedrooms' }[apt.br];
+
+    // Price
+    const priceEl = document.getElementById('popupPrice');
+    const priceLabelEl = document.getElementById('popupPriceLabel');
+    if (isSold) {
+      priceEl.textContent = '—';
+      priceLabelEl.textContent = lang === 'ru' ? 'Продана' : lang === 'ge' ? 'გაყიდული' : 'Sold';
+      priceEl.style.color = '#c0392b';
+    } else {
+      priceEl.textContent = '$' + apt.price.toLocaleString();
+      priceEl.style.color = '';
+      priceLabelEl.textContent = lang === 'ru' ? 'Стоимость' : lang === 'ge' ? 'ღირებულება' : 'Price';
+    }
+
+    // Meta
+    const floorStr = apt.floor === -1 ? '−1' : '' + apt.floor;
+    document.getElementById('popupMeta').innerHTML = `
+      <div class="unit-popup-meta-item"><div class="unit-popup-meta-val">${apt.area}</div><div class="unit-popup-meta-key">${lang === 'ru' ? 'м²' : 'm²'}</div></div>
+      <div class="unit-popup-meta-item"><div class="unit-popup-meta-val">${apt.br}</div><div class="unit-popup-meta-key">${lang === 'ru' ? 'Спальни' : lang === 'ge' ? 'საძინ.' : 'BR'}</div></div>
+      <div class="unit-popup-meta-item"><div class="unit-popup-meta-val">${floorStr}</div><div class="unit-popup-meta-key">${lang === 'ru' ? 'Этаж' : lang === 'ge' ? 'სართ.' : 'Floor'}</div></div>
+    `;
+
+    // CTA
+    const cta = document.getElementById('popupCta');
+    if (isSold) {
+      cta.textContent = lang === 'ru' ? 'Продана' : lang === 'ge' ? 'გაყიდული' : 'Sold';
+      cta.className = 'unit-popup-cta sold-cta';
+      cta.removeAttribute('href');
+    } else {
+      cta.textContent = lang === 'ru' ? 'Запросить информацию →' : lang === 'ge' ? 'მოთხოვნა →' : 'Inquire about this apartment →';
+      cta.className = 'unit-popup-cta';
+      cta.href = '#contact';
+    }
+
+    // Position popup near click
+    const popup = document.getElementById('unitPopup');
+    popup.classList.add('show');
+    document.getElementById('popupOverlay').classList.add('show');
+
+    // Smart positioning
+    if (event) {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const pw = popup.offsetWidth || 340;
+      const ph = popup.offsetHeight || 440;
+      let x = event.clientX + 16;
+      let y = event.clientY - 100;
+      if (x + pw > vw - 16) x = event.clientX - pw - 16;
+      if (y + ph > vh - 16) y = vh - ph - 16;
+      if (y < 70) y = 70;
+      if (vw <= 480) { x = 0; y = 'auto'; }
+      else { popup.style.left = x + 'px'; popup.style.top = y + 'px'; }
+    }
+  }
+
+  function closeUnitPopup() {
+    document.getElementById('unitPopup').classList.remove('show');
+    document.getElementById('popupOverlay').classList.remove('show');
+    popupApt = null;
+  }
+
+
   // Initialize on load
   document.addEventListener('DOMContentLoaded', function(){
     setLang('en');
     renderApts();
+    renderSchema();
   });
 </script>
 </body>
