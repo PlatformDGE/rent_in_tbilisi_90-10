@@ -166,20 +166,185 @@ section { padding:110px 80px; }
 .filter-tabs { display:flex; gap:3px; }
 .filter-tab { background:none; border:1px solid var(--border); padding:9px 22px; font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; color:var(--text-muted); transition:all 0.2s; }
 .filter-tab.active,.filter-tab:hover { background:var(--navy); border-color:var(--navy); color:white; }
-.apts-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-.apt-card { background:white; border:1px solid var(--border); transition:all 0.3s; cursor:pointer; position:relative; overflow:hidden; }
+.apts-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+.apt-card { background:white; border:1px solid var(--border); transition:box-shadow 0.3s; position:relative; overflow:hidden; }
+.apt-card:hover { box-shadow:0 8px 32px rgba(0,0,0,0.10); }
 
-/* Photo gallery in card */
-.apt-photos { position:relative; height:200px; overflow:hidden; background:#f8f7f4; border-bottom:1px solid var(--border); }
-.apt-photos-track { display:flex; height:100%; transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); }
-.apt-photo-slide { flex-shrink:0; width:100%; height:100%; object-fit:cover; }
-.apt-photos-dots { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:3; }
-.apt-photos-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,0.5); border:none; cursor:pointer; padding:0; transition:background 0.2s; }
-.apt-photos-dot.active { background:white; }
-.apt-photos-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.35); border:none; color:white; width:28px; height:28px; cursor:pointer; font-size:14px; z-index:3; display:flex; align-items:center; justify-content:center; transition:background 0.2s; border-radius:50%; }
-.apt-photos-nav:hover { background:rgba(0,0,0,0.6); }
-.apt-photos-prev { left:8px; }
-.apt-photos-next { right:8px; }
+/* ── APT CARD GALLERY ── */
+.apt-gallery {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  background: #f0ede8;
+  border-bottom: 1px solid var(--border);
+}
+.apt-gallery-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.apt-gallery-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Floor plan slide */
+.apt-gallery-plan {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f7f4;
+  padding: 16px;
+}
+.apt-gallery-plan img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+/* Nav arrows */
+.apt-gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(13,26,51,0.55);
+  border: none;
+  color: white;
+  width: 34px; height: 34px;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  border-radius: 2px;
+  backdrop-filter: blur(4px);
+}
+.apt-gallery-nav:hover { background: rgba(13,26,51,0.85); }
+.apt-gallery-prev { left: 10px; }
+.apt-gallery-next { right: 10px; }
+/* Dots */
+.apt-gallery-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 4;
+}
+.apt-gallery-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+.apt-gallery-dot.active { background: white; transform: scale(1.2); }
+/* Counter badge */
+.apt-gallery-counter {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(13,26,51,0.6);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  z-index: 4;
+  backdrop-filter: blur(4px);
+}
+/* Plan tab toggle */
+.apt-gallery-tabs {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  z-index: 4;
+}
+.apt-gallery-tab {
+  background: rgba(13,26,51,0.6);
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+  border-radius: 2px;
+}
+.apt-gallery-tab.active { background: var(--gold); color: var(--navy-deep); }
+/* SOLD overlay */
+.apt-sold-overlay { position:absolute; inset:0; background:rgba(13,26,51,0.72); display:flex; align-items:center; justify-content:center; z-index:5; }
+.apt-sold-label { font-family:'Playfair Display',serif; font-size:22px; font-weight:500; color:white; letter-spacing:0.12em; border:1px solid rgba(255,255,255,0.4); padding:8px 28px; }
+/* RESERVED badge */
+.apt-reserved-badge { position:absolute; top:10px; left:10px; background:var(--reserved,#e67e22); color:white; font-family:'Inter',sans-serif; font-size:9px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; padding:4px 10px; z-index:4; border-radius:2px; }
+
+/* ── APT CARD BODY — rich info ── */
+.apt-body { padding:16px 18px 18px; }
+.apt-body-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.apt-body-left {}
+.apt-body-right { text-align: right; }
+
+.apt-meta-row {
+  display: flex;
+  gap: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.apt-meta-item {
+  flex: 1;
+  text-align: center;
+}
+.apt-meta-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--navy);
+  line-height: 1.2;
+}
+.apt-meta-key {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.apt-meta-divider {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+}
+
+/* Status dot */
+.apt-status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:6px; }
+.apt-status-dot.available { background:#27ae60; }
+.apt-status-dot.reserved { background:#e67e22; }
+.apt-status-dot.sold { background:#c0392b; }
 
 /* SOLD overlay */
 .apt-sold-overlay { position:absolute; inset:0; background:rgba(13,26,51,0.72); display:flex; align-items:center; justify-content:center; z-index:5; }
@@ -355,7 +520,17 @@ button[data-lang].active { display:inline; }
   .about,.location,.contact { grid-template-columns:1fr; gap:48px; }
   .partner-section { grid-template-columns:1fr; padding:60px 28px; gap:40px; }
   .partner-logo-wrap { flex-direction:row; justify-content:center; }
-  .apts-grid { grid-template-columns:repeat(2,1fr); }
+  .apts-grid { grid-template-columns:1fr; }
+  .apt-gallery { height:240px; }
+  .apt-body { padding:14px 16px 16px; }
+  .apt-meta-row { gap:8px; }
+  .apt-meta-val { font-size:15px; }
+  .apt-meta-key { font-size:8px; }
+  .apt-price-block { flex-direction:row; align-items:baseline; justify-content:space-between; }
+  .apt-price-value { font-size:18px; }
+  .apt-price-label { font-size:9px; }
+  .apt-area { font-size:28px; }
+  .apt-inquire { font-size:10px; padding:10px; }
   .apts-price-range {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
@@ -370,6 +545,12 @@ button[data-lang].active { display:inline; }
   .inv-cards { grid-template-columns:1fr 1fr; }
   footer { padding:28px; }
   .frow { grid-template-columns:1fr; }
+}
+
+@media (max-width:480px) {
+  .apts-grid { grid-template-columns:1fr; }
+  .apt-gallery { height:210px; }
+  .apt-price-value { font-size:17px; }
 }
 @media (max-width:560px) {
   .apts-grid { grid-template-columns:1fr 1fr; gap:10px; }
@@ -651,40 +832,99 @@ function renderApts(){
   const list=filter==='all'?apts:apts.filter(a=>a.br==filter);
   grid.innerHTML=list.map(a=>{
     const badge=a.badge?`<div class="apt-badge ${a.badge}">${badgeLabel[a.badge][lang]}</div>`:'';
-    const admin = getAdminData(a.num);
-    const status = admin.status;
-    const photos = admin.photos;
-    const isSold = status === 'sold';
-    const isReserved = status === 'reserved';
+    const admin=getAdminData(a.num);
+    const status=admin.status;
+    const photos=admin.photos;
+    const isSold=status==='sold';
+    const isReserved=status==='reserved';
 
-    // Photo gallery or floor plan
-    let imageArea = '';
-    if (photos.length > 0) {
-      const slides = photos.map(p => `<img class="apt-photo-slide" src="${p}" alt="Apt N${a.num}">`).join('');
-      const dotsHtml = photos.length > 1
-        ? `<div class="apt-photos-dots" id="dots_${a.num}">${photos.map((_,i) => `<button class="apt-photos-dot${i===0?' active':''}" onclick="event.stopPropagation();goToPhoto(${a.num},${i})"></button>`).join('')}</div>`
-        : '';
-      const navHtml = photos.length > 1
-        ? `<button class="apt-photos-nav apt-photos-prev" onclick="event.stopPropagation();slidePhoto(${a.num},-1)">‹</button>
-           <button class="apt-photos-nav apt-photos-next" onclick="event.stopPropagation();slidePhoto(${a.num},1)">›</button>`
-        : '';
-      imageArea = `<div class="apt-photos" onclick="openLightbox(${a.num})">
-        <div class="apt-photos-track" id="track_${a.num}" data-cur="0">${slides}</div>
-        ${navHtml}
-        ${dotsHtml}
-        <span class="apt-num">N°${a.num}</span>
-        ${isSold ? `<div class="apt-sold-overlay"><div class="apt-sold-label">SOLD</div></div>` : ''}
-        ${isReserved ? `<div class="apt-reserved-badge">Reserved</div>` : ''}
-      </div>`;
-    } else {
-      imageArea = `<div class="apt-plan" onclick="openLightbox(${a.num})">
-        <img src="${planImages[a.num]}" alt="Apartment N${a.num} floor plan" loading="lazy">
-        <div class="apt-plan-overlay"><div class="apt-zoom-hint">${zoomLabel[lang]}</div></div>
-        <span class="apt-num">N°${a.num}</span>
-        ${isSold ? `<div class="apt-sold-overlay"><div class="apt-sold-label">SOLD</div></div>` : ''}
-        ${isReserved ? `<div class="apt-reserved-badge">Reserved</div>` : ''}
-      </div>`;
-    }
+    // Build slides: photos first, then floor plan last
+    const photoSlides=photos.map(p=>`<img class="apt-gallery-slide" src="${p}" alt="Apt N${a.num}" loading="lazy">`).join('');
+    const planSlide=`<div class="apt-gallery-plan"><img src="${planImages[a.num]}" alt="Plan N${a.num}"></div>`;
+    const allSlides=photoSlides+planSlide;
+    const totalSlides=photos.length+1;
+
+    // Dots
+    const dots=Array.from({length:totalSlides},(_,i)=>`<button class="apt-gallery-dot${i===0?' active':''}" onclick="event.stopPropagation();goToPhoto(${a.num},${i})"></button>`).join('');
+
+    // Tabs: Photos / Plan
+    const tabs=photos.length>0?`
+      <div class="apt-gallery-tabs">
+        <button class="apt-gallery-tab active" id="tab_ph_${a.num}" onclick="event.stopPropagation();goToPhoto(${a.num},0);updateTabs(${a.num},'ph')">Фото</button>
+        <button class="apt-gallery-tab" id="tab_pl_${a.num}" onclick="event.stopPropagation();goToPhoto(${a.num},${photos.length});updateTabs(${a.num},'pl')">План</button>
+      </div>`:'';
+
+    // Counter
+    const counter=photos.length>0?`<div class="apt-gallery-counter" id="counter_${a.num}">1 / ${totalSlides}</div>`:'';
+
+    // Nav arrows (only if more than 1 slide)
+    const navArrows=totalSlides>1?`
+      <button class="apt-gallery-nav apt-gallery-prev" onclick="event.stopPropagation();slidePhoto(${a.num},-1)">‹</button>
+      <button class="apt-gallery-nav apt-gallery-next" onclick="event.stopPropagation();slidePhoto(${a.num},1)">›</button>`:'';
+
+    const gallery=`<div class="apt-gallery">
+      <div class="apt-gallery-track" id="track_${a.num}" data-cur="0" data-total="${totalSlides}">${allSlides}</div>
+      ${navArrows}
+      <div class="apt-gallery-dots">${dots}</div>
+      ${counter}
+      ${tabs}
+      ${isSold?'<div class="apt-sold-overlay"><div class="apt-sold-label">SOLD</div></div>':''}
+      ${isReserved?'<div class="apt-reserved-badge">Reserved</div>':''}
+      <span class="apt-num">N°${a.num}</span>
+    </div>`;
+
+    // Floor label
+    const floorStr=a.floor===-1?'−1':''+a.floor;
+
+    // Price block
+    const priceBlock=isSold
+      ?`<div class="apt-price-block"><div class="apt-price-label" style="color:#c0392b;"><span class="apt-status-dot sold"></span>Продана</div></div>`
+      :isReserved
+        ?`<div class="apt-price-block"><div class="apt-price-label"><span class="apt-status-dot reserved"></span>Резерв</div><div class="apt-price-value">$${a.price.toLocaleString()}</div></div>`
+        :`<div class="apt-price-block"><div class="apt-price-label">${prLabel[lang]}</div><div class="apt-price-value">$${a.price.toLocaleString()}</div></div>`;
+
+    const inquireBtn=isSold?'':`<a href="#contact" class="apt-inquire">${inqLabel[lang]}</a>`;
+
+    return `<div class="apt-card${isSold?' apt-is-sold':''}">
+      ${badge}
+      ${gallery}
+      <div class="apt-body">
+        <div class="apt-body-top">
+          <div class="apt-body-left">
+            <div class="apt-type">${brLabel[lang][a.br]}</div>
+            <div class="apt-area">${a.area}<span style="font-size:14px;font-family:'Inter',sans-serif;font-weight:400;"> m²</span></div>
+          </div>
+          <div class="apt-body-right">
+            <div class="apt-floor">${flLabel[lang](a.floor)}</div>
+          </div>
+        </div>
+        <div class="apt-meta-row">
+          <div class="apt-meta-item">
+            <div class="apt-meta-val">${a.area}</div>
+            <div class="apt-meta-key"><span data-lang="en active">Total m²</span><span data-lang="ru">Общая м²</span><span data-lang="ge">სულ მ²</span></div>
+          </div>
+          <div class="apt-meta-divider"></div>
+          <div class="apt-meta-item">
+            <div class="apt-meta-val">${a.br}</div>
+            <div class="apt-meta-key"><span data-lang="en active">Bedrooms</span><span data-lang="ru">Спальни</span><span data-lang="ge">საძინებელი</span></div>
+          </div>
+          <div class="apt-meta-divider"></div>
+          <div class="apt-meta-item">
+            <div class="apt-meta-val">${floorStr}</div>
+            <div class="apt-meta-key"><span data-lang="en active">Floor</span><span data-lang="ru">Этаж</span><span data-lang="ge">სართული</span></div>
+          </div>
+          <div class="apt-meta-divider"></div>
+          <div class="apt-meta-item">
+            <div class="apt-meta-val">${photos.length}</div>
+            <div class="apt-meta-key"><span data-lang="en active">Photos</span><span data-lang="ru">Фото</span><span data-lang="ge">ფოტო</span></div>
+          </div>
+        </div>
+        ${priceBlock}
+        ${inquireBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
 
     // Price line — hide if sold
     const priceBlock = isSold
@@ -778,25 +1018,51 @@ function submitForm(){
     } catch(e) { return { status: 'available', photos: [] }; }
   }
 
+  function updateGalleryUI(num, cur, total) {
+    // dots
+    document.querySelectorAll('#track_' + num).forEach(()=>{});
+    const gallery = document.getElementById('track_' + num)?.closest('.apt-gallery');
+    if (!gallery) return;
+    gallery.querySelectorAll('.apt-gallery-dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+    // counter
+    const counter = document.getElementById('counter_' + num);
+    if (counter) counter.textContent = (cur + 1) + ' / ' + total;
+    // tabs
+    const tabPh = document.getElementById('tab_ph_' + num);
+    const tabPl = document.getElementById('tab_pl_' + num);
+    if (tabPh && tabPl) {
+      const isLast = cur === total - 1;
+      tabPh.classList.toggle('active', !isLast);
+      tabPl.classList.toggle('active', isLast);
+    }
+  }
+
   function slidePhoto(num, dir) {
     const track = document.getElementById('track_' + num);
-    const dots = document.querySelectorAll('#dots_' + num + ' .apt-photos-dot');
     if (!track) return;
-    const count = track.children.length;
+    const total = parseInt(track.dataset.total || track.children.length);
     let cur = parseInt(track.dataset.cur || 0);
-    cur = (cur + dir + count) % count;
+    cur = (cur + dir + total) % total;
     track.dataset.cur = cur;
     track.style.transform = 'translateX(-' + (cur * 100) + '%)';
-    dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+    updateGalleryUI(num, cur, total);
   }
 
   function goToPhoto(num, index) {
     const track = document.getElementById('track_' + num);
-    const dots = document.querySelectorAll('#dots_' + num + ' .apt-photos-dot');
     if (!track) return;
+    const total = parseInt(track.dataset.total || track.children.length);
     track.dataset.cur = index;
     track.style.transform = 'translateX(-' + (index * 100) + '%)';
-    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    updateGalleryUI(num, index, total);
+  }
+
+  function updateTabs(num, tab) {
+    const track = document.getElementById('track_' + num);
+    if (!track) return;
+    const total = parseInt(track.dataset.total || track.children.length);
+    const cur = parseInt(track.dataset.cur || 0);
+    updateGalleryUI(num, cur, total);
   }
 
   // Initialize on load
