@@ -1018,10 +1018,13 @@ function init() {
     data = JSON.parse(saved);
   }
   // Merge with base — ensure all apts exist
+  // Merge base data with saved — preserve existing status/price/notes
   APTS_BASE.forEach(a => {
     if (!data[a.num]) {
-      data[a.num] = { status: 'available', price: a.price, photos: [], notes: '' };
+      data[a.num] = { status: 'available', price: a.price, notes: '' };
     }
+    // Always load photos from separate storage
+    data[a.num].photos = loadPhotos(a.num);
   });
   saveData();
   renderSchema();
@@ -1030,8 +1033,31 @@ function init() {
 }
 
 function saveData() {
-  // Save without photo blobs being oversized — store them as-is (base64)
-  localStorage.setItem('gr_admin_data', JSON.stringify(data));
+  // Save metadata (no photos) in main key
+  const meta = {};
+  Object.keys(data).forEach(num => {
+    meta[num] = { status: data[num].status, price: data[num].price, notes: data[num].notes };
+  });
+  try {
+    localStorage.setItem('gr_admin_data', JSON.stringify(meta));
+  } catch(e) { showToast('Ошибка: хранилище переполнено'); }
+}
+
+function savePhotos(num) {
+  const photos = (data[num] && data[num].photos) ? data[num].photos : [];
+  try {
+    localStorage.setItem('gr_photos_' + num, JSON.stringify(photos));
+  } catch(e) {
+    // If storage full, try removing old photos
+    showToast('Ошибка сохранения фото — очистите старые');
+  }
+}
+
+function loadPhotos(num) {
+  try {
+    const raw = localStorage.getItem('gr_photos_' + num);
+    return raw ? JSON.parse(raw) : [null,null,null,null,null];
+  } catch(e) { return [null,null,null,null,null]; }
 }
 
 // ── PASSWORD ──
@@ -1172,8 +1198,10 @@ function openPanel(num) {
   // Notes
   document.getElementById('panelNotes').value = d.notes || '';
 
-  // Photos
-  renderPhotos(d.photos || [null,null,null,null,null]);
+  // Photos — always load fresh from storage
+  const freshPhotos = loadPhotos(num);
+  if (data[num]) data[num].photos = freshPhotos;
+  renderPhotos(freshPhotos);
 
   document.getElementById('detailPanel').classList.add('open');
   document.getElementById('overlay').classList.add('show');
@@ -1240,8 +1268,9 @@ function uploadPhoto(index, input) {
     if (!data[num].photos) data[num].photos = [null,null,null,null,null];
     data[num].photos[index] = e.target.result;
     renderPhotos(data[num].photos);
-    saveData();
-    showToast('Фото загружено');
+    savePhotos(num);
+    renderSchema();
+    showToast('Фото сохранено ✓');
   };
   reader.readAsDataURL(file);
 }
@@ -1251,12 +1280,13 @@ function removePhoto(index, event) {
   const num = currentApt.num;
   data[num].photos[index] = null;
   renderPhotos(data[num].photos);
-  saveData();
+  savePhotos(num);
+  renderSchema();
+  showToast('Фото удалено');
 }
 
 // ── EXPORT ──
 function exportData() {
-  // Export without photos to keep it small
   const exportObj = {};
   Object.keys(data).forEach(num => {
     exportObj[num] = { status: data[num].status, price: data[num].price, notes: data[num].notes };
