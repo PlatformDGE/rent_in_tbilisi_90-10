@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Grishashvili Residence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1d3560;
+    --navy-deep: #0d1a33;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --border: #e0dbd2;
+    --text: #1a1a1a;
+    --muted: #888;
+    --sold: #c0392b;
+    --reserved: #e67e22;
+    --available: #27ae60;
+    --sidebar: 260px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar);
+    background: var(--navy-deep);
+    min-height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .sidebar-logo h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: white;
+    line-height: 1.4;
+  }
+
+  .sidebar-logo p {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 0;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-item:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: white; border-left-color: var(--gold); background: rgba(255,255,255,0.06); }
+
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .sidebar-stats {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: white;
+  }
+
+  .stat-val.gold { color: var(--gold); }
+  .stat-val.sold-col { color: #e74c3c; }
+  .stat-val.reserved-col { color: #f39c12; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 36px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--navy);
+  }
+
+  .topbar-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    padding: 8px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: var(--navy-deep); }
+  .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-gold { background: var(--gold); color: var(--navy-deep); }
+  .btn-gold:hover { background: #b8955a; }
+
+  .content { padding: 32px 36px; flex: 1; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── BUILDING SCHEMA ── */
+  .schema-wrap {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .schema-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .schema-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .schema-legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+  }
+
+  .schema-building {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 700px;
+  }
+
+  .schema-floor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .floor-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .floor-units {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .schema-unit {
+    height: 56px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    border: 2px solid transparent;
+    flex: 1;
+    min-width: 60px;
+    max-width: 120px;
+  }
+
+  .schema-unit:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  .schema-unit.selected { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(29,53,96,0.15); }
+
+  .schema-unit.available { background: #e8f5e9; }
+  .schema-unit.sold { background: #fde8e8; }
+  .schema-unit.reserved { background: #fef3e2; }
+
+  .unit-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--navy);
+    line-height: 1;
+  }
+
+  .schema-unit.sold .unit-num { color: var(--sold); }
+  .schema-unit.reserved .unit-num { color: var(--reserved); }
+
+  .unit-area {
+    font-size: 9px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.4);
+    margin-top: 3px;
+  }
+
+  .unit-status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 4px;
+  }
+
+  .available .unit-status-dot { background: var(--available); }
+  .sold .unit-status-dot { background: var(--sold); }
+  .reserved .unit-status-dot { background: var(--reserved); }
+
+  /* ── APT DETAIL PANEL ── */
+  .detail-panel {
+    position: fixed;
+    right: -420px;
+    top: 0; bottom: 0;
+    width: 420px;
+    background: white;
+    box-shadow: -4px 0 32px rgba(0,0,0,0.12);
+    z-index: 200;
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .detail-panel.open { right: 0; }
+
+  .panel-header {
+    background: var(--navy);
+    padding: 24px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-shrink: 0;
+  }
+
+  .panel-apt-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: white;
+    line-height: 1;
+  }
+
+  .panel-apt-info {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  .panel-close {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+
+  .panel-close:hover { background: rgba(255,255,255,0.2); }
+
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+  }
+
+  .panel-section {
+    margin-bottom: 28px;
+  }
+
+  .panel-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Status selector */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .status-btn {
+    padding: 10px 8px;
+    border: 2px solid var(--border);
+    background: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .status-btn.available.active { border-color: var(--available); background: #e8f5e9; color: var(--available); }
+  .status-btn.sold.active { border-color: var(--sold); background: #fde8e8; color: var(--sold); }
+  .status-btn.reserved.active { border-color: var(--reserved); background: #fef3e2; color: var(--reserved); }
+  .status-btn:hover { border-color: var(--navy); }
+
+  /* Photo upload */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .photo-slot {
+    aspect-ratio: 4/3;
+    border: 2px dashed var(--border);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .photo-slot:hover { border-color: var(--gold); background: #fdf8f0; }
+
+  .photo-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-slot-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .photo-slot-icon { color: var(--border); }
+
+  .photo-slot .photo-remove {
+    position: absolute;
+    top: 4px; right: 4px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .photo-slot:hover .photo-remove { display: flex; }
+
+  .photo-slot input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Notes */
+  .panel-textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .panel-textarea:focus { border-color: var(--navy); }
+
+  /* Price field */
+  .price-field {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .price-field:focus-within { border-color: var(--navy); }
+
+  .price-prefix {
+    padding: 10px 14px;
+    background: var(--bg);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    border-right: 1px solid var(--border);
+  }
+
+  .price-input {
+    flex: 1;
+    border: none;
+    padding: 10px 14px;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    outline: none;
+    background: white;
+  }
+
+  .panel-footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  /* ── APT LIST VIEW ── */
+  .apt-table {
+    background: white;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 60px 80px 80px 100px 120px 140px 1fr 100px;
+    padding: 12px 20px;
+    background: var(--navy);
+    gap: 12px;
+  }
+
+  .th {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 60px 80px 80px 100px 120px 140px 1fr 100px;
+    padding: 14px 20px;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .table-row:hover { background: #faf9f7; }
+  .table-row:last-child { border-bottom: none; }
+
+  .td { font-size: 13px; color: var(--text); }
+  .td.num { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--navy); }
+  .td.price { font-family: 'Playfair Display', serif; font-size: 15px; }
+  .td.muted { color: var(--muted); }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+
+  .status-badge.available { background: #e8f5e9; color: var(--available); }
+  .status-badge.sold { background: #fde8e8; color: var(--sold); }
+  .status-badge.reserved { background: #fef3e2; color: var(--reserved); }
+
+  .status-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ── OVERLAY ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 190;
+    display: none;
+    backdrop-filter: blur(2px);
+  }
+
+  .overlay.show { display: block; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: white;
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    border-left: 3px solid var(--gold);
+    z-index: 999;
+    transition: transform 0.3s;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── PASSWORD SCREEN ── */
+  .pw-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--navy-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .pw-box {
+    background: white;
+    padding: 48px;
+    width: 360px;
+    text-align: center;
+  }
+
+  .pw-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .pw-sub {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+  }
+
+  .pw-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 0.2em;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .pw-input:focus { border-color: var(--navy); }
+  .pw-input.error { border-color: var(--sold); animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .pw-error { font-size: 12px; color: var(--sold); margin-bottom: 12px; min-height: 16px; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── MOBILE BOTTOM NAV ── */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--navy-deep);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mobile-nav-inner { display: flex; }
+  .mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 0 12px;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.35);
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+    border-top: 2px solid transparent;
+  }
+  .mobile-nav-btn.active { color: var(--gold); border-top-color: var(--gold); }
+  .mobile-nav-btn svg { width: 20px; height: 20px; }
+
+  /* ── MOBILE STATS BAR ── */
+  .mobile-stats {
+    display: none;
+    background: var(--navy-deep);
+    padding: 12px 16px;
+  }
+  .mobile-stat {
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .mobile-stat:last-child { border-right: none; }
+  .mobile-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: white;
+    line-height: 1;
+  }
+  .mobile-stat-val.gold { color: var(--gold); }
+  .mobile-stat-val.sold-col { color: #e74c3c; }
+  .mobile-stat-val.reserved-col { color: #f39c12; }
+  .mobile-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-top: 3px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .topbar-actions .btn-outline { display: none; }
+    .main { margin-left: 0; }
+    .topbar { padding: 0 16px; height: 52px; }
+    .topbar-title { font-size: 15px; }
+    .btn-gold { font-size: 10px; padding: 7px 14px; }
+    .content { padding: 14px; padding-bottom: 88px; }
+    .mobile-nav { display: block; }
+    .mobile-stats { display: flex; }
+
+    /* Schema */
+    .schema-wrap { padding: 14px; }
+    .schema-title { font-size: 15px; }
+    .schema-subtitle { font-size: 11px; margin-bottom: 14px; }
+    .schema-legend { gap: 12px; margin-bottom: 14px; }
+    .schema-building { max-width: 100%; gap: 3px; }
+    .floor-label { font-size: 9px; width: 34px; }
+    .floor-units { gap: 3px; }
+    .schema-unit { height: 54px; min-width: 0; }
+    .unit-num { font-size: 12px; }
+    .unit-area { font-size: 8px; }
+
+    /* Panel — full screen */
+    .detail-panel { width: 100%; right: -100%; top: 52px; bottom: 0; }
+    .detail-panel.open { right: 0; }
+    .panel-header { padding: 18px 20px; }
+    .panel-body { padding: 18px 20px; }
+    .panel-footer { padding: 12px 20px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+    .status-btn { padding: 14px 8px; font-size: 12px; }
+    .photo-grid { grid-template-columns: repeat(3, 1fr); }
+
+    /* List — card style */
+    .apt-table { border: none; background: transparent; }
+    .table-header { display: none; }
+    .table-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      align-items: center;
+    }
+    .table-row:last-child { border-bottom: 1px solid var(--border); }
+    .td.num { font-size: 18px; flex: 0 0 auto; }
+    .td.price { font-size: 16px; flex: 1; text-align: right; }
+    .td:nth-child(3),
+    .td:nth-child(4),
+    .td:nth-child(7) { display: none; }
+    .td:nth-child(2) { font-size: 11px; }
+    .td:nth-child(8) { font-size: 11px; margin-left: auto; }
+    .pw-box { width: 100%; max-width: 340px; padding: 36px 24px; }
+  }
+
+  @media (max-width: 380px) {
+    .schema-unit { height: 46px; }
+    .unit-num { font-size: 11px; }
+    .unit-area { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Password screen -->
+<div class="pw-screen" id="pwScreen">
+  <div class="pw-box">
+    <div class="pw-logo">Grishashvili Residence</div>
+    <div class="pw-sub">Admin Panel</div>
+    <input class="pw-input" type="password" id="pwInput" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPw()">
+    <div class="pw-error" id="pwError"></div>
+    <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="checkPw()">Войти</button>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Grishashvili<br>Residence</h1>
+    <p>Admin Panel</p>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showView('schema')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/></svg>
+      Схема дома
+    </div>
+    <div class="nav-item" onclick="showView('list')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>
+      Все квартиры
+    </div>
+  </nav>
+  <div class="sidebar-stats" id="sidebarStats"></div>
+</aside>
+
+<!-- Mobile stats bar -->
+<div class="mobile-stats" id="mobileStats"></div>
+
+<!-- Mobile bottom nav -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="mobile-nav-btn active" id="mnav-schema" onclick="showView('schema')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/></svg>
+      Схема
+    </button>
+    <button class="mobile-nav-btn" id="mnav-list" onclick="showView('list')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>
+      Квартиры
+    </button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Схема дома</div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="exportData()">Экспорт JSON</button>
+      <button class="btn btn-gold" onclick="openPanel(null)">+ Быстрое обновление</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- SCHEMA VIEW -->
+    <div class="view active" id="view-schema">
+      <div class="schema-wrap">
+        <div class="schema-title">Grishashvili Residence · Схема здания</div>
+        <div class="schema-subtitle">Иосеба Гришашвили 46, Старый Тбилиси · 20 квартир · 4 этажа</div>
+
+        <div class="schema-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#e8f5e9;border:1px solid #27ae60;"></div>Свободна</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fef3e2;border:1px solid #e67e22;"></div>Резерв</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fde8e8;border:1px solid #c0392b;"></div>Продана</div>
+        </div>
+
+        <div class="schema-building" id="schemaBuilding"></div>
+      </div>
+    </div>
+
+    <!-- LIST VIEW -->
+    <div class="view" id="view-list">
+      <div class="apt-table">
+        <div class="table-header">
+          <div class="th">№</div>
+          <div class="th">Этаж</div>
+          <div class="th">Тип</div>
+          <div class="th">Площадь</div>
+          <div class="th">Цена</div>
+          <div class="th">Статус</div>
+          <div class="th">Заметки</div>
+          <div class="th">Фото</div>
+        </div>
+        <div id="aptList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- Detail Panel -->
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-apt-num" id="panelNum">N° —</div>
+      <div class="panel-apt-info" id="panelInfo">—</div>
+    </div>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+
+  <div class="panel-body">
+
+    <!-- Status -->
+    <div class="panel-section">
+      <div class="panel-section-title">Статус квартиры</div>
+      <div class="status-grid">
+        <button class="status-btn available" onclick="setStatus('available')">Свободна</button>
+        <button class="status-btn reserved" onclick="setStatus('reserved')">Резерв</button>
+        <button class="status-btn sold" onclick="setStatus('sold')">Продана</button>
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="panel-section">
+      <div class="panel-section-title">Цена</div>
+      <div class="price-field">
+        <div class="price-prefix">$</div>
+        <input class="price-input" type="number" id="panelPrice" placeholder="220 000" step="1000">
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="panel-section">
+      <div class="panel-section-title">Фотографии (до 5)</div>
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="panel-section">
+      <div class="panel-section-title">Заметки</div>
+      <textarea class="panel-textarea" id="panelNotes" placeholder="Покупатель, дата сделки, особые условия..."></textarea>
+    </div>
+
+  </div>
+
+  <div class="panel-footer">
+    <button class="btn btn-primary" style="flex:1;" onclick="saveApt()">Сохранить</button>
+    <button class="btn btn-outline" onclick="closePanel()">Отмена</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const APTS_BASE = [
+  {num:1,br:1,floor:-1,area:81.90,price:260000},
+  {num:2,br:2,floor:-1,area:66.65,price:215000},
+  {num:3,br:1,floor:1,area:93.60,price:305000},
+  {num:4,br:1,floor:1,area:84.30,price:280000},
+  {num:5,br:1,floor:1,area:231.20,price:560000},
+  {num:6,br:1,floor:2,area:93.35,price:320000},
+  {num:7,br:2,floor:2,area:78.85,price:275000},
+  {num:8,br:2,floor:2,area:118.65,price:400000},
+  {num:9,br:1,floor:2,area:95.70,price:320000},
+  {num:10,br:1,floor:2,area:70.45,price:225000},
+  {num:11,br:1,floor:2,area:79.90,price:255000},
+  {num:12,br:3,floor:2,area:141.80,price:440000},
+  {num:13,br:1,floor:3,area:84.70,price:315000},
+  {num:14,br:2,floor:3,area:70.45,price:262000},
+  {num:15,br:3,floor:3,area:118.50,price:435000},
+  {num:16,br:1,floor:3,area:95.35,price:350000},
+  {num:17,br:1,floor:3,area:62.65,price:220000},
+  {num:18,br:2,floor:3,area:72.30,price:255000},
+  {num:19,br:3,floor:3,area:141.70,price:480000},
+  {num:20,br:2,floor:4,area:183.90,price:560000},
+];
+
+const FLOORS = [
+  { label: 'Этаж 4', floor: 4 },
+  { label: 'Этаж 3', floor: 3 },
+  { label: 'Этаж 2', floor: 2 },
+  { label: 'Этаж 1', floor: 1 },
+  { label: 'Этаж −1', floor: -1 },
+];
+
+const PASSWORD = '~]q0KRKd4hj__>b';
+let data = {};
+let currentApt = null;
+
+// ── INIT ──
+function init() {
+  const saved = localStorage.getItem('gr_admin_data');
+  if (saved) {
+    data = JSON.parse(saved);
+  }
+  // Merge with base — ensure all apts exist
+  APTS_BASE.forEach(a => {
+    if (!data[a.num]) {
+      data[a.num] = { status: 'available', price: a.price, photos: [], notes: '' };
+    }
+  });
+  saveData();
+  renderSchema();
+  renderList();
+  renderStats();
+}
+
+function saveData() {
+  // Save without photo blobs being oversized — store them as-is (base64)
+  localStorage.setItem('gr_admin_data', JSON.stringify(data));
+}
+
+// ── PASSWORD ──
+function checkPw() {
+  const val = document.getElementById('pwInput').value;
+  if (val === PASSWORD) {
+    document.getElementById('pwScreen').style.display = 'none';
+    init();
+  } else {
+    const inp = document.getElementById('pwInput');
+    inp.classList.add('error');
+    document.getElementById('pwError').textContent = 'Неверный пароль';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  }
+}
+
+// ── VIEWS ──
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  const navItems = document.querySelectorAll('.nav-item');
+  if (v === 'schema') {
+    navItems[0].classList.add('active');
+    document.getElementById('topbarTitle').textContent = 'Схема дома';
+    const mb = document.getElementById('mnav-schema');
+    if (mb) mb.classList.add('active');
+  }
+  if (v === 'list') {
+    navItems[1].classList.add('active');
+    document.getElementById('topbarTitle').textContent = 'Все квартиры';
+    const mb = document.getElementById('mnav-list');
+    if (mb) mb.classList.add('active');
+  }
+}
+
+// ── SCHEMA ──
+function renderSchema() {
+  const wrap = document.getElementById('schemaBuilding');
+  wrap.innerHTML = FLOORS.map(f => {
+    const units = APTS_BASE.filter(a => a.floor === f.floor);
+    if (!units.length) return '';
+    return `
+      <div class="schema-floor">
+        <div class="floor-label">${f.label}</div>
+        <div class="floor-units">
+          ${units.map(a => {
+            const d = data[a.num] || {};
+            const st = d.status || 'available';
+            const hasPhotos = (d.photos||[]).filter(Boolean).length;
+            return `
+              <div class="schema-unit ${st}" onclick="openPanel(${a.num})" title="N°${a.num} · ${a.area} m²">
+                <div class="unit-num">N°${a.num}</div>
+                <div class="unit-area">${a.area} m²</div>
+                <div class="unit-status-dot"></div>
+                ${hasPhotos ? `<div style="position:absolute;top:4px;right:4px;width:6px;height:6px;background:var(--gold);border-radius:50%;" title="${hasPhotos} фото"></div>` : ''}
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── LIST ──
+function renderList() {
+  const wrap = document.getElementById('aptList');
+  wrap.innerHTML = APTS_BASE.map(a => {
+    const d = data[a.num] || {};
+    const st = d.status || 'available';
+    const stLabel = { available: 'Свободна', reserved: 'Резерв', sold: 'Продана' }[st];
+    const photos = (d.photos||[]).filter(Boolean).length;
+    const floorLabel = a.floor === -1 ? 'Эт. −1' : `Эт. ${a.floor}`;
+    return `
+      <div class="table-row" onclick="openPanel(${a.num})">
+        <div class="td num">N°${a.num}</div>
+        <div class="td muted">${floorLabel}</div>
+        <div class="td muted">${a.br}BR</div>
+        <div class="td muted">${a.area} m²</div>
+        <div class="td price">$${(d.price||a.price).toLocaleString()}</div>
+        <div class="td"><span class="status-badge ${st}">${stLabel}</span></div>
+        <div class="td muted" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;">${d.notes||'—'}</div>
+        <div class="td muted" style="font-size:12px;">${photos ? `📷 ${photos}` : '—'}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── STATS ──
+function renderStats() {
+  const counts = { available: 0, reserved: 0, sold: 0 };
+  APTS_BASE.forEach(a => {
+    const st = (data[a.num]||{}).status || 'available';
+    counts[st]++;
+  });
+  const sidebarHtml = `
+    <div class="stat-row"><span class="stat-label">Всего</span><span class="stat-val gold">20</span></div>
+    <div class="stat-row"><span class="stat-label">Свободно</span><span class="stat-val">${counts.available}</span></div>
+    <div class="stat-row"><span class="stat-label">Резерв</span><span class="stat-val reserved-col">${counts.reserved}</span></div>
+    <div class="stat-row"><span class="stat-label">Продано</span><span class="stat-val sold-col">${counts.sold}</span></div>
+  `;
+  document.getElementById('sidebarStats').innerHTML = sidebarHtml;
+
+  const mobileStats = document.getElementById('mobileStats');
+  if (mobileStats) {
+    mobileStats.innerHTML = `
+      <div class="mobile-stat"><div class="mobile-stat-val gold">20</div><div class="mobile-stat-label">Всего</div></div>
+      <div class="mobile-stat"><div class="mobile-stat-val">${counts.available}</div><div class="mobile-stat-label">Свободно</div></div>
+      <div class="mobile-stat"><div class="mobile-stat-val reserved-col">${counts.reserved}</div><div class="mobile-stat-label">Резерв</div></div>
+      <div class="mobile-stat"><div class="mobile-stat-val sold-col">${counts.sold}</div><div class="mobile-stat-label">Продано</div></div>
+    `;
+  }
+}
+
+// ── PANEL ──
+function openPanel(num) {
+  if (num === null) {
+    // Quick update — open first available
+    const first = APTS_BASE.find(a => (data[a.num]||{}).status === 'available');
+    if (first) num = first.num;
+    else num = 1;
+  }
+
+  currentApt = APTS_BASE.find(a => a.num === num);
+  const d = data[num] || {};
+
+  document.getElementById('panelNum').textContent = `N° ${num}`;
+  document.getElementById('panelInfo').textContent =
+    `${currentApt.br} Bedroom · ${currentApt.area} m² · ${currentApt.floor === -1 ? 'Этаж −1' : 'Этаж ' + currentApt.floor}`;
+
+  // Status
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  const st = d.status || 'available';
+  document.querySelector(`.status-btn.${st}`).classList.add('active');
+
+  // Price
+  document.getElementById('panelPrice').value = d.price || currentApt.price;
+
+  // Notes
+  document.getElementById('panelNotes').value = d.notes || '';
+
+  // Photos
+  renderPhotos(d.photos || [null,null,null,null,null]);
+
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closePanel() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+  currentApt = null;
+}
+
+function setStatus(st) {
+  document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.status-btn.${st}`).classList.add('active');
+}
+
+function getCurrentStatus() {
+  const active = document.querySelector('.status-btn.active');
+  return active ? active.classList[1] : 'available';
+}
+
+function saveApt() {
+  if (!currentApt) return;
+  const num = currentApt.num;
+  if (!data[num]) data[num] = {};
+  data[num].status = getCurrentStatus();
+  data[num].price = parseInt(document.getElementById('panelPrice').value) || currentApt.price;
+  data[num].notes = document.getElementById('panelNotes').value;
+  // photos saved on upload
+  saveData();
+  renderSchema();
+  renderList();
+  renderStats();
+  closePanel();
+  showToast(`N°${num} сохранена`);
+}
+
+// ── PHOTOS ──
+function renderPhotos(photos) {
+  const grid = document.getElementById('photoGrid');
+  const slots = [...photos];
+  while (slots.length < 5) slots.push(null);
+
+  grid.innerHTML = slots.slice(0, 5).map((photo, i) => `
+    <div class="photo-slot" id="slot${i}">
+      ${photo
+        ? `<img src="${photo}" alt="photo ${i+1}">
+           <button class="photo-remove" onclick="removePhoto(${i},event)">✕</button>`
+        : `<svg class="photo-slot-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+           <span class="photo-slot-label">Фото ${i+1}</span>
+           <input type="file" accept="image/*" onchange="uploadPhoto(${i}, this)">`
+      }
+    </div>
+  `).join('');
+}
+
+function uploadPhoto(index, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const num = currentApt.num;
+    if (!data[num]) data[num] = {};
+    if (!data[num].photos) data[num].photos = [null,null,null,null,null];
+    data[num].photos[index] = e.target.result;
+    renderPhotos(data[num].photos);
+    saveData();
+    showToast('Фото загружено');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(index, event) {
+  event.stopPropagation();
+  const num = currentApt.num;
+  data[num].photos[index] = null;
+  renderPhotos(data[num].photos);
+  saveData();
+}
+
+// ── EXPORT ──
+function exportData() {
+  // Export without photos to keep it small
+  const exportObj = {};
+  Object.keys(data).forEach(num => {
+    exportObj[num] = { status: data[num].status, price: data[num].price, notes: data[num].notes };
+  });
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `grishashvili-status-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('Экспорт готов');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
