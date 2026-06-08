@@ -56,14 +56,16 @@ body { font-family:'Inter',sans-serif; background:var(--warm-white); color:var(-
 
 .hero-video-placeholder {
   position: absolute;
-  inset: 0;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  z-index: 1;
+  gap: 10px;
+  z-index: 3;
   pointer-events: none;
+  white-space: nowrap;
 }
 
 .hero-video-placeholder svg {
@@ -84,12 +86,12 @@ body { font-family:'Inter',sans-serif; background:var(--warm-white); color:var(-
 
 /* HERO */
 .hero { height:100vh; min-height:680px; padding-top:64px; position:relative; display:flex; align-items:flex-end; overflow:hidden; background:var(--navy-deeper); box-sizing:border-box; }
-.hero-gradient { position:absolute; inset:0; background:linear-gradient(135deg,#0d1a33 0%,#1d3560 45%,#152845 100%); }
+.hero-gradient { position:absolute; inset:0; z-index:2; background:linear-gradient(135deg,#0d1a33 0%,#1d3560 45%,#152845 100%); }
 .hero-grid { position:absolute; inset:0; overflow:hidden; opacity:0.07; }
 .hero-grid::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.6) 1px,transparent 1px); background-size:60px 60px; }
 .hero-grid::after { content:''; position:absolute; bottom:0; left:0; right:0; height:55%; background:linear-gradient(0deg,var(--navy-deeper) 0%,transparent 100%); }
 .hero-accent { position:absolute; top:0; right:0; width:38%; height:100%; background:linear-gradient(135deg,transparent 0%,rgba(201,169,110,0.06) 100%); border-left:1px solid rgba(201,169,110,0.12); clip-path:polygon(15% 0,100% 0,100% 100%,0% 100%); }
-.hero-content { position:relative; z-index:2; padding:0 80px 80px; width:100%; display:grid; grid-template-columns:1fr auto; align-items:flex-end; gap:60px; animation:fadeUp 1s ease forwards; }
+.hero-content { position:relative; z-index:4; padding:0 80px 80px; width:100%; display:grid; grid-template-columns:1fr auto; align-items:flex-end; gap:60px; animation:fadeUp 1s ease forwards; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
 .hero-eyebrow { display:flex; align-items:center; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
 .hero-tag { font-size:10px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(201,169,110,0.4); padding:5px 16px; font-family:'Inter',sans-serif; }
@@ -151,6 +153,15 @@ section { padding:110px 80px; }
 
 /* APARTMENTS */
 .apartments { background:var(--warm-white); }
+.apts-price-range {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
 .apts-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:52px; flex-wrap:wrap; gap:24px; }
 .filter-tabs { display:flex; gap:3px; }
 .filter-tab { background:none; border:1px solid var(--border); padding:9px 22px; font-family:'Inter',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; color:var(--text-muted); transition:all 0.2s; }
@@ -202,7 +213,30 @@ section { padding:110px 80px; }
 .apt-area { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:300; color:var(--charcoal); line-height:1; margin-bottom:4px; }
 .apt-area span { font-size:14px; color:var(--text-muted); }
 .apt-floor { font-size:11px; font-weight:400; color:var(--text-muted); margin-bottom:14px; font-family:'Inter',sans-serif; }
-.apt-price { font-family:'Playfair Display',serif; font-size:17px; font-weight:500; color:var(--navy); border-top:1px solid var(--border); padding-top:12px; margin-bottom:10px; }
+.apt-price-block {
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.apt-price-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.apt-price-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
 .apt-inquire { display:block; text-align:center; font-size:9px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--navy); text-decoration:none; padding:10px; border:1px solid var(--navy); transition:all 0.2s; font-family:'Inter',sans-serif; }
 .apt-inquire:hover { background:var(--navy); color:white; }
 
@@ -297,7 +331,16 @@ button[data-lang].active { display:inline; }
   .partner-section { grid-template-columns:1fr; padding:60px 28px; gap:40px; }
   .partner-logo-wrap { flex-direction:row; justify-content:center; }
   .apts-grid { grid-template-columns:repeat(2,1fr); }
-  .apts-header { flex-direction:column; align-items:flex-start; }
+  .apts-price-range {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+.apts-header { flex-direction:column; align-items:flex-start; }
   .inv-layout { grid-template-columns:1fr; gap:40px; }
   .inv-cards { grid-template-columns:1fr 1fr; }
   footer { padding:28px; }
@@ -359,6 +402,7 @@ button[data-lang].active { display:inline; }
         <div><div class="hstat-num">20</div><div class="hstat-label"><span data-lang="en active">Apartments</span><span data-lang="ru">Квартир</span><span data-lang="ge">ბინა</span></div></div>
         <div><div class="hstat-num">4</div><div class="hstat-label"><span data-lang="en active">Floors</span><span data-lang="ru">Этажа</span><span data-lang="ge">სართული</span></div></div>
         <div><div class="hstat-num">62–231</div><div class="hstat-label"><span data-lang="en active">sq.m range</span><span data-lang="ru">кв.м от–до</span><span data-lang="ge">კვ.მ</span></div></div>
+        <div><div class="hstat-num" style="font-size:28px;">from $215K</div><div class="hstat-label"><span data-lang="en active">Starting price</span><span data-lang="ru">Цена от</span><span data-lang="ge">საწყისი ფასი</span></div></div>
         <div><div class="hstat-num">16%</div><div class="hstat-label"><span data-lang="en active">Rental yield</span><span data-lang="ru">Доходность</span><span data-lang="ge">შემოსავლიანობა</span></div></div>
       </div>
       <a href="#apartments" class="hero-cta"><span data-lang="en active">Explore Apartments →</span><span data-lang="ru">Смотреть квартиры →</span><span data-lang="ge">ბინების ნახვა →</span></a>
@@ -419,12 +463,13 @@ button[data-lang].active { display:inline; }
     <div>
       <p class="section-label"><span data-lang="en active">The Collection</span><span data-lang="ru">Квартиры</span><span data-lang="ge">კოლექცია</span></p>
       <h2 class="section-title"><span data-lang="en active">20 <em>unique</em> apartments</span><span data-lang="ru">20 <em>уникальных</em> квартир</span><span data-lang="ge">20 <em>უნიკალური</em> ბინა</span></h2>
+      <p class="apts-price-range"><span data-lang="en active">From $215,000 · 1, 2 &amp; 3-bedroom configurations</span><span data-lang="ru">От $215 000 · 1, 2 и 3-комнатные</span><span data-lang="ge">$215,000-დან · 1, 2 და 3 საძინებლიანი</span></p>
     </div>
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="filterApts('all',this)"><span data-lang="en active">All</span><span data-lang="ru">Все</span><span data-lang="ge">ყველა</span></button>
-      <button class="filter-tab" onclick="filterApts('1',this)">1 BR</button>
-      <button class="filter-tab" onclick="filterApts('2',this)">2 BR</button>
-      <button class="filter-tab" onclick="filterApts('3',this)">3 BR</button>
+      <button class="filter-tab" onclick="filterApts('1',this)"><span data-lang="en active">1 BR</span><span data-lang="ru">1 комн.</span><span data-lang="ge">1 საძ.</span></button>
+      <button class="filter-tab" onclick="filterApts('2',this)"><span data-lang="en active">2 BR</span><span data-lang="ru">2 комн.</span><span data-lang="ge">2 საძ.</span></button>
+      <button class="filter-tab" onclick="filterApts('3',this)"><span data-lang="en active">3 BR</span><span data-lang="ru">3 комн.</span><span data-lang="ge">3 საძ.</span></button>
     </div>
   </div>
   <div class="apts-grid" id="aptGrid"></div>
@@ -546,31 +591,31 @@ const planImages = {
 };
 
 const apts = [
-  {num:1,br:1,floor:-1,area:81.90,badge:'invest'},
-  {num:2,br:2,floor:-1,area:66.65,badge:''},
-  {num:3,br:1,floor:1,area:93.60,badge:'invest'},
-  {num:4,br:1,floor:1,area:84.30,badge:'invest'},
-  {num:5,br:1,floor:1,area:231.20,badge:'premium'},
-  {num:6,br:1,floor:2,area:93.35,badge:'invest'},
-  {num:7,br:2,floor:2,area:78.85,badge:''},
-  {num:8,br:2,floor:2,area:118.65,badge:''},
-  {num:9,br:1,floor:2,area:95.70,badge:'invest'},
-  {num:10,br:1,floor:2,area:70.45,badge:'invest'},
-  {num:11,br:1,floor:2,area:79.90,badge:'invest'},
-  {num:12,br:3,floor:2,area:141.80,badge:''},
-  {num:13,br:1,floor:3,area:84.70,badge:'invest'},
-  {num:14,br:2,floor:3,area:70.45,badge:''},
-  {num:15,br:3,floor:3,area:118.50,badge:''},
-  {num:16,br:1,floor:3,area:95.35,badge:'invest'},
-  {num:17,br:1,floor:3,area:62.65,badge:'invest'},
-  {num:18,br:2,floor:3,area:72.30,badge:''},
-  {num:19,br:3,floor:3,area:141.70,badge:''},
-  {num:20,br:2,floor:4,area:183.90,badge:'penthouse'},
+  {num:1,br:1,floor:-1,area:81.90,badge:'invest',price:260000},
+  {num:2,br:2,floor:-1,area:66.65,badge:'',price:215000},
+  {num:3,br:1,floor:1,area:93.60,badge:'invest',price:305000},
+  {num:4,br:1,floor:1,area:84.30,badge:'invest',price:280000},
+  {num:5,br:1,floor:1,area:231.20,badge:'premium',price:560000},
+  {num:6,br:1,floor:2,area:93.35,badge:'invest',price:320000},
+  {num:7,br:2,floor:2,area:78.85,badge:'',price:275000},
+  {num:8,br:2,floor:2,area:118.65,badge:'',price:400000},
+  {num:9,br:1,floor:2,area:95.70,badge:'invest',price:320000},
+  {num:10,br:1,floor:2,area:70.45,badge:'invest',price:225000},
+  {num:11,br:1,floor:2,area:79.90,badge:'invest',price:255000},
+  {num:12,br:3,floor:2,area:141.80,badge:'',price:440000},
+  {num:13,br:1,floor:3,area:84.70,badge:'invest',price:315000},
+  {num:14,br:2,floor:3,area:70.45,badge:'',price:262000},
+  {num:15,br:3,floor:3,area:118.50,badge:'',price:435000},
+  {num:16,br:1,floor:3,area:95.35,badge:'invest',price:350000},
+  {num:17,br:1,floor:3,area:62.65,badge:'invest',price:220000},
+  {num:18,br:2,floor:3,area:72.30,badge:'',price:255000},
+  {num:19,br:3,floor:3,area:141.70,badge:'',price:480000},
+  {num:20,br:2,floor:4,area:183.90,badge:'penthouse',price:560000},
 ];
 
 const brLabel={en:{1:'1 Bedroom',2:'2 Bedrooms',3:'3 Bedrooms'},ru:{1:'1 спальня',2:'2 спальни',3:'3 спальни'},ge:{1:'1 საძინებელი',2:'2 საძინებელი',3:'3 საძინებელი'}};
 const flLabel={en:f=>f===-1?'Ground Floor (–1)':`Floor ${f}`,ru:f=>f===-1?'Цокольный этаж':` Этаж ${f}`,ge:f=>f===-1?'მიწისქვეშა სართული':`${f} სართული`};
-const prLabel={en:'Price on request',ru:'Цена по запросу',ge:'ფასი მოთხოვნით'};
+const prLabel={en:'Starting price',ru:'Стоимость',ge:'ღირებულება'};
 const badgeLabel={invest:{en:'Investment',ru:'Инвест.',ge:'ინვესტ.'},penthouse:{en:'Penthouse',ru:'Пентхаус',ge:'პენტჰაუსი'},premium:{en:'Premium',ru:'Премიუმ',ge:'პრემიუმი'}};
 const inqLabel={en:'Inquire →',ru:'Запросить →',ge:'მოთხოვნა →'};
 const zoomLabel={en:'View floor plan',ru:'Смотреть план',ge:'გეგმის ნახვა'};
@@ -593,7 +638,10 @@ function renderApts(){
         <div class="apt-type">${brLabel[lang][a.br]}</div>
         <div class="apt-area">${a.area}<span> m²</span></div>
         <div class="apt-floor">${flLabel[lang](a.floor)}</div>
-        <div class="apt-price">${prLabel[lang]}</div>
+        <div class="apt-price-block">
+          <div class="apt-price-label">${prLabel[lang]}</div>
+          <div class="apt-price-value">$${a.price.toLocaleString()}</div>
+        </div>
         <a href="#contact" class="apt-inquire">${inqLabel[lang]}</a>
       </div>
     </div>`;
@@ -657,7 +705,11 @@ function submitForm(){
   window.open(`https://wa.me/995599206716?text=${text}`,'_blank');
 }
 
-setLang('en');
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', function(){
+    setLang('en');
+    renderApts();
+  });
 </script>
 </body>
 </html>
