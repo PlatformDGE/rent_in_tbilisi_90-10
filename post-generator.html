@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Generator · rent_in_tbilisi</title>
+<style>
+:root {
+  --bg: #0f1923;
+  --card: #1a2535;
+  --card2: #212f42;
+  --accent: #e8c94a;
+  --red: #d42b2b;
+  --green: #2ecc71;
+  --text: #e8edf5;
+  --dim: #7a90a8;
+  --line: #2a3d54;
+  --radius: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Helvetica Neue',Arial,sans-serif; min-height:100vh; }
+
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.logo {
+  width: 34px; height: 34px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #111;
+  flex-shrink: 0;
+}
+header h1 { font-size: 15px; font-weight: 700; }
+header span { font-size: 11px; color: var(--dim); }
+.header-right { margin-left: auto; }
+.reset-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--dim);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+.layout { display: flex; min-height: calc(100vh - 55px); }
+
+.form-col {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  max-width: 600px;
+  border-right: 1px solid var(--line);
+}
+
+.preview-col {
+  width: 340px;
+  padding: 16px;
+  position: sticky;
+  top: 55px;
+  height: calc(100vh - 55px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .form-col { max-width: 100%; border-right: none; border-bottom: 1px solid var(--line); }
+  .preview-col { width: 100%; position: relative; top: 0; height: auto; }
+}
+
+.section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.section-head {
+  padding: 10px 14px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--card2);
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+}
+.section-body { padding: 12px 14px; }
+
+.deal-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.deal-btn {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--dim);
+  padding: 10px 6px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.deal-btn.active { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 700; }
+
+.tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tag {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  cursor: pointer;
+  color: var(--dim);
+  transition: all 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+.tag:hover { border-color: var(--accent); color: var(--text); }
+.tag.selected { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
+.tag.selected-red { background: var(--red); color: #fff; border-color: var(--red); font-weight: 600; }
+.tag.auto-selected { background: #1a4a2e; color: var(--green); border-color: var(--green); font-size: 10px; }
+
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block;
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+.field input, .field textarea {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px 11px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field input.auto-price { border-color: var(--green); background: #1a2e1f; }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+.excl-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.excl-toggle input { display:none; }
+.toggle-track {
+  width: 42px; height: 22px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 14px; height: 14px;
+  background: var(--dim);
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.excl-toggle input:checked + .toggle-track { background: var(--red); border-color: var(--red); }
+.excl-toggle input:checked + .toggle-track::after { left: 21px; background: #fff; }
+.excl-label { font-size: 13px; }
+
+.hint { font-size: 10px; color: var(--dim); margin-top: 4px; font-style: italic; }
+
+/* PREVIEW */
+.preview-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.post-preview {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 12.5px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+  min-height: 220px;
+  font-family: 'Courier New', monospace;
+  flex: 1;
+}
+.char-count {
+  text-align: right;
+  font-size: 10px;
+  color: var(--dim);
+}
+.copy-btn {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  letter-spacing: 0.03em;
+}
+.copy-btn:hover { background: #27ae60; }
+.copy-btn.copied { background: var(--accent); color: #111; }
+
+.section-divider {
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 10px 0 6px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">R</div>
+  <div>
+    <h1>Post Generator</h1>
+    <span>rent_in_tbilisi</span>
+  </div>
+  <div class="header-right">
+    <button class="reset-btn" onclick="resetAll()">↺ Сбросить</button>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- ═══ FORM ═══ -->
+<div class="form-col">
+
+  <!-- Deal Type -->
+  <div class="section">
+    <div class="section-head">Тип сделки</div>
+    <div class="section-body">
+      <div class="deal-toggle" style="grid-template-columns:1fr 1fr;">
+        <button class="deal-btn active" data-deal="Rent" onclick="setDeal(this)">🏠 Rent</button>
+        <button class="deal-btn" data-deal="Sale" onclick="setDeal(this)">💼 Sale</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">⭐️ Описание / Exclusive</div>
+    <div class="section-body">
+      <div class="field" style="margin-bottom:10px;">
+        <label class="excl-toggle" style="margin-bottom:0;">
+          <input type="checkbox" id="exclusiveToggle" onchange="update()">
+          <div class="toggle-track"></div>
+          <span class="excl-label">❗️ Exclusive listing</span>
+        </label>
+      </div>
+      <div class="field">
+        <label>Описание (необязательно)</label>
+        <input type="text" id="headlineInput" placeholder="In the center of Tbilisi" oninput="update()">
+        <div class="hint">Появится между адресом и описанием объекта</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location -->
+  <div class="section">
+    <div class="section-head">📍 Район / Метро</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Район (один)</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="district" data-val="#Vera" onclick="pickTag(this)">#Vera</span>
+          <span class="tag" data-group="district" data-val="#Mtatsminda" onclick="pickTag(this)">#Mtatsminda</span>
+          <span class="tag" data-group="district" data-val="#Vake" onclick="pickTag(this)">#Vake</span>
+          <span class="tag" data-group="district" data-val="#Sololaki" onclick="pickTag(this)">#Sololaki</span>
+          <span class="tag" data-group="district" data-val="#Kukia" onclick="pickTag(this)">#Kukia</span>
+          <span class="tag" data-group="district" data-val="#Saburtalo" onclick="pickTag(this)">#Saburtalo</span>
+          <span class="tag" data-group="district" data-val="#Nutsubidze" onclick="pickTag(this)">#Nutsubidze</span>
+          <span class="tag" data-group="district" data-val="#Chugureti" onclick="pickTag(this)">#Chugureti</span>
+          <span class="tag" data-group="district" data-val="#Nadzaladevi" onclick="pickTag(this)">#Nadzaladevi</span>
+          <span class="tag" data-group="district" data-val="#Naxalovka" onclick="pickTag(this)">#Naxalovka</span>
+          <span class="tag" data-group="district" data-val="#SavnetisUbani" onclick="pickTag(this)">#SavnetisUbani</span>
+          <span class="tag" data-group="district" data-val="#Didube" onclick="pickTag(this)">#Didube</span>
+          <span class="tag" data-group="district" data-val="#Gldani" onclick="pickTag(this)">#Gldani</span>
+          <span class="tag" data-group="district" data-val="#Avlabari" onclick="pickTag(this)">#Avlabari</span>
+          <span class="tag" data-group="district" data-val="#Isani" onclick="pickTag(this)">#Isani</span>
+          <span class="tag" data-group="district" data-val="#Samgori" onclick="pickTag(this)">#Samgori</span>
+          <span class="tag" data-group="district" data-val="#Ortachala" onclick="pickTag(this)">#Ortachala</span>
+          <span class="tag" data-group="district" data-val="#Abanotubani" onclick="pickTag(this)">#Abanotubani</span>
+          <span class="tag" data-group="district" data-val="#Varketili" onclick="pickTag(this)">#Varketili</span>
+          <span class="tag" data-group="district" data-val="#Digomi" onclick="pickTag(this)">#Digomi</span>
+          <span class="tag" data-group="district" data-val="#DidiDigomi" onclick="pickTag(this)">#DidiDigomi</span>
+          <span class="tag" data-group="district" data-val="#DigomiMassive" onclick="pickTag(this)">#DigomiMassive</span>
+          <span class="tag" data-group="district" data-val="#Digomi1to9" onclick="pickTag(this)">#Digomi1to9</span>
+          <span class="tag" data-group="district" data-val="#VazhaPshavela" onclick="pickTag(this)">#VazhaPshavela</span>
+          <span class="tag" data-group="district" data-val="#Vashlijvari" onclick="pickTag(this)">#Vashlijvari</span>
+          <span class="tag" data-group="district" data-val="#Temqa" onclick="pickTag(this)">#Temqa</span>
+          <span class="tag" data-group="district" data-val="#Iverubani" onclick="pickTag(this)">#Iverubani</span>
+          <span class="tag" data-group="district" data-val="#Vazisubani" onclick="pickTag(this)">#Vazisubani</span>
+          <span class="tag" data-group="district" data-val="#Afrika" onclick="pickTag(this)">#Afrika</span>
+          <span class="tag" data-group="district" data-val="#Ponichala" onclick="pickTag(this)">#Ponichala</span>
+          <span class="tag" data-group="district" data-val="#QvemoPonichala" onclick="pickTag(this)">#QvemoPonichala</span>
+          <span class="tag" data-group="district" data-val="#Avchala" onclick="pickTag(this)">#Avchala</span>
+          <span class="tag" data-group="district" data-val="#Bagebi" onclick="pickTag(this)">#Bagebi</span>
+          <span class="tag" data-group="district" data-val="#Lisi" onclick="pickTag(this)">#Lisi</span>
+          <span class="tag" data-group="district" data-val="#Tskhneti" onclick="pickTag(this)">#Tskhneti</span>
+          <span class="tag" data-group="district" data-val="#Saguramo" onclick="pickTag(this)">#Saguramo</span>
+          <span class="tag" data-group="district" data-val="#Krtsanisi" onclick="pickTag(this)">#Krtsanisi</span>
+          <span class="tag" data-group="district" data-val="#OutOfTown" onclick="pickTag(this)">#OutOfTown</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Метро (опционально)</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="metro" data-val="#LibertySquare" onclick="pickTag(this)">#LibertySquare</span>
+          <span class="tag" data-group="metro" data-val="#Rustaveli" onclick="pickTag(this)">#Rustaveli</span>
+          <span class="tag" data-group="metro" data-val="#Marjanishvili" onclick="pickTag(this)">#Marjanishvili</span>
+          <span class="tag" data-group="metro" data-val="#StationSquare" onclick="pickTag(this)">#StationSquare</span>
+          <span class="tag" data-group="metro" data-val="#Tsereteli" onclick="pickTag(this)">#Tsereteli</span>
+          <span class="tag" data-group="metro" data-val="#Gotsiridze" onclick="pickTag(this)">#Gotsiridze</span>
+          <span class="tag" data-group="metro" data-val="#Nadzaladevi" onclick="pickTag(this)">#Nadzaladevi</span>
+          <span class="tag" data-group="metro" data-val="#Didube" onclick="pickTag(this)">#Didube</span>
+          <span class="tag" data-group="metro" data-val="#Grmagele" onclick="pickTag(this)">#Grmagele</span>
+          <span class="tag" data-group="metro" data-val="#Guramishvili" onclick="pickTag(this)">#Guramishvili</span>
+          <span class="tag" data-group="metro" data-val="#Sarajishvili" onclick="pickTag(this)">#Sarajishvili</span>
+          <span class="tag" data-group="metro" data-val="#AhmeteliTheatre" onclick="pickTag(this)">#AhmeteliTheatre</span>
+          <span class="tag" data-group="metro" data-val="#STUniversity" onclick="pickTag(this)">#STUniversity</span>
+          <span class="tag" data-group="metro" data-val="#VazhaPshavela" onclick="pickTag(this)">#VazhaPshavela</span>
+          <span class="tag" data-group="metro" data-val="#Delisi" onclick="pickTag(this)">#Delisi</span>
+          <span class="tag" data-group="metro" data-val="#TCUniversity" onclick="pickTag(this)">#TCUniversity</span>
+          <span class="tag" data-group="metro" data-val="#MCUniversity" onclick="pickTag(this)">#MCUniversity</span>
+          <span class="tag" data-group="metro" data-val="#AvlabariMetro" onclick="pickTag(this)">#AvlabariMetro</span>
+          <span class="tag" data-group="metro" data-val="#IsaniMetro" onclick="pickTag(this)">#IsaniMetro</span>
+          <span class="tag" data-group="metro" data-val="#300Aragveli" onclick="pickTag(this)">#300Aragveli</span>
+          <span class="tag" data-group="metro" data-val="#SamgoriMetro" onclick="pickTag(this)">#SamgoriMetro</span>
+          <span class="tag" data-group="metro" data-val="#Varketili" onclick="pickTag(this)">#Varketili</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Адрес</label>
+        <input type="text" id="addressInput" placeholder="7 Leo Kiacheli Street" oninput="update()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Property -->
+  <div class="section">
+    <div class="section-head">🏢 Объект</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Тип</label>
+        <div class="tag-grid">
+          <span class="tag selected" data-group="proptype" data-val="#Apartment" onclick="pickTag(this)">#Apartment</span>
+          <span class="tag" data-group="proptype" data-val="#House" onclick="pickTag(this)">#House</span>
+          <span class="tag" data-group="proptype" data-val="#Commercial" onclick="pickTag(this)">#Commercial</span>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Спальни</label>
+          <div class="tag-grid">
+            <span class="tag" data-group="beds" data-val="#1Bed" onclick="pickTag(this)">#1Bed</span>
+            <span class="tag" data-group="beds" data-val="#2Bed" onclick="pickTag(this)">#2Bed</span>
+            <span class="tag" data-group="beds" data-val="#3Bed" onclick="pickTag(this)">#3Bed</span>
+            <span class="tag" data-group="beds" data-val="#4Bed" onclick="pickTag(this)">#4Bed</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Здание</label>
+          <div class="tag-grid">
+            <span class="tag" data-group="building" data-val="#NewBuilding" onclick="pickTag(this)">#NewBuilding</span>
+            <span class="tag" data-group="building" data-val="#OldBuilding" onclick="pickTag(this)">#OldBuilding</span>
+            <span class="tag" data-group="building" data-val="#HistoricalBuilding" onclick="pickTag(this)">#HistoricalBuilding</span>
+            <span class="tag" data-group="building" data-val="#Reconstruction" onclick="pickTag(this)">#Reconstruction</span>
+          </div>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Площадь (м²)</label>
+          <input type="number" id="sqmInput" placeholder="85" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Этаж</label>
+          <input type="text" id="floorInput" placeholder="3/3" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Жильцы</label>
+          <input type="text" id="tenantsInput" placeholder="1-5" oninput="update()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Дизайн</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="design" data-val="#New" onclick="pickTag(this)">#New</span>
+          <span class="tag" data-group="design" data-val="#White" onclick="pickTag(this)">#White</span>
+          <span class="tag" data-group="design" data-val="#Grey" onclick="pickTag(this)">#Grey</span>
+          <span class="tag" data-group="design" data-val="#Yellow" onclick="pickTag(this)">#Yellow</span>
+          <span class="tag" data-group="design" data-val="#Mixed" onclick="pickTag(this)">#Mixed</span>
+          <span class="tag" data-group="design" data-val="#Old" onclick="pickTag(this)">#Old</span>
+          <span class="tag" data-group="design" data-val="#Retro" onclick="pickTag(this)">#Retro</span>
+          <span class="tag" data-group="design" data-val="#UnderRepair" onclick="pickTag(this)">#UnderRepair</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Amenities -->
+  <div class="section">
+    <div class="section-head">✅ Удобства</div>
+    <div class="section-body">
+
+      <div class="field">
+        <label>Ванные комнаты</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="bathrooms" data-val="#2Bathroom" onclick="pickTag(this)">#2Bathroom</span>
+          <span class="tag" data-group="bathrooms" data-val="#3Bathroom" onclick="pickTag(this)">#3Bathroom</span>
+          <span class="tag" data-group="bathrooms" data-val="#4Bathroom" onclick="pickTag(this)">#4Bathroom</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Отопление</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="heating" data-val="#CentralHeating" onclick="pickTag(this)">#CentralHeating</span>
+          <span class="tag" data-group="heating" data-val="#GasHeating" onclick="pickTag(this)">#GasHeating</span>
+          <span class="tag" data-group="heating" data-val="#ElectricalHeating" onclick="pickTag(this)">#ElectricalHeating</span>
+          <span class="tag" data-group="heating" data-val="#ACHeating" onclick="pickTag(this)">#ACHeating</span>
+          <span class="tag" data-group="heating" data-val="#Fireplace" onclick="pickTag(this)">#Fireplace</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Удобства — ✅/✖️ в посте</label>
+        <div class="tag-grid">
+          <span class="tag" data-multi="amenity" data-val="#Elevator" onclick="toggleTag(this)">#Elevator ✅✖️</span>
+          <span class="tag" data-multi="amenity" data-val="#Oven" onclick="toggleTag(this)">#Oven ✅✖️</span>
+          <span class="tag" data-multi="amenity" data-val="#ParkingPlace" onclick="toggleTag(this)">#ParkingPlace ✅✖️</span>
+          <span class="tag" data-multi="amenity" data-val="#Conditioner" onclick="toggleTag(this)">#Conditioner ✅✖️</span>
+        </div>
+        <div class="hint">Эти 4 всегда в посте — с ✅ или ✖️</div>
+      </div>
+
+      <div class="field">
+        <label>Остальные удобства (только ✅ если есть)</label>
+        <div class="tag-grid">
+          <span class="tag" data-multi="amenity" data-val="#Balcony" onclick="toggleTag(this)">#Balcony</span>
+          <span class="tag" data-multi="amenity" data-val="#Terrace" onclick="toggleTag(this)">#Terrace</span>
+          <span class="tag" data-multi="amenity" data-val="#Courtyard" onclick="toggleTag(this)">#Courtyard</span>
+          <span class="tag" data-multi="amenity" data-val="#WiFi" onclick="toggleTag(this)">#WiFi</span>
+          <span class="tag" data-multi="amenity" data-val="#TV" onclick="toggleTag(this)">#TV</span>
+          <span class="tag" data-multi="amenity" data-val="#Bath" onclick="toggleTag(this)">#Bath</span>
+          <span class="tag" data-multi="amenity" data-val="#Shower" onclick="toggleTag(this)">#Shower</span>
+          <span class="tag" data-multi="amenity" data-val="#Dishwasher" onclick="toggleTag(this)">#Dishwasher</span>
+          <span class="tag" data-multi="amenity" data-val="#Stove" onclick="toggleTag(this)">#Stove</span>
+          <span class="tag" data-multi="amenity" data-val="#Microwave" onclick="toggleTag(this)">#Microwave</span>
+          <span class="tag" data-multi="amenity" data-val="#VacuumCleaner" onclick="toggleTag(this)">#VacuumCleaner</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Питомцы</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="pets" data-val="#Allowed" onclick="pickTag(this)">#Allowed</span>
+          <span class="tag selected-red" data-group="pets" data-val="#NotAllowed" onclick="pickTag(this)">#NotAllowed</span>
+          <span class="tag" data-group="pets" data-val="#ByAgreement" onclick="pickTag(this)">#ByAgreement</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Price & Period -->
+  <div class="section">
+    <div class="section-head">💰 Цена / Срок</div>
+    <div class="section-body">
+      <div class="row2">
+        <div class="field">
+          <label>Цена ($)</label>
+          <input type="number" id="priceInput" placeholder="800" oninput="onPriceInput()">
+          <div class="hint" id="priceHint"></div>
+        </div>
+        <div class="field">
+          <label>Депозит ($) <span id="depositSyncLabel" style="color:var(--dim);font-style:italic;font-size:10px;">= цене</span></label>
+          <input type="number" id="depositInput" placeholder="800" oninput="onDepositInput()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Диапазон цены <span id="autoLabel" style="color:var(--green);font-style:italic;"></span></label>
+        <div class="tag-grid">
+          <span class="tag" data-group="pricerange" data-val="#Price0to300" onclick="pickTag(this)">#Price0to300</span>
+          <span class="tag" data-group="pricerange" data-val="#Price300to500" onclick="pickTag(this)">#Price300to500</span>
+          <span class="tag" data-group="pricerange" data-val="#Price500to700" onclick="pickTag(this)">#Price500to700</span>
+          <span class="tag" data-group="pricerange" data-val="#Price700to900" onclick="pickTag(this)">#Price700to900</span>
+          <span class="tag" data-group="pricerange" data-val="#Price900to1200" onclick="pickTag(this)">#Price900to1200</span>
+          <span class="tag" data-group="pricerange" data-val="#Price1200plus" onclick="pickTag(this)">#Price1200plus</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Срок аренды</label>
+        <div class="tag-grid">
+          <span class="tag" data-multi="period" data-val="#1Day" onclick="toggleTag(this)">#1Day</span>
+          <span class="tag" data-multi="period" data-val="#1Month" onclick="toggleTag(this)">#1Month</span>
+          <span class="tag" data-multi="period" data-val="#2Month" onclick="toggleTag(this)">#2Month</span>
+          <span class="tag" data-multi="period" data-val="#3Month" onclick="toggleTag(this)">#3Month</span>
+          <span class="tag" data-multi="period" data-val="#4Month" onclick="toggleTag(this)">#4Month</span>
+          <span class="tag" data-multi="period" data-val="#5Month" onclick="toggleTag(this)">#5Month</span>
+          <span class="tag" data-multi="period" data-val="#6Month" onclick="toggleTag(this)">#6Month</span>
+          <span class="tag" data-multi="period" data-val="#12Month" onclick="toggleTag(this)">#12Month</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent -->
+  <div class="section">
+    <div class="section-head">📲 Агент / Рекрут</div>
+    <div class="section-body">
+      <div style="background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:12px;color:var(--dim);margin-bottom:10px;line-height:1.6;">
+        @David_Tibelashvili | +995 599 20 67 16<br>
+        <span style="font-size:10px;">↓ выбери хештег агента или рекрута</span>
+      </div>
+      <div class="field">
+        <label>Агенты <span id="agentsLoadStatus" style="color:var(--dim);font-style:italic;"></span></label>
+        <div class="tag-grid" id="agentTags">
+          <span style="font-size:11px;color:var(--dim);">Загрузка...</span>
+        </div>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Рекруты <span id="recruitsLoadStatus" style="color:var(--dim);font-style:italic;"></span></label>
+        <div class="tag-grid" id="recruitTags">
+          <span style="font-size:11px;color:var(--dim);">Загрузка...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ PREVIEW ═══ -->
+<div class="preview-col">
+  <div class="preview-label">📋 Готовый пост</div>
+  <div class="post-preview" id="postPreview">← Заполните форму слева</div>
+  <div class="char-count" id="charCount"></div>
+  <button class="copy-btn" id="copyBtn" onclick="copyPost()">📋 Скопировать пост</button>
+</div>
+
+</div>
+
+<script>
+const SHEET_ID = '1M7kg2FgI8eke8_Iy4NofsKzC3NrKetLl3dniKJRxYrU';
+const GID_AGENTS   = '623976749';
+const GID_RECRUITS = '1404574561';
+
+let selectedAgent = '';
+
+async function loadSheetNames(gid, containerId, statusId) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    // Strip Google's callback wrapper
+    const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+    const rows = json.table.rows;
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    // Find column with hashtag names (look for cells starting with #)
+    rows.forEach(row => {
+      if (!row.c) return;
+      row.c.forEach(cell => {
+        if (cell && cell.v) {
+          const val = String(cell.v).trim();
+          if (val.startsWith('#')) {
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.dataset.group = 'agent';
+            tag.dataset.val = val;
+            tag.textContent = val;
+            tag.onclick = function() { pickTag(this); };
+            container.appendChild(tag);
+          }
+        }
+      });
+    });
+
+    if (container.children.length === 0) {
+      container.innerHTML = '<span style="font-size:11px;color:var(--dim);">Нет данных</span>';
+      document.getElementById(statusId).textContent = '(пусто)';
+    } else {
+      document.getElementById(statusId).textContent = '';
+    }
+  } catch(e) {
+    document.getElementById(containerId).innerHTML = '<span style="font-size:11px;color:var(--red);">Ошибка загрузки</span>';
+    document.getElementById(statusId).textContent = '(нет доступа)';
+  }
+}
+
+let deal = 'Rent';
+let depositManuallyChanged = false;
+
+function setDeal(btn) {
+  deal = btn.dataset.deal;
+  document.querySelectorAll('.deal-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  update();
+}
+
+function pickTag(el) {
+  const group = el.dataset.group;
+  const wasSelected = el.classList.contains('selected') || el.classList.contains('selected-red');
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(t => {
+    t.classList.remove('selected', 'selected-red');
+  });
+  if (!wasSelected) {
+    el.classList.add('selected');
+  }
+  update();
+}
+
+function toggleTag(el) {
+  el.classList.toggle('selected');
+  update();
+}
+
+function getGroup(group) {
+  const el = document.querySelector(`[data-group="${group}"].selected`);
+  return el ? el.dataset.val : null;
+}
+
+function getMulti(name) {
+  return [...document.querySelectorAll(`[data-multi="${name}"].selected`)].map(el => el.dataset.val);
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function getPriceRange(p) {
+  if (p <= 0) return null;
+  if (p <= 300) return '#Price0to300';
+  if (p <= 500) return '#Price300to500';
+  if (p <= 700) return '#Price500to700';
+  if (p <= 900) return '#Price700to900';
+  if (p <= 1200) return '#Price900to1200';
+  return '#Price1200plus';
+}
+
+function onPriceInput() {
+  const p = parseInt(val('priceInput'));
+  if (!isNaN(p) && p > 0) {
+    // Auto-fill deposit if not manually changed
+    if (!depositManuallyChanged) {
+      document.getElementById('depositInput').value = p;
+      document.getElementById('depositSyncLabel').textContent = '= цене';
+    }
+    // Auto-select range
+    const range = getPriceRange(p);
+    document.querySelectorAll('[data-group="pricerange"]').forEach(t => t.classList.remove('selected'));
+    if (range) {
+      const rangeEl = document.querySelector(`[data-group="pricerange"][data-val="${range}"]`);
+      if (rangeEl) rangeEl.classList.add('selected');
+      document.getElementById('autoLabel').textContent = '(авто)';
+    }
+  } else {
+    document.getElementById('autoLabel').textContent = '';
+    if (!depositManuallyChanged) {
+      document.getElementById('depositInput').value = '';
+    }
+  }
+  update();
+}
+
+function onDepositInput() {
+  const price = val('priceInput');
+  const deposit = val('depositInput');
+  if (deposit !== price) {
+    depositManuallyChanged = true;
+    document.getElementById('depositSyncLabel').textContent = '(изменён)';
+  } else {
+    depositManuallyChanged = false;
+    document.getElementById('depositSyncLabel').textContent = '= цене';
+  }
+  update();
+}
+
+function buildPost() {
+  const isExclusive = document.getElementById('exclusiveToggle').checked;
+  const district  = getGroup('district');
+  const metro     = getGroup('metro');
+  const propType  = getGroup('proptype') || '#Apartment';
+  const beds      = getGroup('beds');
+  const building  = getGroup('building');
+  const design    = getGroup('design');
+  const heating   = getGroup('heating');
+  const bathrooms = getGroup('bathrooms');
+  const parking   = getGroup('parking');
+  const pets      = getGroup('pets');
+  const priceRange = getGroup('pricerange');
+  const amenities = getMulti('amenity');
+  const periods   = getMulti('period');
+
+  const price    = val('priceInput');
+  const deposit  = val('depositInput');
+  const sqm      = val('sqmInput');
+  const floor    = val('floorInput');
+  const address  = val('addressInput');
+  const tenants  = val('tenantsInput');
+  const headline = val('headlineInput');
+
+  // Fixed agent
+  const agentTg    = 'David_Tibelashvili';
+  const agentPhone = '+995 599 20 67 16';
+  const agentName  = 'David';
+
+  let lines = [];
+
+  // District + Metro
+  let loc = [district, metro ? '🚇 ' + metro : null].filter(Boolean).join(' ');
+  if (loc) lines.push(loc);
+
+  // Address
+  if (address) lines.push(`📍${address}`);
+
+  // Description / слоган
+  if (headline) {
+    lines.push('');
+    lines.push(`⭐️ ${headline} ⭐️`);
+  }
+
+  lines.push('');
+
+  // Exclusive
+  if (isExclusive) lines.push('❗️#Exclusive\n');
+
+  // Property type + beds + deal
+  let propLine = `🏢 `;
+  if (beds) propLine += beds + ' ';
+  propLine += propType + ` for #${deal}`;
+  lines.push(propLine);
+
+  // Building + Design
+  let styleLine = '✨';
+  if (building) styleLine += ' ' + building;
+  if (design)   styleLine += ' | ' + design;
+  if (styleLine !== '✨') lines.push(styleLine);
+
+  // Specs line
+  let specParts = [];
+  if (sqm)       specParts.push(sqm + ' sq.m');
+  if (floor)     specParts.push(floor + ' Floor');
+  if (heating)   specParts.push(heating);
+  if (bathrooms) specParts.push(bathrooms);
+  if (specParts.length) lines.push('🏠 ' + specParts.join(' | '));
+
+  lines.push('');
+
+  // Amenities
+  const FIXED = ['#Elevator','#Oven','#ParkingPlace','#Conditioner'];
+  const regularAmenities = amenities.filter(a => !FIXED.includes(a));
+  const fixedHas  = FIXED.filter(a => amenities.includes(a));
+  const fixedNone = FIXED.filter(a => !amenities.includes(a));
+
+  // ✅ все вместе (обычные + фиксированные что есть), по 3 в строку
+  const allChecked = [...regularAmenities, ...fixedHas];
+  if (allChecked.length > 0) {
+    for (let i = 0; i < allChecked.length; i += 3) {
+      lines.push(allChecked.slice(i, i + 3).map(a => '✅ ' + a).join(' '));
+    }
+  }
+
+  // ✖️ только в форме — в пост не идут
+
+  lines.push('');
+
+  if (tenants) lines.push(`👬Tenants: ${tenants}`);
+  if (pets)    lines.push(`🐕Pets: ${pets}`);
+  if (periods.length > 0) lines.push(`🕐 ${periods.join(' ')}`);
+
+  lines.push('');
+
+  // Price
+  let priceLine = '💰';
+  if (price)   priceLine += ` ${price}$`;
+  if (deposit) priceLine += ` + Deposit ${deposit}$`;
+  if (priceLine !== '💰') lines.push(priceLine);
+  lines.push('0% Commission');
+  if (priceRange) lines.push(priceRange);
+
+  lines.push('');
+
+  // Agent (fixed contact, dynamic hashtag)
+  const agentTag = getGroup('agent');
+  lines.push(`📲 @David_Tibelashvili | \n+995 599 20 67 16 ${agentTag || '#???'}`);
+  lines.push('🌟 Check all listings | Reviews');
+  lines.push('');
+  lines.push('📍APARTMENTS ON MAP📍');
+  lines.push('');
+  lines.push('📱 Instagram 📱 FB 📱 YouTube');
+
+  return lines.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
+function update() {
+  const post = buildPost();
+  document.getElementById('postPreview').textContent = post;
+  document.getElementById('charCount').textContent = post.length + ' символов';
+  const btn = document.getElementById('copyBtn');
+  btn.classList.remove('copied');
+  btn.textContent = '📋 Скопировать пост';
+}
+
+function copyPost() {
+  const text = document.getElementById('postPreview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Скопировано!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Скопировать пост';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function resetAll() {
+  deal = 'Rent';
+  depositManuallyChanged = false;
+  document.querySelectorAll('.deal-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-deal="Rent"]').classList.add('active');
+
+  document.querySelectorAll('.tag').forEach(t => {
+    t.classList.remove('selected', 'selected-red');
+  });
+  document.querySelector('[data-group="proptype"][data-val="#Apartment"]').classList.add('selected');
+
+  ['priceInput','depositInput','sqmInput','floorInput','addressInput',
+   'tenantsInput','headlineInput'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  document.getElementById('exclusiveToggle').checked = false;
+  document.getElementById('autoLabel').textContent = '';
+  document.getElementById('depositSyncLabel').textContent = '= цене';
+
+  update();
+}
+
+update();
+
+// Load agents & recruits from Google Sheets on startup
+loadSheetNames(GID_AGENTS,   'agentTags',   'agentsLoadStatus');
+loadSheetNames(GID_RECRUITS, 'recruitTags', 'recruitsLoadStatus');
+</script>
+</body>
+</html>
