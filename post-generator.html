@@ -2,14 +2,14 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Post Generator · rent_in_tbilisi</title>
 <style>
 :root {
   --bg: #0f1923;
   --card: #1a2535;
   --card2: #212f42;
-  --accent: #e8c94a;
+  --accent: #ffffff;
   --red: #d42b2b;
   --green: #2ecc71;
   --text: #e8edf5;
@@ -17,29 +17,23 @@
   --line: #2a3d54;
   --radius: 8px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'Helvetica Neue',Arial,sans-serif; min-height:100vh; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { background:var(--bg); color:var(--text); font-family:'Helvetica Neue',Arial,sans-serif; }
 
 header {
   background: var(--card);
   border-bottom: 1px solid var(--line);
-  padding: 14px 20px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  gap: 10px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 52px;
 }
-.logo {
-  width: 34px; height: 34px;
-  background: var(--accent);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 800; color: #111;
-  flex-shrink: 0;
-}
-header h1 { font-size: 15px; font-weight: 700; }
+header h1 { font-size: 14px; font-weight: 700; }
 header span { font-size: 11px; color: var(--dim); }
 .header-right { margin-left: auto; }
 .reset-btn {
@@ -47,169 +41,37 @@ header span { font-size: 11px; color: var(--dim); }
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--dim);
-  padding: 6px 12px;
+  padding: 5px 10px;
   font-size: 12px;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.15s;
 }
-.reset-btn:hover { border-color: var(--red); color: var(--red); }
+.reset-btn:active { border-color: var(--red); color: var(--red); }
 
-.layout { display: flex; min-height: calc(100vh - 55px); }
-
+.layout {
+  display: flex;
+  position: fixed;
+  top: 52px; left: 0; right: 0; bottom: 0;
+}
 .form-col {
   flex: 1;
-  padding: 16px;
   overflow-y: auto;
-  max-width: 600px;
+  overflow-x: hidden;
+  padding: 14px;
+  -webkit-overflow-scrolling: touch;
   border-right: 1px solid var(--line);
 }
-
 .preview-col {
-  width: 340px;
-  padding: 16px;
-  position: sticky;
-  top: 55px;
-  height: calc(100vh - 55px);
-  overflow-y: auto;
+  width: 320px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-@media (max-width: 900px) {
-  .layout { flex-direction: column; }
-  .form-col { max-width: 100%; border-right: none; border-bottom: 1px solid var(--line); }
-  .preview-col { width: 100%; position: relative; top: 0; height: auto; }
-}
-
-.section {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  margin-bottom: 12px;
   overflow: hidden;
-}
-.section-head {
-  padding: 10px 14px;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--card2);
-  border-bottom: 1px solid var(--line);
-  font-weight: 700;
-}
-.section-body { padding: 12px 14px; }
-
-.deal-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-.deal-btn {
-  background: var(--card2);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  color: var(--dim);
-  padding: 10px 6px;
-  font-size: 13px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.15s;
-  font-family: inherit;
-}
-.deal-btn.active { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 700; }
-
-.tag-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-.tag {
-  background: var(--card2);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 4px 10px;
-  font-size: 11.5px;
-  cursor: pointer;
-  color: var(--dim);
-  transition: all 0.15s;
-  user-select: none;
-  white-space: nowrap;
-}
-.tag:hover { border-color: var(--accent); color: var(--text); }
-.tag.selected { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
-.tag.selected-red { background: var(--red); color: #fff; border-color: var(--red); font-weight: 600; }
-.tag.auto-selected { background: #1a4a2e; color: var(--green); border-color: var(--green); font-size: 10px; }
-
-.field { margin-bottom: 12px; }
-.field:last-child { margin-bottom: 0; }
-.field label {
-  display: block;
-  font-size: 10px;
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 5px;
-}
-.field input, .field textarea {
-  width: 100%;
-  background: var(--card2);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 9px 11px;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 14px;
-  transition: border-color 0.2s;
-  resize: vertical;
-}
-.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
-.field input.auto-price { border-color: var(--green); background: #1a2e1f; }
-
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-
-.excl-toggle {
-  display: flex;
-  align-items: center;
+  padding: 14px;
   gap: 10px;
-  cursor: pointer;
-}
-.excl-toggle input { display:none; }
-.toggle-track {
-  width: 42px; height: 22px;
-  background: var(--card2);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  position: relative;
-  transition: background 0.2s;
-  flex-shrink: 0;
-}
-.toggle-track::after {
-  content: '';
-  position: absolute;
-  top: 3px; left: 3px;
-  width: 14px; height: 14px;
-  background: var(--dim);
-  border-radius: 50%;
-  transition: all 0.2s;
-}
-.excl-toggle input:checked + .toggle-track { background: var(--red); border-color: var(--red); }
-.excl-toggle input:checked + .toggle-track::after { left: 21px; background: #fff; }
-.excl-label { font-size: 13px; }
-
-.hint { font-size: 10px; color: var(--dim); margin-top: 4px; font-style: italic; }
-
-/* PREVIEW */
-.preview-label {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--dim);
 }
 .post-preview {
+  flex: 1;
+  overflow-y: auto;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -219,45 +81,95 @@ header span { font-size: 11px; color: var(--dim); }
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--text);
-  min-height: 220px;
   font-family: 'Courier New', monospace;
-  flex: 1;
+  -webkit-overflow-scrolling: touch;
 }
-.char-count {
-  text-align: right;
-  font-size: 10px;
-  color: var(--dim);
-}
-.copy-btn {
-  width: 100%;
-  background: var(--green);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  padding: 13px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
-  letter-spacing: 0.03em;
-}
-.copy-btn:hover { background: #27ae60; }
-.copy-btn.copied { background: var(--accent); color: #111; }
 
-.section-divider {
-  font-size: 10px;
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 10px 0 6px;
+@media (max-width: 760px) {
+  .layout { flex-direction: column; bottom: 64px; }
+  .form-col { flex: 1; border-right: none; padding: 12px; }
+  .preview-col {
+    width: 100%; height: auto; max-height: 0;
+    overflow: hidden; padding: 0;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    border-top: 1px solid var(--line); gap: 0;
+  }
+  .preview-col.open { max-height: 60vh; padding: 12px; gap: 8px; }
+  .mobile-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    padding: 10px 12px;
+    gap: 8px; z-index: 100;
+    height: 64px; align-items: center;
+  }
+  .preview-toggle {
+    flex: 1;
+    background: var(--card2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 11px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+  }
+  .copy-btn { flex: 2; }
+  .preview-label, .char-count, .desktop-copy { display: none; }
 }
+@media (min-width: 761px) { .mobile-bar { display: none; } }
+
+.section { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+.section-head { padding: 9px 13px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: var(--card2); border-bottom: 1px solid var(--line); font-weight: 700; }
+.section-body { padding: 11px 13px; }
+
+/* sale-only / rent-only sections */
+.sale-only { display: none; }
+.rent-only { display: block; }
+body.mode-sale .sale-only { display: block; }
+body.mode-sale .rent-only { display: none; }
+
+.deal-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.deal-btn { background: var(--card2); border: 1px solid var(--line); border-radius: 6px; color: var(--dim); padding: 10px 6px; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.15s; font-family: inherit; touch-action: manipulation; }
+.deal-btn.active { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 700; }
+
+.tag-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { background: var(--card2); border: 1px solid var(--line); border-radius: 20px; padding: 5px 11px; font-size: 11.5px; cursor: pointer; color: var(--dim); transition: all 0.12s; user-select: none; white-space: nowrap; touch-action: manipulation; }
+.tag:active { transform: scale(0.94); }
+.tag.selected { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
+.tag.selected-red { background: var(--red); color: #fff; border-color: var(--red); font-weight: 600; }
+
+.field { margin-bottom: 11px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+.field input { width: 100%; background: var(--card2); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; color: var(--text); font-family: inherit; font-size: 14px; transition: border-color 0.2s; }
+.field input:focus { outline: none; border-color: var(--accent); }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+.excl-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; touch-action: manipulation; }
+.excl-toggle input { display:none; }
+.toggle-track { width: 42px; height: 22px; background: var(--card2); border: 1px solid var(--line); border-radius: 11px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: var(--dim); border-radius: 50%; transition: all 0.2s; }
+.excl-toggle input:checked + .toggle-track { background: var(--red); border-color: var(--red); }
+.excl-toggle input:checked + .toggle-track::after { left: 21px; background: #fff; }
+.excl-label { font-size: 13px; }
+.hint { font-size: 10px; color: var(--dim); margin-top: 4px; font-style: italic; }
+
+.preview-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); flex-shrink: 0; }
+.char-count { text-align: right; font-size: 10px; color: var(--dim); flex-shrink: 0; }
+.copy-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: var(--radius); padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; flex-shrink: 0; touch-action: manipulation; }
+.copy-btn:active { background: #27ae60; transform: scale(0.98); }
+.copy-btn.copied { background: var(--accent); color: #111; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">R</div>
   <div>
     <h1>Post Generator</h1>
     <span>rent_in_tbilisi</span>
@@ -268,21 +180,20 @@ header span { font-size: 11px; color: var(--dim); }
 </header>
 
 <div class="layout">
-
-<!-- ═══ FORM ═══ -->
 <div class="form-col">
 
   <!-- Deal Type -->
   <div class="section">
     <div class="section-head">Тип сделки</div>
     <div class="section-body">
-      <div class="deal-toggle" style="grid-template-columns:1fr 1fr;">
+      <div class="deal-toggle">
         <button class="deal-btn active" data-deal="Rent" onclick="setDeal(this)">🏠 Rent</button>
         <button class="deal-btn" data-deal="Sale" onclick="setDeal(this)">💼 Sale</button>
       </div>
     </div>
   </div>
 
+  <!-- Описание / Exclusive -->
   <div class="section">
     <div class="section-head">⭐️ Описание / Exclusive</div>
     <div class="section-body">
@@ -296,12 +207,11 @@ header span { font-size: 11px; color: var(--dim); }
       <div class="field">
         <label>Описание (необязательно)</label>
         <input type="text" id="headlineInput" placeholder="In the center of Tbilisi" oninput="update()">
-        <div class="hint">Появится между адресом и описанием объекта</div>
       </div>
     </div>
   </div>
 
-  <!-- Location -->
+  <!-- Location — shared -->
   <div class="section">
     <div class="section-head">📍 Район / Метро</div>
     <div class="section-body">
@@ -376,15 +286,19 @@ header span { font-size: 11px; color: var(--dim); }
         </div>
       </div>
       <div class="field">
-        <label>Адрес</label>
-        <input type="text" id="addressInput" placeholder="7 Leo Kiacheli Street" oninput="update()">
+        <label>Адрес (текст)</label>
+        <input type="text" id="addressInput" placeholder="10 Mikheil Asatiani St" oninput="update()">
+      </div>
+      <div class="field">
+        <label>Ссылка Google Maps</label>
+        <input type="text" id="mapsInput" placeholder="https://maps.google.com/?q=..." oninput="update()">
       </div>
     </div>
   </div>
 
-  <!-- Property -->
-  <div class="section">
-    <div class="section-head">🏢 Объект</div>
+  <!-- RENT: Property -->
+  <div class="section rent-only">
+    <div class="section-head">🏢 Объект (Rent)</div>
     <div class="section-body">
       <div class="field">
         <label>Тип</label>
@@ -421,7 +335,7 @@ header span { font-size: 11px; color: var(--dim); }
         </div>
         <div class="field">
           <label>Этаж</label>
-          <input type="text" id="floorInput" placeholder="3/3" oninput="update()">
+          <input type="text" id="floorInput" placeholder="3/9" oninput="update()">
         </div>
         <div class="field">
           <label>Жильцы</label>
@@ -444,11 +358,98 @@ header span { font-size: 11px; color: var(--dim); }
     </div>
   </div>
 
-  <!-- Amenities -->
-  <div class="section">
-    <div class="section-head">✅ Удобства</div>
+  <!-- SALE: Property -->
+  <div class="section sale-only">
+    <div class="section-head">🏢 Объект (Sale)</div>
     <div class="section-body">
+      <div class="field">
+        <label>Тип</label>
+        <div class="tag-grid">
+          <span class="tag selected" data-group="s-proptype" data-val="#Apartment" onclick="pickTag(this)">#Apartment</span>
+          <span class="tag" data-group="s-proptype" data-val="#House" onclick="pickTag(this)">#House</span>
+          <span class="tag" data-group="s-proptype" data-val="#Land" onclick="pickTag(this)">#Land</span>
+          <span class="tag" data-group="s-proptype" data-val="#Commercial" onclick="pickTag(this)">#Commercial</span>
+          <span class="tag" data-group="s-proptype" data-val="#Retail" onclick="pickTag(this)">#Retail</span>
+          <span class="tag" data-group="s-proptype" data-val="#Business" onclick="pickTag(this)">#Business</span>
+          <span class="tag" data-group="s-proptype" data-val="#Cafe" onclick="pickTag(this)">#Cafe</span>
+          <span class="tag" data-group="s-proptype" data-val="#Restaurant" onclick="pickTag(this)">#Restaurant</span>
+          <span class="tag" data-group="s-proptype" data-val="#BeautySalon" onclick="pickTag(this)">#BeautySalon</span>
+          <span class="tag" data-group="s-proptype" data-val="#Warehouses" onclick="pickTag(this)">#Warehouses</span>
+          <span class="tag" data-group="s-proptype" data-val="#Manufacture" onclick="pickTag(this)">#Manufacture</span>
+          <span class="tag" data-group="s-proptype" data-val="#Duplex" onclick="pickTag(this)">#Duplex</span>
+          <span class="tag" data-group="s-proptype" data-val="#Townhouse" onclick="pickTag(this)">#Townhouse</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Спальни</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="s-beds" data-val="#Studio" onclick="pickTag(this)">#Studio</span>
+          <span class="tag" data-group="s-beds" data-val="#1Bed" onclick="pickTag(this)">#1Bed</span>
+          <span class="tag" data-group="s-beds" data-val="#2Bed" onclick="pickTag(this)">#2Bed</span>
+          <span class="tag" data-group="s-beds" data-val="#3Bed" onclick="pickTag(this)">#3Bed</span>
+          <span class="tag" data-group="s-beds" data-val="#4Bed" onclick="pickTag(this)">#4Bed</span>
+          <span class="tag" data-group="s-beds" data-val="#5Bed" onclick="pickTag(this)">#5Bed</span>
+          <span class="tag" data-group="s-beds" data-val="#6Bedplus" onclick="pickTag(this)">#6Bedplus</span>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Здание</label>
+          <div class="tag-grid">
+            <span class="tag" data-group="s-building" data-val="#NewBuilding" onclick="pickTag(this)">#NewBuilding</span>
+            <span class="tag" data-group="s-building" data-val="#OldBuilding" onclick="pickTag(this)">#OldBuilding</span>
+            <span class="tag" data-group="s-building" data-val="#HistoricalBuilding" onclick="pickTag(this)">#HistoricalBuilding</span>
+            <span class="tag" data-group="s-building" data-val="#Reconstruction" onclick="pickTag(this)">#Reconstruction</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Состояние</label>
+          <div class="tag-grid">
+            <span class="tag" data-group="s-condition" data-val="#BlackFrame" onclick="pickTag(this)">#BlackFrame</span>
+            <span class="tag" data-group="s-condition" data-val="#WhiteFrame" onclick="pickTag(this)">#WhiteFrame</span>
+            <span class="tag" data-group="s-condition" data-val="#GreenFrame" onclick="pickTag(this)">#GreenFrame</span>
+            <span class="tag" data-group="s-condition" data-val="#FullyRenovated" onclick="pickTag(this)">#FullyRenovated</span>
+          </div>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label>Площадь (м²)</label>
+          <input type="number" id="s-sqmInput" placeholder="80" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Этаж</label>
+          <input type="text" id="s-floorInput" placeholder="6" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Позиция этажа</label>
+          <div class="tag-grid" style="margin-top:2px;">
+            <span class="tag" data-group="s-floorpos" data-val="#GroundFloor" onclick="pickTag(this)">#Ground</span>
+            <span class="tag" data-group="s-floorpos" data-val="#MiddleFloor" onclick="pickTag(this)">#Middle</span>
+            <span class="tag" data-group="s-floorpos" data-val="#TopFloor" onclick="pickTag(this)">#Top</span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Дизайн</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="s-design" data-val="#NewApartment" onclick="pickTag(this)">#NewApartment</span>
+          <span class="tag" data-group="s-design" data-val="#White" onclick="pickTag(this)">#White</span>
+          <span class="tag" data-group="s-design" data-val="#Grey" onclick="pickTag(this)">#Grey</span>
+          <span class="tag" data-group="s-design" data-val="#Yellow" onclick="pickTag(this)">#Yellow</span>
+          <span class="tag" data-group="s-design" data-val="#Mixed" onclick="pickTag(this)">#Mixed</span>
+          <span class="tag" data-group="s-design" data-val="#Old" onclick="pickTag(this)">#Old</span>
+          <span class="tag" data-group="s-design" data-val="#Retro" onclick="pickTag(this)">#Retro</span>
+          <span class="tag" data-group="s-design" data-val="#UnderRepair" onclick="pickTag(this)">#UnderRepair</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- RENT: Amenities -->
+  <div class="section rent-only">
+    <div class="section-head">✅ Удобства (Rent)</div>
+    <div class="section-body">
       <div class="field">
         <label>Ванные комнаты</label>
         <div class="tag-grid">
@@ -457,7 +458,6 @@ header span { font-size: 11px; color: var(--dim); }
           <span class="tag" data-group="bathrooms" data-val="#4Bathroom" onclick="pickTag(this)">#4Bathroom</span>
         </div>
       </div>
-
       <div class="field">
         <label>Отопление</label>
         <div class="tag-grid">
@@ -468,20 +468,18 @@ header span { font-size: 11px; color: var(--dim); }
           <span class="tag" data-group="heating" data-val="#Fireplace" onclick="pickTag(this)">#Fireplace</span>
         </div>
       </div>
-
       <div class="field">
-        <label>Удобства — ✅/✖️ в посте</label>
+        <label>✅/✖️ в посте (всегда)</label>
         <div class="tag-grid">
-          <span class="tag" data-multi="amenity" data-val="#Elevator" onclick="toggleTag(this)">#Elevator ✅✖️</span>
-          <span class="tag" data-multi="amenity" data-val="#Oven" onclick="toggleTag(this)">#Oven ✅✖️</span>
-          <span class="tag" data-multi="amenity" data-val="#ParkingPlace" onclick="toggleTag(this)">#ParkingPlace ✅✖️</span>
-          <span class="tag" data-multi="amenity" data-val="#Conditioner" onclick="toggleTag(this)">#Conditioner ✅✖️</span>
+          <span class="tag" data-multi="amenity" data-val="#Elevator" onclick="toggleTag(this)">#Elevator</span>
+          <span class="tag" data-multi="amenity" data-val="#Oven" onclick="toggleTag(this)">#Oven</span>
+          <span class="tag" data-multi="amenity" data-val="#ParkingPlace" onclick="toggleTag(this)">#ParkingPlace</span>
+          <span class="tag" data-multi="amenity" data-val="#Conditioner" onclick="toggleTag(this)">#Conditioner</span>
         </div>
-        <div class="hint">Эти 4 всегда в посте — с ✅ или ✖️</div>
+        <div class="hint">Нет галочки = ✖️ в посте</div>
       </div>
-
       <div class="field">
-        <label>Остальные удобства (только ✅ если есть)</label>
+        <label>Остальные (только ✅ если есть)</label>
         <div class="tag-grid">
           <span class="tag" data-multi="amenity" data-val="#Balcony" onclick="toggleTag(this)">#Balcony</span>
           <span class="tag" data-multi="amenity" data-val="#Terrace" onclick="toggleTag(this)">#Terrace</span>
@@ -496,7 +494,6 @@ header span { font-size: 11px; color: var(--dim); }
           <span class="tag" data-multi="amenity" data-val="#VacuumCleaner" onclick="toggleTag(this)">#VacuumCleaner</span>
         </div>
       </div>
-
       <div class="field">
         <label>Питомцы</label>
         <div class="tag-grid">
@@ -505,19 +502,59 @@ header span { font-size: 11px; color: var(--dim); }
           <span class="tag" data-group="pets" data-val="#ByAgreement" onclick="pickTag(this)">#ByAgreement</span>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Price & Period -->
-  <div class="section">
-    <div class="section-head">💰 Цена / Срок</div>
+  <!-- SALE: Amenities -->
+  <div class="section sale-only">
+    <div class="section-head">✅ Удобства (Sale)</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Ванные комнаты</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="s-bathrooms" data-val="#2Bathroom" onclick="pickTag(this)">#2Bathroom</span>
+          <span class="tag" data-group="s-bathrooms" data-val="#3Bathroom" onclick="pickTag(this)">#3Bathroom</span>
+          <span class="tag" data-group="s-bathrooms" data-val="#4Bathroom" onclick="pickTag(this)">#4Bathroom</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Отопление</label>
+        <div class="tag-grid">
+          <span class="tag" data-group="s-heating" data-val="#CentralHeating" onclick="pickTag(this)">#CentralHeating</span>
+          <span class="tag" data-group="s-heating" data-val="#GasHeating" onclick="pickTag(this)">#GasHeating</span>
+          <span class="tag" data-group="s-heating" data-val="#ElectricalHeating" onclick="pickTag(this)">#ElectricalHeating</span>
+          <span class="tag" data-group="s-heating" data-val="#ACHeating" onclick="pickTag(this)">#ACHeating</span>
+          <span class="tag" data-group="s-heating" data-val="#Fireplace" onclick="pickTag(this)">#Fireplace</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Удобства</label>
+        <div class="tag-grid">
+          <span class="tag" data-multi="s-amenity" data-val="#Balcony" onclick="toggleTag(this)">#Balcony</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Terrace" onclick="toggleTag(this)">#Terrace</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Courtyard" onclick="toggleTag(this)">#Courtyard</span>
+          <span class="tag" data-multi="s-amenity" data-val="#ParkingPlace" onclick="toggleTag(this)">#ParkingPlace</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Conditioner" onclick="toggleTag(this)">#Conditioner</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Dishwasher" onclick="toggleTag(this)">#Dishwasher</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Oven" onclick="toggleTag(this)">#Oven</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Stove" onclick="toggleTag(this)">#Stove</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Bath" onclick="toggleTag(this)">#Bath</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Shower" onclick="toggleTag(this)">#Shower</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Elevator" onclick="toggleTag(this)">#Elevator</span>
+          <span class="tag" data-multi="s-amenity" data-val="#Fireplace" onclick="toggleTag(this)">#Fireplace</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENT: Цена -->
+  <div class="section rent-only">
+    <div class="section-head">💰 Цена / Срок (Rent)</div>
     <div class="section-body">
       <div class="row2">
         <div class="field">
           <label>Цена ($)</label>
           <input type="number" id="priceInput" placeholder="800" oninput="onPriceInput()">
-          <div class="hint" id="priceHint"></div>
         </div>
         <div class="field">
           <label>Депозит ($) <span id="depositSyncLabel" style="color:var(--dim);font-style:italic;font-size:10px;">= цене</span></label>
@@ -525,7 +562,7 @@ header span { font-size: 11px; color: var(--dim); }
         </div>
       </div>
       <div class="field">
-        <label>Диапазон цены <span id="autoLabel" style="color:var(--green);font-style:italic;"></span></label>
+        <label>Диапазон цены <span id="autoLabel" style="color:var(--green);font-style:italic;font-size:10px;"></span></label>
         <div class="tag-grid">
           <span class="tag" data-group="pricerange" data-val="#Price0to300" onclick="pickTag(this)">#Price0to300</span>
           <span class="tag" data-group="pricerange" data-val="#Price300to500" onclick="pickTag(this)">#Price300to500</span>
@@ -551,39 +588,80 @@ header span { font-size: 11px; color: var(--dim); }
     </div>
   </div>
 
+  <!-- SALE: Цена -->
+  <div class="section sale-only">
+    <div class="section-head">💰 Цена (Sale)</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Цена ($)</label>
+        <input type="number" id="s-priceInput" placeholder="255000" oninput="onSalePriceInput()">
+      </div>
+      <div class="field">
+        <label>Диапазон цены <span id="s-autoLabel" style="color:var(--green);font-style:italic;font-size:10px;"></span></label>
+        <div class="tag-grid">
+          <span class="tag" data-group="s-pricerange" data-val="#Price0to30000" onclick="pickTag(this)">#Price0to30000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price30000to50000" onclick="pickTag(this)">#Price30000to50000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price50000to70000" onclick="pickTag(this)">#Price50000to70000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price70000to90000" onclick="pickTag(this)">#Price70000to90000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price90000to120000" onclick="pickTag(this)">#Price90000to120000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price120000to150000" onclick="pickTag(this)">#Price120000to150000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price150000to180000" onclick="pickTag(this)">#Price150000to180000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price180000to210000" onclick="pickTag(this)">#Price180000to210000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price210000to240000" onclick="pickTag(this)">#Price210000to240000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price240000to270000" onclick="pickTag(this)">#Price240000to270000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price270000to300000" onclick="pickTag(this)">#Price270000to300000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price300000to330000" onclick="pickTag(this)">#Price300000to330000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price330000to360000" onclick="pickTag(this)">#Price330000to360000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price360000to390000" onclick="pickTag(this)">#Price360000to390000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price390000to420000" onclick="pickTag(this)">#Price390000to420000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price420000to450000" onclick="pickTag(this)">#Price420000to450000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price450000to480000" onclick="pickTag(this)">#Price450000to480000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price480000to510000" onclick="pickTag(this)">#Price480000to510000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price510000to600000" onclick="pickTag(this)">#Price510000to600000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price600000to700000" onclick="pickTag(this)">#Price600000to700000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price700000to800000" onclick="pickTag(this)">#Price700000to800000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price800000to900000" onclick="pickTag(this)">#Price800000to900000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price900000to1000000" onclick="pickTag(this)">#Price900000to1000000</span>
+          <span class="tag" data-group="s-pricerange" data-val="#Price1000000plus" onclick="pickTag(this)">#Price1000000plus</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Agent -->
   <div class="section">
     <div class="section-head">📲 Агент / Рекрут</div>
     <div class="section-body">
       <div style="background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:12px;color:var(--dim);margin-bottom:10px;line-height:1.6;">
         @David_Tibelashvili | +995 599 20 67 16<br>
-        <span style="font-size:10px;">↓ выбери хештег агента или рекрута</span>
+        <span style="font-size:10px;">↓ выбери хештег</span>
       </div>
       <div class="field">
-        <label>Агенты <span id="agentsLoadStatus" style="color:var(--dim);font-style:italic;"></span></label>
-        <div class="tag-grid" id="agentTags">
-          <span style="font-size:11px;color:var(--dim);">Загрузка...</span>
-        </div>
+        <label>Агенты <span id="agentsLoadStatus" style="color:var(--dim);font-style:italic;font-size:10px;"></span></label>
+        <div class="tag-grid" id="agentTags"><span style="font-size:11px;color:var(--dim);">Загрузка...</span></div>
       </div>
       <div class="field" style="margin-top:8px;">
-        <label>Рекруты <span id="recruitsLoadStatus" style="color:var(--dim);font-style:italic;"></span></label>
-        <div class="tag-grid" id="recruitTags">
-          <span style="font-size:11px;color:var(--dim);">Загрузка...</span>
-        </div>
+        <label>Рекруты <span id="recruitsLoadStatus" style="color:var(--dim);font-style:italic;font-size:10px;"></span></label>
+        <div class="tag-grid" id="recruitTags"><span style="font-size:11px;color:var(--dim);">Загрузка...</span></div>
       </div>
     </div>
   </div>
 
-</div>
+</div><!-- end form-col -->
 
-<!-- ═══ PREVIEW ═══ -->
-<div class="preview-col">
+<!-- PREVIEW -->
+<div class="preview-col" id="previewCol">
   <div class="preview-label">📋 Готовый пост</div>
-  <div class="post-preview" id="postPreview">← Заполните форму слева</div>
+  <div class="post-preview" id="postPreview">← Заполните форму</div>
   <div class="char-count" id="charCount"></div>
-  <button class="copy-btn" id="copyBtn" onclick="copyPost()">📋 Скопировать пост</button>
+  <button class="copy-btn desktop-copy" id="copyBtnDesktop" onclick="copyPost()">📋 Скопировать пост</button>
 </div>
 
+</div><!-- end layout -->
+
+<div class="mobile-bar">
+  <button class="preview-toggle" id="previewToggle" onclick="togglePreview()">👁 Превью</button>
+  <button class="copy-btn" id="copyBtn" onclick="copyPost()">📋 Скопировать</button>
 </div>
 
 <script>
@@ -591,43 +669,35 @@ const SHEET_ID = '1M7kg2FgI8eke8_Iy4NofsKzC3NrKetLl3dniKJRxYrU';
 const GID_AGENTS   = '623976749';
 const GID_RECRUITS = '1404574561';
 
-let selectedAgent = '';
-
 async function loadSheetNames(gid, containerId, statusId) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
   try {
     const res = await fetch(url);
     const text = await res.text();
-    // Strip Google's callback wrapper
     const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
     const rows = json.table.rows;
     const container = document.getElementById(containerId);
     container.innerHTML = '';
-
-    // Find column with hashtag names (look for cells starting with #)
     rows.forEach(row => {
       if (!row.c) return;
       row.c.forEach(cell => {
         if (cell && cell.v) {
-          const val = String(cell.v).trim();
-          if (val.startsWith('#')) {
+          const v = String(cell.v).trim();
+          if (v.startsWith('#')) {
             const tag = document.createElement('span');
             tag.className = 'tag';
             tag.dataset.group = 'agent';
-            tag.dataset.val = val;
-            tag.textContent = val;
+            tag.dataset.val = v;
+            tag.textContent = v;
             tag.onclick = function() { pickTag(this); };
             container.appendChild(tag);
           }
         }
       });
     });
-
     if (container.children.length === 0) {
       container.innerHTML = '<span style="font-size:11px;color:var(--dim);">Нет данных</span>';
       document.getElementById(statusId).textContent = '(пусто)';
-    } else {
-      document.getElementById(statusId).textContent = '';
     }
   } catch(e) {
     document.getElementById(containerId).innerHTML = '<span style="font-size:11px;color:var(--red);">Ошибка загрузки</span>';
@@ -638,26 +708,28 @@ async function loadSheetNames(gid, containerId, statusId) {
 let deal = 'Rent';
 let depositManuallyChanged = false;
 
+function vibrate() { if (navigator.vibrate) navigator.vibrate(8); }
+
 function setDeal(btn) {
+  vibrate();
   deal = btn.dataset.deal;
   document.querySelectorAll('.deal-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  document.body.className = deal === 'Sale' ? 'mode-sale' : '';
   update();
 }
 
 function pickTag(el) {
+  vibrate();
   const group = el.dataset.group;
   const wasSelected = el.classList.contains('selected') || el.classList.contains('selected-red');
-  document.querySelectorAll(`[data-group="${group}"]`).forEach(t => {
-    t.classList.remove('selected', 'selected-red');
-  });
-  if (!wasSelected) {
-    el.classList.add('selected');
-  }
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(t => t.classList.remove('selected','selected-red'));
+  if (!wasSelected) el.classList.add('selected');
   update();
 }
 
 function toggleTag(el) {
+  vibrate();
   el.classList.toggle('selected');
   update();
 }
@@ -666,18 +738,13 @@ function getGroup(group) {
   const el = document.querySelector(`[data-group="${group}"].selected`);
   return el ? el.dataset.val : null;
 }
-
 function getMulti(name) {
   return [...document.querySelectorAll(`[data-multi="${name}"].selected`)].map(el => el.dataset.val);
 }
+function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 
-function val(id) {
-  const el = document.getElementById(id);
-  return el ? el.value.trim() : '';
-}
-
-function getPriceRange(p) {
-  if (p <= 0) return null;
+// Rent price ranges
+function getRentPriceRange(p) {
   if (p <= 300) return '#Price0to300';
   if (p <= 500) return '#Price300to500';
   if (p <= 700) return '#Price500to700';
@@ -686,211 +753,253 @@ function getPriceRange(p) {
   return '#Price1200plus';
 }
 
+// Sale price ranges
+function getSalePriceRange(p) {
+  const ranges = [
+    [30000,'#Price0to30000'],[50000,'#Price30000to50000'],[70000,'#Price50000to70000'],
+    [90000,'#Price70000to90000'],[120000,'#Price90000to120000'],[150000,'#Price120000to150000'],
+    [180000,'#Price150000to180000'],[210000,'#Price180000to210000'],[240000,'#Price210000to240000'],
+    [270000,'#Price240000to270000'],[300000,'#Price270000to300000'],[330000,'#Price300000to330000'],
+    [360000,'#Price330000to360000'],[390000,'#Price360000to390000'],[420000,'#Price390000to420000'],
+    [450000,'#Price420000to450000'],[480000,'#Price450000to480000'],[510000,'#Price480000to510000'],
+    [600000,'#Price510000to600000'],[700000,'#Price600000to700000'],[800000,'#Price700000to800000'],
+    [900000,'#Price800000to900000'],[1000000,'#Price900000to1000000']
+  ];
+  for (const [max, tag] of ranges) { if (p <= max) return tag; }
+  return '#Price1000000plus';
+}
+
 function onPriceInput() {
   const p = parseInt(val('priceInput'));
   if (!isNaN(p) && p > 0) {
-    // Auto-fill deposit if not manually changed
-    if (!depositManuallyChanged) {
-      document.getElementById('depositInput').value = p;
-      document.getElementById('depositSyncLabel').textContent = '= цене';
-    }
-    // Auto-select range
-    const range = getPriceRange(p);
+    if (!depositManuallyChanged) document.getElementById('depositInput').value = p;
+    const range = getRentPriceRange(p);
     document.querySelectorAll('[data-group="pricerange"]').forEach(t => t.classList.remove('selected'));
-    if (range) {
-      const rangeEl = document.querySelector(`[data-group="pricerange"][data-val="${range}"]`);
-      if (rangeEl) rangeEl.classList.add('selected');
-      document.getElementById('autoLabel').textContent = '(авто)';
-    }
+    const el = document.querySelector(`[data-group="pricerange"][data-val="${range}"]`);
+    if (el) { el.classList.add('selected'); document.getElementById('autoLabel').textContent = '(авто)'; }
   } else {
     document.getElementById('autoLabel').textContent = '';
-    if (!depositManuallyChanged) {
-      document.getElementById('depositInput').value = '';
-    }
+    if (!depositManuallyChanged) document.getElementById('depositInput').value = '';
   }
   update();
 }
 
 function onDepositInput() {
-  const price = val('priceInput');
-  const deposit = val('depositInput');
-  if (deposit !== price) {
-    depositManuallyChanged = true;
-    document.getElementById('depositSyncLabel').textContent = '(изменён)';
+  const price = val('priceInput'), deposit = val('depositInput');
+  depositManuallyChanged = deposit !== price;
+  document.getElementById('depositSyncLabel').textContent = depositManuallyChanged ? '(изменён)' : '= цене';
+  update();
+}
+
+function onSalePriceInput() {
+  const p = parseInt(val('s-priceInput'));
+  if (!isNaN(p) && p > 0) {
+    const range = getSalePriceRange(p);
+    document.querySelectorAll('[data-group="s-pricerange"]').forEach(t => t.classList.remove('selected'));
+    const el = document.querySelector(`[data-group="s-pricerange"][data-val="${range}"]`);
+    if (el) { el.classList.add('selected'); document.getElementById('s-autoLabel').textContent = '(авто)'; }
   } else {
-    depositManuallyChanged = false;
-    document.getElementById('depositSyncLabel').textContent = '= цене';
+    document.getElementById('s-autoLabel').textContent = '';
   }
   update();
 }
 
+// Format sale price: 255000 → 255.000
+function formatSalePrice(p) {
+  return p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 function buildPost() {
+  return deal === 'Sale' ? buildSalePost() : buildRentPost();
+}
+
+function buildRentPost() {
   const isExclusive = document.getElementById('exclusiveToggle').checked;
-  const district  = getGroup('district');
-  const metro     = getGroup('metro');
-  const propType  = getGroup('proptype') || '#Apartment';
-  const beds      = getGroup('beds');
-  const building  = getGroup('building');
-  const design    = getGroup('design');
-  const heating   = getGroup('heating');
-  const bathrooms = getGroup('bathrooms');
-  const parking   = getGroup('parking');
-  const pets      = getGroup('pets');
-  const priceRange = getGroup('pricerange');
-  const amenities = getMulti('amenity');
-  const periods   = getMulti('period');
-
-  const price    = val('priceInput');
-  const deposit  = val('depositInput');
-  const sqm      = val('sqmInput');
-  const floor    = val('floorInput');
-  const address  = val('addressInput');
-  const tenants  = val('tenantsInput');
-  const headline = val('headlineInput');
-
-  // Fixed agent
-  const agentTg    = 'David_Tibelashvili';
-  const agentPhone = '+995 599 20 67 16';
-  const agentName  = 'David';
+  const district = getGroup('district'), metro = getGroup('metro');
+  const propType = getGroup('proptype') || '#Apartment';
+  const beds = getGroup('beds'), building = getGroup('building'), design = getGroup('design');
+  const heating = getGroup('heating'), bathrooms = getGroup('bathrooms'), pets = getGroup('pets');
+  const priceRange = getGroup('pricerange'), agentTag = getGroup('agent');
+  const amenities = getMulti('amenity'), periods = getMulti('period');
+  const price = val('priceInput'), deposit = val('depositInput');
+  const sqm = val('sqmInput'), floor = val('floorInput');
+  const address = val('addressInput'), mapsUrl = val('mapsInput');
+  const tenants = val('tenantsInput'), headline = val('headlineInput');
 
   let lines = [];
-
-  // District + Metro
   let loc = [district, metro ? '🚇 ' + metro : null].filter(Boolean).join(' ');
   if (loc) lines.push(loc);
-
-  // Address
-  if (address) lines.push(`📍${address}`);
-
-  // Description / слоган
-  if (headline) {
-    lines.push('');
-    lines.push(`⭐️ ${headline} ⭐️`);
-  }
-
+  if (address && mapsUrl) lines.push(`[📍${address}](${mapsUrl})`);
+  else if (address) lines.push(`📍${address}`);
+  if (headline) { lines.push(''); lines.push(`⭐️ *${headline}* ⭐️`); }
   lines.push('');
-
-  // Exclusive
   if (isExclusive) lines.push('❗️#Exclusive\n');
-
-  // Property type + beds + deal
-  let propLine = `🏢 `;
-  if (beds) propLine += beds + ' ';
-  propLine += propType + ` for #${deal}`;
+  let propLine = '🏢 '; if (beds) propLine += beds + ' '; propLine += propType + ' for #Rent';
   lines.push(propLine);
-
-  // Building + Design
-  let styleLine = '✨';
-  if (building) styleLine += ' ' + building;
-  if (design)   styleLine += ' | ' + design;
+  let styleLine = '✨'; if (building) styleLine += ' ' + building; if (design) styleLine += ' | ' + design;
   if (styleLine !== '✨') lines.push(styleLine);
-
-  // Specs line
   let specParts = [];
-  if (sqm)       specParts.push(sqm + ' sq.m');
-  if (floor)     specParts.push(floor + ' Floor');
-  if (heating)   specParts.push(heating);
+  if (sqm) specParts.push(sqm + ' sq.m');
+  if (floor) specParts.push(floor + ' Floor');
+  if (heating) specParts.push(heating);
   if (bathrooms) specParts.push(bathrooms);
   if (specParts.length) lines.push('🏠 ' + specParts.join(' | '));
-
   lines.push('');
-
-  // Amenities
   const FIXED = ['#Elevator','#Oven','#ParkingPlace','#Conditioner'];
-  const regularAmenities = amenities.filter(a => !FIXED.includes(a));
-  const fixedHas  = FIXED.filter(a => amenities.includes(a));
+  const regular = amenities.filter(a => !FIXED.includes(a));
+  const fixedHas = FIXED.filter(a => amenities.includes(a));
   const fixedNone = FIXED.filter(a => !amenities.includes(a));
-
-  // ✅ все вместе (обычные + фиксированные что есть), по 3 в строку
-  const allChecked = [...regularAmenities, ...fixedHas];
+  const allChecked = [...regular, ...fixedHas];
   if (allChecked.length > 0) {
-    for (let i = 0; i < allChecked.length; i += 3) {
-      lines.push(allChecked.slice(i, i + 3).map(a => '✅ ' + a).join(' '));
-    }
+    for (let i = 0; i < allChecked.length; i += 3)
+      lines.push(allChecked.slice(i, i+3).map(a => '✅ ' + a).join(' '));
   }
-
-  // ✖️ только в форме — в пост не идут
-
+  if (amenities.length > 0 && fixedNone.length > 0)
+    lines.push(fixedNone.map(a => '✖️' + a).join(' '));
   lines.push('');
-
   if (tenants) lines.push(`👬Tenants: ${tenants}`);
-  if (pets)    lines.push(`🐕Pets: ${pets}`);
+  if (pets) lines.push(`🐕Pets: ${pets}`);
   if (periods.length > 0) lines.push(`🕐 ${periods.join(' ')}`);
-
   lines.push('');
-
-  // Price
   let priceLine = '💰';
-  if (price)   priceLine += ` ${price}$`;
+  if (price) priceLine += ` ${price}$`;
   if (deposit) priceLine += ` + Deposit ${deposit}$`;
   if (priceLine !== '💰') lines.push(priceLine);
   lines.push('0% Commission');
   if (priceRange) lines.push(priceRange);
-
   lines.push('');
-
-  // Agent (fixed contact, dynamic hashtag)
-  const agentTag = getGroup('agent');
   lines.push(`📲 @David_Tibelashvili | \n+995 599 20 67 16 ${agentTag || '#???'}`);
-  lines.push('🌟 Check all listings | Reviews');
   lines.push('');
-  lines.push('📍APARTMENTS ON MAP📍');
+  lines.push(`[🌟 Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)`);
   lines.push('');
-  lines.push('📱 Instagram 📱 FB 📱 YouTube');
-
+  lines.push(`[📍APARTMENTS ON MAP📍](https://t.me/RentInTbilisi_bot/MAP?startapp=source=sale_in_tbilisi)`);
+  lines.push('');
+  lines.push(`[📱 Instagram](https://www.instagram.com/rent_in_tbilisi/profilecard/?igsh=N3kxbTd4bTdkN2Vk) [📱 FB](https://www.facebook.com/share/18GSsdio3b/?mibextid=LQQJ4d) [📱 YouTube](https://youtube.com/@rentintbilisi)`);
   return lines.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
+function buildSalePost() {
+  const isExclusive = document.getElementById('exclusiveToggle').checked;
+  const district = getGroup('district'), metro = getGroup('metro');
+  const propType = getGroup('s-proptype') || '#Apartment';
+  const beds = getGroup('s-beds'), building = getGroup('s-building');
+  const design = getGroup('s-design'), condition = getGroup('s-condition');
+  const heating = getGroup('s-heating'), bathrooms = getGroup('s-bathrooms');
+  const floorPos = getGroup('s-floorpos'), priceRange = getGroup('s-pricerange');
+  const agentTag = getGroup('agent'), amenities = getMulti('s-amenity');
+  const price = val('s-priceInput'), sqm = val('s-sqmInput'), floor = val('s-floorInput');
+  const address = val('addressInput'), mapsUrl = val('mapsInput'), headline = val('headlineInput');
+
+  let lines = [];
+  let loc = [district, metro ? '🚇 ' + metro : null].filter(Boolean).join(' ');
+  if (loc) lines.push(loc);
+  if (address && mapsUrl) lines.push(`[📍${address}](${mapsUrl})`);
+  else if (address) lines.push(`📍${address}`);
+  if (headline) { lines.push(''); lines.push(`🌟*${headline}*🌟`); }
+  lines.push('');
+  if (isExclusive) lines.push('❗️#Exclusive\n');
+  let propLine = '🏢 '; if (beds) propLine += beds + ' '; propLine += propType + ' for #Sale';
+  lines.push(propLine);
+  let styleLine = '✨'; if (building) styleLine += ' ' + building; if (design) styleLine += ' | ' + design;
+  if (condition) styleLine += ' | ' + condition;
+  if (styleLine !== '✨') lines.push(styleLine);
+  let specParts = [];
+  if (sqm) specParts.push(sqm + ' Sq.m');
+  if (floor) specParts.push(floor + ' Floor');
+  if (heating) specParts.push(heating);
+  if (bathrooms) specParts.push(bathrooms);
+  if (floorPos) specParts.push(floorPos);
+  if (specParts.length) lines.push('🏠 ' + specParts.join(' | '));
+  lines.push('');
+  if (amenities.length > 0) {
+    for (let i = 0; i < amenities.length; i += 3)
+      lines.push(amenities.slice(i, i+3).map(a => '✅ ' + a).join(' '));
+  }
+  lines.push('');
+  if (price) lines.push(`💰${formatSalePrice(parseInt(price))}$`);
+  lines.push('0% Commission');
+  if (priceRange) lines.push(priceRange);
+  lines.push('');
+  lines.push(`📲 @David_Tibelashvili | \n+995 599 20 67 16 ${agentTag || '#???'}`);
+  lines.push('');
+  lines.push(`[🌟 Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)`);
+  lines.push('');
+  lines.push(`[📍APARTMENTS ON MAP📍](https://t.me/RentInTbilisi_bot/MAP?startapp=source=sale_in_tbilisi)`);
+  lines.push('');
+  lines.push(`[📱 Instagram](https://www.instagram.com/rent_in_tbilisi/profilecard/?igsh=N3kxbTd4bTdkN2Vk) [📱 FB](https://www.facebook.com/share/18GSsdio3b/?mibextid=LQQJ4d) [📱 YouTube](https://youtube.com/@rentintbilisi)`);
+  lines.push('');
+  lines.push('SALE IN TBILISI🇬🇪');
+  return lines.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
+function toPreviewHTML(text) {
+  return text
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--accent);text-decoration:underline;">$1</a>')
+    .replace(/\n/g, '<br>');
 }
 
 function update() {
   const post = buildPost();
-  document.getElementById('postPreview').textContent = post;
+  document.getElementById('postPreview').innerHTML = toPreviewHTML(post);
   document.getElementById('charCount').textContent = post.length + ' символов';
-  const btn = document.getElementById('copyBtn');
-  btn.classList.remove('copied');
-  btn.textContent = '📋 Скопировать пост';
+  ['copyBtn','copyBtnDesktop'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.remove('copied');
+    btn.textContent = id === 'copyBtn' ? '📋 Скопировать' : '📋 Скопировать пост';
+  });
 }
 
 function copyPost() {
-  const text = document.getElementById('postPreview').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = '✅ Скопировано!';
-    btn.classList.add('copied');
+  vibrate();
+  navigator.clipboard.writeText(buildPost()).then(() => {
+    ['copyBtn','copyBtnDesktop'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.textContent = '✅ Скопировано!'; btn.classList.add('copied');
+    });
     setTimeout(() => {
-      btn.textContent = '📋 Скопировать пост';
-      btn.classList.remove('copied');
+      ['copyBtn','copyBtnDesktop'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.textContent = id === 'copyBtn' ? '📋 Скопировать' : '📋 Скопировать пост';
+        btn.classList.remove('copied');
+      });
     }, 2000);
   });
 }
 
+let previewOpen = false;
+function togglePreview() {
+  vibrate();
+  previewOpen = !previewOpen;
+  document.getElementById('previewCol').classList.toggle('open', previewOpen);
+  document.getElementById('previewToggle').textContent = previewOpen ? '✕ Закрыть' : '👁 Превью';
+}
+
 function resetAll() {
+  vibrate();
   deal = 'Rent';
   depositManuallyChanged = false;
+  document.body.className = '';
   document.querySelectorAll('.deal-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('[data-deal="Rent"]').classList.add('active');
-
-  document.querySelectorAll('.tag').forEach(t => {
-    t.classList.remove('selected', 'selected-red');
-  });
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected','selected-red'));
   document.querySelector('[data-group="proptype"][data-val="#Apartment"]').classList.add('selected');
-
-  ['priceInput','depositInput','sqmInput','floorInput','addressInput',
-   'tenantsInput','headlineInput'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
+  document.querySelector('[data-group="s-proptype"][data-val="#Apartment"]').classList.add('selected');
+  ['priceInput','depositInput','sqmInput','floorInput','s-priceInput','s-sqmInput',
+   's-floorInput','addressInput','mapsInput','tenantsInput','headlineInput'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
   });
-
   document.getElementById('exclusiveToggle').checked = false;
   document.getElementById('autoLabel').textContent = '';
+  document.getElementById('s-autoLabel').textContent = '';
   document.getElementById('depositSyncLabel').textContent = '= цене';
-
   update();
 }
 
 update();
-
-// Load agents & recruits from Google Sheets on startup
-loadSheetNames(GID_AGENTS,   'agentTags',   'agentsLoadStatus');
+loadSheetNames(GID_AGENTS, 'agentTags', 'agentsLoadStatus');
 loadSheetNames(GID_RECRUITS, 'recruitTags', 'recruitsLoadStatus');
 </script>
 </body>
