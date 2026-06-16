@@ -80,6 +80,7 @@ header span { font-size: 11px; color: var(--dim); }
   line-height: 1.8;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: break-word;
   color: var(--text);
   font-family: 'Courier New', monospace;
   -webkit-overflow-scrolling: touch;
@@ -218,8 +219,8 @@ body.mode-sale .rent-only { display: none; }
     <div class="section-head">Тип сделки / Deal type</div>
     <div class="section-body">
       <div class="deal-toggle">
-        <button class="deal-btn active" data-deal="Rent" onclick="setDeal(this)">🏠 Аренда</button>
-        <button class="deal-btn" data-deal="Sale" onclick="setDeal(this)">💼 Продажа</button>
+        <button class="deal-btn active" data-deal="Rent" onclick="setDeal(this)">🏠 Аренда / Rent</button>
+        <button class="deal-btn" data-deal="Sale" onclick="setDeal(this)">💼 Продажа / Sale</button>
       </div>
     </div>
   </div>
@@ -711,14 +712,20 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- Фото -->
   <div class="section">
-    <div class="section-head">📸 Фото / Photos</div>
+    <div class="section-head">📸 Медиа / Media</div>
     <div class="section-body">
       <div class="field">
-        <label>Загрузить фото (оригиналы)</label>
-        <div id="dropZone" onclick="document.getElementById('photoInput').click()" style="border:2px dashed var(--line);border-radius:8px;padding:20px;text-align:center;cursor:pointer;color:var(--dim);font-size:13px;transition:border-color 0.2s;">
-          📁 Нажми или перетащи фото сюда
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div id="dropZonePhoto" onclick="document.getElementById('photoInput').click()" style="border:2px dashed var(--line);border-radius:8px;padding:16px 8px;text-align:center;cursor:pointer;color:var(--dim);font-size:12px;transition:border-color 0.2s;">
+            📷 Фото
+          </div>
+          <div id="dropZoneVideo" onclick="document.getElementById('videoInput').click()" style="border:2px dashed var(--line);border-radius:8px;padding:16px 8px;text-align:center;cursor:pointer;color:var(--dim);font-size:12px;transition:border-color 0.2s;">
+            🎥 Видео
+          </div>
         </div>
         <input type="file" id="photoInput" multiple accept="image/*" style="display:none" onchange="handlePhotos(this.files)">
+        <input type="file" id="videoInput" multiple accept="video/*" style="display:none" onchange="handleVideos(this.files)">
+        <div class="hint">Первый элемент = главный. Перетащи для сортировки или используй ← →</div>
       </div>
       <div id="photoGrid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
       <div id="photoCount" style="font-size:10px;color:var(--dim);margin-top:4px;"></div>
@@ -732,16 +739,14 @@ body.mode-sale .rent-only { display: none; }
   <div class="preview-label">📋 Готовый пост</div>
   <div class="post-preview" id="postPreview">← Заполните форму</div>
   <div class="char-count" id="charCount"></div>
-  <button class="copy-btn desktop-copy" id="copyBtnDesktop" onclick="copyPost()">📋 Скопировать текст</button>
-  <button class="copy-btn desktop-copy" id="publishBtnDesktop" onclick="publishPost()" style="background:#2196F3;margin-top:6px;">✈️ Опубликовать в канал</button>
+  <button class="copy-btn desktop-copy" id="publishBtnDesktop" onclick="publishPost()" style="background:#2196F3;">✈️ Опубликовать в канал</button>
 </div>
 
 </div><!-- end layout -->
 
 <div class="mobile-bar">
   <button class="preview-toggle" id="previewToggle" onclick="togglePreview()">👁 Превью</button>
-  <button class="copy-btn" id="copyBtn" onclick="copyPost()" style="flex:1.5;">📋 Копировать</button>
-  <button class="copy-btn" id="publishBtn" onclick="publishPost()" style="flex:1.5;background:#2196F3;">✈️ Пост</button>
+  <button class="copy-btn" id="publishBtn" onclick="publishPost()" style="flex:2;background:#2196F3;">✈️ Опубликовать</button>
 </div>
 
 <script>
@@ -773,50 +778,115 @@ function buildTelegramHTML() {
   return text;
 }
 
-// ── PHOTOS ──────────────────────────────────────────
-let photos = []; // [{file, url, id}]
+// ── MEDIA ────────────────────────────────────────────
+let media = []; // [{file, url, type:'photo'|'video', id}]
 let dragSrc = null;
 
 function handlePhotos(files) {
+  const current = media.filter(m => m.type === 'photo').length;
+  const allowed = 9 - current;
+  if (allowed <= 0) { alert('Максимум 9 фото'); return; }
+  let added = 0;
   for (const file of files) {
-    const id = Date.now() + Math.random();
-    const url = URL.createObjectURL(file);
-    photos.push({ file, url, id });
+    if (added >= allowed) { alert(`Добавлено ${added} из ${files.length} — достигнут лимит 9 фото`); break; }
+    media.push({ file, url: URL.createObjectURL(file), type: 'photo', id: Date.now() + Math.random() });
+    added++;
   }
-  renderPhotoGrid();
+  renderGrid();
 }
 
-function renderPhotoGrid() {
+function handleVideos(files) {
+  const hasVideo = media.some(m => m.type === 'video');
+  if (hasVideo) { alert('Можно загрузить только 1 видео'); return; }
+  const file = files[0];
+  if (!file) return;
+  media.push({ file, url: URL.createObjectURL(file), type: 'video', id: Date.now() + Math.random() });
+  renderGrid();
+}
+
+function moveItem(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= media.length) return;
+  [media[i], media[j]] = [media[j], media[i]];
+  renderGrid();
+}
+
+function renderGrid() {
   const grid = document.getElementById('photoGrid');
   grid.innerHTML = '';
-  photos.forEach((p, i) => {
+
+  media.forEach((item, i) => {
     const wrap = document.createElement('div');
-    wrap.style.cssText = 'position:relative;width:80px;height:80px;border-radius:6px;overflow:hidden;border:2px solid var(--line);cursor:grab;flex-shrink:0;';
+    wrap.style.cssText = 'position:relative;width:90px;flex-shrink:0;border-radius:8px;overflow:hidden;border:2px solid var(--line);background:var(--card2);';
     wrap.draggable = true;
     wrap.dataset.idx = i;
 
-    const img = document.createElement('img');
-    img.src = p.url;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;pointer-events:none;';
+    // Thumbnail
+    const thumb = document.createElement('div');
+    thumb.style.cssText = 'width:90px;height:90px;position:relative;';
 
-    const num = document.createElement('div');
-    num.textContent = i + 1;
-    num.style.cssText = 'position:absolute;top:3px;left:5px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px #000;';
+    if (item.type === 'photo') {
+      const img = document.createElement('img');
+      img.src = item.url;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      thumb.appendChild(img);
+    } else {
+      const vid = document.createElement('video');
+      vid.src = item.url;
+      vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      vid.muted = true;
+      thumb.appendChild(vid);
+      const play = document.createElement('div');
+      play.textContent = '▶';
+      play.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;color:#fff;text-shadow:0 1px 4px #000;pointer-events:none;';
+      thumb.appendChild(play);
+    }
 
+    // Badge: number + star for first
+    const badge = document.createElement('div');
+    badge.style.cssText = 'position:absolute;top:3px;left:4px;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px #000;';
+    badge.textContent = i === 0 ? '⭐️' : (i + 1);
+    thumb.appendChild(badge);
+
+    // Type badge
+    const typeBadge = document.createElement('div');
+    typeBadge.textContent = item.type === 'video' ? '🎥' : '📷';
+    typeBadge.style.cssText = 'position:absolute;bottom:3px;left:4px;font-size:11px;';
+    thumb.appendChild(typeBadge);
+
+    // Delete
     const del = document.createElement('button');
     del.textContent = '✕';
-    del.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.6);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:18px;padding:0;';
-    del.onclick = (e) => { e.stopPropagation(); photos.splice(i, 1); renderPhotoGrid(); };
+    del.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.65);border:none;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;line-height:20px;padding:0;';
+    del.onclick = (e) => { e.stopPropagation(); media.splice(i, 1); renderGrid(); };
+    thumb.appendChild(del);
 
-    wrap.appendChild(img);
-    wrap.appendChild(num);
-    wrap.appendChild(del);
+    wrap.appendChild(thumb);
 
-    // Drag events
+    // Arrow buttons (mobile-friendly)
+    const arrows = document.createElement('div');
+    arrows.style.cssText = 'display:flex;';
+    const btnL = document.createElement('button');
+    btnL.textContent = '←';
+    btnL.style.cssText = 'flex:1;background:var(--card2);border:none;border-top:1px solid var(--line);color:' + (i === 0 ? 'var(--line)' : 'var(--text)') + ';padding:4px;font-size:13px;cursor:pointer;';
+    btnL.disabled = i === 0;
+    btnL.onclick = () => moveItem(i, -1);
+
+    const btnR = document.createElement('button');
+    btnR.textContent = '→';
+    btnR.style.cssText = 'flex:1;background:var(--card2);border:none;border-top:1px solid var(--line);border-left:1px solid var(--line);color:' + (i === media.length - 1 ? 'var(--line)' : 'var(--text)') + ';padding:4px;font-size:13px;cursor:pointer;';
+    btnR.disabled = i === media.length - 1;
+    btnR.onclick = () => moveItem(i, 1);
+
+    arrows.appendChild(btnL);
+    arrows.appendChild(btnR);
+    wrap.appendChild(arrows);
+
+    // Drag events (desktop)
     wrap.addEventListener('dragstart', e => {
       dragSrc = i;
       e.dataTransfer.effectAllowed = 'move';
-      wrap.style.opacity = '0.4';
+      setTimeout(() => wrap.style.opacity = '0.4', 0);
     });
     wrap.addEventListener('dragend', () => { wrap.style.opacity = '1'; });
     wrap.addEventListener('dragover', e => { e.preventDefault(); wrap.style.borderColor = 'var(--accent)'; });
@@ -825,32 +895,34 @@ function renderPhotoGrid() {
       e.preventDefault();
       wrap.style.borderColor = 'var(--line)';
       if (dragSrc === null || dragSrc === i) return;
-      const moved = photos.splice(dragSrc, 1)[0];
-      photos.splice(i, 0, moved);
+      const moved = media.splice(dragSrc, 1)[0];
+      media.splice(i, 0, moved);
       dragSrc = null;
-      renderPhotoGrid();
+      renderGrid();
     });
 
     grid.appendChild(wrap);
   });
 
-  // Drop zone highlight
-  const dz = document.getElementById('dropZone');
-  dz.ondragover = e => { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; };
-  dz.ondragleave = () => { dz.style.borderColor = 'var(--line)'; };
-  dz.ondrop = e => {
-    e.preventDefault();
-    dz.style.borderColor = 'var(--line)';
-    handlePhotos(e.dataTransfer.files);
-  };
+  // Drop zones
+  ['dropZonePhoto', 'dropZoneVideo'].forEach(id => {
+    const dz = document.getElementById(id);
+    if (!dz) return;
+    dz.ondragover = e => { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; };
+    dz.ondragleave = () => { dz.style.borderColor = 'var(--line)'; };
+    dz.ondrop = e => {
+      e.preventDefault();
+      dz.style.borderColor = 'var(--line)';
+      const files = e.dataTransfer.files;
+      if (id === 'dropZonePhoto') handlePhotos(files);
+      else handleVideos(files);
+    };
+  });
 
-  document.getElementById('photoCount').textContent = photos.length ? `${photos.length} фото` : '';
+  document.getElementById('photoCount').textContent = media.length
+    ? `${media.filter(m=>m.type==='photo').length} фото · ${media.filter(m=>m.type==='video').length} видео · итого ${media.length}`
+    : '';
 }
-
-// Инициализация drop zone
-document.addEventListener('DOMContentLoaded', () => {
-  renderPhotoGrid();
-});
 
 // ── PUBLISH ─────────────────────────────────────────
 async function publishPost() {
@@ -869,33 +941,40 @@ async function publishPost() {
   setBtns('⏳ Публикую...', '#888', true);
 
   try {
-    if (photos.length > 0) {
-      // Отправляем фото как документы (оригиналы) + текст к первому
+    if (media.length > 0) {
       const caption = htmlText.length <= 1024 ? htmlText : '';
 
-      if (photos.length === 1) {
-        // Одно фото
+      if (media.length === 1) {
+        const item = media[0];
         const form = new FormData();
         form.append('chat_id', CHANNEL_ID);
-        form.append('document', photos[0].file, photos[0].file.name);
-        form.append('caption', caption);
-        form.append('parse_mode', 'HTML');
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: form });
+        if (item.type === 'video') {
+          form.append('video', item.file, item.file.name);
+          form.append('caption', caption);
+          form.append('parse_mode', 'HTML');
+          form.append('supports_streaming', 'true');
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { method: 'POST', body: form });
+        } else {
+          form.append('document', item.file, item.file.name);
+          form.append('caption', caption);
+          form.append('parse_mode', 'HTML');
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: form });
+        }
       } else {
-        // Несколько — альбом документов
+        // Альбом — фото как document, видео как video
         const form = new FormData();
         form.append('chat_id', CHANNEL_ID);
-        const media = photos.map((p, i) => ({
-          type: 'document',
-          media: `attach://photo${i}`,
+        const mediaArr = media.map((item, i) => ({
+          type: item.type === 'video' ? 'video' : 'document',
+          media: `attach://file${i}`,
           ...(i === 0 && caption ? { caption, parse_mode: 'HTML' } : {})
         }));
-        form.append('media', JSON.stringify(media));
-        photos.forEach((p, i) => form.append(`photo${i}`, p.file, p.file.name));
+        form.append('media', JSON.stringify(mediaArr));
+        media.forEach((item, i) => form.append(`file${i}`, item.file, item.file.name));
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup`, { method: 'POST', body: form });
       }
 
-      // Если текст не влез в caption — шлём отдельно
+      // Если текст не влез в caption
       if (htmlText.length > 1024) {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: 'POST',
@@ -1107,13 +1186,15 @@ function buildRentPost() {
   const fixedNone = FIXED.filter(a => !amenities.includes(a));
   const allChecked = [...regular, ...fixedHas];
   if (allChecked.length > 0) {
-    for (let i = 0; i < allChecked.length; i += 3)
-      lines.push(allChecked.slice(i, i+3).map(a => '✅ ' + a).join(' '));
+    for (let i = 0; i < allChecked.length; i += 3) {
+      const row = allChecked.slice(i, i + 3).map(a => '✅\u00A0' + a).join('  ');
+      lines.push(row);
+    }
   }
   if (amenities.length > 0 && fixedNone.length > 0)
-    lines.push(fixedNone.map(a => '✖️' + a).join(' '));
+    lines.push(fixedNone.map(a => '✖️\u00A0' + a).join('  '));
   lines.push('');
-  if (tenants) lines.push(`👬Tenants: ${tenants}`);
+  if (tenants) lines.push(`👬Tenants: 1-${tenants}`);
   if (pets) lines.push(`🐕Pets: ${pets}`);
   if (periods.length > 0) lines.push(`🕐 ${periods.join(' ')}`);
   lines.push('');
@@ -1249,8 +1330,8 @@ function resetAll() {
   document.getElementById('autoLabel').textContent = '';
   document.getElementById('s-autoLabel').textContent = '';
   document.getElementById('depositSyncLabel').textContent = '= цене';
-  photos = [];
-  renderPhotoGrid();
+  media = [];
+  renderGrid();
   update();
 }
 
