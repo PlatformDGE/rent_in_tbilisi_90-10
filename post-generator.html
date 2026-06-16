@@ -176,7 +176,8 @@ body.mode-sale .rent-only { display: none; }
 .field:last-child { margin-bottom: 0; }
 .field label { display: block; font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
 .field input { width: 100%; background: var(--card2); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; color: var(--text); font-family: inherit; font-size: 14px; transition: border-color 0.2s; }
-.field input:focus { outline: none; border-color: var(--accent); }
+.field select { width: 100%; background: var(--card2); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; color: var(--text); font-family: inherit; font-size: 14px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a90a8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
 
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -201,8 +202,8 @@ body.mode-sale .rent-only { display: none; }
 
 <header>
   <div>
-    <h1>Post Generator</h1>
-    <span>rent_in_tbilisi</span>
+    <h1>Заполни текст для публикации</h1>
+    <span>Fill in the text for publication</span>
   </div>
   <div class="header-right">
     <button class="reset-btn" onclick="resetAll()">↺ Сбросить</button>
@@ -214,18 +215,18 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- Deal Type -->
   <div class="section">
-    <div class="section-head">Тип сделки</div>
+    <div class="section-head">Тип сделки / Deal type</div>
     <div class="section-body">
       <div class="deal-toggle">
-        <button class="deal-btn active" data-deal="Rent" onclick="setDeal(this)">🏠 Rent</button>
-        <button class="deal-btn" data-deal="Sale" onclick="setDeal(this)">💼 Sale</button>
+        <button class="deal-btn active" data-deal="Rent" onclick="setDeal(this)">🏠 Аренда</button>
+        <button class="deal-btn" data-deal="Sale" onclick="setDeal(this)">💼 Продажа</button>
       </div>
     </div>
   </div>
 
   <!-- Описание / Exclusive -->
   <div class="section">
-    <div class="section-head">⭐️ Описание / Exclusive</div>
+    <div class="section-head">⭐️ Описание / Description</div>
     <div class="section-body">
       <div class="field" style="margin-bottom:10px;">
         <label class="excl-toggle" style="margin-bottom:0;">
@@ -243,10 +244,10 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- Location — shared -->
   <div class="section">
-    <div class="section-head">📍 Район / Метро</div>
+    <div class="section-head">📍 Район / District & Metro</div>
     <div class="section-body">
       <div class="field">
-        <label>Район (один)</label>
+        <label>Район / District</label>
         <div class="tag-grid">
           <span class="tag" data-group="district" data-val="#Vera" onclick="pickTag(this)">#Vera</span>
           <span class="tag" data-group="district" data-val="#Mtatsminda" onclick="pickTag(this)">#Mtatsminda</span>
@@ -289,7 +290,7 @@ body.mode-sale .rent-only { display: none; }
         </div>
       </div>
       <div class="field">
-        <label>Метро (опционально)</label>
+        <label>🚇 Метро / Metro Station</label>
         <div class="tag-grid">
           <span class="tag" data-group="metro" data-val="#LibertySquare" onclick="pickTag(this)">#LibertySquare</span>
           <span class="tag" data-group="metro" data-val="#Rustaveli" onclick="pickTag(this)">#Rustaveli</span>
@@ -328,7 +329,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- RENT: Property -->
   <div class="section rent-only">
-    <div class="section-head">🏢 Объект (Rent)</div>
+    <div class="section-head">🏢 Объект / Property</div>
     <div class="section-body">
       <div class="field">
         <label>Тип</label>
@@ -358,18 +359,39 @@ body.mode-sale .rent-only { display: none; }
           </div>
         </div>
       </div>
-      <div class="row3">
+      <div class="row2">
         <div class="field">
           <label>Площадь (м²)</label>
           <input type="number" id="sqmInput" placeholder="85" oninput="update()">
         </div>
         <div class="field">
-          <label>Этаж</label>
-          <input type="text" id="floorInput" placeholder="3/9" oninput="update()">
+          <label>Этаж / Всего</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select id="floorNum" onchange="update()" style="flex:1;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 8px;color:var(--text);font-family:inherit;font-size:14px;">
+              <option value="">—</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+              <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+            </select>
+            <span style="color:var(--dim);font-size:13px;">/</span>
+            <select id="floorTotal" onchange="update()" style="flex:1;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 8px;color:var(--text);font-family:inherit;font-size:14px;">
+              <option value="">—</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+              <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <label>Жильцы</label>
-          <input type="text" id="tenantsInput" placeholder="1-5" oninput="update()">
+      </div>
+      <div class="field">
+        <label>Жильцы макс.</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:var(--dim);font-size:13px;white-space:nowrap;">1 —</span>
+          <input type="number" id="tenantsInput" placeholder="5" min="1" max="20" oninput="update()" style="max-width:80px;">
         </div>
       </div>
       <div class="field">
@@ -390,7 +412,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- SALE: Property -->
   <div class="section sale-only">
-    <div class="section-head">🏢 Объект (Sale)</div>
+    <div class="section-head">🏢 Объект / Property</div>
     <div class="section-body">
       <div class="field">
         <label>Тип</label>
@@ -442,21 +464,31 @@ body.mode-sale .rent-only { display: none; }
           </div>
         </div>
       </div>
-      <div class="row3">
+      <div class="row2">
         <div class="field">
           <label>Площадь (м²)</label>
           <input type="number" id="s-sqmInput" placeholder="80" oninput="update()">
         </div>
         <div class="field">
-          <label>Этаж</label>
-          <input type="text" id="s-floorInput" placeholder="6" oninput="update()">
-        </div>
-        <div class="field">
-          <label>Позиция этажа</label>
-          <div class="tag-grid" style="margin-top:2px;">
-            <span class="tag" data-group="s-floorpos" data-val="#GroundFloor" onclick="pickTag(this)">#Ground</span>
-            <span class="tag" data-group="s-floorpos" data-val="#MiddleFloor" onclick="pickTag(this)">#Middle</span>
-            <span class="tag" data-group="s-floorpos" data-val="#TopFloor" onclick="pickTag(this)">#Top</span>
+          <label>Этаж / Всего</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select id="s-floorNum" onchange="update()" style="flex:1;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 8px;color:var(--text);font-family:inherit;font-size:14px;">
+              <option value="">—</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+              <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+            </select>
+            <span style="color:var(--dim);font-size:13px;">/</span>
+            <select id="s-floorTotal" onchange="update()" style="flex:1;background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 8px;color:var(--text);font-family:inherit;font-size:14px;">
+              <option value="">—</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+              <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
+            </select>
           </div>
         </div>
       </div>
@@ -478,7 +510,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- RENT: Amenities -->
   <div class="section rent-only">
-    <div class="section-head">✅ Удобства (Rent)</div>
+    <div class="section-head">✅ Удобства / Amenities</div>
     <div class="section-body">
       <div class="field">
         <label>Ванные комнаты</label>
@@ -499,7 +531,7 @@ body.mode-sale .rent-only { display: none; }
         </div>
       </div>
       <div class="field">
-        <label>✅/✖️ в посте (всегда)</label>
+        <label>✅/✖️ в посте</label>
         <div class="tag-grid">
           <span class="tag" data-multi="amenity" data-val="#Elevator" onclick="toggleTag(this)">#Elevator</span>
           <span class="tag" data-multi="amenity" data-val="#Oven" onclick="toggleTag(this)">#Oven</span>
@@ -537,7 +569,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- SALE: Amenities -->
   <div class="section sale-only">
-    <div class="section-head">✅ Удобства (Sale)</div>
+    <div class="section-head">✅ Удобства / Amenities</div>
     <div class="section-body">
       <div class="field">
         <label>Ванные комнаты</label>
@@ -579,7 +611,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- RENT: Цена -->
   <div class="section rent-only">
-    <div class="section-head">💰 Цена / Срок (Rent)</div>
+    <div class="section-head">💰 Цена / Price & Period</div>
     <div class="section-body">
       <div class="row2">
         <div class="field">
@@ -620,7 +652,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- SALE: Цена -->
   <div class="section sale-only">
-    <div class="section-head">💰 Цена (Sale)</div>
+    <div class="section-head">💰 Цена / Price</div>
     <div class="section-body">
       <div class="field">
         <label>Цена ($)</label>
@@ -660,7 +692,7 @@ body.mode-sale .rent-only { display: none; }
 
   <!-- Agent -->
   <div class="section">
-    <div class="section-head">📲 Агент / Рекрут</div>
+    <div class="section-head">📲 Агент / Agent</div>
     <div class="section-body">
       <div style="background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:12px;color:var(--dim);margin-bottom:10px;line-height:1.6;">
         @David_Tibelashvili | +995 599 20 67 16<br>
