@@ -709,6 +709,22 @@ body.mode-sale .rent-only { display: none; }
     </div>
   </div>
 
+  <!-- Фото -->
+  <div class="section">
+    <div class="section-head">📸 Фото / Photos</div>
+    <div class="section-body">
+      <div class="field">
+        <label>Загрузить фото (оригиналы)</label>
+        <div id="dropZone" onclick="document.getElementById('photoInput').click()" style="border:2px dashed var(--line);border-radius:8px;padding:20px;text-align:center;cursor:pointer;color:var(--dim);font-size:13px;transition:border-color 0.2s;">
+          📁 Нажми или перетащи фото сюда
+        </div>
+        <input type="file" id="photoInput" multiple accept="image/*" style="display:none" onchange="handlePhotos(this.files)">
+      </div>
+      <div id="photoGrid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+      <div id="photoCount" style="font-size:10px;color:var(--dim);margin-top:4px;"></div>
+    </div>
+  </div>
+
 </div><!-- end form-col -->
 
 <!-- PREVIEW -->
@@ -716,20 +732,198 @@ body.mode-sale .rent-only { display: none; }
   <div class="preview-label">📋 Готовый пост</div>
   <div class="post-preview" id="postPreview">← Заполните форму</div>
   <div class="char-count" id="charCount"></div>
-  <button class="copy-btn desktop-copy" id="copyBtnDesktop" onclick="copyPost()">📋 Скопировать пост</button>
+  <button class="copy-btn desktop-copy" id="copyBtnDesktop" onclick="copyPost()">📋 Скопировать текст</button>
+  <button class="copy-btn desktop-copy" id="publishBtnDesktop" onclick="publishPost()" style="background:#2196F3;margin-top:6px;">✈️ Опубликовать в канал</button>
 </div>
 
 </div><!-- end layout -->
 
 <div class="mobile-bar">
   <button class="preview-toggle" id="previewToggle" onclick="togglePreview()">👁 Превью</button>
-  <button class="copy-btn" id="copyBtn" onclick="copyPost()">📋 Скопировать</button>
+  <button class="copy-btn" id="copyBtn" onclick="copyPost()" style="flex:1.5;">📋 Копировать</button>
+  <button class="copy-btn" id="publishBtn" onclick="publishPost()" style="flex:1.5;background:#2196F3;">✈️ Пост</button>
 </div>
 
 <script>
 const SHEET_ID = '1M7kg2FgI8eke8_Iy4NofsKzC3NrKetLl3dniKJRxYrU';
 const GID_AGENTS   = '623976749';
 const GID_RECRUITS = '1404574561';
+const BOT_TOKEN  = '8724734832:AAH5XTfDLCi1O_jkBPupxXWV_ztdJ3YrocI';
+const CHANNEL_ID = '-1003498137667';
+
+// Build HTML version for Telegram Bot API (clickable links)
+function buildTelegramHTML() {
+  const address = val('addressInput');
+  const mapsUrl = val('mapsInput');
+  let text = buildPost();
+
+  // Address → clickable
+  if (address && mapsUrl) {
+    text = text.replace(`📍${address}`, `<a href="${mapsUrl}">📍${address}</a>`);
+  }
+
+  // Footer links
+  text = text.replace('🌟 Check all listings | Reviews',
+    `<a href="https://t.me/rent_tbilisi_ge/9859">🌟 Check all listings</a> | <a href="https://t.me/reviews_rent_tbilisi">Reviews</a>`);
+  text = text.replace('📍APARTMENTS ON MAP📍',
+    `<a href="https://t.me/RentInTbilisi_bot/MAP?startapp=source=sale_in_tbilisi">📍APARTMENTS ON MAP📍</a>`);
+  text = text.replace('📱 Instagram 🗳 FB 🎥 YouTube',
+    `<a href="https://www.instagram.com/rent_in_tbilisi/profilecard/?igsh=N3kxbTd4bTdkN2Vk">📱 Instagram</a> <a href="https://www.facebook.com/share/18GSsdio3b/?mibextid=LQQJ4d">🗳 FB</a> <a href="https://youtube.com/@rentintbilisi">🎥 YouTube</a>`);
+
+  return text;
+}
+
+// ── PHOTOS ──────────────────────────────────────────
+let photos = []; // [{file, url, id}]
+let dragSrc = null;
+
+function handlePhotos(files) {
+  for (const file of files) {
+    const id = Date.now() + Math.random();
+    const url = URL.createObjectURL(file);
+    photos.push({ file, url, id });
+  }
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = '';
+  photos.forEach((p, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;width:80px;height:80px;border-radius:6px;overflow:hidden;border:2px solid var(--line);cursor:grab;flex-shrink:0;';
+    wrap.draggable = true;
+    wrap.dataset.idx = i;
+
+    const img = document.createElement('img');
+    img.src = p.url;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;pointer-events:none;';
+
+    const num = document.createElement('div');
+    num.textContent = i + 1;
+    num.style.cssText = 'position:absolute;top:3px;left:5px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px #000;';
+
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.6);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:18px;padding:0;';
+    del.onclick = (e) => { e.stopPropagation(); photos.splice(i, 1); renderPhotoGrid(); };
+
+    wrap.appendChild(img);
+    wrap.appendChild(num);
+    wrap.appendChild(del);
+
+    // Drag events
+    wrap.addEventListener('dragstart', e => {
+      dragSrc = i;
+      e.dataTransfer.effectAllowed = 'move';
+      wrap.style.opacity = '0.4';
+    });
+    wrap.addEventListener('dragend', () => { wrap.style.opacity = '1'; });
+    wrap.addEventListener('dragover', e => { e.preventDefault(); wrap.style.borderColor = 'var(--accent)'; });
+    wrap.addEventListener('dragleave', () => { wrap.style.borderColor = 'var(--line)'; });
+    wrap.addEventListener('drop', e => {
+      e.preventDefault();
+      wrap.style.borderColor = 'var(--line)';
+      if (dragSrc === null || dragSrc === i) return;
+      const moved = photos.splice(dragSrc, 1)[0];
+      photos.splice(i, 0, moved);
+      dragSrc = null;
+      renderPhotoGrid();
+    });
+
+    grid.appendChild(wrap);
+  });
+
+  // Drop zone highlight
+  const dz = document.getElementById('dropZone');
+  dz.ondragover = e => { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; };
+  dz.ondragleave = () => { dz.style.borderColor = 'var(--line)'; };
+  dz.ondrop = e => {
+    e.preventDefault();
+    dz.style.borderColor = 'var(--line)';
+    handlePhotos(e.dataTransfer.files);
+  };
+
+  document.getElementById('photoCount').textContent = photos.length ? `${photos.length} фото` : '';
+}
+
+// Инициализация drop zone
+document.addEventListener('DOMContentLoaded', () => {
+  renderPhotoGrid();
+});
+
+// ── PUBLISH ─────────────────────────────────────────
+async function publishPost() {
+  vibrate();
+  const htmlText = buildTelegramHTML();
+  if (!htmlText || htmlText.length < 10) { alert('Заполните форму перед публикацией'); return; }
+
+  const btns = ['publishBtn', 'publishBtnDesktop'];
+  const setBtns = (text, color, disabled) => btns.forEach(id => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.textContent = text; b.disabled = disabled;
+    if (color) b.style.background = color;
+  });
+
+  setBtns('⏳ Публикую...', '#888', true);
+
+  try {
+    if (photos.length > 0) {
+      // Отправляем фото как документы (оригиналы) + текст к первому
+      const caption = htmlText.length <= 1024 ? htmlText : '';
+
+      if (photos.length === 1) {
+        // Одно фото
+        const form = new FormData();
+        form.append('chat_id', CHANNEL_ID);
+        form.append('document', photos[0].file, photos[0].file.name);
+        form.append('caption', caption);
+        form.append('parse_mode', 'HTML');
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: form });
+      } else {
+        // Несколько — альбом документов
+        const form = new FormData();
+        form.append('chat_id', CHANNEL_ID);
+        const media = photos.map((p, i) => ({
+          type: 'document',
+          media: `attach://photo${i}`,
+          ...(i === 0 && caption ? { caption, parse_mode: 'HTML' } : {})
+        }));
+        form.append('media', JSON.stringify(media));
+        photos.forEach((p, i) => form.append(`photo${i}`, p.file, p.file.name));
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup`, { method: 'POST', body: form });
+      }
+
+      // Если текст не влез в caption — шлём отдельно
+      if (htmlText.length > 1024) {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHANNEL_ID, text: htmlText, parse_mode: 'HTML', disable_web_page_preview: true })
+        });
+      }
+
+      setBtns('✅ Опубликовано!', 'var(--green)', false);
+    } else {
+      // Только текст
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHANNEL_ID, text: htmlText, parse_mode: 'HTML', disable_web_page_preview: true })
+      });
+      const data = await res.json();
+      if (data.ok) setBtns('✅ Опубликовано!', 'var(--green)', false);
+      else { alert('Ошибка: ' + (data.description || 'неизвестная')); setBtns('✈️ Опубликовать', '#2196F3', false); return; }
+    }
+
+    setTimeout(() => setBtns('✈️ Опубликовать в канал', '#2196F3', false), 3000);
+
+  } catch(e) {
+    alert('Ошибка сети: ' + e.message);
+    setBtns('✈️ Опубликовать в канал', '#2196F3', false);
+  }
+}
 
 async function loadSheetNames(gid, containerId, statusId) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
@@ -932,11 +1126,11 @@ function buildRentPost() {
   lines.push('');
   lines.push(`📲 @David_Tibelashvili | \n+995 599 20 67 16 ${agentTag || '#???'}`);
   lines.push('');
-  lines.push(`[🌟 Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)`);
+  lines.push('🌟 Check all listings | Reviews');
   lines.push('');
-  lines.push(`[📍APARTMENTS ON MAP📍](https://t.me/RentInTbilisi_bot/MAP?startapp=source=sale_in_tbilisi)`);
+  lines.push('📍APARTMENTS ON MAP📍');
   lines.push('');
-  lines.push(`[📱 Instagram](https://www.instagram.com/rent_in_tbilisi/profilecard/?igsh=N3kxbTd4bTdkN2Vk) [📱 FB](https://www.facebook.com/share/18GSsdio3b/?mibextid=LQQJ4d) [📱 YouTube](https://youtube.com/@rentintbilisi)`);
+  lines.push('📱 Instagram 🗳 FB 🎥 YouTube');
   return lines.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
@@ -984,20 +1178,18 @@ function buildSalePost() {
   lines.push('');
   lines.push(`📲 @David_Tibelashvili | \n+995 599 20 67 16 ${agentTag || '#???'}`);
   lines.push('');
-  lines.push(`[🌟 Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)`);
+  lines.push('🌟 Check all listings | Reviews');
   lines.push('');
-  lines.push(`[📍APARTMENTS ON MAP📍](https://t.me/RentInTbilisi_bot/MAP?startapp=source=sale_in_tbilisi)`);
+  lines.push('📍APARTMENTS ON MAP📍');
   lines.push('');
-  lines.push(`[📱 Instagram](https://www.instagram.com/rent_in_tbilisi/profilecard/?igsh=N3kxbTd4bTdkN2Vk) [📱 FB](https://www.facebook.com/share/18GSsdio3b/?mibextid=LQQJ4d) [📱 YouTube](https://youtube.com/@rentintbilisi)`);
+  lines.push('📱 Instagram 🗳 FB 🎥 YouTube');
   lines.push('');
   lines.push('SALE IN TBILISI🇬🇪');
   return lines.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
 function toPreviewHTML(text) {
-  return text
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--accent);text-decoration:underline;">$1</a>')
-    .replace(/\n/g, '<br>');
+  return text.replace(/\n/g, '<br>');
 }
 
 function update() {
@@ -1057,6 +1249,8 @@ function resetAll() {
   document.getElementById('autoLabel').textContent = '';
   document.getElementById('s-autoLabel').textContent = '';
   document.getElementById('depositSyncLabel').textContent = '= цене';
+  photos = [];
+  renderPhotoGrid();
   update();
 }
 
