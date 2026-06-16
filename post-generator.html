@@ -941,40 +941,20 @@ async function publishPost() {
   setBtns('⏳ Публикую...', '#888', true);
 
   try {
-    if (media.length > 0) {
-      const caption = htmlText.length <= 1024 ? htmlText : '';
+    const photos = media.filter(m => m.type === 'photo');
+    const videos = media.filter(m => m.type === 'video');
 
-      if (media.length === 1) {
-        const item = media[0];
-        const form = new FormData();
-        form.append('chat_id', CHANNEL_ID);
-        if (item.type === 'video') {
-          form.append('video', item.file, item.file.name);
-          form.append('caption', caption);
-          form.append('parse_mode', 'HTML');
-          form.append('supports_streaming', 'true');
-          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { method: 'POST', body: form });
-        } else {
-          form.append('document', item.file, item.file.name);
-          form.append('caption', caption);
-          form.append('parse_mode', 'HTML');
-          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: form });
-        }
-      } else {
-        // Альбом — фото как document, видео как video
-        const form = new FormData();
-        form.append('chat_id', CHANNEL_ID);
-        const mediaArr = media.map((item, i) => ({
-          type: item.type === 'video' ? 'video' : 'document',
-          media: `attach://file${i}`,
-          ...(i === 0 && caption ? { caption, parse_mode: 'HTML' } : {})
-        }));
-        form.append('media', JSON.stringify(mediaArr));
-        media.forEach((item, i) => form.append(`file${i}`, item.file, item.file.name));
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup`, { method: 'POST', body: form });
-      }
-
-      // Если текст не влез в caption
+    if (photos.length === 1 && videos.length === 0) {
+      // Одно фото + текст как caption
+      const form = new FormData();
+      form.append('chat_id', CHANNEL_ID);
+      form.append('photo', photos[0].file, photos[0].file.name);
+      form.append('caption', htmlText.substring(0, 1024));
+      form.append('parse_mode', 'HTML');
+      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: form });
+      const d = await r.json();
+      if (!d.ok) { alert('Ошибка фото: ' + d.description); setBtns('✈️ Опубликовать в канал', '#2196F3', false); return; }
+      // Если текст длиннее 1024 — досылаем остаток
       if (htmlText.length > 1024) {
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: 'POST',
@@ -983,7 +963,75 @@ async function publishPost() {
         });
       }
 
-      setBtns('✅ Опубликовано!', 'var(--green)', false);
+    } else if (photos.length > 1 && videos.length === 0) {
+      // Несколько фото альбомом + текст к первому
+      const form = new FormData();
+      form.append('chat_id', CHANNEL_ID);
+      const mediaArr = photos.map((item, i) => ({
+        type: 'photo',
+        media: `attach://photo${i}`,
+        ...(i === 0 ? { caption: htmlText.substring(0, 1024), parse_mode: 'HTML' } : {})
+      }));
+      form.append('media', JSON.stringify(mediaArr));
+      photos.forEach((item, i) => form.append(`photo${i}`, item.file, item.file.name));
+      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup`, { method: 'POST', body: form });
+      const d = await r.json();
+      if (!d.ok) { alert('Ошибка альбома: ' + d.description); setBtns('✈️ Опубликовать в канал', '#2196F3', false); return; }
+      if (htmlText.length > 1024) {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHANNEL_ID, text: htmlText, parse_mode: 'HTML', disable_web_page_preview: true })
+        });
+      }
+
+    } else if (videos.length > 0 && photos.length === 0) {
+      // Только видео + текст как caption
+      const form = new FormData();
+      form.append('chat_id', CHANNEL_ID);
+      form.append('video', videos[0].file, videos[0].file.name);
+      form.append('caption', htmlText.substring(0, 1024));
+      form.append('parse_mode', 'HTML');
+      form.append('supports_streaming', 'true');
+      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { method: 'POST', body: form });
+      const d = await r.json();
+      if (!d.ok) { alert('Ошибка видео: ' + d.description); setBtns('✈️ Опубликовать в канал', '#2196F3', false); return; }
+      if (htmlText.length > 1024) {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHANNEL_ID, text: htmlText, parse_mode: 'HTML', disable_web_page_preview: true })
+        });
+      }
+
+    } else if (photos.length > 0 && videos.length > 0) {
+      // Фото альбом + видео отдельно + текст
+      const form = new FormData();
+      form.append('chat_id', CHANNEL_ID);
+      const mediaArr = photos.map((item, i) => ({
+        type: 'photo',
+        media: `attach://photo${i}`,
+        ...(i === 0 ? { caption: htmlText.substring(0, 1024), parse_mode: 'HTML' } : {})
+      }));
+      form.append('media', JSON.stringify(mediaArr));
+      photos.forEach((item, i) => form.append(`photo${i}`, item.file, item.file.name));
+      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup`, { method: 'POST', body: form });
+      const d = await r.json();
+      if (!d.ok) { alert('Ошибка альбома: ' + d.description); setBtns('✈️ Опубликовать в канал', '#2196F3', false); return; }
+      // Видео отдельно
+      const vform = new FormData();
+      vform.append('chat_id', CHANNEL_ID);
+      vform.append('video', videos[0].file, videos[0].file.name);
+      vform.append('supports_streaming', 'true');
+      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { method: 'POST', body: vform });
+      if (htmlText.length > 1024) {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHANNEL_ID, text: htmlText, parse_mode: 'HTML', disable_web_page_preview: true })
+        });
+      }
+
     } else {
       // Только текст
       const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -992,10 +1040,10 @@ async function publishPost() {
         body: JSON.stringify({ chat_id: CHANNEL_ID, text: htmlText, parse_mode: 'HTML', disable_web_page_preview: true })
       });
       const data = await res.json();
-      if (data.ok) setBtns('✅ Опубликовано!', 'var(--green)', false);
-      else { alert('Ошибка: ' + (data.description || 'неизвестная')); setBtns('✈️ Опубликовать', '#2196F3', false); return; }
+      if (!data.ok) { alert('Ошибка: ' + data.description); setBtns('✈️ Опубликовать в канал', '#2196F3', false); return; }
     }
 
+    setBtns('✅ Опубликовано!', 'var(--green)', false);
     setTimeout(() => setBtns('✈️ Опубликовать в канал', '#2196F3', false), 3000);
 
   } catch(e) {
@@ -1164,9 +1212,8 @@ function buildRentPost() {
   let lines = [];
   let loc = [district, metro ? '🚇 ' + metro : null].filter(Boolean).join(' ');
   if (loc) lines.push(loc);
-  if (address && mapsUrl) lines.push(`[📍${address}](${mapsUrl})`);
-  else if (address) lines.push(`📍${address}`);
-  if (headline) { lines.push(''); lines.push(`⭐️ *${headline}* ⭐️`); }
+  if (address) lines.push(`📍${address}`);
+  if (headline) { lines.push(''); lines.push(`⭐️ ${headline} ⭐️`); }
   lines.push('');
   if (isExclusive) lines.push('❗️#Exclusive\n');
   let propLine = '🏢 '; if (beds) propLine += beds + ' '; propLine += propType + ' for #Rent';
@@ -1230,9 +1277,8 @@ function buildSalePost() {
   let lines = [];
   let loc = [district, metro ? '🚇 ' + metro : null].filter(Boolean).join(' ');
   if (loc) lines.push(loc);
-  if (address && mapsUrl) lines.push(`[📍${address}](${mapsUrl})`);
-  else if (address) lines.push(`📍${address}`);
-  if (headline) { lines.push(''); lines.push(`🌟*${headline}*🌟`); }
+  if (address) lines.push(`📍${address}`);
+  if (headline) { lines.push(''); lines.push(`🌟 ${headline} 🌟`); }
   lines.push('');
   if (isExclusive) lines.push('❗️#Exclusive\n');
   let propLine = '🏢 '; if (beds) propLine += beds + ' '; propLine += propType + ' for #Sale';
@@ -1269,7 +1315,27 @@ function buildSalePost() {
   return lines.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
-function toPreviewHTML(text) {
+function buildTelegramHTML() {
+  const address = val('addressInput');
+  const mapsUrl = val('mapsInput');
+  let text = buildPost();
+
+  // Address → clickable link
+  if (address && mapsUrl) {
+    text = text.replace(`📍${address}`, `<a href="${mapsUrl}">📍${address}</a>`);
+  }
+
+  // Footer links
+  text = text
+    .replace('🌟 Check all listings | Reviews',
+      `<a href="https://t.me/rent_tbilisi_ge/9859">🌟 Check all listings</a> | <a href="https://t.me/reviews_rent_tbilisi">Reviews</a>`)
+    .replace('📍APARTMENTS ON MAP📍',
+      `<a href="https://t.me/RentInTbilisi_bot/MAP?startapp=source=sale_in_tbilisi">📍APARTMENTS ON MAP📍</a>`)
+    .replace('📱 Instagram 🗳 FB 🎥 YouTube',
+      `<a href="https://www.instagram.com/rent_in_tbilisi/profilecard/?igsh=N3kxbTd4bTdkN2Vk">📱 Instagram</a> <a href="https://www.facebook.com/share/18GSsdio3b/?mibextid=LQQJ4d">🗳 FB</a> <a href="https://youtube.com/@rentintbilisi">🎥 YouTube</a>`);
+
+  return text;
+}
   return text.replace(/\n/g, '<br>');
 }
 
