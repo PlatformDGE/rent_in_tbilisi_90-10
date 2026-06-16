@@ -943,14 +943,13 @@ async function publishPost() {
   try {
     const photos = media.filter(m => m.type === 'photo');
     const videos = media.filter(m => m.type === 'video');
+    const plainText = buildPost();
 
     if (photos.length === 1 && videos.length === 0) {
-      // Одно фото + текст как caption
       const form = new FormData();
       form.append('chat_id', CHANNEL_ID);
       form.append('photo', photos[0].file, photos[0].file.name);
-      form.append('caption', htmlText.substring(0, 1024));
-      form.append('parse_mode', 'HTML');
+      form.append('caption', plainText.substring(0, 1024));
       const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: form });
       const d = await r.json();
       if (!d.ok) { alert('Ошибка фото: ' + d.description); setBtns('✈️ Опубликовать в канал', '#2196F3', false); return; }
@@ -970,7 +969,7 @@ async function publishPost() {
       const mediaArr = photos.map((item, i) => ({
         type: 'photo',
         media: `attach://photo${i}`,
-        ...(i === 0 ? { caption: htmlText.substring(0, 1024), parse_mode: 'HTML' } : {})
+        ...(i === 0 ? { caption: plainText.substring(0, 1024) } : {})
       }));
       form.append('media', JSON.stringify(mediaArr));
       photos.forEach((item, i) => form.append(`photo${i}`, item.file, item.file.name));
@@ -990,8 +989,7 @@ async function publishPost() {
       const form = new FormData();
       form.append('chat_id', CHANNEL_ID);
       form.append('video', videos[0].file, videos[0].file.name);
-      form.append('caption', htmlText.substring(0, 1024));
-      form.append('parse_mode', 'HTML');
+      form.append('caption', plainText.substring(0, 1024));
       form.append('supports_streaming', 'true');
       const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { method: 'POST', body: form });
       const d = await r.json();
@@ -1011,7 +1009,7 @@ async function publishPost() {
       const mediaArr = photos.map((item, i) => ({
         type: 'photo',
         media: `attach://photo${i}`,
-        ...(i === 0 ? { caption: htmlText.substring(0, 1024), parse_mode: 'HTML' } : {})
+        ...(i === 0 ? { caption: plainText.substring(0, 1024) } : {})
       }));
       form.append('media', JSON.stringify(mediaArr));
       photos.forEach((item, i) => form.append(`photo${i}`, item.file, item.file.name));
