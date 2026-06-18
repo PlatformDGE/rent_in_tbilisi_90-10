@@ -788,14 +788,17 @@ async function fileToBase64(file) {
   });
 }
 
-// Отправить через Apps Script
+// Отправить через Apps Script (CORS-safe)
 async function gasRequest(payload) {
   const resp = await fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    headers: { 'Content-Type': 'text/plain' }, // text/plain обходит CORS preflight
+    body: JSON.stringify(payload),
+    redirect: 'follow'
   });
-  return resp.json();
+  const text = await resp.text();
+  try { return JSON.parse(text); }
+  catch(e) { return { ok: false, error: 'Bad response: ' + text.substring(0, 100) }; }
 }
 
 // Отправить документ (фото оригинал) через GAS
