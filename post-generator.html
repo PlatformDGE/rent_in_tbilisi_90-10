@@ -776,7 +776,7 @@ const TOPIC_OWNER      = 22;               // Топик: Owner Info
 const TOPIC_ALBUM      = 207;              // Топик: готовый пост (репост на канал)
 const CHANNEL_ID_ALBUM = '-1003498137667';
 const CHANNEL_ID_OWNER = '-1003498137667';
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw0lW7vYpqchOGRcms1Rtq7uMHZ16kl-w0jZCHgLh5ECvCHSkSKFAdYv3AjHs3H2brZng/exec';
+const GAS_URL = 'https://tg-proxy.ddavitashvili.workers.dev';
 
 // Конвертировать File в base64
 async function fileToBase64(file) {
@@ -788,13 +788,12 @@ async function fileToBase64(file) {
   });
 }
 
-// Отправить через Apps Script (CORS-safe)
+// Отправить через Cloudflare Worker
 async function gasRequest(payload) {
   const resp = await fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' }, // text/plain обходит CORS preflight
-    body: JSON.stringify(payload),
-    redirect: 'follow'
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
   });
   const text = await resp.text();
   try { return JSON.parse(text); }
