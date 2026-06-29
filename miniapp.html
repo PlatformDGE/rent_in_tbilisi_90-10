@@ -1033,9 +1033,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="field" id="rn-recruit-block"><label class="fl">Рекрут / Агент (показ)</label>
             <select id="rn-recruit" onchange="rnUpd()"><option value="">Без рекрута</option></select>
           </div>
-          <div class="field" id="rn-recruit2-block" style="display:none;"><label class="fl">Второй участник (рекрут)</label>
-            <select id="rn-recruit2" onchange="rnUpd()"><option value="">Выбрать рекрута...</option></select>
-          </div>
           <div class="field" id="rn-client-src-block" style="display:none;"><label class="fl">Кто передал клиента</label>
             <select id="rn-client-src" onchange="rnUpd()"><option value="">Выбрать агента/рекрута...</option></select>
           </div>
@@ -1284,6 +1281,12 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <button class="stats-tab" id="stab-recruits" onclick="switchStatsTab('recruits')">🌱 Рекруты</button>
           <button class="stats-tab" id="stab-standards" onclick="switchStatsTab('standards')">📚 Стандарты</button>
           <button class="stats-tab" id="stab-news" onclick="switchStatsTab('news')">📰 Новости</button>
+        </div>
+        <!-- Post Generator -->
+        <div style="margin-top:12px;">
+          <button onclick="(window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp.openLink('https://rentintbilisi.ge/post-generator.html'):window.open('https://rentintbilisi.ge/post-generator.html','_blank'))" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            ✍️ Создать пост для публикации
+          </button>
         </div>
       </div>
 
@@ -2188,7 +2191,6 @@ function setRnSc(i){
   }
   var showRec=(i>=1&&i<=3);
   var showRecDeals=(i===5);
-  var showRecruit2=(i===5);
   var showLevel=(i<=3||i===6);
   var showClientSrc=(i===6);
   // Сценарий 7 — ручное: показываем блок и подсвечиваем
@@ -2200,7 +2202,6 @@ function setRnSc(i){
   var cs=document.getElementById('rn-client-src-block');
   if(rb)rb.style.display=showRec?'block':'none';
   if(rd)rd.style.display=showRecDeals?'block':'none';
-  var r2b=document.getElementById('rn-recruit2-block');if(r2b)r2b.style.display=showRecruit2?'block':'none';
   if(lb)lb.style.display=showLevel?'block':'none';
   if(cs){
     cs.style.display=showClientSrc?'block':'none';
@@ -2212,18 +2213,6 @@ function setRnSc(i){
         csel.innerHTML='<option value="">Выбрать агента/рекрута...</option>';
         all.forEach(function(n){csel.innerHTML+='<option value="'+n+'">'+n+'</option>';});
       }
-    }
-  }
-  // Populate recruit2 list when sc=5
-  if(showRecruit2){
-    var r2sel=document.getElementById('rn-recruit2');
-    if(r2sel&&r2sel.options.length<=1){
-      var recAll=(RECRUITS||[]);
-      r2sel.innerHTML='<option value="">Выбрать рекрута...</option>';
-      recAll.forEach(function(r){
-        var htag=r.hashtag||('#'+r.name);
-        r2sel.innerHTML+='<option value="'+htag+'">'+r.name+'</option>';
-      });
     }
   }
   buildRnManual();
@@ -2452,12 +2441,7 @@ function rnUpd(){
     'Platforms Commission'+(rnIsRerented?'':platRow.p?(' ('+platRow.p+'%)'):'')+ ': $'+(rnIsRerented?0:platRow.val),
     '#'+agentName+' Commission'+(rnIsRerented?'':agRow.p?(' ('+agRow.p+'%)'):'')+ ': $'+(rnIsRerented?0:agRow.val),
   ];
-  if(!rnIsRerented && recRow) {
-    var r2El=document.getElementById('rn-recruit2');
-    var r2Tag=r2El&&r2El.value?r2El.value:'';
-    var recLabel=rnSc===5&&r2Tag?r2Tag:recRow.n;
-    lines.push(recLabel+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
-  }
+  if(!rnIsRerented && recRow) lines.push(recRow.n+(recRow.p?(' ('+recRow.p+'%)'):'')+ ': $'+recRow.val);
   if(rnSc===6){var csEl=document.getElementById('rn-client-src');var csName=csEl&&csEl.value?csEl.value:'—';lines.push('Передал клиента: '+csName+' (10%)');}
   lines.push('');
   lines.push('Cadastral number:');
