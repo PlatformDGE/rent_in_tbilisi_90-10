@@ -3502,7 +3502,7 @@ function checkAccess() {
     if (AGENTS.length > 0 || RECRUITS.length > 0) {
       clearInterval(timer);
       verifyUsername();
-    } else if (tries > 30) { // 15 seconds
+    } else if (tries > 10) { // 5 seconds
       clearInterval(timer);
       // Last resort — check via GAS
       var cb = '__access_'+Date.now();
@@ -3592,7 +3592,7 @@ function loadData(){
       useFallback();
       // НЕ удаляем window[cbName] — если GAS ответит позже, данные обновятся автоматически
     }
-  }, 25000); // GAS cold start
+  }, 8000); // GAS cold start — fallback faster
 }
 
 // ─── FALLBACK VERSION ────────────────────────────────────
