@@ -1194,28 +1194,6 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="lcbtn" onclick="cxSelLang('GEO',this)"><span style="font-size:26px;">🇬🇪</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">ქართული</div><div style="font-size:11px;color:var(--text2);">Georgian version</div></div><span class="lbadge">GEO</span></div>
           <div class="lcbtn" onclick="cxSelLang('RU',this)"><span style="font-size:26px;">🇷🇺</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">Русский</div><div style="font-size:11px;color:var(--text2);">Russian version</div></div><span class="lbadge">RU</span></div>
           <div class="lcbtn" onclick="cxSelLang('EN',this)"><span style="font-size:26px;">🇬🇧</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">English</div><div style="font-size:11px;color:var(--text2);">English version</div></div><span class="lbadge">EN</span></div>
-          <!-- Pets toggle -->
-          <div style="margin-top:20px;padding:14px 16px;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--border);">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:20px;">🐾</span>
-                <div>
-                  <div style="font-size:14px;font-weight:700;">With Pets</div>
-                  <div style="font-size:11px;color:var(--text2);">Add pet deposit clause to contract</div>
-                </div>
-              </div>
-              <label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
-                <input type="checkbox" id="cx-pets" onchange="cxTogglePets()" style="opacity:0;width:0;height:0;">
-                <span id="cx-pets-track" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--bg2);border-radius:24px;transition:.3s;border:1px solid var(--border);"></span>
-                <span id="cx-pets-thumb" style="position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.3s;"></span>
-              </label>
-            </div>
-            <div id="cx-pets-dep" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
-              <label class="fl" style="margin-bottom:6px;">Pet Deposit (USD)</label>
-              <input type="number" id="cx-petdep" placeholder="Pet deposit amount" oninput="cxPetDepChanged()" style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:14px;box-sizing:border-box;">
-              <div style="font-size:11px;color:var(--text2);margin-top:4px;">Default: 50% of main deposit</div>
-            </div>
-          </div>
           <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cx-err2"></div>
         </div>
 
@@ -1253,7 +1231,29 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
               <div class="field"><label class="fl">Duration (months) <span class="req">*</span></label><input type="text" id="cx-mo" placeholder="Number of months"></div>
               <div class="r2">
                 <div class="field"><label class="fl">Monthly Price (USD) <span class="req">*</span></label><input type="text" id="cx-pr" placeholder="Monthly price" oninput="cxSyncDep()"></div>
-                <div class="field"><label class="fl">Deposit (USD) <span class="req">*</span></label><input type="text" id="cx-dep" placeholder="Deposit amount"></div>
+                <div class="field"><label class="fl">Deposit (USD) <span class="req">*</span></label><input type="text" id="cx-dep" placeholder="Deposit amount" oninput="cxSyncDep()"></div>
+              <!-- Pets toggle inline -->
+              <div style="padding:12px 14px;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--border);margin-bottom:2px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:18px;">🐾</span>
+                    <div>
+                      <div style="font-size:13px;font-weight:700;">With Pets</div>
+                      <div style="font-size:11px;color:var(--text2);">Adds pet deposit clause</div>
+                    </div>
+                  </div>
+                  <label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
+                    <input type="checkbox" id="cx-pets" onchange="cxTogglePets()" style="opacity:0;width:0;height:0;">
+                    <span id="cx-pets-track" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--bg2);border-radius:24px;transition:.3s;border:1px solid var(--border);"></span>
+                    <span id="cx-pets-thumb" style="position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.3s;"></span>
+                  </label>
+                </div>
+                <div id="cx-pets-dep" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+                  <label class="fl" style="margin-bottom:6px;">Pet Deposit (USD)</label>
+                  <input type="number" id="cx-petdep" placeholder="Pet deposit amount" oninput="cxPetDepChanged()" style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:14px;box-sizing:border-box;">
+                  <div style="font-size:11px;color:var(--text2);margin-top:4px;">Default: 50% of main deposit</div>
+                </div>
+              </div>
               </div>
               <div class="field"><label class="fl">Payment Day (1–31) <span class="req">*</span></label><input type="text" id="cx-pd" placeholder="Day of month"></div>
             </div>
