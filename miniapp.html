@@ -1194,6 +1194,28 @@ input:checked + .adm-sw-sl:before{transform:translateX(20px);}
           <div class="lcbtn" onclick="cxSelLang('GEO',this)"><span style="font-size:26px;">🇬🇪</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">ქართული</div><div style="font-size:11px;color:var(--text2);">Georgian version</div></div><span class="lbadge">GEO</span></div>
           <div class="lcbtn" onclick="cxSelLang('RU',this)"><span style="font-size:26px;">🇷🇺</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">Русский</div><div style="font-size:11px;color:var(--text2);">Russian version</div></div><span class="lbadge">RU</span></div>
           <div class="lcbtn" onclick="cxSelLang('EN',this)"><span style="font-size:26px;">🇬🇧</span><div style="flex:1;"><div style="font-size:14px;font-weight:700;">English</div><div style="font-size:11px;color:var(--text2);">English version</div></div><span class="lbadge">EN</span></div>
+          <!-- Pets toggle -->
+          <div style="margin-top:20px;padding:14px 16px;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--border);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:20px;">🐾</span>
+                <div>
+                  <div style="font-size:14px;font-weight:700;">With Pets</div>
+                  <div style="font-size:11px;color:var(--text2);">Add pet deposit clause to contract</div>
+                </div>
+              </div>
+              <label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
+                <input type="checkbox" id="cx-pets" onchange="cxTogglePets()" style="opacity:0;width:0;height:0;">
+                <span id="cx-pets-track" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--bg2);border-radius:24px;transition:.3s;border:1px solid var(--border);"></span>
+                <span id="cx-pets-thumb" style="position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.3s;"></span>
+              </label>
+            </div>
+            <div id="cx-pets-dep" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+              <label class="fl" style="margin-bottom:6px;">Pet Deposit (USD)</label>
+              <input type="number" id="cx-petdep" placeholder="Pet deposit amount" oninput="cxPetDepChanged()" style="width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-size:14px;box-sizing:border-box;">
+              <div style="font-size:11px;color:var(--text2);margin-top:4px;">Default: 50% of main deposit</div>
+            </div>
+          </div>
           <div style="color:var(--red);font-size:12px;margin-top:8px;display:none" id="cx-err2"></div>
         </div>
 
@@ -3762,7 +3784,16 @@ function cxG(id){return document.getElementById(id);}
 function cxSafe(v){return v==null?'':String(v).trim();}
 function cxFmt(iso){if(!iso)return'';var p=String(iso).split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:iso;}
 function cxOnem(iso){if(!iso)return'';var p=iso.split('-');if(p.length!==3)return'';var d=new Date(+p[0],+p[1]-1,+p[2]),o=d.getDate();d.setMonth(d.getMonth()+1);if(d.getDate()!==o)d.setDate(0);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();}
-function cxSyncDep(){var p=cxG('cx-pr'),d=cxG('cx-dep');if(p&&d&&!cxDepTouched)d.value=p.value;}
+function cxSyncDep(){
+  var p=cxG('cx-pr'),d=cxG('cx-dep');
+  if(p&&d&&!cxDepTouched)d.value=p.value;
+  // Автообновляем pet deposit если тумблер включён и поле не трогали
+  var cb=cxG('cx-pets'),pet=cxG('cx-petdep');
+  if(cb&&cb.checked&&pet&&d&&d.value){
+    var mainDep=parseFloat(d.value)||0;
+    if(mainDep>0) pet.value=Math.round(mainDep*0.5);
+  }
+}
 function cxOv(f){var e=document.getElementById('ov');if(e)e.classList.toggle('on',f);}
 
 function cxRender2(){
@@ -3842,7 +3873,9 @@ function cxCol(){
     deposit_usd:cxSafe(cxG('cx-dep')?cxG('cx-dep').value:''),
     pay_day:cxSafe(cxG('cx-pd')?cxG('cx-pd').value:''),
     sale_price:cxSafe(cxG('cx-sp')?cxG('cx-sp').value:''),
-    transfer_date:cxSafe(cxG('cx-td')?cxG('cx-td').value:'')};
+    transfer_date:cxSafe(cxG('cx-td')?cxG('cx-td').value:''),
+    with_pets:!!(cxG('cx-pets')&&cxG('cx-pets').checked),
+    pet_deposit:cxSafe(cxG('cx-petdep')?cxG('cx-petdep').value:'')};
 }
 
 function cxNext(){
@@ -3898,7 +3931,8 @@ function cxSubmit(){
     apartment_area:d.apartment_area,start_rent:cxFmt(d.start_rent),end_rent:cxFmt(d.end_rent),
     rent_duration_months:d.rent_duration_months,price_usd:d.price_usd,
     deposit_usd:d.deposit_usd,pay_day:d.pay_day,one_month:om,
-    sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date)
+    sale_price:d.sale_price,transfer_date:cxFmt(d.transfer_date),
+    with_pets:d.with_pets,pet_deposit:d.pet_deposit
   };
 
   var GAS_URL='https://script.google.com/macros/s/AKfycbwpHlcwrWPZAds5XPCQLwZgyqPmK8V_pU_oWD9uRFC9eFGXDBZOv0X5-nXWKmSztvEUJQ/exec';
@@ -3972,12 +4006,38 @@ function openPdf(e){
   }
 }
 
+function cxTogglePets(){
+  var cb=cxG('cx-pets'), dep=cxG('cx-pets-dep');
+  var track=cxG('cx-pets-track'), thumb=cxG('cx-pets-thumb');
+  if(!cb||!dep) return;
+  var on=cb.checked;
+  dep.style.display=on?'block':'none';
+  if(track) track.style.background=on?'var(--accent)':'var(--bg2)';
+  if(thumb) thumb.style.left=on?'22px':'2px';
+  if(on){
+    // Подставляем 50% от депозита по умолчанию
+    var mainDep=parseFloat((cxG('cx-dep')||{}).value)||0;
+    var petEl=cxG('cx-petdep');
+    if(petEl&&!petEl.value&&mainDep>0) petEl.value=Math.round(mainDep*0.5);
+  }
+}
+
+function cxPetDepChanged(){
+  // Позволяем менять вручную — просто обновляем превью если нужно
+}
+
 function cxReset(){
   cxType='';cxLang='';cxStep2=1;cxDepTouched=false;
   document.querySelectorAll('.ctype-btn').forEach(function(b){b.classList.remove('sel');});
   document.querySelectorAll('.lcbtn').forEach(function(b){b.classList.remove('sel');});
   var ts=cxG('cx-ts');
   if(ts){var d=new Date();ts.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  // Сбрасываем тумблер питомцев
+  var cb=cxG('cx-pets'); if(cb) cb.checked=false;
+  var dep=cxG('cx-pets-dep'); if(dep) dep.style.display='none';
+  var track=cxG('cx-pets-track'); if(track) track.style.background='var(--bg2)';
+  var thumb=cxG('cx-pets-thumb'); if(thumb) thumb.style.left='2px';
+  var petdep=cxG('cx-petdep'); if(petdep) petdep.value='';
   cxRender2();
 }
 
