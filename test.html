@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Contract AI — Rent in Tbilisi</title>
+
+<style>
+:root{
+  --brand:#1d3560;
+  --bg:#f3f6fa;
+  --text:#17233a;
+  --muted:#7b8798;
+  --line:#e1e7ef;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--text);
+}
+
+.app{
+  max-width:900px;
+  margin:auto;
+  padding-bottom:100px;
+}
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#1d3560;
+  color:white;
+  padding:15px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-weight:850;
+}
+
+.sub{
+  font-size:11px;
+  opacity:.75;
+  margin-top:3px;
+}
+
+.badge{
+  font-size:11px;
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid #ffffff35;
+}
+
+main{
+  padding:14px;
+}
+
+.card{
+  background:white;
+  border:1px solid #e4eaf1;
+  border-radius:20px;
+  margin-bottom:13px;
+  overflow:hidden;
+}
+
+.h{
+  padding:16px 16px 10px;
+  font-size:17px;
+  font-weight:850;
+}
+
+.b{
+  padding:0 16px 16px;
+}
+
+.note{
+  font-size:12px;
+  line-height:1.45;
+  border-radius:13px;
+  padding:11px 12px;
+  margin-bottom:12px;
+  background:#eef4fb;
+  color:#385c83;
+}
+
+.warning{
+  background:#fff6dc;
+  color:#835f13;
+}
+
+label.lbl{
+  display:block;
+  color:#607087;
+  font-size:12px;
+  font-weight:750;
+  margin:12px 0 6px;
+}
+
+input[type=text],
+input[type=password],
+textarea{
+  width:100%;
+  border:1px solid #d7e0ea;
+  border-radius:13px;
+  padding:13px;
+  font-size:15px;
+  background:white;
+  outline:none;
+}
+
+textarea{
+  min-height:100px;
+}
+
+.upload{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  border:1.5px dashed #c7d3e2;
+  border-radius:15px;
+
+  padding:14px;
+  margin-bottom:10px;
+
+  background:#fbfcfe;
+  cursor:pointer;
+}
+
+.upload input{
+  display:none;
+}
+
+.ico{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:#edf2f8;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  flex:none;
+}
+
+.ut{
+  font-size:14px;
+  font-weight:800;
+}
+
+.us{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.files{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:7px;
+}
+
+.chip{
+  font-size:11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:6px 8px;
+  background:#f7f9fc;
+}
+
+.btn{
+  width:100%;
+  border:0;
+  border-radius:14px;
+  padding:14px;
+  font-weight:850;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.primary{
+  background:#1d3560;
+  color:white;
+}
+
+.secondary{
+  background:#edf2f7;
+  color:#1d3560;
+}
+
+.status{
+  display:none;
+  margin-top:10px;
+  font-size:13px;
+  padding:11px;
+  border-radius:12px;
+  background:#eef2f7;
+}
+
+.status.show{
+  display:block;
+}
+
+.result{
+  display:none;
+}
+
+.result.show{
+  display:block;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.field{
+  border:1px solid #e5ebf2;
+  background:#fafcfe;
+  border-radius:13px;
+  padding:11px;
+  min-height:67px;
+}
+
+.field span{
+  display:block;
+  color:#7b8798;
+  font-size:10px;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.field b{
+  font-size:13px;
+  word-break:break-word;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.bottom{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+
+  background:rgba(255,255,255,.96);
+  border-top:1px solid #e4e9ef;
+
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+
+  z-index:20;
+}
+
+.bottomin{
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  gap:9px;
+}
+
+.bottom button{
+  flex:1;
+}
+
+@media(max-width:560px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+<header class="top">
+
+<div>
+
+<div class="logo">
+RENT IN TBILISI · Contract AI
+</div>
+
+<div class="sub">
+Полноценный тест без Telegram-бота
+</div>
+
+</div>
+
+<div class="badge">
+FULL TEST
+</div>
+
+</header>
+
+
+
+<main>
+
+
+<section class="card">
+
+<div class="h">
+1. OpenAI
+</div>
+
+<div class="b">
+
+<div class="note warning">
+
+Для теста вставь API key сюда.
+
+Ключ не сохраняется в браузере.
+
+После тестирования нажми «Очистить».
+
+</div>
+
+
+<label class="lbl">
+OpenAI API key
+</label>
+
+<input
+id="apiKey"
+type="password"
+placeholder="sk-..."
+autocomplete="off">
+
+
+<label class="lbl">
+Модель
+</label>
+
+<input
+id="model"
+type="text"
+value="gpt-5.6">
+
+</div>
+
+</section>
+
+
+
+
+<section class="card">
+
+<div class="h">
+2. Документы
+</div>
+
+<div class="b">
+
+
+<label class="upload">
+
+<input
+id="ownerPassport"
+type="file"
+accept="image/*,.pdf"
+multiple>
+
+<div class="ico">
+👤
+</div>
+
+<div>
+
+<div class="ut">
+Паспорт собственника
+</div>
+
+<div class="us">
+Фото или PDF
+</div>
+
+<div
+class="files"
+id="ownerPassportFiles">
+</div>
+
+</div>
+
+</label>
+
+
+
+
+<label class="upload">
+
+<input
+id="tenantPassport"
+type="file"
+accept="image/*,.pdf"
+multiple>
+
+<div class="ico">
+🪪
+</div>
+
+<div>
+
+<div class="ut">
+Паспорт клиента
+</div>
+
+<div class="us">
+Фото или PDF
+</div>
+
+<div
+class="files"
+id="tenantPassportFiles">
+</div>
+
+</div>
+
+</label>
+
+
+
+
+<label class="upload">
+
+<input
+id="naprFile"
+type="file"
+accept="image/*,.pdf"
+multiple>
+
+<div class="ico">
+🏠
+</div>
+
+<div>
+
+<div class="ut">
+Выписка NAPR
+</div>
+
+<div class="us">
+PDF или фотография
+</div>
+
+<div
+class="files"
+id="naprFileFiles">
+</div>
+
+</div>
+
+</label>
+
+
+
+
+<label class="upload">
+
+<input
+id="chatShots"
+type="file"
+accept="image/*"
+multiple>
+
+<div class="ico">
+💬
+</div>
+
+<div>
+
+<div class="ut">
+Скриншоты переписки
+</div>
+
+<div class="us">
+Можно выбрать несколько фотографий
+</div>
+
+<div
+class="files"
+id="chatShotsFiles">
+</div>
+
+</div>
+
+</label>
+
+
+
+<label class="lbl">
+Ссылка на выписку NAPR
+</label>
+
+<input
+id="naprUrl"
+type="text"
+placeholder="https://bs.napr.gov.ge/GetBlob?...">
+
+
+
+<label class="lbl">
+Ссылка на квартиру / пост
+</label>
+
+<input
+id="listingUrl"
+type="text"
+placeholder="https://t.me/...">
+
+
+
+<label class="lbl">
+Дополнительные условия
+</label>
+
+<textarea
+id="extraText"
+placeholder="Например: срок 6 месяцев, начало 03.09.2026..."></textarea>
+
+
+
+<button
+class="btn primary"
+id="analyzeBtn"
+onclick="analyze()">
+
+✨ РАСПОЗНАТЬ И СОБРАТЬ ДОГОВОР
+
+</button>
+
+
+<div
+id="status"
+class="status">
+</div>
+
+
+</div>
+
+</section>
+
+
+
+
+
+<section
+class="card result"
+id="resultCard">
+
+
+<div class="h">
+3. Проверка данных
+</div>
+
+
+<div class="b">
+
+
+<div class="grid">
+
+
+<div class="field">
+
+<span>
+Owner
+</span>
+
+<b id="rOwner">
+—
+</b>
+
+</div>
+
+
+<div class="field">
+
+<span>
+Owner P/N
+</span>
+
+<b id="rOwnerPn">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Tenant
+</span>
+
+<b id="rTenant">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Tenant document
+</span>
+
+<b id="rTenantPn">
+—
+</b>
+
+</div>
+
+
+
+<div class="field full">
+
+<span>
+Cadastral
+</span>
+
+<b id="rCad">
+—
+</b>
+
+</div>
+
+
+
+<div class="field full">
+
+<span>
+Address
+</span>
+
+<b id="rAddress">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Floor
+</span>
+
+<b id="rFloor">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Apartment
+</span>
+
+<b id="rApt">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Area
+</span>
+
+<b id="rArea">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Term
+</span>
+
+<b id="rTerm">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Rent
+</span>
+
+<b id="rRent">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Deposit
+</span>
+
+<b id="rDeposit">
+—
+</b>
+
+</div>
+
+
+
+<div class="field full">
+
+<span>
+Period
+</span>
+
+<b id="rPeriod">
+—
+</b>
+
+</div>
+
+
+
+<div class="field">
+
+<span>
+Pay day
+</span>
+
+<b id="rPayDay">
+—
+</b>
+
+</div>
+
+
+
+<div class="field full">
+
+<span>
+Нужно проверить
+</span>
+
+<b id="rUncertain">
+—
+</b>
+
+</div>
+
+
+
+<div class="field full">
+
+<span>
+Конфликты
+</span>
+
+<b id="rConflicts">
+—
+</b>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+
+
+<div class="bottom">
+
+<div class="bottomin">
+
+
+<button
+class="btn secondary"
+onclick="resetAll()">
+
+Очистить
+
+</button>
+
+
+<button
+class="btn primary"
+onclick="downloadContract()">
+
+Создать договор
+
+</button>
+
+
+</div>
+
+</div>
+
+
+
+
+<script>
+
+const INPUT_IDS = [
+
+"ownerPassport",
+"tenantPassport",
+"naprFile",
+"chatShots"
+
+];
+
+
+let lastResult = null;
+
+
+
+for(const id of INPUT_IDS){
+
+document
+.getElementById(id)
+.addEventListener(
+
+"change",
+
+e=>{
+
+const box =
+document.getElementById(id+"Files");
+
+box.innerHTML="";
+
+
+[...e.target.files]
+.forEach(
+
+f=>{
+
+const x =
+document.createElement("span");
+
+x.className =
+"chip";
+
+x.textContent =
+"✓ "+f.name;
+
+box.appendChild(x);
+
+}
+
+);
+
+}
+
+);
+
+}
+
+
+
+
+function setStatus(msg){
+
+const el =
+document.getElementById("status");
+
+el.textContent =
+msg;
+
+el.classList.add("show");
+
+}
+
+
+
+
+function fileToDataURL(file){
+
+return new Promise(
+
+(resolve,reject)=>{
+
+const r =
+new FileReader();
+
+r.onload =
+()=>resolve(r.result);
+
+r.onerror =
+reject;
+
+r.readAsDataURL(file);
+
+}
+
+);
+
+}
+
+
+
+
+async function addFiles(
+content,
+id,
+label
+){
+
+for(
+const f
+of
+document.getElementById(id).files
+){
+
+const data =
+await fileToDataURL(f);
+
+
+content.push({
+
+type:
+"input_text",
+
+text:
+`SOURCE: ${label} | FILE: ${f.name}`
+
+});
+
+
+if(
+f.type === "application/pdf"
+||
+f.name.toLowerCase().endsWith(".pdf")
+){
+
+content.push({
+
+type:
+"input_file",
+
+filename:
+f.name,
+
+file_data:
+data
+
+});
+
+}
+
+else{
+
+content.push({
+
+type:
+"input_image",
+
+image_url:
+data,
+
+detail:
+id === "chatShots"
+?
+"auto"
+:
+"high"
+
+});
+
+}
+
+}
+
+}
+
+
+
+
+const SCHEMA = {
+
+type:
+"object",
+
+additionalProperties:
+false,
+
+
+properties:{
+
+owner_full_name:{
+type:["string","null"]
+},
+
+owner_personal_number:{
+type:["string","null"]
+},
+
+tenant_full_name:{
+type:["string","null"]
+},
+
+tenant_document_number:{
+type:["string","null"]
+},
+
+cadastral_code:{
+type:["string","null"]
+},
+
+address:{
+type:["string","null"]
+},
+
+floor:{
+type:["string","null"]
+},
+
+apartment_number:{
+type:["string","null"]
+},
+
+area_m2:{
+type:["number","null"]
+},
+
+rent_usd:{
+type:["number","null"]
+},
+
+deposit_usd:{
+type:["number","null"]
+},
+
+duration_months:{
+type:["integer","null"]
+},
+
+start_date:{
+type:["string","null"]
+},
+
+end_date:{
+type:["string","null"]
+},
+
+pay_day:{
+type:["integer","null"]
+},
+
+uncertain_fields:{
+type:"array",
+items:{
+type:"string"
+}
+},
+
+conflicts:{
+type:"array",
+items:{
+type:"string"
+}
+}
+
+},
+
+
+required:[
+
+"owner_full_name",
+"owner_personal_number",
+
+"tenant_full_name",
+"tenant_document_number",
+
+"cadastral_code",
+
+"address",
+
+"floor",
+
+"apartment_number",
+
+"area_m2",
+
+"rent_usd",
+
+"deposit_usd",
+
+"duration_months",
+
+"start_date",
+
+"end_date",
+
+"pay_day",
+
+"uncertain_fields",
+
+"conflicts"
+
+]
+
+};
+
+
+
+
+async function analyze(){
+
+const apiKey =
+document
+.getElementById("apiKey")
+.value
+.trim();
+
+
+const model =
+document
+.getElementById("model")
+.value
+.trim()
+||
+"gpt-5.6";
+
+
+if(!apiKey){
+
+alert(
+"Сначала вставь OpenAI API key."
+);
+
+return;
+
+}
+
+
+
+const btn =
+document
+.getElementById("analyzeBtn");
+
+
+btn.disabled =
+true;
+
+btn.textContent =
+"⏳ ЧИТАЮ ДОКУМЕНТЫ...";
+
+
+setStatus(
+"Подготавливаю документы..."
+);
+
+
+
+try{
+
+
+const content = [
+
+{
+
+type:
+"input_text",
+
+text:
+`
+Собери данные для договора аренды Rent in Tbilisi.
+
+ПРАВИЛА:
+
+Имена Owner и Tenant должны быть латиницей.
+
+Если документы относятся к Maia Goqeshvili,
+используй именно написание:
+
+Maia Goqeshvili
+
+Не выдумывай отсутствующие данные.
+
+Паспорт собственника имеет приоритет
+для имени и Personal Number собственника.
+
+Паспорт клиента имеет приоритет
+для имени и номера документа клиента.
+
+NAPR имеет приоритет для:
+
+кадастрового номера,
+адреса,
+площади,
+зарегистрированного собственника.
+
+Переписка имеет приоритет для:
+
+цены аренды,
+депозита,
+срока,
+даты начала.
+
+Если цена в объявлении отличается
+от цены в переписке,
+используй цену из переписки.
+
+Но обязательно добавь конфликт
+в conflicts.
+
+Если написано:
+
+полгода
+
+это означает:
+
+6 месяцев.
+
+Все даты:
+
+DD.MM.YYYY
+
+Если дата окончания может быть
+рассчитана по сроку и дате начала,
+рассчитай её.
+
+Если день оплаты не указан,
+используй число из start_date.
+
+Не определяй личность человека
+по фотографии лица.
+
+Используй только читаемый текст
+документов.
+`
+
+}
+
+];
+
+
+
+await addFiles(
+content,
+"ownerPassport",
+"OWNER PASSPORT"
+);
+
+
+await addFiles(
+content,
+"tenantPassport",
+"TENANT PASSPORT"
+);
+
+
+await addFiles(
+content,
+"naprFile",
+"NAPR EXTRACT"
+);
+
+
+await addFiles(
+content,
+"chatShots",
+"CHAT SCREENSHOT"
+);
+
+
+
+const naprUrl =
+document
+.getElementById("naprUrl")
+.value
+.trim();
+
+
+const listingUrl =
+document
+.getElementById("listingUrl")
+.value
+.trim();
+
+
+const extraText =
+document
+.getElementById("extraText")
+.value
+.trim();
+
+
+
+if(naprUrl){
+
+content.push({
+
+type:
+"input_text",
+
+text:
+"NAPR URL: "+naprUrl
+
+});
+
+}
+
+
+
+if(listingUrl){
+
+content.push({
+
+type:
+"input_text",
+
+text:
+"PROPERTY LISTING URL: "+listingUrl
+
+});
+
+}
+
+
+
+if(extraText){
+
+content.push({
+
+type:
+"input_text",
+
+text:
+"ADDITIONAL TERMS:\n"+extraText
+
+});
+
+}
+
+
+
+setStatus(
+"Отправляю документы в OpenAI..."
+);
+
+
+
+const response =
+await fetch(
+
+"https://api.openai.com/v1/responses",
+
+{
+
+method:
+"POST",
+
+headers:{
+
+"Content-Type":
+"application/json",
+
+"Authorization":
+"Bearer "+apiKey
+
+},
+
+
+body:
+JSON.stringify({
+
+model:
+model,
+
+store:
+false,
+
+input:[
+
+{
+
+role:
+"user",
+
+content:
+content
+
+}
+
+],
+
+
+text:{
+
+format:{
+
+type:
+"json_schema",
+
+name:
+"rental_contract_data",
+
+strict:
+true,
+
+schema:
+SCHEMA
+
+}
+
+}
+
+})
+
+}
+
+);
+
+
+
+const raw =
+await response.json();
+
+
+
+if(!response.ok){
+
+throw new Error(
+
+raw?.error?.message
+||
+"OpenAI API error"
+
+);
+
+}
+
+
+
+let outputText =
+raw.output_text;
+
+
+
+if(
+!outputText
+&&
+Array.isArray(raw.output)
+){
+
+for(
+const item
+of
+raw.output
+){
+
+for(
+const c
+of
+(item.content || [])
+){
+
+if(
+c.type === "output_text"
+&&
+c.text
+){
+
+outputText =
+c.text;
+
+break;
+
+}
+
+}
+
+if(outputText)
+break;
+
+}
+
+}
+
+
+
+if(!outputText){
+
+throw new Error(
+"API не вернул результат."
+);
+
+}
+
+
+
+const data =
+JSON.parse(outputText);
+
+
+lastResult =
+data;
+
+
+render(data);
+
+
+setStatus(
+"✅ Готово. Проверь данные."
+);
+
+
+}
+
+catch(e){
+
+console.error(e);
+
+
+setStatus(
+"Ошибка: "+e.message
+);
+
+
+alert(
+"Ошибка: "+e.message
+);
+
+}
+
+
+finally{
+
+btn.disabled =
+false;
+
+btn.textContent =
+"✨ РАСПОЗНАТЬ И СОБРАТЬ ДОГОВОР";
+
+}
+
+}
+
+
+
+
+function val(x){
+
+return (
+
+x === null
+||
+x === undefined
+||
+x === ""
+
+)
+
+?
+
+"—"
+
+:
+
+String(x);
+
+}
+
+
+
+
+function put(
+id,
+x
+){
+
+document
+.getElementById(id)
+.textContent =
+val(x);
+
+}
+
+
+
+
+function render(d){
+
+put(
+"rOwner",
+d.owner_full_name
+);
+
+put(
+"rOwnerPn",
+d.owner_personal_number
+);
+
+put(
+"rTenant",
+d.tenant_full_name
+);
+
+put(
+"rTenantPn",
+d.tenant_document_number
+);
+
+put(
+"rCad",
+d.cadastral_code
+);
+
+put(
+"rAddress",
+d.address
+);
+
+put(
+"rFloor",
+d.floor
+);
+
+put(
+"rApt",
+d.apartment_number
+);
+
+put(
+"rArea",
+d.area_m2 == null
+?
+null
+:
+d.area_m2+" m²"
+);
+
+put(
+"rTerm",
+d.duration_months == null
+?
+null
+:
+d.duration_months+" месяцев"
+);
+
+put(
+"rRent",
+d.rent_usd == null
+?
+null
+:
+"$"+d.rent_usd
+);
+
+put(
+"rDeposit",
+d.deposit_usd == null
+?
+null
+:
+"$"+d.deposit_usd
+);
+
+
+put(
+"rPeriod",
+
+(d.start_date || d.end_date)
+
+?
+
+`${val(d.start_date)} — ${val(d.end_date)}`
+
+:
+
+null
+
+);
+
+
+put(
+"rPayDay",
+d.pay_day
+);
+
+
+put(
+"rUncertain",
+(d.uncertain_fields || []).join(", ")
+);
+
+
+put(
+"rConflicts",
+(d.conflicts || []).join(" | ")
+);
+
+
+
+const card =
+document
+.getElementById("resultCard");
+
+
+card
+.classList
+.add("show");
+
+
+card
+.scrollIntoView({
+
+behavior:
+"smooth",
+
+block:
+"start"
+
+});
+
+}
+
+
+
+
+function escapeHtml(s){
+
+return String(
+s ?? "—"
+)
+.replace(
+
+/[&<>"']/g,
+
+c=>({
+
+"&":"&amp;",
+
+"<":"&lt;",
+
+">":"&gt;",
+
+'"':"&quot;",
+
+"'":"&#39;"
+
+}[c])
+
+);
+
+}
+
+
+
+
+function downloadContract(){
+
+if(!lastResult){
+
+alert(
+"Сначала распознай данные."
+);
+
+return;
+
+}
+
+
+const d =
+lastResult;
+
+
+
+const html =
+`
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+Rent in Tbilisi Contract
+</title>
+
+<style>
+
+body{
+
+font-family:
+Arial,
+sans-serif;
+
+background:
+#eef2f6;
+
+margin:
+0;
+
+padding:
+24px;
+
+color:
+#17233a;
+
+}
+
+.page{
+
+max-width:
+900px;
+
+margin:
+auto;
+
+background:
+white;
+
+border-radius:
+18px;
+
+padding:
+36px;
+
+}
+
+h1{
+
+text-align:
+center;
+
+color:
+#1d3560;
+
+}
+
+.grid{
+
+display:
+grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:
+12px;
+
+}
+
+.box{
+
+border:
+1px solid #dde5ef;
+
+border-radius:
+12px;
+
+padding:
+12px;
+
+}
+
+small{
+
+color:
+#7b8798;
+
+}
+
+@media(max-width:600px){
+
+.grid{
+
+grid-template-columns:
+1fr;
+
+}
+
+.page{
+
+padding:
+20px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="page">
+
+<h1>
+RENT IN TBILISI
+</h1>
+
+<h2>
+Contract AI — Test Contract
+</h2>
+
+<div class="grid">
+
+
+<div class="box">
+
+<small>
+OWNER
+</small>
+
+<br>
+
+<b>
+${escapeHtml(d.owner_full_name)}
+</b>
+
+<br>
+
+${escapeHtml(d.owner_personal_number)}
+
+</div>
+
+
+
+<div class="box">
+
+<small>
+TENANT
+</small>
+
+<br>
+
+<b>
+${escapeHtml(d.tenant_full_name)}
+</b>
+
+<br>
+
+${escapeHtml(d.tenant_document_number)}
+
+</div>
+
+
+
+<div class="box">
+
+<small>
+PROPERTY
+</small>
+
+<br>
+
+${escapeHtml(d.address)}
+
+<br>
+
+${escapeHtml(d.cadastral_code)}
+
+<br>
+
+${escapeHtml(d.area_m2)} m²
+
+</div>
+
+
+
+<div class="box">
+
+<small>
+TERMS
+</small>
+
+<br>
+
+Rent:
+$${escapeHtml(d.rent_usd)}
+
+<br>
+
+Deposit:
+$${escapeHtml(d.deposit_usd)}
+
+<br>
+
+${escapeHtml(d.duration_months)}
+months
+
+</div>
+
+
+
+<div class="box">
+
+<small>
+PERIOD
+</small>
+
+<br>
+
+${escapeHtml(d.start_date)}
+
+—
+
+${escapeHtml(d.end_date)}
+
+<br>
+
+Pay day:
+
+${escapeHtml(d.pay_day)}
+
+</div>
+
+
+
+<div class="box">
+
+<small>
+NEED CHECK
+</small>
+
+<br>
+
+${escapeHtml(
+(d.uncertain_fields || [])
+.join(", ")
+)}
+
+<br><br>
+
+${escapeHtml(
+(d.conflicts || [])
+.join(" | ")
+)}
+
+</div>
+
+
+</div>
+
+</div>
+
+</body>
+
+</html>
+`;
+
+
+
+const blob =
+new Blob(
+
+[html],
+
+{
+type:
+"text/html;charset=utf-8"
+}
+
+);
+
+
+
+const a =
+document.createElement("a");
+
+
+a.href =
+URL.createObjectURL(blob);
+
+
+a.download =
+"rent-in-tbilisi-contract-test.html";
+
+
+a.click();
+
+
+
+setTimeout(
+()=>URL.revokeObjectURL(a.href),
+1000
+);
+
+}
+
+
+
+
+function resetAll(){
+
+INPUT_IDS
+.forEach(
+
+id=>{
+
+document
+.getElementById(id)
+.value="";
+
+document
+.getElementById(id+"Files")
+.innerHTML="";
+
+}
+
+);
+
+
+
+[
+
+"naprUrl",
+"listingUrl",
+"extraText",
+"apiKey"
+
+]
+
+.forEach(
+
+id=>
+
+document
+.getElementById(id)
+.value=""
+
+);
+
+
+
+document
+.getElementById("resultCard")
+.classList
+.remove("show");
+
+
+document
+.getElementById("status")
+.classList
+.remove("show");
+
+
+lastResult =
+null;
+
+}
+
+</script>
+
+
+</body>
+</html>
